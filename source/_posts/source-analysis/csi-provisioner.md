@@ -4,7 +4,7 @@ catalog: true
 date: 2018-6-24 15:23:24
 type: "categories"
 subtitle:
-header-img: "http://ozilwgpje.bkt.clouddn.com/scenery/building.jpg?imageslim"
+header-img: "https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg"
 tags:
 - 源码分析
 catagories:

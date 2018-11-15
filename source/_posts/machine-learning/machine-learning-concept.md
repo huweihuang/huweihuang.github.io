@@ -4,7 +4,7 @@ catalog: true
 date: 2018-1-6 16:26:24
 type: "categories"
 subtitle:
-header-img: "http://ozilwgpje.bkt.clouddn.com/article2.jpg"
+header-img: "https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg"
 tags:
 - MachineLearning
 catagories:

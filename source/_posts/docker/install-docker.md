@@ -4,7 +4,7 @@ catalog: true
 date: 2018-6-23 17:26:24
 type: "tags"
 subtitle:
-header-img: "http://ozilwgpje.bkt.clouddn.com/scenery/building.jpg?imageslim"
+header-img: "https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg"
 tags:
 - Docker
 catagories:
