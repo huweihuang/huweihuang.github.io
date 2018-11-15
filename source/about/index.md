@@ -3,7 +3,7 @@ layout: "about"
 title: "About"
 date: 2017-10-04 10:48:33
 description: "走在成为极客的路上"
-header-img: "http://ozilwgpje.bkt.clouddn.com/blog/about.jpg?imageslim"
+header-img: "https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285470/header/about.jpg"
 comments: true
 aplayer: true
 data-id: 2423410161
