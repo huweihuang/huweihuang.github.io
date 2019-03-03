@@ -55,4 +55,4 @@ data-fixed: false
 
 ### 微信公众号
 
-<img src="http://ozilwgpje.bkt.clouddn.com/wechat-public-acconut.jpg" width="35%">
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg" width="35%">
