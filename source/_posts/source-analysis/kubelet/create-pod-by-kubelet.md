@@ -1,7 +1,7 @@
 ---
-title: "[源码分析] kubelet源码分析（三）之 Pod的创建"
+title: "[源码分析] kubelet源码分析（四）之 Pod的创建"
 catalog: true
-date: 2018-10-4 16:24:24
+date: 2018-10-3 19:24:24
 type: "categories"
 subtitle:
 header-img: "https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg"
@@ -10,6 +10,8 @@ tags:
 catagories:
 - 源码分析
 ---
+
+# kubelet源码分析（四）之 Pod的创建
 
 > 以下代码分析基于 `kubernetes v1.12.0` 版本。
 >
