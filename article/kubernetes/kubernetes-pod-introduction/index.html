@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          [Kubernetes] Kubernetes之Pod详解 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes/kubernetes-pod-introduction/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                        </div>
+                        <h1>[Kubernetes] Kubernetes之Pod详解</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-09-17
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="1-pod的基本用法">1. Pod的基本用法</h2>
+<h3 id="11-说明">1.1. 说明</h3>
+<ol>
+<li>Pod实际上是<strong>容器的集合</strong>，在k8s中对运行容器的要求为：容器的主程序需要一直在前台运行，而不是后台运行。应用可以改造成前台运行的方式，例如Go语言的程序，直接运行二进制文件；java语言则运行主类；tomcat程序可以写个运行脚本。或者通过supervisor的进程管理工具，即supervisor在前台运行，应用程序由supervisor管理在后台运行。具体可参考<a href="http://blog.csdn.net/huwh_/article/details/77108245" target="_blank" rel="noopener">supervisord</a>。</li>
+<li>当多个应用之间是紧耦合的关系时，可以将多个应用一起放在一个Pod中，同个Pod中的多个容器之间互相访问可以通过localhost来通信（可以把Pod理解成一个虚拟机，共享网络和存储卷）。</li>
+</ol>
+<h3 id="12-pod相关命令">1.2. Pod相关命令</h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建</td>
+<td>kubectl create -f frontend-localredis-pod.yaml</td>
+<td></td>
+</tr>
+<tr>
+<td>查询Pod运行状态</td>
+<td>kubectl get pods --namespace=<code>&lt;NAMESPACE&gt;</code></td>
+<td></td>
+</tr>
+<tr>
+<td>查询Pod详情</td>
+<td>kebectl describe pod <code>&lt;POD_NAME&gt;</code> --namespace=<code>&lt;NAMESPACE&gt;</code></td>
+<td>该命令常用来排查问题，查看Event事件</td>
+</tr>
+<tr>
+<td>删除</td>
+<td>kubectl delete pod <code>&lt;POD_NAME&gt;</code> ;kubectl delete pod --all</td>
+<td></td>
+</tr>
+<tr>
+<td>更新</td>
+<td>kubectl replace pod.yaml</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-pod的定义文件">2. Pod的定义文件</h2>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">  namaspace:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      annotations:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">  spec:</span></span><br><span class="line"><span class="attr">    containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">    images:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">    imagePullPolice:</span> <span class="string">[Always</span> <span class="string">| Never | IfNotPresent]</span></span><br><span class="line"><span class="string"></span><span class="attr">    command:</span> <span class="string">[string]</span></span><br><span class="line"><span class="attr">    args:</span> <span class="string">[string]</span></span><br><span class="line"><span class="attr">    workingDir:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">    volumeMounts:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      mountPath:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      readOnly:</span> <span class="string">boolean</span></span><br><span class="line"><span class="attr">      ports:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      containerPort:</span> <span class="string">int</span></span><br><span class="line"><span class="attr">      hostPort:</span> <span class="string">int</span></span><br><span class="line"><span class="attr">      protocol:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      env:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      value:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      resources:</span></span><br><span class="line"><span class="attr">      limits:</span></span><br><span class="line"><span class="attr">        cpu:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        memory:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      requests:</span></span><br><span class="line"><span class="attr">        cpu:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        memory:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      livenessProbe:</span></span><br><span class="line"><span class="attr">      exec:</span></span><br><span class="line"><span class="attr">        command:</span> <span class="string">[string]</span></span><br><span class="line"><span class="attr">      httpGet:</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        port:</span> <span class="string">int</span></span><br><span class="line"><span class="attr">        host:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        scheme:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        httpHeaders:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">          value:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">          tcpSocket:</span></span><br><span class="line"><span class="attr">            port:</span> <span class="string">int</span></span><br><span class="line"><span class="attr">          initialDelaySeconds:</span> <span class="string">number</span></span><br><span class="line"><span class="attr">          timeoutSeconds:</span> <span class="string">number</span></span><br><span class="line"><span class="attr">          periodSeconds:</span> <span class="string">number</span></span><br><span class="line"><span class="attr">          successThreshold:</span> <span class="number">0</span></span><br><span class="line"><span class="attr">          failureThreshold:</span> <span class="number">0</span></span><br><span class="line"><span class="attr">          securityContext:</span></span><br><span class="line"><span class="attr">          privileged:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">          restartPolicy:</span> <span class="string">[Always</span> <span class="string">| Never | OnFailure]   </span></span><br><span class="line"><span class="string"></span><span class="attr">          nodeSelector:</span> <span class="string">object</span></span><br><span class="line"><span class="attr">          imagePullSecrets:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      hostNetwork:</span> <span class="literal">false</span></span><br><span class="line"><span class="attr">        volumes:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">    emptyDir:</span> <span class="string">&#123;&#125;</span></span><br><span class="line"><span class="attr">    hostPath:</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">    secret:</span></span><br><span class="line"><span class="attr">      secretName:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">      items:</span></span><br><span class="line"><span class="attr">      - key:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        configMap:</span></span><br><span class="line"><span class="attr">          name:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">          items:</span></span><br><span class="line"><span class="attr">      - key:</span> <span class="string">string</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">string</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-静态pod">3. 静态pod</h2>
+<p>静态Pod是由kubelet进行管理，仅存在于特定Node上的Pod。它们不能通过API Server进行管理，无法与ReplicationController、Deployment或DaemonSet进行关联，并且kubelet也无法对其健康检查。</p>
+<p>静态Pod总是由kubelet创建，并且总在kubelet所在的Node上运行。</p>
+<p>创建静态Pod的方式：</p>
+<h3 id="31-通过配置文件方式">3.1. 通过配置文件方式</h3>
+<p>需要设置kubelet的启动参数“–config”，指定kubelet需要监控的配置文件所在目录，kubelet会定期扫描该目录，并根据该目录的.yaml或.json文件进行创建操作。静态Pod无法通过API Server删除（若删除会变成pending状态），如需删除该Pod则将yaml或json文件从这个目录中删除。</p>
+<p>例如：</p>
+<p>配置目录为/etc/kubelet.d/，配置启动参数：–config=/etc/kubelet.d/，该目录下放入static-web.yaml。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">static-web</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">static-web</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">static-web</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">web</span></span><br><span class="line"><span class="attr">    containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<h2 id="4-pod容器共享volume">4. Pod容器共享Volume</h2>
+<p>同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。</p>
+<p>例如：Pod级别的Volume:“app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。</p>
+<p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1512804287/article/kubernetes/pod/pod_volume.png" alt="这里写图片描述"></p>
+<p><strong>pod-volumes-applogs.yaml</strong></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">volume-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">tomcat</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">tomcat</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="attr">    - containerPort:</span> <span class="number">8080</span></span><br><span class="line"><span class="attr">    volumeMounts:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">app-logs</span></span><br><span class="line"><span class="attr">      mountPath:</span> <span class="string">/usr/local/tomcat/logs</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">busybox</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">busybox</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">["sh","-c","tailf</span> <span class="string">/logs/catalina*.log"]</span></span><br><span class="line"><span class="attr">    volumeMounts:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">app-logs</span></span><br><span class="line"><span class="attr">      mountPath:</span> <span class="string">/logs</span></span><br><span class="line"><span class="attr">  volumes:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">app-logs</span></span><br><span class="line"><span class="attr">    emptuDir:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure>
+<p><strong>查看日志</strong></p>
+<ol>
+<li>kubectl logs <code>&lt;pod_name&gt;</code> -c <code>&lt;container_name&gt;</code></li>
+<li>kubectl exec -it <code>&lt;pod_name&gt;</code> -c <code>&lt;container_name&gt;</code> – tail /usr/local/tomcat/logs/catalina.xx.log</li>
+</ol>
+<h2 id="5-pod的配置管理">5. Pod的配置管理</h2>
+<p>Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。</p>
+<h3 id="51-configmap容器应用的配置管理">5.1. ConfigMap：容器应用的配置管理</h3>
+<p>使用场景：</p>
+<ol>
+<li>生成为容器内的环境变量。</li>
+<li>设置容器启动命令的启动参数（需设置为环境变量）。</li>
+<li>以Volume的形式挂载为容器内部的文件或目录。</li>
+</ol>
+<p>ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可以表示一个变量的值（例如：apploglevel=info），也可以表示完整配置文件的内容（例如：server.xml=&lt;?xml…&gt;…）。</p>
+<p>可以通过yaml配置文件或者使用kubectl create configmap命令的方式创建ConfigMap。</p>
+<h3 id="52-创建configmap">5.2. 创建ConfigMap</h3>
+<h4 id="521-通过yaml文件方式">5.2.1. 通过yaml文件方式</h4>
+<p>cm-appvars.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">cm-appvars</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line"><span class="attr">  apploglevel:</span> <span class="string">info</span></span><br><span class="line"><span class="attr">  appdatadir:</span> <span class="string">/var/data</span></span><br></pre></td></tr></table></figure>
+<p>常用命令</p>
+<p>kubectl create -f cm-appvars.yaml</p>
+<p>kubectl get configmap</p>
+<p>kubectl describe configmap cm-appvars</p>
+<p>kubectl get configmap cm-appvars -o yaml</p>
+<h4 id="522-通过kubectl命令行方式">5.2.2. 通过kubectl命令行方式</h4>
+<p>通过kubectl create configmap创建，使用参数–from-file或–from-literal指定内容，可以在一行中指定多个参数。</p>
+<p>1）通过–from-file参数从文件中进行创建，可以指定key的名称，也可以在一个命令行中创建包含多个key的ConfigMap。</p>
+<p>kubectl create configmap NAME --from-file=[key=]source --from-file=[key=]source</p>
+<p>2）通过–from-file参数从目录中进行创建，该目录下的每个配置文件名被设置为key，文件内容被设置为value。</p>
+<p>kubectl create configmap NAME --from-file=config-files-dir</p>
+<p>3）通过–from-literal从文本中进行创建，直接将指定的key=value创建为ConfigMap的内容。</p>
+<p>kubectl create configmap NAME --from-literal=key1=value1 --from-literal=key2=value2</p>
+<p>容器应用对ConfigMap的使用有两种方法：</p>
+<ol>
+<li>通过环境变量获取ConfigMap中的内容。</li>
+<li>通过Volume挂载的方式将ConfigMap中的内容挂载为容器内部的文件或目录。</li>
+</ol>
+<h4 id="523-通过环境变量的方式">5.2.3. 通过环境变量的方式</h4>
+<p>ConfigMap的yaml文件:cm-appvars.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">cm-appvars</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line"><span class="attr">  apploglevel:</span> <span class="string">info</span></span><br><span class="line"><span class="attr">  appdatadir:</span> <span class="string">/var/data</span></span><br></pre></td></tr></table></figure>
+<p>Pod的yaml文件：cm-test-pod.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">cm-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">cm-test</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">busybox</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">["/bin/sh","-c","env|grep</span> <span class="string">APP"]</span></span><br><span class="line"><span class="attr">    env:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">APPLOGLEVEL</span></span><br><span class="line"><span class="attr">      valueFrom:</span></span><br><span class="line"><span class="attr">        configMapKeyRef:</span></span><br><span class="line"><span class="attr">          name:</span> <span class="string">cm-appvars</span></span><br><span class="line"><span class="attr">          key:</span> <span class="string">apploglevel</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">APPDATADIR</span></span><br><span class="line"><span class="attr">      valueFrom:</span></span><br><span class="line"><span class="attr">        configMapKeyRef:</span></span><br><span class="line"><span class="attr">          name:</span> <span class="string">cm-appvars</span></span><br><span class="line"><span class="attr">          key:</span> <span class="string">appdatadir</span></span><br></pre></td></tr></table></figure>
+<p>创建命令：</p>
+<p>kubectl create -f cm-test-pod.yaml</p>
+<p>kubectl get pods --show-all</p>
+<p>kubectl logs cm-test-pod</p>
+<h3 id="53-使用configmap的限制条件">5.3. 使用ConfigMap的限制条件</h3>
+<ul>
+<li>ConfigMap必须在Pod之前创建</li>
+<li>ConfigMap也可以定义为属于某个Namespace。只有处于相同Namespace中的Pod可以引用它。</li>
+<li>kubelet只支持可以被API Server管理的Pod使用ConfigMap。静态Pod无法引用。</li>
+<li>在Pod对ConfigMap进行挂载操作时，容器内只能挂载为“目录”，无法挂载为文件。</li>
+</ul>
+<h2 id="6-pod的生命周期">6. Pod的生命周期</h2>
+<h3 id="61-pod的状态">6.1. Pod的状态</h3>
+<table>
+<thead>
+<tr>
+<th>状态值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pending</td>
+<td>API Server已经创建了该Pod,但Pod中的一个或多个容器的镜像还没有创建，包括镜像下载过程</td>
+</tr>
+<tr>
+<td>Running</td>
+<td>Pod内所有容器已创建，且至少一个容器处于运行状态、正在启动状态或正在重启状态</td>
+</tr>
+<tr>
+<td>Succeeded</td>
+<td>Pod内所有容器均成功执行退出，且不会再重启</td>
+</tr>
+<tr>
+<td>Failed</td>
+<td>Pod内所有容器均已退出，但至少一个容器退出失败</td>
+</tr>
+<tr>
+<td>Unknown</td>
+<td>由于某种原因无法获取Pod状态，例如网络通信不畅</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-pod的重启策略">6.2. Pod的重启策略</h3>
+<table>
+<thead>
+<tr>
+<th>重启策略</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always</td>
+<td>当容器失效时，由kubelet自动重启该容器</td>
+</tr>
+<tr>
+<td>OnFailure</td>
+<td>当容器终止运行且退出码不为0时，由kubelet自动重启该容器</td>
+</tr>
+<tr>
+<td>Never</td>
+<td>不论容器运行状态如何，kubelet都不会重启该容器</td>
+</tr>
+</tbody>
+</table>
+<p><strong>说明</strong>：</p>
+<p>可以管理Pod的控制器有Replication Controller，Job，DaemonSet，及kubelet（静态Pod）。</p>
+<ol>
+<li>RC和DaemonSet：必须设置为Always，需要保证该容器持续运行。</li>
+<li>Job：OnFailure或Never，确保容器执行完后不再重启。</li>
+<li>kubelet：在Pod失效的时候重启它，不论RestartPolicy设置为什么值，并且不会对Pod进行健康检查。</li>
+</ol>
+<h3 id="63-常见的状态转换场景">6.3. 常见的状态转换场景</h3>
+<table>
+<thead>
+<tr>
+<th>Pod的容器数</th>
+<th>Pod当前状态</th>
+<th>发生的事件</th>
+<th>Pod结果状态</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td>RestartPolicy=Always</td>
+<td>RestartPolicy=OnFailure</td>
+<td>RestartPolicy=Never</td>
+</tr>
+<tr>
+<td>包含一个容器</td>
+<td>Running</td>
+<td>容器成功退出</td>
+<td>Running</td>
+<td>Succeeded</td>
+<td>Succeeded</td>
+</tr>
+<tr>
+<td>包含一个容器</td>
+<td>Running</td>
+<td>容器失败退出</td>
+<td>Running</td>
+<td>Running</td>
+<td>Failure</td>
+</tr>
+<tr>
+<td>包含两个容器</td>
+<td>Running</td>
+<td>1个容器失败退出</td>
+<td>Running</td>
+<td>Running</td>
+<td>Running</td>
+</tr>
+<tr>
+<td>包含两个容器</td>
+<td>Running</td>
+<td>容器被OOM杀掉</td>
+<td>Running</td>
+<td>Running</td>
+<td>Failure</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-pod健康检查">7. Pod健康检查</h2>
+<p>Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。</p>
+<ul>
+<li><strong>LivenessProbe</strong></li>
+</ul>
+<ol>
+<li>用于判断容器是否存活（running状态）。</li>
+<li>如果LivenessProbe探针探测到容器非健康，则kubelet将杀掉该容器，并根据容器的重启策略做相应处理。</li>
+<li>如果容器不包含LivenessProbe探针，则kubelet认为该探针的返回值永远为“success”。</li>
+</ol>
+<ul>
+<li><strong>ReadinessProbe</strong></li>
+</ul>
+<ol>
+<li>用于判断容器是否启动完成（read状态），可以接受请求。</li>
+<li>如果ReadnessProbe探针检测失败，则Pod的状态将被修改。Endpoint Controller将从Service的Endpoint中删除包含该容器所在Pod的Endpoint。</li>
+</ol>
+<p>kubelet定期执行LivenessProbe探针来判断容器的健康状态。</p>
+<p><strong>LivenessProbe参数：</strong></p>
+<ul>
+<li><strong>initialDelaySeconds</strong>：启动容器后首次进行健康检查的等待时间，单位为秒。</li>
+<li><strong>timeoutSeconds</strong>:健康检查发送请求后等待响应的时间，如果超时响应kubelet则认为容器非健康，重启该容器，单位为秒。</li>
+</ul>
+<p><strong>LivenessProbe三种实现方式</strong>：</p>
+<p>1）ExecAction:在一个容器内部执行一个命令，如果该命令状态返回值为0，则表明容器健康。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">liveness-exec</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">liveness</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">tomcagcr.io/google_containers/busybox</span></span><br><span class="line"><span class="attr">    args:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">/bin/sh</span></span><br><span class="line"><span class="bullet">    -</span> <span class="bullet">-c</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">echo</span> <span class="string">ok</span> <span class="string">&gt; /tmp/health;sleep 10;rm -fr /tmp/health;sleep 600</span></span><br><span class="line"><span class="string"></span><span class="attr">    livenessProbe:</span></span><br><span class="line"><span class="attr">      exec:</span></span><br><span class="line"><span class="attr">        command:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">cat</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">/tmp/health</span></span><br><span class="line"><span class="attr">      initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">      timeoutSeconds:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>2）TCPSocketAction:通过容器IP地址和端口号执行TCP检查，如果能够建立TCP连接，则表明容器健康。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">pod-with-healthcheck</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="attr">    - containnerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">    livenessProbe:</span></span><br><span class="line"><span class="attr">      tcpSocket:</span></span><br><span class="line"><span class="attr">        port:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">      initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">      timeoutSeconds:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>3）HTTPGetAction:通过容器的IP地址、端口号及路径调用HTTP Get方法，如果响应的状态码大于等于200且小于等于400，则认为容器健康。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">pod-with-healthcheck</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">    ports:</span></span><br><span class="line"><span class="attr">    - containnerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">    livenessProbe:</span></span><br><span class="line"><span class="attr">      httpGet:</span></span><br><span class="line"><span class="attr">        path:</span> <span class="string">/_status/healthz</span></span><br><span class="line"><span class="attr">        port:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">      initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">      timeoutSeconds:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="8-pod调度">8. Pod调度</h2>
+<p>在kubernetes集群中，Pod（container）是应用的载体，一般通过RC、Deployment、DaemonSet、Job等对象来完成Pod的调度与自愈功能。</p>
+<h3 id="81-rc-deployment全自动调度">8.1. RC、Deployment:全自动调度</h3>
+<p>RC的功能即保持集群中始终运行着指定个数的Pod。</p>
+<p>在调度策略上主要有：</p>
+<ul>
+<li>系统内置调度算法[最优Node]</li>
+<li>NodeSelector[定向调度]</li>
+<li>NodeAffinity[亲和性调度]</li>
+</ul>
+<h4 id="811-nodeselector定向调度">8.1.1. NodeSelector[定向调度]</h4>
+<p>k8s中kube-scheduler负责实现Pod的调度，内部系统通过一系列算法最终计算出最佳的目标节点。如果需要将Pod调度到指定Node上，则可以通过Node的标签（Label）和Pod的nodeSelector属性相匹配来达到目的。</p>
+<p>1、kubectl label nodes {node-name} {label-key}={label-value}</p>
+<p>2、nodeSelector:<br>
+{label-key}:{label-value}</p>
+<p>如果给多个Node打了相同的标签，则scheduler会根据调度算法从这组Node中选择一个可用的Node来调度。</p>
+<p>如果Pod的nodeSelector的标签在Node中没有对应的标签，则该Pod无法被调度成功。</p>
+<p><strong>Node标签的使用场景：</strong></p>
+<p>对集群中不同类型的Node打上不同的标签，可控制应用运行Node的范围。例如role=frontend;role=backend;role=database。</p>
+<h4 id="812-nodeaffinity亲和性调度">8.1.2. NodeAffinity[亲和性调度]</h4>
+<p>NodeAffinity意为Node亲和性调度策略，NodeSelector为精确匹配，NodeAffinity为条件范围匹配，通过In（属于）、NotIn（不属于）、Exists（存在一个条件）、DoesNotExist（不存在）、Gt（大于）、Lt（小于）等操作符来选择Node，使调度更加灵活。</p>
+<ul>
+<li>RequiredDuringSchedulingRequiredDuringExecution：类似于NodeSelector，但在Node不满足条件时，系统将从该Node上移除之前调度上的Pod。</li>
+<li>RequiredDuringSchedulingIgnoredDuringExecution：与上一个类似，区别是在Node不满足条件时，系统不一定从该Node上移除之前调度上的Pod。</li>
+<li>PreferredDuringSchedulingIgnoredDuringExecution：指定在满足调度条件的Node中，哪些Node应更优先地进行调度。同时在Node不满足条件时，系统不一定从该Node上移除之前调度上的Pod。</li>
+</ul>
+<p>如果同时设置了NodeSelector和NodeAffinity，则系统将需要同时满足两者的设置才能进行调度。</p>
+<h4 id="813-daemonset特定场景调度">8.1.3. DaemonSet：特定场景调度</h4>
+<p>DaemonSet是kubernetes1.2版本新增的一种资源对象，用于管理在集群中<strong>每个Node</strong>上<strong>仅运行一份Pod</strong>的副本实例。</p>
+<p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1512804287/article/kubernetes/pod/monitor_pod.png" alt="这里写图片描述"></p>
+<p>该用法适用的应用场景：</p>
+<ul>
+<li>在每个Node上运行一个GlusterFS存储或者Ceph存储的daemon进程。</li>
+<li>在每个Node上运行一个日志采集程序：fluentd或logstach。</li>
+<li>在每个Node上运行一个健康程序，采集该Node的运行性能数据，例如：Prometheus Node Exportor、collectd、New Relic agent或Ganglia gmond等。</li>
+</ul>
+<p>DaemonSet的Pod调度策略与RC类似，除了使用系统内置算法在每台Node上进行调度，也可以通过NodeSelector或NodeAffinity来指定满足条件的Node范围进行调度。</p>
+<h4 id="814-job批处理调度"><strong>8.1.4. Job：批处理调度</strong></h4>
+<p>kubernetes从1.2版本开始支持批处理类型的应用，可以通过kubernetes Job资源对象来定义并启动一个批处理任务。批处理任务通常并行（或串行）启动多个计算进程去处理一批工作项（work item），处理完后，整个批处理任务结束。</p>
+<h5 id="8141-批处理的三种模式"><strong>8.1.4.1. 批处理的三种模式</strong></h5>
+<p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1512804286/article/kubernetes/pod/k8s_job.png" alt="这里写图片描述"></p>
+<p>批处理按任务实现方式不同分为以下几种模式：</p>
+<ul>
+<li><strong>Job Template Expansion模式</strong><br>
+一个Job对象对应一个待处理的Work item，有几个Work item就产生几个独立的Job，通过适用于Work item数量少，每个Work item要处理的数据量比较大的场景。例如有10个文件（Work item）,每个文件（Work item）为100G。</li>
+</ul>
+<ul>
+<li><strong>Queue with Pod Per Work Item</strong><br>
+采用一个任务队列存放Work item，一个Job对象作为消费者去完成这些Work item，其中Job会启动N个Pod，每个Pod对应一个Work item。</li>
+</ul>
+<ul>
+<li><strong>Queue with Variable Pod Count</strong><br>
+采用一个任务队列存放Work item，一个Job对象作为消费者去完成这些Work item，其中Job会启动N个Pod，每个Pod对应一个Work item。<strong>但Pod的数量是可变的</strong>。</li>
+</ul>
+<h5 id="8142-job的三种类型">8.1.4.2. Job的三种类型</h5>
+<p><strong>1）Non-parallel Jobs</strong></p>
+<p>通常一个Job只启动一个Pod,除非Pod异常才会重启该Pod,一旦此Pod正常结束，Job将结束。</p>
+<p><strong>2）Parallel Jobs with a fixed completion count</strong></p>
+<p>并行Job会启动多个Pod，此时需要设定Job的.spec.completions参数为一个正数，当正常结束的Pod数量达到该值则Job结束。</p>
+<p><strong>3）Parallel Jobs with a work queue</strong></p>
+<p>任务队列方式的并行Job需要一个独立的Queue，Work item都在一个Queue中存放，不能设置Job的.spec.completions参数。</p>
+<p>此时Job的特性：</p>
+<ul>
+<li>每个Pod能独立判断和决定是否还有任务项需要处理</li>
+<li>如果某个Pod正常结束，则Job不会再启动新的Pod</li>
+<li>如果一个Pod成功结束，则此时应该不存在其他Pod还在干活的情况，它们应该都处于即将结束、退出的状态</li>
+<li>如果所有的Pod都结束了，且至少一个Pod成功结束，则整个Job算是成功结束</li>
+</ul>
+<h2 id="9-pod伸缩">9. Pod伸缩</h2>
+<p>k8s中RC的用来保持集群中始终运行指定数目的实例，通过RC的scale机制可以完成Pod的扩容和缩容（伸缩）。</p>
+<h3 id="91-手动伸缩scale">9.1. 手动伸缩（scale）</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale rc redis-slave --replicas=3</span><br></pre></td></tr></table></figure>
+<h3 id="92-自动伸缩hpa">9.2. 自动伸缩（HPA）</h3>
+<p>Horizontal Pod Autoscaler（HPA）控制器用于实现基于CPU使用率进行自动Pod伸缩的功能。HPA控制器基于Master的kube-controller-manager服务启动参数–horizontal-pod-autoscaler-sync-period定义是时长（默认30秒），周期性监控目标Pod的CPU使用率，并在满足条件时对ReplicationController或Deployment中的Pod副本数进行调整，以符合用户定义的平均Pod CPU使用率。Pod CPU使用率来源于heapster组件，因此需安装该组件。</p>
+<p>可以通过kubectl autoscale命令进行快速创建或者使用yaml配置文件进行创建。创建之前需已存在一个RC或Deployment对象，并且该RC或Deployment中的Pod必须定义resources.requests.cpu的资源请求值，以便heapster采集到该Pod的CPU。</p>
+<h4 id="921-通过kubectl-autoscale创建">9.2.1. 通过kubectl autoscale创建</h4>
+<p>例如：</p>
+<p>php-apache-rc.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ReplicationController</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      name:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        app:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">        image:</span> <span class="string">gcr.io/google_containers/hpa-example</span></span><br><span class="line"><span class="attr">        resources:</span></span><br><span class="line"><span class="attr">          requests:</span></span><br><span class="line"><span class="attr">            cpu:</span> <span class="number">200</span><span class="string">m</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>创建php-apache的RC</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f php-apache-rc.yaml</span><br></pre></td></tr></table></figure>
+<p>php-apache-svc.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="attr">  - port:</span> <span class="number">80</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">php-apache</span></span><br></pre></td></tr></table></figure>
+<p>创建php-apache的Service</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f php-apache-svc.yaml</span><br></pre></td></tr></table></figure>
+<p>创建HPA控制器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl autoscale rc php-apache --min=1 --max=10 --cpu-percent=50</span><br></pre></td></tr></table></figure>
+<h4 id="922-通过yaml配置文件创建">9.2.2. 通过yaml配置文件创建</h4>
+<p>hpa-php-apache.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">HorizontalPodAutoscaler</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  scaleTargetRef:</span></span><br><span class="line"><span class="attr">    apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">    kind:</span> <span class="string">ReplicationController</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">php-apache</span></span><br><span class="line"><span class="attr">  minReplicas:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  maxReplicas:</span> <span class="number">10</span></span><br><span class="line"><span class="attr">  targetCPUUtilizationPercentage:</span> <span class="number">50</span></span><br></pre></td></tr></table></figure>
+<p>创建hpa</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f hpa-php-apache.yaml</span><br></pre></td></tr></table></figure>
+<p>查看hpa</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get hpa</span><br></pre></td></tr></table></figure>
+<h2 id="10-pod滚动升级">10. Pod滚动升级</h2>
+<p>k8s中的滚动升级通过执行kubectl rolling-update命令完成，该命令创建一个新的RC（与旧的RC在同一个命名空间中），然后自动控制旧的RC中的Pod副本数逐渐减少为0，同时新的RC中的Pod副本数从0逐渐增加到附加值，但滚动升级中Pod副本数（包括新Pod和旧Pod）保持原预期值。</p>
+<h3 id="101-通过配置文件实现">10.1. 通过配置文件实现</h3>
+<p>redis-master-controller-v2.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ReplicationController</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">redis-master-v2</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">redis-master</span></span><br><span class="line"><span class="attr">    version:</span> <span class="string">v2</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">redis-master</span></span><br><span class="line"><span class="attr">    version:</span> <span class="string">v2</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">redis-master</span></span><br><span class="line"><span class="attr">        version:</span> <span class="string">v2</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">master</span></span><br><span class="line"><span class="attr">        image:</span> <span class="string">kubeguide/redis-master:2.0</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - containerPort:</span> <span class="number">6379</span></span><br></pre></td></tr></table></figure>
+<p>注意事项：</p>
+<ol>
+<li>RC的名字（name）不能与旧RC的名字相同</li>
+<li>在selector中应至少有一个Label与旧的RC的Label不同，以标识其为新的RC。例如本例中新增了version的Label。</li>
+</ol>
+<p>运行kubectl rolling-update</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rolling-update redis-master -f redis-master-controller-v2.yaml</span><br></pre></td></tr></table></figure>
+<h3 id="102-通过kubectl-rolling-update命令实现">10.2. 通过kubectl rolling-update命令实现</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rolling-update redis-master --image=redis-master:2.0</span><br></pre></td></tr></table></figure>
+<p>与使用配置文件实现不同在于，该执行结果旧的RC被删除，新的RC仍使用旧的RC的名字。</p>
+<h3 id="103-升级回滚">10.3. 升级回滚</h3>
+<p>kubectl rolling-update加参数–rollback实现回滚操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rolling-update redis-master --image=kubeguide/redis-master:2.0 --rollback</span><br></pre></td></tr></table></figure>
+<p>参考《Kubernetes权威指南》</p>
+<div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/flannel/flannel-introduction/">[Kubernetes] Flannel介绍</a></li><li><a href="http://www.huweihuang.com/article/kubernetes/kubernetes-architecture/">[Kubernetes] Kubernetes总架构图</a></li><li><a href="http://www.huweihuang.com/article/kubernetes/kubernetes-commands/">[Kubernetes] Kubernetes常用命令（kubectl）</a></li></ul></div>
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/golang/golang-packages/" data-toggle="tooltip" data-placement="top" title="[Golang] Golang常用包">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/golang/golang-basis/" data-toggle="tooltip" data-placement="top" title="[Golang] Golang系列（一）之基础篇">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-pod的基本用法"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Pod的基本用法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#11-说明"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. 说明</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#12-pod相关命令"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. Pod相关命令</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-pod的定义文件"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. Pod的定义文件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#3-静态pod"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. 静态pod</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#31-通过配置文件方式"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. 通过配置文件方式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#4-pod容器共享volume"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. Pod容器共享Volume</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#5-pod的配置管理"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. Pod的配置管理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#51-configmap容器应用的配置管理"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">5.1. ConfigMap：容器应用的配置管理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#52-创建configmap"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">5.2. 创建ConfigMap</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#521-通过yaml文件方式"><span class="toc-nav-number">5.2.1.</span> <span class="toc-nav-text">5.2.1. 通过yaml文件方式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#522-通过kubectl命令行方式"><span class="toc-nav-number">5.2.2.</span> <span class="toc-nav-text">5.2.2. 通过kubectl命令行方式</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#523-通过环境变量的方式"><span class="toc-nav-number">5.2.3.</span> <span class="toc-nav-text">5.2.3. 通过环境变量的方式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#53-使用configmap的限制条件"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">5.3. 使用ConfigMap的限制条件</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#6-pod的生命周期"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. Pod的生命周期</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#61-pod的状态"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">6.1. Pod的状态</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#62-pod的重启策略"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">6.2. Pod的重启策略</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#63-常见的状态转换场景"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">6.3. 常见的状态转换场景</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#7-pod健康检查"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">7. Pod健康检查</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#8-pod调度"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">8. Pod调度</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#81-rc-deployment全自动调度"><span class="toc-nav-number">8.1.</span> <span class="toc-nav-text">8.1. RC、Deployment:全自动调度</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#811-nodeselector定向调度"><span class="toc-nav-number">8.1.1.</span> <span class="toc-nav-text">8.1.1. NodeSelector[定向调度]</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#812-nodeaffinity亲和性调度"><span class="toc-nav-number">8.1.2.</span> <span class="toc-nav-text">8.1.2. NodeAffinity[亲和性调度]</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#813-daemonset特定场景调度"><span class="toc-nav-number">8.1.3.</span> <span class="toc-nav-text">8.1.3. DaemonSet：特定场景调度</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#814-job批处理调度"><span class="toc-nav-number">8.1.4.</span> <span class="toc-nav-text">8.1.4. Job：批处理调度</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#8141-批处理的三种模式"><span class="toc-nav-number">8.1.4.1.</span> <span class="toc-nav-text">8.1.4.1. 批处理的三种模式</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#8142-job的三种类型"><span class="toc-nav-number">8.1.4.2.</span> <span class="toc-nav-text">8.1.4.2. Job的三种类型</span></a></li></ol></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#9-pod伸缩"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">9. Pod伸缩</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#91-手动伸缩scale"><span class="toc-nav-number">9.1.</span> <span class="toc-nav-text">9.1. 手动伸缩（scale）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#92-自动伸缩hpa"><span class="toc-nav-number">9.2.</span> <span class="toc-nav-text">9.2. 自动伸缩（HPA）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#921-通过kubectl-autoscale创建"><span class="toc-nav-number">9.2.1.</span> <span class="toc-nav-text">9.2.1. 通过kubectl autoscale创建</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#922-通过yaml配置文件创建"><span class="toc-nav-number">9.2.2.</span> <span class="toc-nav-text">9.2.2. 通过yaml配置文件创建</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#10-pod滚动升级"><span class="toc-nav-number">10.</span> <span class="toc-nav-text">10. Pod滚动升级</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#101-通过配置文件实现"><span class="toc-nav-number">10.1.</span> <span class="toc-nav-text">10.1. 通过配置文件实现</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#102-通过kubectl-rolling-update命令实现"><span class="toc-nav-number">10.2.</span> <span class="toc-nav-text">10.2. 通过kubectl rolling-update命令实现</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#103-升级回滚"><span class="toc-nav-number">10.3.</span> <span class="toc-nav-text">10.3. 升级回滚</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#推荐文章"><span class="toc-nav-number">11.</span> <span class="toc-nav-text">推荐文章</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">CSDN Blog 胡伟煌</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                        <li><a href="http://dockone.io/people/胡伟煌" target="_blank">DockOne 胡伟煌</a></li>
+                    
+                        <li><a href="https://yq.aliyun.com/u/huweihuang" target="_blank">阿里云栖社区 胡伟煌</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2019 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
