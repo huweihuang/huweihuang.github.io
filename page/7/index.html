@@ -243,20 +243,18 @@ Scheduler：
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes/monitoring/heapster-introduction/">
+    <a href="/article/kubernetes/monitoring/kubernetes-cluster-monitoring/">
         <h2 class="post-title">
                         
-            [Kubernetes] Heapster介绍
+            [Kubernetes] Kubernetes集群监控
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. heapster简介
-Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。
-Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。
-2. heapster部署与配置
-......
+            1. 概述
+1.1. cAdvisor
+cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数–cadvisor-port可以定义cAdvisor......
         </div>
     </a>
     
@@ -276,18 +274,23 @@ Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes/monitoring/kubernetes-cluster-monitoring/">
+    <a href="/article/kubernetes/kubernetes-basic-concepts/">
         <h2 class="post-title">
                         
-            [Kubernetes] Kubernetes集群监控
+            [Kubernetes] Kubernetes基本概念
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 概述
-1.1. cAdvisor
-cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数–cadvisor-port可以定义cAdvisor......
+            1. Master
+集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
+1.1. Master的组件
+
+kube-apiserver：资源增删改查的入口
+kube-controller-manager：资源对象的大总管
+kube-scheduler：负责资源调度（Pod调度）
+etcd Server:kubernet......
         </div>
     </a>
     
@@ -345,24 +348,54 @@ mysqldump -u 用户名......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes/monitoring/influxdb-introduction/">
+    <a href="/article/kubernetes/kubernetes-network/">
         <h2 class="post-title">
                         
-            [Kubernetes] Influxdb介绍
+            [Kubernetes] Kubernetes网络原理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. InfluxDB简介
-InfluxDB是一个当下比较流行的时序数据库，InfluxDB使用 Go 语言编写，无需外部依赖，安装配置非常方便，适合构建大型分布式系统的监控系统。
-主要特色功能：
-1）基于时间序列，支持与时间有关的相关函数（如最大，最小，求和等）
-2）可度量性：你可以实时对大量数据进行计算
-3）基于事件：它支持任意的事件数据
-2. InfluxDB安装
-1）安装
-wget ......
+            1. kubernetes网络模型
+1.1. 基础原则
+
+每个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、扁平的网络空间中，不管是否运行在同一Node上都可以通过Pod的IP来访问。
+k8s中Pod的IP是最小粒度IP。同一个Pod内所有的容器共享一个网络堆栈，该模型称为IP-per-Pod模型。
+Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes/monitoring/heapster-introduction/">
+        <h2 class="post-title">
+                        
+            [Kubernetes] Heapster介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. heapster简介
+Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。
+Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。
+2. heapster部署与配置
+......
         </div>
     </a>
     
@@ -412,23 +445,24 @@ wget ......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes/kubernetes-basic-concepts/">
+    <a href="/article/kubernetes/monitoring/influxdb-introduction/">
         <h2 class="post-title">
                         
-            [Kubernetes] Kubernetes基本概念
+            [Kubernetes] Influxdb介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Master
-集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
-1.1. Master的组件
-
-kube-apiserver：资源增删改查的入口
-kube-controller-manager：资源对象的大总管
-kube-scheduler：负责资源调度（Pod调度）
-etcd Server:kubernet......
+            1. InfluxDB简介
+InfluxDB是一个当下比较流行的时序数据库，InfluxDB使用 Go 语言编写，无需外部依赖，安装配置非常方便，适合构建大型分布式系统的监控系统。
+主要特色功能：
+1）基于时间序列，支持与时间有关的相关函数（如最大，最小，求和等）
+2）可度量性：你可以实时对大量数据进行计算
+3）基于事件：它支持任意的事件数据
+2. InfluxDB安装
+1）安装
+wget ......
         </div>
     </a>
     
@@ -463,40 +497,6 @@ Usage:
 kubectl [flags]
 kubectl [command]
 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes/kubernetes-network/">
-        <h2 class="post-title">
-                        
-            [Kubernetes] Kubernetes网络原理
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. kubernetes网络模型
-1.1. 基础原则
-
-每个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、扁平的网络空间中，不管是否运行在同一Node上都可以通过Pod的IP来访问。
-k8s中Pod的IP是最小粒度IP。同一个Pod内所有的容器共享一个网络堆栈，该模型称为IP-per-Pod模型。
-Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
         </div>
     </a>
     
@@ -628,9 +628,9 @@ Redis是......
             
         
             
-        
-            
             <a href="/tags/#Linux" title="Linux" rel="2">Linux</a>
+            
+        
             
         
             
@@ -777,6 +777,11 @@ Redis是......
         
     </div>
 </div>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
 
 
     <!-- Footer -->
