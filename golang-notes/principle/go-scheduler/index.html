@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Goroutine调度 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/golang-notes/principle/go-scheduler/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Golang" title="Golang">Golang</a>
+                            
+                        </div>
+                        <h1>Goroutine调度</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2022-11-19
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>本文主要介绍Go的调度模型。</p>
+</blockquote>
+<h1 id="1-线程实现模型"><a href="#1-线程实现模型" class="headerlink" title="1. 线程实现模型"></a>1. 线程实现模型</h1><p>线程模型有三类：<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29#Models" target="_blank" rel="noopener">内核级线程模型、用户级线程模型、混合型线程模型</a>。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。</p>
+<blockquote>
+<p>内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。</p>
+</blockquote>
+<h2 id="11-线程模型对比"><a href="#1-1-线程模型对比" class="headerlink" title="1.1. 线程模型对比"></a>1.1. 线程模型对比</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>线程模型</th>
+<th>用户线程与KSE之间的对应关系</th>
+<th>特点</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内核级线程模型</td>
+<td>1:1</td>
+<td>1条用户线程对应一条内核进程/线程来调度，即以核心态线程实现。</td>
+<td>具有和内核线程一致的优点，不同用户线程之间不会互相影响。可以利用多核系统的优势。</td>
+<td>在大量线程的情况下，线程的创建、删除、切换的代价更昂贵，影响性能。</td>
+</tr>
+<tr>
+<td>用户级线程模型</td>
+<td>M:1</td>
+<td>N条用户线程只由一条内核进程/线程调度，即以用户态线程实现。</td>
+<td>线程的创建、删除和环境切换都很高效。</td>
+<td>一旦一个线程发生阻塞，整个进程下的其他线程也会被阻塞。不能利用多核系统的优势。</td>
+</tr>
+<tr>
+<td>混合型线程模型</td>
+<td>M:N</td>
+<td>M条用户线程由N条内核线程动态关联。又称两级线程模型</td>
+<td>可以快速地执行上下文切换，而且可以利用多核的优势。当某个线程发生阻塞可以调度出CPU关联到可以执行的线程上。目前Go就是采用这种线程模型。</td>
+<td>动态关联机制实现复杂，需要用户或runtime自己去实现。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="12-线程模型示意图"><a href="#1-2-线程模型示意图" class="headerlink" title="1.2. 线程模型示意图"></a>1.2. 线程模型示意图</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557130409/article/golang/scheduler/thread-model.png" width="100%"></p>
+<h1 id="2-g-p-m调度模型"><a href="#2-G-P-M调度模型" class="headerlink" title="2. G-P-M调度模型"></a>2. G-P-M调度模型</h1><p><strong>调度模型:</strong></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557129220/article/golang/scheduler/go-scheduler.png" width="80%"></p>
+<p><strong>G-P-M对应关系：</strong></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557129219/article/golang/scheduler/gpm.png" width="40%"></p>
+<h2 id="21-基本概念"><a href="#2-1-基本概念" class="headerlink" title="2.1. 基本概念"></a>2.1. 基本概念</h2><ul>
+<li>M：machine，代表系统内核进程，用来执行G。（工人）</li>
+<li>P：processor，代表调度执行的上下文（context），维护了一个本地的goroutine的队列。（小推车）</li>
+<li>G：goroutine，代表goroutine，即执行的goroutine的数据结构及栈等。（砖头）</li>
+</ul>
+<h2 id="22-基本流程"><a href="#2-2-基本流程" class="headerlink" title="2.2. 基本流程"></a>2.2. 基本流程</h2><p>调度的本质是将G尽量均匀合理地安排给M来执行，其中P的作用就是来实现合理安排逻辑。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/in-motion.jpg" width="50%"></p>
+<ul>
+<li>P的数量通过 <code>GOMAXPROCS()</code> 来设置，一般等于CPU的核数，对于一次代码执行设置好一般不会变。</li>
+<li>P维护了一个本地的G队列（runqueue），包括正在执行和待执行的G，尽量保证所有的P都匹配一个M同时在执行G。</li>
+<li>当P本地goroutine队列消费完，会从全局的goroutine队列（global runqueue）中拿goroutine到本地队列。P也会定期检查全局的goroutine队列，避免存在全局的goroutine没有被执行而”饿死”的现象。</li>
+<li>P和M是动态形式的一对一的关系，P和G是动态形式的一对多的关系。</li>
+</ul>
+<h2 id="23-抢占式调度阻塞"><a href="#2-3-抢占式调度（阻塞）" class="headerlink" title="2.3. 抢占式调度（阻塞）"></a>2.3. 抢占式调度（阻塞）</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/syscall.jpg"></p>
+<p>当goroutine发生阻塞的时候，可以通过P将剩余的G切换给新的M来执行，而不会导致剩余的G无法执行，如果没有M则创建M来匹配P。</p>
+<p>当阻塞的goroutine返回后，进程会尝试获取一个上下文（Context）来执行这个goroutine。一般是先从其他进程中”偷取”一个Context，如果”偷取”不成功，则将goroutine放入全局的goroutine中。</p>
+<h2 id="24-偷任务"><a href="#2-4-偷任务" class="headerlink" title="2.4. 偷任务"></a>2.4. 偷任务</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/steal.jpg"></p>
+<p>P可以偷任务即goroutine，当某个P的本地G执行完，且全局没有G需要执行的时候，P可以去偷别的P还没有执行完的一半的G来给M执行，提高了G的执行效率。</p>
+<p>参考：</p>
+<ul>
+<li><a href="http://morsmachine.dk/go-scheduler" target="_blank" rel="noopener">http://morsmachine.dk/go-scheduler</a></li>
+<li><a href="https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw/edit#heading=h.mmq8lm48qfcw" target="_blank" rel="noopener">Scalable Go Scheduler Design Doc</a></li>
+<li><a href="https://docs.google.com/document/d/1ETuA2IOmnaQ4j81AtTGT40Y4_Jr6_IDASEKg0t0dBR8/edit#heading=h.3pilqarbrc9h" target="_blank" rel="noopener">Go Preemptive Scheduler Design Doc</a></li>
+<li><a href="https://github.com/k2huang/blogpost/blob/master/golang/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E5%B9%B6%E5%8F%91%E6%9C%BA%E5%88%B6/Go%E5%B9%B6%E5%8F%91%E6%9C%BA%E5%88%B6.md" target="_blank" rel="noopener">k2huang/blogpost/Go并发机制</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/golang-notes/principle/memory-allocation/" data-toggle="tooltip" data-placement="top" title="内存分配">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/golang-notes/web/beego/beego-log/" data-toggle="tooltip" data-placement="top" title="Beego 日志处理">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-线程实现模型"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 线程实现模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-线程模型对比"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. 线程模型对比</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-线程模型示意图"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. 线程模型示意图</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-g-p-m调度模型"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. G-P-M调度模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-基本概念"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 基本概念</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-基本流程"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. 基本流程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-抢占式调度阻塞"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 抢占式调度（阻塞）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-偷任务"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4. 偷任务</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Golang" title="Golang">Golang</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">CSDN Blog 胡伟煌</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                        <li><a href="http://dockone.io/people/胡伟煌" target="_blank">DockOne 胡伟煌</a></li>
+                    
+                        <li><a href="https://yq.aliyun.com/u/huweihuang" target="_blank">阿里云栖社区 胡伟煌</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

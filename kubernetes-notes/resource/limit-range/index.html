@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          资源配额 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/kubernetes-notes/resource/limit-range/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                        </div>
+                        <h1>资源配额</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-06-23
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="pod限额limitrange"><a href="#Pod限额（LimitRange）" class="headerlink" title="Pod限额（LimitRange）"></a>Pod限额（LimitRange）</h1><blockquote>
+<p><code>ResourceQuota</code>对象是限制某个namespace下<code>所有Pod(容器)</code>的资源限额</p>
+<p><code>LimitRange</code>对象是限制某个namespace<code>单个Pod(容器</code>)的资源限额</p>
+</blockquote>
+<p><code>LimitRange</code>对象用来定义某个<code>命名空间</code>下某种<code>资源对象</code>的使用限额，其中资源对象包括：<code>Pod</code>、<code>Container</code>、<code>PersistentVolumeClaim</code>。</p>
+<h2 id="1-为namespace配置cpu和内存的默认值"><a href="#1-为namespace配置CPU和内存的默认值" class="headerlink" title="1. 为namespace配置CPU和内存的默认值"></a>1. 为namespace配置CPU和内存的默认值</h2><p>如果在一个拥有默认内存或CPU限额的命名空间中创建一个容器，并且这个容器未指定它自己的内存或CPU的<code>limit</code>， 它会被分配这个默认的内存或CPU的<code>limit</code>。既没有设置pod的<code>limit</code>和<code>request</code>才会分配默认的内存或CPU的<code>request</code>。</p>
+<h3 id="11-namespace的内存默认值"><a href="#1-1-namespace的内存默认值" class="headerlink" title="1.1. namespace的内存默认值"></a>1.1. namespace的内存默认值</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建namespace</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create namespace default-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建LimitRange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat memory-defaults.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: LimitRange</span><br><span class="line">metadata:</span><br><span class="line">  name: mem-limit-range</span><br><span class="line">spec:</span><br><span class="line">  limits:</span><br><span class="line">  - default:</span><br><span class="line">      memory: 512Mi</span><br><span class="line">    defaultRequest:</span><br><span class="line">      memory: 256Mi</span><br><span class="line">    type: Container</span><br><span class="line">  </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-defaults.yaml --namespace=default-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建Pod,未指定内存的<span class="built_in">limit</span>和request</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat memory-defaults-pod.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: default-mem-demo</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: default-mem-demo-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-defaults-pod.yaml --namespace=default-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看Pod</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get pod default-mem-demo --output=yaml --namespace=default-mem-example</span></span><br><span class="line">containers:</span><br><span class="line">- image: nginx</span><br><span class="line">  imagePullPolicy: Always</span><br><span class="line">  name: default-mem-demo-ctr</span><br><span class="line">  resources:</span><br><span class="line">    limits:</span><br><span class="line">      memory: 512Mi</span><br><span class="line">    requests:</span><br><span class="line">      memory: 256Mi</span><br></pre></td></tr></table></figure>
+<h3 id="12-namespace的cpu默认值"><a href="#1-2-namespace的CPU默认值" class="headerlink" title="1.2. namespace的CPU默认值"></a>1.2. namespace的CPU默认值</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建namespace</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create namespace default-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建LimitRange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-defaults.yaml </span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: LimitRange</span><br><span class="line">metadata:</span><br><span class="line">  name: cpu-limit-range</span><br><span class="line">spec:</span><br><span class="line">  limits:</span><br><span class="line">  - default:</span><br><span class="line">      cpu: 1</span><br><span class="line">    defaultRequest:</span><br><span class="line">      cpu: 0.5</span><br><span class="line">    type: Container</span><br><span class="line">    </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-defaults.yaml --namespace=default-cpu-example    </span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建Pod，未指定CPU的<span class="built_in">limit</span>和request</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-defaults-pod.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: default-cpu-demo</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: default-cpu-demo-ctr</span><br><span class="line">    image: nginx</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-defaults-pod.yaml --namespace=default-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看Pod</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get pod default-cpu-demo --output=yaml --namespace=default-cpu-example</span></span><br><span class="line">containers:</span><br><span class="line">- image: nginx</span><br><span class="line">  imagePullPolicy: Always</span><br><span class="line">  name: default-cpu-demo-ctr</span><br><span class="line">  resources:</span><br><span class="line">    limits:</span><br><span class="line">      cpu: "1"</span><br><span class="line">    requests:</span><br><span class="line">      cpu: 500m</span><br></pre></td></tr></table></figure>
+<h3 id="13-说明"><a href="#1-3-说明" class="headerlink" title="1.3 说明"></a>1.3 说明</h3><ol>
+<li>如果没有指定pod的<code>request</code>和<code>limit</code>，则创建的pod会使用<code>LimitRange</code>对象定义的默认值（request和limit）</li>
+<li>如果指定pod的<code>limit</code>但未指定<code>request</code>，则创建的pod的<code>request</code>值会取<code>limit</code>的值，而不会取LimitRange对象定义的request默认值。</li>
+<li>如果指定pod的<code>request</code>但未指定<code>limit</code>，则创建的pod的<code>limit</code>值会取<code>LimitRange</code>对象定义的<code>limit</code>默认值。</li>
+</ol>
+<p><strong>默认Limit和request的动机</strong></p>
+<p>如果命名空间具有<code>资源配额（ResourceQuota）</code>, 它为内存限额（CPU限额）设置默认值是有意义的。 以下是资源配额对命名空间施加的两个限制：</p>
+<ul>
+<li>在命名空间运行的每一个容器必须有它自己的内存限额（CPU限额）。</li>
+<li>在命名空间中所有的容器使用的内存总量（CPU总量）不能超出指定的限额。</li>
+</ul>
+<p>如果一个容器没有指定它自己的内存限额（CPU限额），它将被赋予默认的限额值，然后它才可以在被配额限制的命名空间中运行。</p>
+<h2 id="2-为namespace配置cpu和内存的最大最小值"><a href="#2-为namespace配置CPU和内存的最大最小值" class="headerlink" title="2. 为namespace配置CPU和内存的最大最小值"></a>2. 为namespace配置CPU和内存的最大最小值</h2><h3 id="21-内存的最大最小值"><a href="#2-1-内存的最大最小值" class="headerlink" title="2.1. 内存的最大最小值"></a>2.1. 内存的最大最小值</h3><p><strong>创建LimitRange</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建namespace</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create namespace constraints-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建LimitRange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat memory-constraints.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: LimitRange</span><br><span class="line">metadata:</span><br><span class="line">  name: mem-min-max-demo-lr</span><br><span class="line">spec:</span><br><span class="line">  limits:</span><br><span class="line">  - max:</span><br><span class="line">      memory: 1Gi</span><br><span class="line">    min:</span><br><span class="line">      memory: 500Mi</span><br><span class="line">    type: Container</span><br><span class="line"> </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-constraints.yaml --namespace=constraints-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看LimitRange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get limitrange cpu-min-max-demo --namespace=constraints-mem-example --output=yaml</span></span><br><span class="line">...</span><br><span class="line">  limits:</span><br><span class="line">  - default:</span><br><span class="line">      memory: 1Gi</span><br><span class="line">    defaultRequest:</span><br><span class="line">      memory: 1Gi</span><br><span class="line">    max:</span><br><span class="line">      memory: 1Gi</span><br><span class="line">    min:</span><br><span class="line">      memory: 500Mi</span><br><span class="line">    type: Container</span><br><span class="line">...</span><br><span class="line"><span class="meta">#</span><span class="bash"> LimitRange设置了最大最小值，但没有设置默认值，也会被自动设置默认值。</span></span><br></pre></td></tr></table></figure>
+<p><strong>创建符合要求的Pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建符合要求的Pod</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat memory-constraints-pod.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-mem-demo</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-mem-demo-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        memory: "800Mi"</span><br><span class="line">      requests:</span><br><span class="line">        memory: "600Mi"</span><br><span class="line"> </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-constraints-pod.yaml --namespace=constraints-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看Pod</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get pod constraints-mem-demo --output=yaml --namespace=constraints-mem-example</span></span><br><span class="line">...</span><br><span class="line">resources:</span><br><span class="line">  limits:</span><br><span class="line">     memory: 800Mi</span><br><span class="line">  requests:</span><br><span class="line">    memory: 600Mi</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><strong>创建超过最大内存limit的pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat memory-constraints-pod-2.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-mem-demo-2</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-mem-demo-2-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        memory: "1.5Gi"  # 超过最大值 1Gi</span><br><span class="line">      requests:</span><br><span class="line">        memory: "800Mi"</span><br><span class="line">        </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-constraints-pod-2.yaml --namespace=constraints-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Pod创建失败，因为容器指定的<span class="built_in">limit</span>过大</span></span><br><span class="line">Error from server (Forbidden): error when creating "docs/tasks/administer-cluster/memory-constraints-pod-2.yaml":</span><br><span class="line">pods "constraints-mem-demo-2" is forbidden: maximum memory usage per Container is 1Gi, but limit is 1536Mi.</span><br></pre></td></tr></table></figure>
+<p><strong>创建小于最小内存request的Pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat memory-constraints-pod-3.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-mem-demo-3</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-mem-demo-3-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        memory: "800Mi"</span><br><span class="line">      requests:</span><br><span class="line">        memory: "100Mi"   # 小于最小值500Mi</span><br><span class="line">        </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-constraints-pod-3.yaml --namespace=constraints-mem-example         </span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Pod创建失败，因为容器指定的内存request过小</span></span><br><span class="line">Error from server (Forbidden): error when creating "docs/tasks/administer-cluster/memory-constraints-pod-3.yaml":</span><br><span class="line">pods "constraints-mem-demo-3" is forbidden: minimum memory usage per Container is 500Mi, but request is 100Mi.</span><br></pre></td></tr></table></figure>
+<p><strong>创建没有指定任何内存limit和request的pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat memory-constraints-pod-4.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-mem-demo-4</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-mem-demo-4-ctr</span><br><span class="line">    image: nginx</span><br><span class="line"></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/memory-constraints-pod-4.yaml --namespace=constraints-mem-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看Pod</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get pod constraints-mem-demo-4 --namespace=constraints-mem-example --output=yaml</span></span><br><span class="line">...</span><br><span class="line">resources:</span><br><span class="line">  limits:</span><br><span class="line">    memory: 1Gi</span><br><span class="line">  requests:</span><br><span class="line">    memory: 1Gi</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>容器没有指定自己的 CPU 请求和限制，所以它将从 LimitRange 获取默认的 CPU 请求和限制值。</p>
+<h3 id="22-cpu的最大最小值"><a href="#2-2-CPU的最大最小值" class="headerlink" title="2.2. CPU的最大最小值"></a>2.2. CPU的最大最小值</h3><p><strong>创建LimitRange</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建namespace</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create namespace constraints-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建LimitRange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-constraints.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: LimitRange</span><br><span class="line">metadata:</span><br><span class="line">  name: cpu-min-max-demo-lr</span><br><span class="line">spec:</span><br><span class="line">  limits:</span><br><span class="line">  - max:</span><br><span class="line">      cpu: "800m"</span><br><span class="line">    min:</span><br><span class="line">      cpu: "200m"</span><br><span class="line">    type: Container</span><br><span class="line">    </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-constraints.yaml --namespace=constraints-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看LimitRange</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get limitrange cpu-min-max-demo-lr --output=yaml --namespace=constraints-cpu-example</span></span><br><span class="line">...</span><br><span class="line">limits:</span><br><span class="line">- default:</span><br><span class="line">    cpu: 800m</span><br><span class="line">  defaultRequest:</span><br><span class="line">    cpu: 800m</span><br><span class="line">  max:</span><br><span class="line">    cpu: 800m</span><br><span class="line">  min:</span><br><span class="line">    cpu: 200m</span><br><span class="line">  type: Container</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><strong>创建符合要求的Pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-constraints-pod.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-cpu-demo</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-cpu-demo-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        cpu: "800m"</span><br><span class="line">      requests:</span><br><span class="line">        cpu: "500m"</span><br><span class="line">        </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-constraints-pod.yaml --namespace=constraints-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看Pod</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get pod constraints-cpu-demo --output=yaml --namespace=constraints-cpu-example</span></span><br><span class="line">...</span><br><span class="line">resources:</span><br><span class="line">  limits:</span><br><span class="line">    cpu: 800m</span><br><span class="line">  requests:</span><br><span class="line">    cpu: 500m</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><strong>创建超过最大CPU limit的Pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-constraints-pod-2.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-cpu-demo-2</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-cpu-demo-2-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        cpu: "1.5"</span><br><span class="line">      requests:</span><br><span class="line">        cpu: "500m"</span><br><span class="line">        </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-constraints-pod-2.yaml --namespace=constraints-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Pod创建失败，因为容器指定的CPU <span class="built_in">limit</span>过大</span></span><br><span class="line">Error from server (Forbidden): error when creating "docs/tasks/administer-cluster/cpu-constraints-pod-2.yaml":</span><br><span class="line">pods "constraints-cpu-demo-2" is forbidden: maximum cpu usage per Container is 800m, but limit is 1500m.</span><br></pre></td></tr></table></figure>
+<p><strong>创建小于最小CPU request的Pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-constraints-pod-3.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-cpu-demo-4</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-cpu-demo-4-ctr</span><br><span class="line">    image: nginx</span><br><span class="line">    resources:</span><br><span class="line">      limits:</span><br><span class="line">        cpu: "800m"</span><br><span class="line">      requests:</span><br><span class="line">        cpu: "100m"</span><br><span class="line">        </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-constraints-pod-3.yaml --namespace=constraints-cpu-example</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> Pod创建失败，因为容器指定的CPU request过小</span></span><br><span class="line">Error from server (Forbidden): error when creating "docs/tasks/administer-cluster/cpu-constraints-pod-3.yaml":</span><br><span class="line">pods "constraints-cpu-demo-4" is forbidden: minimum cpu usage per Container is 200m, but request is 100m.</span><br></pre></td></tr></table></figure>
+<p><strong>创建没有指定任何CPU limit和request的pod</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cat cpu-constraints-pod-4.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: constraints-cpu-demo-4</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: constraints-cpu-demo-4-ctr</span><br><span class="line">    image: vish/stress</span><br><span class="line">    </span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f https://k8s.io/docs/tasks/administer-cluster/cpu-constraints-pod-4.yaml --namespace=constraints-cpu-example    </span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看Pod</span></span><br><span class="line">kubectl get pod constraints-cpu-demo-4 --namespace=constraints-cpu-example --output=yaml</span><br><span class="line">...</span><br><span class="line">resources:</span><br><span class="line">  limits:</span><br><span class="line">    cpu: 800m</span><br><span class="line">  requests:</span><br><span class="line">    cpu: 800m</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>容器没有指定自己的 CPU 请求和限制，所以它将从 LimitRange 获取默认的 CPU 请求和限制值。</p>
+<h3 id="23-说明"><a href="#2-3-说明" class="headerlink" title="2.3. 说明"></a>2.3. 说明</h3><p>LimitRange 在 namespace 中施加的最小和最大内存（CPU）限制只有在创建和更新 Pod 时才会被应用。改变 LimitRange 不会对之前创建的 Pod 造成影响。</p>
+<p>Kubernetes 都会执行下列步骤：</p>
+<ul>
+<li>如果容器没有指定自己的内存（CPU）请求（request）和限制（limit），系统将会为其分配默认值。</li>
+<li>验证容器的内存（CPU）请求大于等于最小值。</li>
+<li>验证容器的内存（CPU）限制小于等于最大值。</li>
+</ul>
+<p>参考文章：</p>
+<ul>
+<li><p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/</a></p>
+</li>
+<li><p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-default-namespace/</a></p>
+</li>
+<li><p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/</a></p>
+</li>
+<li><p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-constraint-namespace/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/cpu-constraint-namespace/</a></p>
+</li>
+<li><p><a href="https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/</a></p>
+</li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/kubernetes-notes/paas/12-factor/" data-toggle="tooltip" data-placement="top" title="12 Factor">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/kubernetes-notes/operation/node/nodeselector-and-taint/" data-toggle="tooltip" data-placement="top" title="指定节点调度与隔离">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#pod限额limitrange"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Pod限额（LimitRange）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#1-为namespace配置cpu和内存的默认值"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1. 为namespace配置CPU和内存的默认值</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#11-namespace的内存默认值"><span class="toc-nav-number">1.1.1.</span> <span class="toc-nav-text">1.1. namespace的内存默认值</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#12-namespace的cpu默认值"><span class="toc-nav-number">1.1.2.</span> <span class="toc-nav-text">1.2. namespace的CPU默认值</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#13-说明"><span class="toc-nav-number">1.1.3.</span> <span class="toc-nav-text">1.3 说明</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#2-为namespace配置cpu和内存的最大最小值"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">2. 为namespace配置CPU和内存的最大最小值</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#21-内存的最大最小值"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">2.1. 内存的最大最小值</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#22-cpu的最大最小值"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">2.2. CPU的最大最小值</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#23-说明"><span class="toc-nav-number">1.2.3.</span> <span class="toc-nav-text">2.3. 说明</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">CSDN Blog 胡伟煌</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                        <li><a href="http://dockone.io/people/胡伟煌" target="_blank">DockOne 胡伟煌</a></li>
+                    
+                        <li><a href="https://yq.aliyun.com/u/huweihuang" target="_blank">阿里云栖社区 胡伟煌</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

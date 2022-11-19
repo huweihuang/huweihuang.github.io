@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          CNI接口介绍 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/kubernetes-notes/network/cni/cni/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#CNI" title="CNI">CNI</a>
+                            
+                        </div>
+                        <h1>CNI接口介绍</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2021-07-10
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="1-cnicontainer-network-interface"><a href="#1-CNI（Container-Network-Interface）" class="headerlink" title="1. CNI（Container Network Interface）"></a>1. CNI（Container Network Interface）</h1><p>CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。</p>
+<p>kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从<code>--cni-conf-dir</code> （默认是 <code>/etc/cni/net.d</code>） 读取文件并使用 该文件中的 CNI 配置来设置各个 Pod 的网络。 CNI 配置文件必须与 <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration" target="_blank" rel="noopener">CNI 规约</a> 匹配，并且配置所引用的所有所需的 CNI 插件都应存在于 <code>--cni-bin-dir</code>（默认是 <code>/opt/cni/bin</code>）下。如果有多个CNI配置文件，kubelet 将会使用按文件名的字典顺序排列 的第一个作为配置文件。</p>
+<p>CNI规范定义：</p>
+<ul>
+<li><p>网络配置文件的格式</p>
+</li>
+<li><p>容器runtime与CNI插件的通信协议</p>
+</li>
+<li><p>基于提供的配置执行网络插件的步骤</p>
+</li>
+<li><p>网络插件调用其他功能插件的步骤</p>
+</li>
+<li><p>插件返回给runtime结果的数据格式</p>
+</li>
+</ul>
+<h1 id="2-cni配置文件格式"><a href="#2-CNI配置文件格式" class="headerlink" title="2. CNI配置文件格式"></a>2. CNI配置文件格式</h1><p>CNI配置文件的格式为JSON格式，配置文件的默认路径：/etc/cni/net.d。插件二进制默认的路径为：/opt/cni/bin。</p>
+<h2 id="21-主配置的字段"><a href="#2-1-主配置的字段" class="headerlink" title="2.1. 主配置的字段"></a>2.1. 主配置的字段</h2><ul>
+<li><p><code>cniVersion</code> (string)：CNI规范使用的版本，例如版本为0.4.0。</p>
+</li>
+<li><p><code>name</code> (string)：目标网络的名称。</p>
+</li>
+<li><p><code>disableCheck</code> (boolean)：关闭CHECK操作。</p>
+</li>
+<li><p><code>plugins</code> (list)：CNI插件列表及插件配置。</p>
+</li>
+</ul>
+<h2 id="22-插件配置字段"><a href="#2-2-插件配置字段" class="headerlink" title="2.2. 插件配置字段"></a>2.2. 插件配置字段</h2><p>根据不同的插件，插件配置所需的字段不同。</p>
+<p>必选字段：</p>
+<ul>
+<li><code>type</code> (string)：节点上插件二进制的名称，比如bridge，sriov，macvlan等。</li>
+</ul>
+<p>可选字段：</p>
+<ul>
+<li><p><code>capabilities</code> (dictionary)</p>
+</li>
+<li><p><code>ipMasq</code> (boolean)：为目标网络配上Outbound Masquerade(地址伪装)，即：由容器内部通过网关向外发送数据包时，对数据包的源IP地址进行修改。</p>
+<p>当我们的容器以宿主机作为网关时，这个参数是必须要设置的。否则，从容器内部发出的数据包就没有办法通过网关路由到其他网段。因为容器内部的IP地址无法被目标网段识别，所以这些数据包最终会被丢弃掉。</p>
+</li>
+<li><p><code>ipam</code> (dictionary)：IPAM(IP Adderss Management)即IP地址管理，提供了一系列方法用于对IP和路由进行管理。它对应的是由CNI提供的一组标准IPAM插件，比如像host-local，dhcp，static等。比如文中用到的bridge插件，会调用我们所指定的IPAM插件，实现对网络设备IP地址的分配和管理。**如果是自己开发的ipam插件，则相关的入参可以自己定义和实现。</p>
+<p>以下以host-local为例说明。</p>
+<ul>
+<li>type：指定所用IPAM插件的名称，在我们的例子里，用的是host-local。</li>
+<li>subnet：为目标网络分配网段，包括网络ID和子网掩码，以CIDR形式标记。在我们的例子里为<code>10.15.10.0/24</code>，也就是目标网段为<code>10.15.10.0</code>，子网掩码为<code>255.255.255.0</code>。</li>
+<li>routes：用于指定路由规则，插件会为我们在容器的路由表里生成相应的规则。其中，dst表示希望到达的目标网段，以CIDR形式标记。gw对应网关的IP地址，也就是要到达目标网段所要经过的“next hop(下一跳)”。如果省略gw的话，那么插件会自动帮我们选择默认网关。在我们的例子里，gw选择的是默认网关，而dst为<code>0.0.0.0/0</code>则代表“任何网络”，表示数据包将通过默认网关发往任何网络。实际上，这对应的是一条默认路由规则，即：当所有其他路由规则都不匹配时，将选择该路由。</li>
+<li>rangeStart：允许分配的IP地址范围的起始值</li>
+<li>rangeEnd：允许分配的IP地址范围的结束值</li>
+<li>gateway：为网关（也就是我们将要在宿主机上创建的bridge）指定的IP地址。如果省略的话，那么插件会自动从允许分配的IP地址范围内选择起始值作为网关的IP地址。</li>
+</ul>
+</li>
+<li><p><code>dns</code> (dictionary, optional)：dns配置</p>
+<ul>
+<li><p><code>nameservers</code> (list of strings, optional)</p>
+</li>
+<li><p><code>domain</code> (string, optional)</p>
+</li>
+<li><p><code>search</code> (list of strings, optional)</p>
+</li>
+<li><p><code>options</code> (list of strings, optional)</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="23-配置文件示例"><a href="#2-3-配置文件示例" class="headerlink" title="2.3. 配置文件示例"></a>2.3. 配置文件示例</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /etc/cni/net.d</span><br><span class="line">$ cat &gt;/etc/cni/net.d/10-mynet.conf &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"cniVersion"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"dbnet"</span>,</span><br><span class="line">  <span class="attr">"plugins"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"bridge"</span>,</span><br><span class="line">      <span class="comment">// plugin specific parameters</span></span><br><span class="line">      <span class="attr">"bridge"</span>: <span class="string">"cni0"</span>,</span><br><span class="line">      <span class="attr">"keyA"</span>: [<span class="string">"some more"</span>, <span class="string">"plugin specific"</span>, <span class="string">"configuration"</span>],</span><br><span class="line"></span><br><span class="line">      <span class="attr">"ipam"</span>: &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"host-local"</span>,</span><br><span class="line">        <span class="comment">// ipam specific</span></span><br><span class="line">        <span class="attr">"subnet"</span>: <span class="string">"10.1.0.0/16"</span>,</span><br><span class="line">        <span class="attr">"gateway"</span>: <span class="string">"10.1.0.1"</span>,</span><br><span class="line">        <span class="attr">"routes"</span>: [</span><br><span class="line">            &#123;<span class="attr">"dst"</span>: <span class="string">"0.0.0.0/0"</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"dns"</span>: &#123;</span><br><span class="line">        <span class="attr">"nameservers"</span>: [ <span class="string">"10.1.0.1"</span> ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"tuning"</span>,</span><br><span class="line">      <span class="attr">"capabilities"</span>: &#123;</span><br><span class="line">        <span class="attr">"mac"</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"sysctl"</span>: &#123;</span><br><span class="line">        <span class="attr">"net.core.somaxconn"</span>: <span class="string">"500"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"portmap"</span>,</span><br><span class="line">        <span class="attr">"capabilities"</span>: &#123;<span class="attr">"portMappings"</span>: <span class="literal">true</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-cni插件"><a href="#3-CNI插件" class="headerlink" title="3. CNI插件"></a>3. CNI插件</h1><h2 id="31-安装插件"><a href="#3-1-安装插件" class="headerlink" title="3.1. 安装插件"></a>3.1. 安装插件</h2><p>安装CNI二进制插件，插件下载地：<a href="https://github.com/containernetworking/plugins/releases" target="_blank" rel="noopener">https://github.com/containernetworking/plugins/releases</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载二进制</span></span><br><span class="line">wget https://github.com/containernetworking/plugins/releases/download/v1.1.0/cni-plugins-linux-amd64-v1.1.0.tgz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压文件</span></span><br><span class="line">tar -zvxf cni-plugins-linux-amd64-v1.1.0.tgz -C /opt/cni/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看解压文件</span></span><br><span class="line"><span class="comment"># ll -h</span></span><br><span class="line">总用量 63M</span><br><span class="line">-rwxr-xr-x 1 root root 3.7M 2月  24 01:01 bandwidth</span><br><span class="line">-rwxr-xr-x 1 root root 4.1M 2月  24 01:01 bridge</span><br><span class="line">-rwxr-xr-x 1 root root 9.3M 2月  24 01:01 dhcp</span><br><span class="line">-rwxr-xr-x 1 root root 4.2M 2月  24 01:01 firewall</span><br><span class="line">-rwxr-xr-x 1 root root 3.7M 2月  24 01:01 host-device</span><br><span class="line">-rwxr-xr-x 1 root root 3.1M 2月  24 01:01 host-local</span><br><span class="line">-rwxr-xr-x 1 root root 3.8M 2月  24 01:01 ipvlan</span><br><span class="line">-rwxr-xr-x 1 root root 3.2M 2月  24 01:01 loopback</span><br><span class="line">-rwxr-xr-x 1 root root 3.8M 2月  24 01:01 macvlan</span><br><span class="line">-rwxr-xr-x 1 root root 3.6M 2月  24 01:01 portmap</span><br><span class="line">-rwxr-xr-x 1 root root 4.0M 2月  24 01:01 ptp</span><br><span class="line">-rwxr-xr-x 1 root root 3.4M 2月  24 01:01 sbr</span><br><span class="line">-rwxr-xr-x 1 root root 2.7M 2月  24 01:01 static</span><br><span class="line">-rwxr-xr-x 1 root root 3.3M 2月  24 01:01 tuning</span><br><span class="line">-rwxr-xr-x 1 root root 3.8M 2月  24 01:01 vlan</span><br><span class="line">-rwxr-xr-x 1 root root 3.4M 2月  24 01:01 vrf</span><br></pre></td></tr></table></figure>
+<h2 id="32-插件分类"><a href="#3-2-插件分类" class="headerlink" title="3.2. 插件分类"></a>3.2. 插件分类</h2><p>参考：<a href="https://www.cni.dev/plugins/current/" target="_blank" rel="noopener">https://www.cni.dev/plugins/current/</a></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>插件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>main</td>
+<td>bridge</td>
+<td>Creates a bridge, adds the host and the container to it</td>
+</tr>
+<tr>
+<td></td>
+<td>ipvlan</td>
+<td>Adds an ipvlan interface in the container</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>macvlan</strong></td>
+<td>Creates a new MAC address, forwards all traffic to that to the container</td>
+</tr>
+<tr>
+<td></td>
+<td>ptp</td>
+<td>Creates a veth pair</td>
+</tr>
+<tr>
+<td></td>
+<td><a href="https://www.cni.dev/plugins/current/main/host-device/" target="_blank" rel="noopener">host-device</a></td>
+<td>Moves an already-existing device into a container</td>
+</tr>
+<tr>
+<td></td>
+<td>vlan</td>
+<td>Creates a vlan interface off a master</td>
+</tr>
+<tr>
+<td>IPAM</td>
+<td>dhcp</td>
+<td>Runs a daemon on the host to make DHCP requests on behalf of a container</td>
+</tr>
+<tr>
+<td></td>
+<td>host-local</td>
+<td>Maintains a local database of allocated IPs</td>
+</tr>
+<tr>
+<td></td>
+<td>static</td>
+<td>Allocates static IPv4/IPv6 addresses to containers</td>
+</tr>
+<tr>
+<td>meta</td>
+<td>tuning</td>
+<td>Changes sysctl parameters of an existing interface</td>
+</tr>
+<tr>
+<td></td>
+<td>portmap</td>
+<td>An iptables-based portmapping plugin. Maps ports from the host’s address space to the container</td>
+</tr>
+<tr>
+<td></td>
+<td><strong>bandwidth</strong></td>
+<td>Allows bandwidth-limiting through use of traffic control tbf (ingress/egress)</td>
+</tr>
+<tr>
+<td></td>
+<td>sbr</td>
+<td>A plugin that configures source based routing for an interface (from which it is chained)</td>
+</tr>
+<tr>
+<td></td>
+<td>firewall</td>
+<td>A firewall plugin which uses iptables or firewalld to add rules to allow traffic to/from the container</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="4-cni插件接口"><a href="#4-CNI插件接口" class="headerlink" title="4. CNI插件接口"></a>4. CNI插件接口</h1><p>具体可参考：<a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations" target="_blank" rel="noopener">https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations</a></p>
+<p>CNI定义的接口操作有：</p>
+<ul>
+<li><code>ADD</code>：添加容器网络，在容器启动时调用。</li>
+<li><code>DEL</code>：删除容器网络，在容器删除时调用。</li>
+<li><code>CHECK</code>：检查容器网络是否正常。</li>
+<li><code>VERSION</code>：显示插件版本。</li>
+</ul>
+<p>这些操作通过<code>CNI_COMMAND</code>环境变量来传递给CNI插件二进制。</p>
+<p>其中环境变量包括：</p>
+<ul>
+<li><p><code>CNI_COMMAND</code>：命令操作，包括 <code>ADD</code>, <code>DEL</code>, <code>CHECK</code>, or <code>VERSION</code>。</p>
+</li>
+<li><p><code>CNI_CONTAINERID</code>:容器的ID，有runtime分配，不为空。</p>
+</li>
+<li><p><code>CNI_NETNS</code>:容器的网络命名空间，命名空间路径，例如：/run/netns/[nsname]</p>
+</li>
+<li><p><code>CNI_IFNAME</code>:容器内的网卡名称。</p>
+</li>
+<li><p><code>CNI_ARGS</code>:其他参数。</p>
+</li>
+<li><p><code>CNI_PATH</code>:CNI插件二进制的路径。</p>
+</li>
+</ul>
+<h2 id="41-add接口添加容器网络"><a href="#4-1-ADD接口：添加容器网络" class="headerlink" title="4.1. ADD接口：添加容器网络"></a>4.1. ADD接口：添加容器网络</h2><p>在容器的网络命名空间<code>CNI_NETNS</code>中创建<code>CNI_IFNAME</code>网卡设备，或者调整网卡配置。</p>
+<p>必选参数：</p>
+<ul>
+<li><code>CNI_COMMAND</code></li>
+<li><code>CNI_CONTAINERID</code></li>
+<li><code>CNI_NETNS</code></li>
+<li><code>CNI_IFNAME</code></li>
+</ul>
+<p>可选参数：</p>
+<ul>
+<li><code>CNI_ARGS</code></li>
+<li><code>CNI_PATH</code></li>
+</ul>
+<h2 id="42-del接口删除容器网络"><a href="#4-2-DEL接口：删除容器网络" class="headerlink" title="4.2. DEL接口：删除容器网络"></a>4.2. DEL接口：删除容器网络</h2><p>删除容器网络命名空间<code>CNI_NETNS</code>中的容器网卡<code>CNI_IFNAME</code>，或者撤销ADD修改操作。</p>
+<p>必选参数：</p>
+<ul>
+<li><code>CNI_COMMAND</code></li>
+<li><code>CNI_CONTAINERID</code></li>
+<li><code>CNI_IFNAME</code></li>
+</ul>
+<p>可选参数：</p>
+<ul>
+<li><code>CNI_NETNS</code></li>
+<li><code>CNI_ARGS</code></li>
+<li><code>CNI_PATH</code></li>
+</ul>
+<h2 id="43-check接口检查容器网络"><a href="#4-3-CHECK接口：检查容器网络" class="headerlink" title="4.3. CHECK接口：检查容器网络"></a>4.3. CHECK接口：检查容器网络</h2><h2 id="44-version接口输出cni的版本"><a href="#4-4-VERSION接口：输出CNI的版本" class="headerlink" title="4.4. VERSION接口：输出CNI的版本"></a>4.4. VERSION接口：输出CNI的版本</h2><p>参考：</p>
+<ul>
+<li><a href="https://www.cni.dev/docs/spec/" target="_blank" rel="noopener">https://www.cni.dev/docs/spec/</a></li>
+<li><a href="https://github.com/containernetworking/cni" target="_blank" rel="noopener">https://github.com/containernetworking/cni</a></li>
+<li><a href="https://github.com/containernetworking/cni/blob/spec-v0.4.0/SPEC.md" target="_blank" rel="noopener">https://github.com/containernetworking/cni/blob/spec-v0.4.0/SPEC.md</a></li>
+<li><a href="https://kubernetes.io/zh/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/</a></li>
+<li><a href="https://github.com/containernetworking/plugins/tree/master/plugins" target="_blank" rel="noopener">https://github.com/containernetworking/plugins/tree/master/plugins</a></li>
+<li><a href="https://www.cni.dev/plugins/current/" target="_blank" rel="noopener">https://www.cni.dev/plugins/current/</a></li>
+<li><a href="https://cloud.tencent.com/developer/news/600713" target="_blank" rel="noopener">https://cloud.tencent.com/developer/news/600713</a></li>
+<li><a href="https://morningspace.github.io/tech/k8s-net-cni/#%E9%85%8D%E7%BD%AEcni%E6%8F%92%E4%BB%B6" target="_blank" rel="noopener">配置CNI插件</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/" data-toggle="tooltip" data-placement="top" title="k8s多集群管理的思考">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/" data-toggle="tooltip" data-placement="top" title="increase the mlock limit">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-cnicontainer-network-interface"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. CNI（Container Network Interface）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-cni配置文件格式"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. CNI配置文件格式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-主配置的字段"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 主配置的字段</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-插件配置字段"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. 插件配置字段</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-配置文件示例"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 配置文件示例</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-cni插件"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. CNI插件</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-安装插件"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. 安装插件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-插件分类"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. 插件分类</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-cni插件接口"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. CNI插件接口</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-add接口添加容器网络"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. ADD接口：添加容器网络</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-del接口删除容器网络"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. DEL接口：删除容器网络</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-check接口检查容器网络"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. CHECK接口：检查容器网络</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-version接口输出cni的版本"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">4.4. VERSION接口：输出CNI的版本</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#CNI" title="CNI">CNI</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">CSDN Blog 胡伟煌</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                        <li><a href="http://dockone.io/people/胡伟煌" target="_blank">DockOne 胡伟煌</a></li>
+                    
+                        <li><a href="https://yq.aliyun.com/u/huweihuang" target="_blank">阿里云栖社区 胡伟煌</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

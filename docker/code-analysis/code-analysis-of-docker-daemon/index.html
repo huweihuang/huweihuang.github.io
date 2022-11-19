@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          [Docker] Docker源码分析（二）之Docker Daemon - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/docker/code-analysis/code-analysis-of-docker-daemon/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                            
+                        </div>
+                        <h1>[Docker] Docker源码分析（二）之Docker Daemon</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-07-09
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="一-docker-daemon架构示意图"><a href="#一、Docker-Daemon架构示意图" class="headerlink" title="一、Docker Daemon架构示意图"></a>一、Docker Daemon架构示意图</h2><p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578079/article/docker/dockerDaemon/DaemonArchitecture.jpg" width="60%"></p>
+<p>Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。</p>
+<p>Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。</p>
+<p>运行过程的作用有以下几种可能：</p>
+<ul>
+<li>向Docker Registry获取镜像，</li>
+<li>通过graphdriver执行容器镜像的本地化操作，</li>
+<li>通过networkdriver执行容器网络环境的配置，</li>
+<li>通过execdriver执行容器内部运行的执行工作等。</li>
+</ul>
+<p>说明：本文分析的代码为Docker 1.2.0版本。</p>
+<h2 id="二-docker-daemon启动流程图"><a href="#二、Docker-Daemon启动流程图" class="headerlink" title="二、Docker Daemon启动流程图"></a>二、Docker Daemon启动流程图</h2><p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578079/article/docker/dockerDaemon/DaemonFlow.jpg" width="50%"></p>
+<p>启动Docker Daemon时，一般可以使用以下命令：docker —daemon=true; docker –d; docker –d=true等。接着由docker的main()函数来解析以上命令的相应flag参数，并最终完成Docker Daemon的启动。</p>
+<p><strong>/docker/docker.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> *flDaemon &#123;</span><br><span class="line">        mainDaemon()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="三-maindaemon的具体实现"><a href="#三、mainDaemon的具体实现" class="headerlink" title="三、mainDaemon的具体实现"></a>三、mainDaemon的具体实现</h2><p>宏观来讲，mainDaemon()完成创建一个daemon进程，并使其正常运行。</p>
+<p>从功能的角度来说，mainDaemon()实现了两部分内容：</p>
+<ul>
+<li>第一，创建Docker运行环境；</li>
+<li>第二，服务于Docker Client，接收并处理相应请求。</li>
+</ul>
+<h3 id="一配置初始化"><a href="#（一）配置初始化" class="headerlink" title="（一）配置初始化"></a>（一）配置初始化</h3><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    daemonCfg = &amp;daemon.Config&#123;&#125;</span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    daemonCfg.InstallFlags()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在mainDaemon()运行之前，关于Docker Daemon所需要的config配置信息均已经初始化完毕。</p>
+<p>声明一个为daemon包中Config类型的变量，名为daemonCfg。而Config对象，定义了Docker Daemon所需的配置信息。在Docker Daemon在启动时，daemonCfg变量被传递至Docker Daemon并被使用。</p>
+<p><strong>/daemon/config.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">    Pidfile                  <span class="keyword">string</span>   <span class="comment">//Docker Daemon所属进程的PID文件</span></span><br><span class="line">    Root                   <span class="keyword">string</span>   <span class="comment">//Docker运行时所使用的root路径</span></span><br><span class="line">    AutoRestart             <span class="keyword">bool</span>    <span class="comment">//已被启用，转而支持docker run时的重启</span></span><br><span class="line">    Dns                   []<span class="keyword">string</span>  <span class="comment">//Docker使用的DNS Server地址</span></span><br><span class="line">    DnsSearch              []<span class="keyword">string</span>  <span class="comment">//Docker使用的指定的DNS查找域名</span></span><br><span class="line">    Mirrors                 []<span class="keyword">string</span>  <span class="comment">//指定的优先Docker Registry镜像</span></span><br><span class="line">    EnableIptables           <span class="keyword">bool</span>    <span class="comment">//启用Docker的iptables功能</span></span><br><span class="line">    EnableIpForward         <span class="keyword">bool</span>    <span class="comment">//启用net.ipv4.ip_forward功能</span></span><br><span class="line">    EnableIpMasq            <span class="keyword">bool</span>      <span class="comment">//启用IP伪装技术</span></span><br><span class="line">    DefaultIp                net.IP     <span class="comment">//绑定容器端口时使用的默认IP</span></span><br><span class="line">    BridgeIface              <span class="keyword">string</span>      <span class="comment">//添加容器网络至已有的网桥</span></span><br><span class="line">    BridgeIP                 <span class="keyword">string</span>     <span class="comment">//创建网桥的IP地址</span></span><br><span class="line">    FixedCIDR               <span class="keyword">string</span>     <span class="comment">//指定IP的IPv4子网，必须被网桥子网包含</span></span><br><span class="line">    InterContainerCommunication   <span class="keyword">bool</span>  <span class="comment">//是否允许相同host上容器间的通信</span></span><br><span class="line">    GraphDriver             <span class="keyword">string</span>      <span class="comment">//Docker运行时使用的特定存储驱动</span></span><br><span class="line">    GraphOptions            []<span class="keyword">string</span>   <span class="comment">//可设置的存储驱动选项</span></span><br><span class="line">    ExecDriver               <span class="keyword">string</span>    <span class="comment">// Docker运行时使用的特定exec驱动</span></span><br><span class="line">    Mtu                    <span class="keyword">int</span>      <span class="comment">//设置容器网络的MTU</span></span><br><span class="line">    DisableNetwork          <span class="keyword">bool</span>     <span class="comment">//有定义，之后未初始化</span></span><br><span class="line">    EnableSelinuxSupport      <span class="keyword">bool</span>     <span class="comment">//启用SELinux功能的支持</span></span><br><span class="line">    Context                 <span class="keyword">map</span>[<span class="keyword">string</span>][]<span class="keyword">string</span>   <span class="comment">//有定义，之后未初始化</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>init()函数实现了daemonCfg变量中各属性的赋值，具体的实现为：daemonCfg.InstallFlags()</p>
+<p><strong>/daemon/config.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InstallFlags adds command-line options to the top-level flag parser for</span></span><br><span class="line"><span class="comment">// the current process.</span></span><br><span class="line"><span class="comment">// Subsequent calls to `flag.Parse` will populate config with values parsed</span></span><br><span class="line"><span class="comment">// from the command-line.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(config *Config)</span> <span class="title">InstallFlags</span><span class="params">()</span></span> &#123;</span><br><span class="line">    flag.StringVar(&amp;config.Pidfile, []<span class="keyword">string</span>&#123;<span class="string">"p"</span>, <span class="string">"-pidfile"</span>&#125;, <span class="string">"/var/run/docker.pid"</span>, <span class="string">"Path to use for daemon PID file"</span>)</span><br><span class="line">    flag.StringVar(&amp;config.Root, []<span class="keyword">string</span>&#123;<span class="string">"g"</span>, <span class="string">"-graph"</span>&#125;, <span class="string">"/var/lib/docker"</span>, <span class="string">"Path to use as the root of the Docker runtime"</span>)</span><br><span class="line">    flag.BoolVar(&amp;config.AutoRestart, []<span class="keyword">string</span>&#123;<span class="string">"#r"</span>, <span class="string">"#-restart"</span>&#125;, <span class="literal">true</span>, <span class="string">"--restart on the daemon has been deprecated infavor of --restart policies on docker run"</span>)</span><br><span class="line">    flag.BoolVar(&amp;config.EnableIptables, []<span class="keyword">string</span>&#123;<span class="string">"#iptables"</span>, <span class="string">"-iptables"</span>&#125;, <span class="literal">true</span>, <span class="string">"Enable Docker's addition of iptables rules"</span>)</span><br><span class="line">    flag.BoolVar(&amp;config.EnableIpForward, []<span class="keyword">string</span>&#123;<span class="string">"#ip-forward"</span>, <span class="string">"-ip-forward"</span>&#125;, <span class="literal">true</span>, <span class="string">"Enable net.ipv4.ip_forward"</span>)</span><br><span class="line">    flag.StringVar(&amp;config.BridgeIP, []<span class="keyword">string</span>&#123;<span class="string">"#bip"</span>, <span class="string">"-bip"</span>&#125;, <span class="string">""</span>, <span class="string">"Use this CIDR notation address for the network bridge's IP, not compatible with -b"</span>)</span><br><span class="line">    flag.StringVar(&amp;config.BridgeIface, []<span class="keyword">string</span>&#123;<span class="string">"b"</span>, <span class="string">"-bridge"</span>&#125;, <span class="string">""</span>, <span class="string">"Attach containers to a pre-existing network bridge/nuse 'none' to disable container networking"</span>)</span><br><span class="line">    flag.BoolVar(&amp;config.InterContainerCommunication, []<span class="keyword">string</span>&#123;<span class="string">"#icc"</span>, <span class="string">"-icc"</span>&#125;, <span class="literal">true</span>, <span class="string">"Enable inter-container communication"</span>)</span><br><span class="line">    flag.StringVar(&amp;config.GraphDriver, []<span class="keyword">string</span>&#123;<span class="string">"s"</span>, <span class="string">"-storage-driver"</span>&#125;, <span class="string">""</span>, <span class="string">"Force the Docker runtime to use a specific storage driver"</span>)</span><br><span class="line">    flag.StringVar(&amp;config.ExecDriver, []<span class="keyword">string</span>&#123;<span class="string">"e"</span>, <span class="string">"-exec-driver"</span>&#125;, <span class="string">"native"</span>, <span class="string">"Force the Docker runtime to use a specific exec driver"</span>)</span><br><span class="line">    flag.BoolVar(&amp;config.EnableSelinuxSupport, []<span class="keyword">string</span>&#123;<span class="string">"-selinux-enabled"</span>&#125;, <span class="literal">false</span>, <span class="string">"Enable selinux support. SELinux does not presently support the BTRFS storage driver"</span>)</span><br><span class="line">    flag.IntVar(&amp;config.Mtu, []<span class="keyword">string</span>&#123;<span class="string">"#mtu"</span>, <span class="string">"-mtu"</span>&#125;, <span class="number">0</span>, <span class="string">"Set the containers network MTU/nif no value is provided: default to the default route MTU or 1500 if no default route is available"</span>)</span><br><span class="line">    opts.IPVar(&amp;config.DefaultIp, []<span class="keyword">string</span>&#123;<span class="string">"#ip"</span>, <span class="string">"-ip"</span>&#125;, <span class="string">"0.0.0.0"</span>, <span class="string">"Default IP address to use when binding container ports"</span>)</span><br><span class="line">    opts.ListVar(&amp;config.GraphOptions, []<span class="keyword">string</span>&#123;<span class="string">"-storage-opt"</span>&#125;, <span class="string">"Set storage driver options"</span>)</span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> why the inconsistency between "hosts" and "sockets"?</span></span><br><span class="line">    opts.IPListVar(&amp;config.Dns, []<span class="keyword">string</span>&#123;<span class="string">"#dns"</span>, <span class="string">"-dns"</span>&#125;, <span class="string">"Force Docker to use specific DNS servers"</span>)</span><br><span class="line">    opts.DnsSearchListVar(&amp;config.DnsSearch, []<span class="keyword">string</span>&#123;<span class="string">"-dns-search"</span>&#125;, <span class="string">"Force Docker to use specific DNS search domains"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在InstallFlags()函数的实现过程中，主要是定义某种类型的flag参数，并将该参数的值绑定在config变量的指定属性上，如：</p>
+<p>flag.StringVar(&amp;config.Pidfile, []string{“p”, “-pidfile”}, “ /var/run/docker.pid”, “Path to use for daemon PID file”)</p>
+<p>以上语句的含义为：</p>
+<ul>
+<li>定义一个为String类型的flag参数；</li>
+<li>该flag的名称为”p”或者”-pidfile”;</li>
+<li>该flag的值为” /var/run/docker.pid”,并将该值绑定在变量config.Pidfile上；</li>
+<li>该flag的描述信息为”Path to use for daemon PID file”。</li>
+</ul>
+<h3 id="二flag参数检查"><a href="#（二）flag参数检查" class="headerlink" title="（二）flag参数检查"></a>（二）flag参数检查</h3><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> flag.NArg() != <span class="number">0</span> &#123;</span><br><span class="line">    flag.Usage()</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>参数个数不为0，则说明在启动Docker Daemon的时候，传入了多余的参数，此时会输出错误提示，并退出运行程序。</li>
+<li>若为0，则说明Docker Daemon的启动命令无误，正常运行。</li>
+</ul>
+<h3 id="三创建engine对象"><a href="#（三）创建engine对象" class="headerlink" title="（三）创建engine对象"></a>（三）创建engine对象</h3><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eng := engine.New()</span><br></pre></td></tr></table></figure>
+<p>Engine是Docker架构中的运行引擎，同时也是Docker运行的核心模块。Engine扮演着Docker container存储仓库的角色，并且通过job的形式来管理这些容器。</p>
+<p><strong>/engine/engine.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Engine <span class="keyword">struct</span> &#123;</span><br><span class="line">    handlers   <span class="keyword">map</span>[<span class="keyword">string</span>]Handler</span><br><span class="line">    catchall   Handler</span><br><span class="line">    hack       Hack <span class="comment">// data for temporary hackery (see hack.go)</span></span><br><span class="line">    id         <span class="keyword">string</span></span><br><span class="line">    Stdout     io.Writer</span><br><span class="line">    Stderr     io.Writer</span><br><span class="line">    Stdin      io.Reader</span><br><span class="line">    Logging    <span class="keyword">bool</span></span><br><span class="line">    tasks      sync.WaitGroup</span><br><span class="line">    l          sync.RWMutex <span class="comment">// lock for shutdown</span></span><br><span class="line">    shutdown   <span class="keyword">bool</span></span><br><span class="line">    onShutdown []<span class="function"><span class="keyword">func</span><span class="params">()</span> // <span class="title">shutdown</span> <span class="title">handlers</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Engine结构体中最为重要的即为handlers属性。该handlers属性为map类型，key为string类型，value为Handler类型。Handler为一个定义的函数。该函数传入的参数为Job指针，返回为Status状态。</p>
+<p><strong>/engine/engine.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Handler <span class="function"><span class="keyword">func</span><span class="params">(*Job)</span> <span class="title">Status</span></span></span><br></pre></td></tr></table></figure>
+<p>New()函数的实现:</p>
+<p><strong>/engine/engine.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New initializes a new engine.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">Engine</span></span> &#123;</span><br><span class="line">    eng := &amp;Engine&#123;</span><br><span class="line">        handlers: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]Handler),</span><br><span class="line">        id:       utils.RandomString(),</span><br><span class="line">        Stdout:   os.Stdout,</span><br><span class="line">        Stderr:   os.Stderr,</span><br><span class="line">        Stdin:    os.Stdin,</span><br><span class="line">        Logging:  <span class="literal">true</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    eng.Register(<span class="string">"commands"</span>, <span class="function"><span class="keyword">func</span><span class="params">(job *Job)</span> <span class="title">Status</span></span> &#123;</span><br><span class="line">        <span class="keyword">for</span> _, name := <span class="keyword">range</span> eng.commands() &#123;</span><br><span class="line">            job.Printf(<span class="string">"%s/n"</span>, name)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> StatusOK</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// Copy existing global handlers</span></span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> globalHandlers &#123;</span><br><span class="line">        eng.handlers[k] = v</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> eng</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>创建一个Engine结构体实例eng</li>
+<li>向eng对象注册名为commands的Handler，其中Handler为临时定义的函数func(job *Job) Status{ } , 该函数的作用是通过job来打印所有已经注册完毕的command名称，最终返回状态StatusOK。</li>
+<li>将已定义的变量globalHandlers中的所有的Handler，都复制到eng对象的handlers属性中。最后成功返回eng对象。</li>
+</ol>
+<h3 id="四设置engine的信号捕获"><a href="#（四）设置engine的信号捕获" class="headerlink" title="（四）设置engine的信号捕获"></a>（四）设置engine的信号捕获</h3><p><strong>/daemon/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">signal.Trap(eng.Shutdown)</span><br></pre></td></tr></table></figure>
+<p>在Docker Daemon的运行中，设置Trap特定信号的处理方法，特定信号有SIGINT，SIGTERM以及SIGQUIT；当程序捕获到SIGINT或者SIGTERM信号时，执行相应的善后操作，最后保证Docker Daemon程序退出。</p>
+<p><strong>/pkg/signal/trap.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Trap sets up a simplified signal "trap", appropriate for common</span></span><br><span class="line"><span class="comment">// behavior expected from a vanilla unix command-line tool in general</span></span><br><span class="line"><span class="comment">// (and the Docker engine in particular).</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// * If SIGINT or SIGTERM are received, `cleanup` is called, then the process is terminated.</span></span><br><span class="line"><span class="comment">// * If SIGINT or SIGTERM are repeated 3 times before cleanup is complete, then cleanup is</span></span><br><span class="line"><span class="comment">// skipped and the process terminated directly.</span></span><br><span class="line"><span class="comment">// * If "DEBUG" is set in the environment, SIGQUIT causes an exit without cleanup.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Trap</span><span class="params">(cleanup <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">    c := <span class="built_in">make</span>(<span class="keyword">chan</span> os.Signal, <span class="number">1</span>)</span><br><span class="line">    signals := []os.Signal&#123;os.Interrupt, syscall.SIGTERM&#125;</span><br><span class="line">    <span class="keyword">if</span> os.Getenv(<span class="string">"DEBUG"</span>) == <span class="string">""</span> &#123;</span><br><span class="line">        signals = <span class="built_in">append</span>(signals, syscall.SIGQUIT)</span><br><span class="line">    &#125;</span><br><span class="line">    gosignal.Notify(c, signals...)</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        interruptCount := <span class="keyword">uint32</span>(<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">for</span> sig := <span class="keyword">range</span> c &#123;</span><br><span class="line">            <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(sig os.Signal)</span></span> &#123;</span><br><span class="line">                log.Printf(<span class="string">"Received signal '%v', starting shutdown of docker.../n"</span>, sig)</span><br><span class="line">                <span class="keyword">switch</span> sig &#123;</span><br><span class="line">                <span class="keyword">case</span> os.Interrupt, syscall.SIGTERM:</span><br><span class="line">                    <span class="comment">// If the user really wants to interrupt, let him do so.</span></span><br><span class="line">                    <span class="keyword">if</span> atomic.LoadUint32(&amp;interruptCount) &lt; <span class="number">3</span> &#123;</span><br><span class="line">                        atomic.AddUint32(&amp;interruptCount, <span class="number">1</span>)</span><br><span class="line">                        <span class="comment">// Initiate the cleanup only once</span></span><br><span class="line">                        <span class="keyword">if</span> atomic.LoadUint32(&amp;interruptCount) == <span class="number">1</span> &#123;</span><br><span class="line">                            <span class="comment">// Call cleanup handler</span></span><br><span class="line">                            cleanup()</span><br><span class="line">                            os.Exit(<span class="number">0</span>)</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            <span class="keyword">return</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        log.Printf(<span class="string">"Force shutdown of docker, interrupting cleanup/n"</span>)</span><br><span class="line">                    &#125;</span><br><span class="line">                <span class="keyword">case</span> syscall.SIGQUIT:</span><br><span class="line">                &#125;</span><br><span class="line">                os.Exit(<span class="number">128</span> + <span class="keyword">int</span>(sig.(syscall.Signal)))</span><br><span class="line">            &#125;(sig)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建并设置一个channel，用于发送信号通知；</li>
+<li>定义signals数组变量，初始值为os.SIGINT, os.SIGTERM;若环境变量DEBUG为空的话，则添加os.SIGQUIT至signals数组；</li>
+<li>通过gosignal.Notify(c, signals…)中Notify函数来实现将接收到的signal信号传递给c。需要注意的是只有signals中被罗列出的信号才会被传递给c，其余信号会被直接忽略；</li>
+<li>创建一个goroutine来处理具体的signal信号，当信号类型为os.Interrupt或者syscall.SIGTERM时，执行传入Trap函数的具体执行方法，形参为cleanup(),实参为eng.Shutdown。</li>
+</ul>
+<p>Shutdown()函数的定义位于<a href="https://github.com/docker/docker/blob/v1.2.0/engine/engine.go#L153" target="_blank" rel="noopener">./docker/engine/engine.go</a>，主要做的工作是为Docker Daemon的关闭做一些善后工作。</p>
+<p><strong>/engine/engine.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Shutdown permanently shuts down eng as follows:</span></span><br><span class="line"><span class="comment">// - It refuses all new jobs, permanently.</span></span><br><span class="line"><span class="comment">// - It waits for all active jobs to complete (with no timeout)</span></span><br><span class="line"><span class="comment">// - It calls all shutdown handlers concurrently (if any)</span></span><br><span class="line"><span class="comment">// - It returns when all handlers complete, or after 15 seconds,</span></span><br><span class="line"><span class="comment">//    whichever happens first.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(eng *Engine)</span> <span class="title">Shutdown</span><span class="params">()</span></span> &#123;</span><br><span class="line">    eng.l.Lock()</span><br><span class="line">    <span class="keyword">if</span> eng.shutdown &#123;</span><br><span class="line">        eng.l.Unlock()</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    eng.shutdown = <span class="literal">true</span></span><br><span class="line">    eng.l.Unlock()</span><br><span class="line">    <span class="comment">// We don't need to protect the rest with a lock, to allow</span></span><br><span class="line">    <span class="comment">// for other calls to immediately fail with "shutdown" instead</span></span><br><span class="line">    <span class="comment">// of hanging for 15 seconds.</span></span><br><span class="line">    <span class="comment">// This requires all concurrent calls to check for shutdown, otherwise</span></span><br><span class="line">    <span class="comment">// it might cause a race.</span></span><br><span class="line">    <span class="comment">// Wait for all jobs to complete.</span></span><br><span class="line">    <span class="comment">// Timeout after 5 seconds.</span></span><br><span class="line">    tasksDone := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        eng.tasks.Wait()</span><br><span class="line">        <span class="built_in">close</span>(tasksDone)</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-time.After(time.Second * <span class="number">5</span>):</span><br><span class="line">    <span class="keyword">case</span> &lt;-tasksDone:</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Call shutdown handlers, if any.</span></span><br><span class="line">    <span class="comment">// Timeout after 10 seconds.</span></span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="keyword">for</span> _, h := <span class="keyword">range</span> eng.onShutdown &#123;</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(h <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">defer</span> wg.Done()</span><br><span class="line">            h()</span><br><span class="line">        &#125;(h)</span><br><span class="line">    &#125;</span><br><span class="line">    done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        wg.Wait()</span><br><span class="line">        <span class="built_in">close</span>(done)</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">select</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> &lt;-time.After(time.Second * <span class="number">10</span>):</span><br><span class="line">    <span class="keyword">case</span> &lt;-done:</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Docker Daemon不再接收任何新的Job；</li>
+<li>Docker Daemon等待所有存活的Job执行完毕；</li>
+<li>Docker Daemon调用所有shutdown的处理方法；</li>
+<li>当所有的handler执行完毕，或者15秒之后，Shutdown()函数返回。</li>
+</ul>
+<p>由于在signal.Trap( eng.Shutdown )函数的具体实现中执行eng.Shutdown，在执行完eng.Shutdown之后，随即执行<a href="https://github.com/docker/docker/blob/v1.2.0/pkg/signal/trap.go#L41" target="_blank" rel="noopener">os.Exit(0)</a>，完成当前程序的立即退出。</p>
+<h3 id="五加载builtins"><a href="#（五）加载builtins" class="headerlink" title="（五）加载builtins"></a>（五）加载builtins</h3><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := builtins.Register(eng); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为engine注册多个Handler，以便后续在执行相应任务时，运行指定的Handler。</p>
+<p>这些Handler包括：</p>
+<ul>
+<li>网络初始化、</li>
+<li>web API服务、</li>
+<li>事件查询、</li>
+<li>版本查看、</li>
+<li>Docker Registry验证与搜索。</li>
+</ul>
+<p><strong>/builtins/builtins.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Register</span><span class="params">(eng *engine.Engine)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := daemon(eng); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := remote(eng); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := events.New().Install(eng); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := eng.Register(<span class="string">"version"</span>, dockerVersion); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> registry.NewService().Install(eng)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="1-注册初始化网络驱动的handler"><a href="#1、注册初始化网络驱动的Handler" class="headerlink" title="1、注册初始化网络驱动的Handler"></a>1、注册初始化网络驱动的Handler</h4><p>daemon(eng)的实现过程，主要为eng对象注册了一个key为”init_networkdriver”的Handler，该Handler的值为bridge.InitDriver函数，代码如下：</p>
+<p><strong>/builtins/builtins.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">daemon</span><span class="params">(eng *engine.Engine)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> eng.Register(<span class="string">"init_networkdriver"</span>, bridge.InitDriver)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，向eng对象注册Handler，并不代表Handler的值函数会被直接运行，如bridge.InitDriver，并不会直接运行，而是将bridge.InitDriver的函数入口，写入eng的handlers属性中。</p>
+<p><strong>/daemon/networkdriver/bridge/driver.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InitDriver</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        network        *net.IPNet</span><br><span class="line">        enableIPTables = job.GetenvBool(<span class="string">"EnableIptables"</span>)</span><br><span class="line">        icc            = job.GetenvBool(<span class="string">"InterContainerCommunication"</span>)</span><br><span class="line">        ipForward      = job.GetenvBool(<span class="string">"EnableIpForward"</span>)</span><br><span class="line">        bridgeIP       = job.Getenv(<span class="string">"BridgeIP"</span>)</span><br><span class="line">    )</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> defaultIP := job.Getenv(<span class="string">"DefaultBindingIP"</span>); defaultIP != <span class="string">""</span> &#123;</span><br><span class="line">        defaultBindingIP = net.ParseIP(defaultIP)</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    bridgeIface = job.Getenv(<span class="string">"BridgeIface"</span>)</span><br><span class="line">    usingDefaultBridge := <span class="literal">false</span></span><br><span class="line">    <span class="keyword">if</span> bridgeIface == <span class="string">""</span> &#123;</span><br><span class="line">        usingDefaultBridge = <span class="literal">true</span></span><br><span class="line">        bridgeIface = DefaultNetworkBridge</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    addr, err := networkdriver.GetIfaceAddr(bridgeIface)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// If we're not using the default bridge, fail without trying to create it</span></span><br><span class="line">        <span class="keyword">if</span> !usingDefaultBridge &#123;</span><br><span class="line">            job.Logf(<span class="string">"bridge not found: %s"</span>, bridgeIface)</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// If the iface is not found, try to create it</span></span><br><span class="line">        job.Logf(<span class="string">"creating new bridge for %s"</span>, bridgeIface)</span><br><span class="line">        <span class="keyword">if</span> err := createBridge(bridgeIP); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        job.Logf(<span class="string">"getting iface addr"</span>)</span><br><span class="line">        addr, err = networkdriver.GetIfaceAddr(bridgeIface)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">        network = addr.(*net.IPNet)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        network = addr.(*net.IPNet)</span><br><span class="line">        <span class="comment">// validate that the bridge ip matches the ip specified by BridgeIP</span></span><br><span class="line">        <span class="keyword">if</span> bridgeIP != <span class="string">""</span> &#123;</span><br><span class="line">            bip, _, err := net.ParseCIDR(bridgeIP)</span><br><span class="line">            <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> job.Error(err)</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> !network.IP.Equal(bip) &#123;</span><br><span class="line">                <span class="keyword">return</span> job.Errorf(<span class="string">"bridge ip (%s) does not match existing bridge configuration %s"</span>, network.IP, bip)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Configure iptables for link support</span></span><br><span class="line">    <span class="keyword">if</span> enableIPTables &#123;</span><br><span class="line">        <span class="keyword">if</span> err := setupIPTables(addr, icc); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> ipForward &#123;</span><br><span class="line">        <span class="comment">// Enable IPv4 forwarding</span></span><br><span class="line">        <span class="keyword">if</span> err := ioutil.WriteFile(<span class="string">"/proc/sys/net/ipv4/ip_forward"</span>, []<span class="keyword">byte</span>&#123;<span class="string">'1'</span>, <span class="string">'/n'</span>&#125;, <span class="number">0644</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            job.Logf(<span class="string">"WARNING: unable to enable IPv4 forwarding: %s/n"</span>, err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// We can always try removing the iptables</span></span><br><span class="line">    <span class="keyword">if</span> err := iptables.RemoveExistingChain(<span class="string">"DOCKER"</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Error(err)</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> enableIPTables &#123;</span><br><span class="line">        chain, err := iptables.NewChain(<span class="string">"DOCKER"</span>, bridgeIface)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">        portmapper.SetIptablesChain(chain)</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    bridgeNetwork = network</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// https://github.com/docker/docker/issues/2768</span></span><br><span class="line">    job.Eng.Hack_SetGlobalVar(<span class="string">"httpapi.bridgeIP"</span>, bridgeNetwork.IP)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> name, f := <span class="keyword">range</span> <span class="keyword">map</span>[<span class="keyword">string</span>]engine.Handler&#123;</span><br><span class="line">        <span class="string">"allocate_interface"</span>: Allocate,</span><br><span class="line">        <span class="string">"release_interface"</span>:  Release,</span><br><span class="line">        <span class="string">"allocate_port"</span>:      AllocatePort,</span><br><span class="line">        <span class="string">"link"</span>:               LinkContainers,</span><br><span class="line">    &#125; &#123;</span><br><span class="line">        <span class="keyword">if</span> err := job.Eng.Register(name, f); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> engine.StatusOK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Bridge.InitDriver的作用：</p>
+<ul>
+<li>获取为Docker服务的网络设备的地址；</li>
+<li>创建指定IP地址的网桥；</li>
+<li>配置网络iptables规则；</li>
+<li>另外还为eng对象注册了多个Handler,如 ”allocate_interface”， ”release_interface”， ”allocate_port”，”link”。</li>
+</ul>
+<h4 id="2-注册api服务的handler"><a href="#2、注册API服务的Handler" class="headerlink" title="2、注册API服务的Handler"></a>2、注册API服务的Handler</h4><p>remote(eng)的实现过程，主要为eng对象注册了两个Handler，分别为”serveapi”与”acceptconnections”。代码实现如下：</p>
+<p><strong>/builtins/builtins.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">remote</span><span class="params">(eng *engine.Engine)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := eng.Register(<span class="string">"serveapi"</span>, apiserver.ServeApi); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> eng.Register(<span class="string">"acceptconnections"</span>, apiserver.AcceptConnections)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注册的两个Handler名称分别为”serveapi”与”acceptconnections”</p>
+<ul>
+<li>ServeApi执行时，通过循环多种协议，创建出goroutine来配置指定的http.Server，最终为不同的协议请求服务；</li>
+<li>AcceptConnections的实现主要是为了通知init守护进程，Docker Daemon已经启动完毕，可以让Docker Daemon进程接受请求。(守护进程)</li>
+</ul>
+<h4 id="3-注册events事件的handler"><a href="#3、注册events事件的Handler" class="headerlink" title="3、注册events事件的Handler"></a>3、注册events事件的Handler</h4><p>events.New().Install(eng)的实现过程，为Docker注册了多个event事件，功能是给Docker用户提供API，使得用户可以通过这些API查看Docker内部的events信息，log信息以及subscribers_count信息。</p>
+<p><strong>/events/events.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Events <span class="keyword">struct</span> &#123;</span><br><span class="line">    mu          sync.RWMutex</span><br><span class="line">    events      []*utils.JSONMessage</span><br><span class="line">    subscribers []listener</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span> *<span class="title">Events</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Events&#123;</span><br><span class="line">        events: <span class="built_in">make</span>([]*utils.JSONMessage, <span class="number">0</span>, eventsLimit),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Install installs events public api in docker engine</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *Events)</span> <span class="title">Install</span><span class="params">(eng *engine.Engine)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="comment">// Here you should describe public interface</span></span><br><span class="line">    jobs := <span class="keyword">map</span>[<span class="keyword">string</span>]engine.Handler&#123;</span><br><span class="line">        <span class="string">"events"</span>:            e.Get,</span><br><span class="line">        <span class="string">"log"</span>:               e.Log,</span><br><span class="line">        <span class="string">"subscribers_count"</span>: e.SubscribersCount,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> name, job := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">        <span class="keyword">if</span> err := eng.Register(name, job); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-注册版本的handler"><a href="#4、注册版本的Handler" class="headerlink" title="4、注册版本的Handler"></a>4、注册版本的Handler</h4><p>eng.Register(“version”,dockerVersion)的实现过程，向eng对象注册key为”version”，value为”dockerVersion”执行方法的Handler，dockerVersion的执行过程中，会向名为version的job的标准输出中写入Docker的版本，Docker API的版本，git版本，Go语言运行时版本以及操作系统等版本信息。</p>
+<p><strong>/builtins/builtins.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// builtins jobs independent of any subsystem</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">dockerVersion</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    v := &amp;engine.Env&#123;&#125;</span><br><span class="line">    v.SetJson(<span class="string">"Version"</span>, dockerversion.VERSION)</span><br><span class="line">    v.SetJson(<span class="string">"ApiVersion"</span>, api.APIVERSION)</span><br><span class="line">    v.Set(<span class="string">"GitCommit"</span>, dockerversion.GITCOMMIT)</span><br><span class="line">    v.Set(<span class="string">"GoVersion"</span>, runtime.Version())</span><br><span class="line">    v.Set(<span class="string">"Os"</span>, runtime.GOOS)</span><br><span class="line">    v.Set(<span class="string">"Arch"</span>, runtime.GOARCH)</span><br><span class="line">    <span class="keyword">if</span> kernelVersion, err := kernel.GetKernelVersion(); err == <span class="literal">nil</span> &#123;</span><br><span class="line">        v.Set(<span class="string">"KernelVersion"</span>, kernelVersion.String())</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> _, err := v.WriteTo(job.Stdout); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Error(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> engine.StatusOK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="5-注册registry的handler"><a href="#5、注册registry的Handler" class="headerlink" title="5、注册registry的Handler"></a>5、注册registry的Handler</h4><p>registry.NewService().Install(eng)的实现过程位于<a href="https://github.com/docker/docker/blob/v1.2.0/registry/service.go#L25" target="_blank" rel="noopener">./docker/registry/service.go</a>，在eng对象对外暴露的API信息中添加docker registry的信息。当registry.NewService()成功被Install安装完毕的话，则有两个调用能够被eng使用：”auth”，向公有registry进行认证；”search”，在公有registry上搜索指定的镜像。</p>
+<p><strong>/registry/service.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewService returns a new instance of Service ready to be</span></span><br><span class="line"><span class="comment">// installed no an engine.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewService</span><span class="params">()</span> *<span class="title">Service</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Service&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Install installs registry capabilities to eng.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Service)</span> <span class="title">Install</span><span class="params">(eng *engine.Engine)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    eng.Register(<span class="string">"auth"</span>, s.Auth)</span><br><span class="line">    eng.Register(<span class="string">"search"</span>, s.Search)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="六使用goroutine加载daemon对象"><a href="#（六）使用goroutine加载daemon对象" class="headerlink" title="（六）使用goroutine加载daemon对象"></a>（六）使用goroutine加载daemon对象</h3><p>执行完builtins的加载，回到mainDaemon()的执行，通过一个goroutine来加载daemon对象并开始运行。这一环节的执行，主要包含三个步骤：</p>
+<ul>
+<li>通过init函数中初始化的daemonCfg与eng对象来创建一个daemon对象d；(守护进程)</li>
+<li>通过daemon对象的Install函数，向eng对象中注册众多的Handler；</li>
+<li>在Docker Daemon启动完毕之后，运行名为”acceptconnections”的job，主要工作为向init守护进程发送”READY=1”信号，以便开始正常接受请求。</li>
+</ul>
+<p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// load the daemon in the background so we can immediately start</span></span><br><span class="line"><span class="comment">// the http api so that connections don't fail while the daemon</span></span><br><span class="line"><span class="comment">// is booting</span></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    d, err := daemon.NewDaemon(daemonCfg, eng)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := d.Install(eng); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// after the daemon is done setting up we can tell the api to start</span></span><br><span class="line">    <span class="comment">// accepting connections</span></span><br><span class="line">    <span class="keyword">if</span> err := eng.Job(<span class="string">"acceptconnections"</span>).Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;()</span><br></pre></td></tr></table></figure>
+<h4 id="1-创建daemon对象"><a href="#1、创建daemon对象" class="headerlink" title="1、创建daemon对象"></a>1、创建daemon对象</h4><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d, err := daemon.NewDaemon(daemonCfg, eng)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>daemon.NewDaemon(daemonCfg, eng)是创建daemon对象d的核心部分。主要作用为初始化Docker Daemon的基本环境，如处理config参数，验证系统支持度，配置Docker工作目录，设置与加载多种driver，创建graph环境等，验证DNS配置等。具体参考<a href="http://wiki.haplat.net/display/~huwh/NewDaemon" target="_blank" rel="noopener">NewDaemon</a> 。</p>
+<h4 id="2-通过daemon对象为engine注册handler"><a href="#2、通过daemon对象为engine注册Handler" class="headerlink" title="2、通过daemon对象为engine注册Handler"></a>2、通过daemon对象为engine注册Handler</h4><p>当创建完daemon对象，goroutine执行d.Install(eng)</p>
+<p><strong>/daemon/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Daemon <span class="keyword">struct</span> &#123;</span><br><span class="line">    repository     <span class="keyword">string</span></span><br><span class="line">    sysInitPath    <span class="keyword">string</span></span><br><span class="line">    containers     *contStore</span><br><span class="line">    graph          *graph.Graph</span><br><span class="line">    repositories   *graph.TagStore</span><br><span class="line">    idIndex        *truncindex.TruncIndex</span><br><span class="line">    sysInfo        *sysinfo.SysInfo</span><br><span class="line">    volumes        *graph.Graph</span><br><span class="line">    eng            *engine.Engine</span><br><span class="line">    config         *Config</span><br><span class="line">    containerGraph *graphdb.Database</span><br><span class="line">    driver         graphdriver.Driver</span><br><span class="line">    execDriver     execdriver.Driver</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Install installs daemon capabilities to eng.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(daemon *Daemon)</span> <span class="title">Install</span><span class="params">(eng *engine.Engine)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> rename "delete" to "rm" for consistency with the CLI command</span></span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> rename ContainerDestroy to ContainerRm for consistency with the CLI command</span></span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> remove ImageDelete's dependency on Daemon, then move to graph/</span></span><br><span class="line">    <span class="keyword">for</span> name, method := <span class="keyword">range</span> <span class="keyword">map</span>[<span class="keyword">string</span>]engine.Handler&#123;</span><br><span class="line">        <span class="string">"attach"</span>:            daemon.ContainerAttach,</span><br><span class="line">        <span class="string">"build"</span>:             daemon.CmdBuild,</span><br><span class="line">        <span class="string">"commit"</span>:            daemon.ContainerCommit,</span><br><span class="line">        <span class="string">"container_changes"</span>: daemon.ContainerChanges,</span><br><span class="line">        <span class="string">"container_copy"</span>:    daemon.ContainerCopy,</span><br><span class="line">        <span class="string">"container_inspect"</span>: daemon.ContainerInspect,</span><br><span class="line">        <span class="string">"containers"</span>:        daemon.Containers,</span><br><span class="line">        <span class="string">"create"</span>:            daemon.ContainerCreate,</span><br><span class="line">        <span class="string">"delete"</span>:            daemon.ContainerDestroy,</span><br><span class="line">        <span class="string">"export"</span>:            daemon.ContainerExport,</span><br><span class="line">        <span class="string">"info"</span>:              daemon.CmdInfo,</span><br><span class="line">        <span class="string">"kill"</span>:              daemon.ContainerKill,</span><br><span class="line">        <span class="string">"logs"</span>:              daemon.ContainerLogs,</span><br><span class="line">        <span class="string">"pause"</span>:             daemon.ContainerPause,</span><br><span class="line">        <span class="string">"resize"</span>:            daemon.ContainerResize,</span><br><span class="line">        <span class="string">"restart"</span>:           daemon.ContainerRestart,</span><br><span class="line">        <span class="string">"start"</span>:             daemon.ContainerStart,</span><br><span class="line">        <span class="string">"stop"</span>:              daemon.ContainerStop,</span><br><span class="line">        <span class="string">"top"</span>:               daemon.ContainerTop,</span><br><span class="line">        <span class="string">"unpause"</span>:           daemon.ContainerUnpause,</span><br><span class="line">        <span class="string">"wait"</span>:              daemon.ContainerWait,</span><br><span class="line">        <span class="string">"image_delete"</span>:      daemon.ImageDelete, <span class="comment">// <span class="doctag">FIXME:</span> see above</span></span><br><span class="line">    &#125; &#123;</span><br><span class="line">        <span class="keyword">if</span> err := eng.Register(name, method); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := daemon.Repositories().Install(eng); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> this hack is necessary for legacy integration tests to access</span></span><br><span class="line">    <span class="comment">// the daemon object.</span></span><br><span class="line">    eng.Hack_SetGlobalVar(<span class="string">"httpapi.daemon"</span>, daemon)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码的实现分为三部分：</p>
+<ul>
+<li>向eng对象中注册众多的Handler对象；</li>
+<li>daemon.Repositories().Install(eng)实现了向eng对象注册多个与image相关的Handler，Install的实现位于<a href="https://github.com/docker/docker/blob/v1.2.0/graph/service.go#L12" target="_blank" rel="noopener">./docker/graph/service.go</a>；</li>
+<li>eng.Hack_SetGlobalVar(“httpapi.daemon”, daemon)实现向eng对象中map类型的hack对象中添加一条记录，key为”httpapi.daemon”，value为daemon。</li>
+</ul>
+<h4 id="3-运行acceptconnections的job"><a href="#3、运行acceptconnections的job" class="headerlink" title="3、运行acceptconnections的job"></a>3、运行acceptconnections的job</h4><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := eng.Job(<span class="string">"acceptconnections"</span>).Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在goroutine内部最后运行名为”acceptconnections”的job，主要作用是通知init守护进程，Docker Daemon可以开始接受请求了。</p>
+<p>首先执行eng.Job(“acceptconnections”)，返回一个Job，随后再执行eng.Job(“acceptconnections”).Run()，也就是该执行Job的run函数。</p>
+<p><strong>/engine/engine.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Job creates a new job which can later be executed.</span></span><br><span class="line"><span class="comment">// This function mimics `Command` from the standard os/exec package.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(eng *Engine)</span> <span class="title">Job</span><span class="params">(name <span class="keyword">string</span>, args ...<span class="keyword">string</span>)</span> *<span class="title">Job</span></span> &#123;</span><br><span class="line">    job := &amp;Job&#123;</span><br><span class="line">        Eng:    eng,</span><br><span class="line">        Name:   name,</span><br><span class="line">        Args:   args,</span><br><span class="line">        Stdin:  NewInput(),</span><br><span class="line">        Stdout: NewOutput(),</span><br><span class="line">        Stderr: NewOutput(),</span><br><span class="line">        env:    &amp;Env&#123;&#125;,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> eng.Logging &#123;</span><br><span class="line">        job.Stderr.Add(utils.NopWriteCloser(eng.Stderr))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Catchall is shadowed by specific Register.</span></span><br><span class="line">    <span class="keyword">if</span> handler, exists := eng.handlers[name]; exists &#123;</span><br><span class="line">        job.handler = handler</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> eng.catchall != <span class="literal">nil</span> &amp;&amp; name != <span class="string">""</span> &#123;</span><br><span class="line">        <span class="comment">// empty job names are illegal, catchall or not.</span></span><br><span class="line">        job.handler = eng.catchall</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> job</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>首先创建一个类型为Job的job对象，该对象中Eng属性为函数的调用者eng，Name属性为”acceptconnections”，没有参数传入。</li>
+<li>另外在eng对象所有的handlers属性中寻找键为”acceptconnections”记录的值，由于在加载builtins操作中的remote(eng)中已经向eng注册过这样的一条记录，key为”acceptconnections”，value为apiserver.AcceptConnections。</li>
+<li>因此job对象的handler为apiserver.AcceptConnections。</li>
+<li>最后返回已经初始化完毕的对象job。</li>
+</ol>
+<p>创建完job对象之后，随即执行该job对象的run()函数。</p>
+<p><strong>/engine/job.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A job is the fundamental unit of work in the docker engine.</span></span><br><span class="line"><span class="comment">// Everything docker can do should eventually be exposed as a job.</span></span><br><span class="line"><span class="comment">// For example: execute a process in a container, create a new container,</span></span><br><span class="line"><span class="comment">// download an archive from the internet, serve the http api, etc.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// The job API is designed after unix processes: a job has a name, arguments,</span></span><br><span class="line"><span class="comment">// environment variables, standard streams for input, output and error, and</span></span><br><span class="line"><span class="comment">// an exit status which can indicate success (0) or error (anything else).</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// One slight variation is that jobs report their status as a string. The</span></span><br><span class="line"><span class="comment">// string "0" indicates success, and any other strings indicates an error.</span></span><br><span class="line"><span class="comment">// This allows for richer error reporting.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">type</span> Job <span class="keyword">struct</span> &#123;</span><br><span class="line">    Eng     *Engine</span><br><span class="line">    Name    <span class="keyword">string</span></span><br><span class="line">    Args    []<span class="keyword">string</span></span><br><span class="line">    env     *Env</span><br><span class="line">    Stdout  *Output</span><br><span class="line">    Stderr  *Output</span><br><span class="line">    Stdin   *Input</span><br><span class="line">    handler Handler</span><br><span class="line">    status  Status</span><br><span class="line">    end     time.Time</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Status <span class="keyword">int</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    StatusOK       Status = <span class="number">0</span></span><br><span class="line">    StatusErr      Status = <span class="number">1</span></span><br><span class="line">    StatusNotFound Status = <span class="number">127</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">// Run executes the job and blocks until the job completes.</span></span><br><span class="line"><span class="comment">// If the job returns a failure status, an error is returned</span></span><br><span class="line"><span class="comment">// which includes the status.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(job *Job)</span> <span class="title">Run</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> job.Eng.IsShutdown() &#123;</span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"engine is shutdown"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> this is a temporary workaround to avoid Engine.Shutdown</span></span><br><span class="line">    <span class="comment">// waiting 5 seconds for server/api.ServeApi to complete (which it never will)</span></span><br><span class="line">    <span class="comment">// everytime the daemon is cleanly restarted.</span></span><br><span class="line">    <span class="comment">// The permanent fix is to implement Job.Stop and Job.OnStop so that</span></span><br><span class="line">    <span class="comment">// ServeApi can cooperate and terminate cleanly.</span></span><br><span class="line">    <span class="keyword">if</span> job.Name != <span class="string">"serveapi"</span> &#123;</span><br><span class="line">        job.Eng.l.Lock()</span><br><span class="line">        job.Eng.tasks.Add(<span class="number">1</span>)</span><br><span class="line">        job.Eng.l.Unlock()</span><br><span class="line">        <span class="keyword">defer</span> job.Eng.tasks.Done()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> make this thread-safe</span></span><br><span class="line">    <span class="comment">// <span class="doctag">FIXME:</span> implement wait</span></span><br><span class="line">    <span class="keyword">if</span> !job.end.IsZero() &#123;</span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"%s: job has already completed"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Log beginning and end of the job</span></span><br><span class="line">    job.Eng.Logf(<span class="string">"+job %s"</span>, job.CallString())</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        job.Eng.Logf(<span class="string">"-job %s%s"</span>, job.CallString(), job.StatusString())</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">var</span> errorMessage = bytes.NewBuffer(<span class="literal">nil</span>)</span><br><span class="line">    job.Stderr.Add(errorMessage)</span><br><span class="line">    <span class="keyword">if</span> job.handler == <span class="literal">nil</span> &#123;</span><br><span class="line">        job.Errorf(<span class="string">"%s: command not found"</span>, job.Name)</span><br><span class="line">        job.status = <span class="number">127</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        job.status = job.handler(job)</span><br><span class="line">        job.end = time.Now()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Wait for all background tasks to complete</span></span><br><span class="line">    <span class="keyword">if</span> err := job.Stdout.Close(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := job.Stderr.Close(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := job.Stdin.Close(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> job.status != <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"%s"</span>, Tail(errorMessage, <span class="number">1</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Run()函数的实现位于<a href="https://github.com/docker/docker/blob/v1.2.0/engine/job.go#L48" target="_blank" rel="noopener">./docker/engine/job.go</a>，该函数执行指定的job，并在job执行完成前一直阻塞。对于名为”acceptconnections”的job对象，运行代码为<a href="https://github.com/docker/docker/blob/v1.2.0/engine/job.go#L79" target="_blank" rel="noopener">job.status = job.handler(job)</a>，由于job.handler值为apiserver.AcceptConnections，故真正执行的是job.status = apiserver.AcceptConnections(job)。</p>
+<p>进入AcceptConnections的具体实现，位于<a href="https://github.com/docker/docker/blob/v1.2.0/api/server/server.go#L1370" target="_blank" rel="noopener">./docker/api/server/server.go</a>,如下：</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AcceptConnections</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    <span class="comment">// Tell the init daemon we are accepting requests</span></span><br><span class="line">    <span class="keyword">go</span>  systemd.SdNotify(<span class="string">"READY=1"</span>)</span><br><span class="line">    <span class="keyword">if</span> activationLock != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">close</span>(activationLock)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> engine.StatusOK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重点为go systemd.SdNotify(“READY=1”)的实现，位于<a href="https://github.com/docker/docker/blob/v1.2.0/pkg/systemd/sd_notify.go#L12" target="_blank" rel="noopener">./docker/pkg/system/sd_notify.go</a>，主要作用是通知init守护进程Docker Daemon的启动已经全部完成，潜在的功能是使得Docker Daemon开始接受Docker Client发送来的API请求。</p>
+<p>至此，已经完成通过goroutine来加载daemon对象并运行。</p>
+<h3 id="七打印docker版本及驱动信息"><a href="#（七）打印Docker版本及驱动信息" class="headerlink" title="（七）打印Docker版本及驱动信息"></a>（七）打印Docker版本及驱动信息</h3><p>显示docker的版本信息，以及ExecDriver和GraphDriver这两个驱动的具体信息</p>
+<p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// TODO actually have a resolved graphdriver to show?</span></span><br><span class="line">log.Printf(<span class="string">"docker daemon: %s %s; execdriver: %s; graphdriver: %s"</span>,</span><br><span class="line">    dockerversion.VERSION,</span><br><span class="line">    dockerversion.GITCOMMIT,</span><br><span class="line">    daemonCfg.ExecDriver,</span><br><span class="line">    daemonCfg.GraphDriver,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="八serveapi的创建与运行"><a href="#（八）serveapi的创建与运行" class="headerlink" title="（八）serveapi的创建与运行"></a>（八）serveapi的创建与运行</h3><p>打印部分Docker具体信息之后，Docker Daemon立即创建并运行名为”serveapi”的job，主要作用为让Docker Daemon提供API访问服务。</p>
+<p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Serve api</span></span><br><span class="line">job := eng.Job(<span class="string">"serveapi"</span>, flHosts...)</span><br><span class="line">job.SetenvBool(<span class="string">"Logging"</span>, <span class="literal">true</span>)</span><br><span class="line">job.SetenvBool(<span class="string">"EnableCors"</span>, *flEnableCors)</span><br><span class="line">job.Setenv(<span class="string">"Version"</span>, dockerversion.VERSION)</span><br><span class="line">job.Setenv(<span class="string">"SocketGroup"</span>, *flSocketGroup)</span><br><span class="line">job.SetenvBool(<span class="string">"Tls"</span>, *flTls)</span><br><span class="line">job.SetenvBool(<span class="string">"TlsVerify"</span>, *flTlsVerify)</span><br><span class="line">job.Setenv(<span class="string">"TlsCa"</span>, *flCa)</span><br><span class="line">job.Setenv(<span class="string">"TlsCert"</span>, *flCert)</span><br><span class="line">job.Setenv(<span class="string">"TlsKey"</span>, *flKey)</span><br><span class="line">job.SetenvBool(<span class="string">"BufferRequests"</span>, <span class="literal">true</span>)</span><br><span class="line"><span class="keyword">if</span> err := job.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>创建一个名为”serveapi”的job，并将flHosts的值赋给job.Args。flHost的作用主要是为Docker Daemon提供使用的协议与监听的地址。</li>
+<li>Docker Daemon为该job设置了众多的环境变量，如安全传输层协议的环境变量等。最后通过job.Run()运行该serveapi的job。</li>
+</ol>
+<p>由于在eng中key为”serveapi”的handler，value为apiserver.ServeApi，故该job运行时，执行apiserver.ServeApi函数，位于<a href="https://github.com/docker/docker/blob/v1.2.0/api/server/server.go#L1339" target="_blank" rel="noopener">./docker/api/server/server.go</a>。ServeApi函数的作用主要是对于用户定义的所有支持协议，Docker Daemon均创建一个goroutine来启动相应的http.Server，分别为不同的协议服务。具体参考<a href="http://wiki.haplat.net/display/~huwh/Docker+Server" target="_blank" rel="noopener">Docker Server</a>。</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/docker/code-analysis/code-analysis-of-docker-server/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（三）之Docker Server">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/kubernetes-notes/network/flannel/flannel-introduction/" data-toggle="tooltip" data-placement="top" title="Flannel介绍">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-docker-daemon架构示意图"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">一、Docker Daemon架构示意图</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-docker-daemon启动流程图"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">二、Docker Daemon启动流程图</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-maindaemon的具体实现"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">三、mainDaemon的具体实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一配置初始化"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">（一）配置初始化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#二flag参数检查"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">（二）flag参数检查</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#三创建engine对象"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">（三）创建engine对象</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#四设置engine的信号捕获"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">（四）设置engine的信号捕获</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#五加载builtins"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">（五）加载builtins</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-注册初始化网络驱动的handler"><span class="toc-nav-number">3.5.1.</span> <span class="toc-nav-text">1、注册初始化网络驱动的Handler</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-注册api服务的handler"><span class="toc-nav-number">3.5.2.</span> <span class="toc-nav-text">2、注册API服务的Handler</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-注册events事件的handler"><span class="toc-nav-number">3.5.3.</span> <span class="toc-nav-text">3、注册events事件的Handler</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#4-注册版本的handler"><span class="toc-nav-number">3.5.4.</span> <span class="toc-nav-text">4、注册版本的Handler</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#5-注册registry的handler"><span class="toc-nav-number">3.5.5.</span> <span class="toc-nav-text">5、注册registry的Handler</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#六使用goroutine加载daemon对象"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">（六）使用goroutine加载daemon对象</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-创建daemon对象"><span class="toc-nav-number">3.6.1.</span> <span class="toc-nav-text">1、创建daemon对象</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-通过daemon对象为engine注册handler"><span class="toc-nav-number">3.6.2.</span> <span class="toc-nav-text">2、通过daemon对象为engine注册Handler</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#3-运行acceptconnections的job"><span class="toc-nav-number">3.6.3.</span> <span class="toc-nav-text">3、运行acceptconnections的job</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#七打印docker版本及驱动信息"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">（七）打印Docker版本及驱动信息</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#八serveapi的创建与运行"><span class="toc-nav-number">3.8.</span> <span class="toc-nav-text">（八）serveapi的创建与运行</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">CSDN Blog 胡伟煌</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                        <li><a href="http://dockone.io/people/胡伟煌" target="_blank">DockOne 胡伟煌</a></li>
+                    
+                        <li><a href="https://yq.aliyun.com/u/huweihuang" target="_blank">阿里云栖社区 胡伟煌</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

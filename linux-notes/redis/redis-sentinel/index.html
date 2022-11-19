@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Redis哨兵模式部署 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/linux-notes/redis/redis-sentinel/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Redis" title="Redis">Redis</a>
+                            
+                        </div>
+                        <h1>Redis哨兵模式部署</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-04-17
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="1-部署redis集群"><a href="#1-部署Redis集群" class="headerlink" title="1. 部署Redis集群"></a>1. 部署Redis集群</h1><p>redis的安装及配置参考[redis部署]</p>
+<blockquote>
+<p>本文以创建一主二从的集群为例。</p>
+</blockquote>
+<h2 id="11-部署与配置"><a href="#1-1-部署与配置" class="headerlink" title="1.1 部署与配置"></a>1.1 部署与配置</h2><p>先创建<code>sentinel</code>目录，在该目录下创建<code>8000</code>，<code>8001</code>，<code>8002</code>三个以端口号命名的目录。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir sentinel</span><br><span class="line"><span class="built_in">cd</span> sentinel</span><br><span class="line">mkdir 8000 8001 8002</span><br></pre></td></tr></table></figure>
+<p>在对应端口号目录中创建<code>redis.conf</code>的文件，配置文件中的端口号<code>port</code>参数改为对应目录的端口号。配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 守护进程模式</span></span><br><span class="line">daemonize yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># pid file</span></span><br><span class="line">pidfile /var/run/redis.pid</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监听端口</span></span><br><span class="line">port 8000</span><br><span class="line"></span><br><span class="line"><span class="comment"># TCP接收队列长度，受/proc/sys/net/core/somaxconn和tcp_max_syn_backlog这两个内核参数的影响</span></span><br><span class="line">tcp-backlog 511</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一个客户端空闲多少秒后关闭连接(0代表禁用，永不关闭)</span></span><br><span class="line">timeout 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果非零，则设置SO_KEEPALIVE选项来向空闲连接的客户端发送ACK</span></span><br><span class="line">tcp-keepalive 60</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定服务器调试等级</span></span><br><span class="line"><span class="comment"># 可能值：</span></span><br><span class="line"><span class="comment"># debug （大量信息，对开发/测试有用）</span></span><br><span class="line"><span class="comment"># verbose （很多精简的有用信息，但是不像debug等级那么多）</span></span><br><span class="line"><span class="comment"># notice （适量的信息，基本上是你生产环境中需要的）</span></span><br><span class="line"><span class="comment"># warning （只有很重要/严重的信息会记录下来）</span></span><br><span class="line">loglevel notice</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指明日志文件名</span></span><br><span class="line">logfile <span class="string">"./redis8000.log"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置数据库个数</span></span><br><span class="line">databases 16</span><br><span class="line"></span><br><span class="line"><span class="comment"># 会在指定秒数和数据变化次数之后把数据库写到磁盘上</span></span><br><span class="line"><span class="comment"># 900秒（15分钟）之后，且至少1次变更</span></span><br><span class="line"><span class="comment"># 300秒（5分钟）之后，且至少10次变更</span></span><br><span class="line"><span class="comment"># 60秒之后，且至少10000次变更</span></span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认如果开启RDB快照(至少一条save指令)并且最新的后台保存失败，Redis将会停止接受写操作</span></span><br><span class="line"><span class="comment"># 这将使用户知道数据没有正确的持久化到硬盘，否则可能没人注意到并且造成一些灾难</span></span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当导出到 .rdb 数据库时是否用LZF压缩字符串对象</span></span><br><span class="line">rdbcompression yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 版本5的RDB有一个CRC64算法的校验和放在了文件的最后。这将使文件格式更加可靠。</span></span><br><span class="line">rdbchecksum yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 持久化数据库的文件名</span></span><br><span class="line">dbfilename dump.rdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 工作目录</span></span><br><span class="line">dir ./</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当master服务设置了密码保护时，slave服务连接master的密码</span></span><br><span class="line">masterauth 0234kz9*l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当一个slave失去和master的连接，或者同步正在进行中，slave的行为可以有两种：</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 1) 如果 slave-serve-stale-data 设置为 "yes" (默认值)，slave会继续响应客户端请求，</span></span><br><span class="line"><span class="comment"># 可能是正常数据，或者是过时了的数据，也可能是还没获得值的空数据。</span></span><br><span class="line"><span class="comment"># 2) 如果 slave-serve-stale-data 设置为 "no"，slave会回复"正在从master同步</span></span><br><span class="line"><span class="comment"># （SYNC with master in progress）"来处理各种请求，除了 INFO 和 SLAVEOF 命令。</span></span><br><span class="line">slave-serve-stale-data yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 你可以配置salve实例是否接受写操作。可写的slave实例可能对存储临时数据比较有用(因为写入salve</span></span><br><span class="line"><span class="comment"># 的数据在同master同步之后将很容易被删除</span></span><br><span class="line">slave-read-only yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否在slave套接字发送SYNC之后禁用 TCP_NODELAY？</span></span><br><span class="line"><span class="comment"># 如果你选择“yes”Redis将使用更少的TCP包和带宽来向slaves发送数据。但是这将使数据传输到slave</span></span><br><span class="line"><span class="comment"># 上有延迟，Linux内核的默认配置会达到40毫秒</span></span><br><span class="line"><span class="comment"># 如果你选择了 "no" 数据传输到salve的延迟将会减少但要使用更多的带宽</span></span><br><span class="line">repl-disable-tcp-nodelay no</span><br><span class="line"></span><br><span class="line"><span class="comment"># slave的优先级是一个整数展示在Redis的Info输出中。如果master不再正常工作了，哨兵将用它来</span></span><br><span class="line"><span class="comment"># 选择一个slave提升=升为master。</span></span><br><span class="line"><span class="comment"># 优先级数字小的salve会优先考虑提升为master，所以例如有三个slave优先级分别为10，100，25，</span></span><br><span class="line"><span class="comment"># 哨兵将挑选优先级最小数字为10的slave。</span></span><br><span class="line"><span class="comment"># 0作为一个特殊的优先级，标识这个slave不能作为master，所以一个优先级为0的slave永远不会被</span></span><br><span class="line"><span class="comment"># 哨兵挑选提升为master</span></span><br><span class="line">slave-priority 100</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 密码验证</span></span><br><span class="line"><span class="comment"># 警告：因为Redis太快了，所以外面的人可以尝试每秒150k的密码来试图破解密码。这意味着你需要</span></span><br><span class="line"><span class="comment"># 一个高强度的密码，否则破解太容易了</span></span><br><span class="line">requirepass 0234kz9*l</span><br><span class="line"></span><br><span class="line"><span class="comment"># redis实例最大占用内存，不要用比设置的上限更多的内存。一旦内存使用达到上限，Redis会根据选定的回收策略（参见：</span></span><br><span class="line"><span class="comment"># maxmemmory-policy）删除key</span></span><br><span class="line">maxmemory 3gb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最大内存策略：如果达到内存限制了，Redis如何选择删除key。你可以在下面五个行为里选：</span></span><br><span class="line"><span class="comment"># volatile-lru -&gt; 根据LRU算法删除带有过期时间的key。</span></span><br><span class="line"><span class="comment"># allkeys-lru -&gt; 根据LRU算法删除任何key。</span></span><br><span class="line"><span class="comment"># volatile-random -&gt; 根据过期设置来随机删除key, 具备过期时间的key。</span></span><br><span class="line"><span class="comment"># allkeys-&gt;random -&gt; 无差别随机删, 任何一个key。</span></span><br><span class="line"><span class="comment"># volatile-ttl -&gt; 根据最近过期时间来删除（辅以TTL）, 这是对于有过期时间的key</span></span><br><span class="line"><span class="comment"># noeviction -&gt; 谁也不删，直接在写操作时返回错误。</span></span><br><span class="line">maxmemory-policy volatile-lru</span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认情况下，Redis是异步的把数据导出到磁盘上。这种模式在很多应用里已经足够好，但Redis进程</span></span><br><span class="line"><span class="comment"># 出问题或断电时可能造成一段时间的写操作丢失(这取决于配置的save指令)。</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># AOF是一种提供了更可靠的替代持久化模式，例如使用默认的数据写入文件策略（参见后面的配置）</span></span><br><span class="line"><span class="comment"># 在遇到像服务器断电或单写情况下Redis自身进程出问题但操作系统仍正常运行等突发事件时，Redis</span></span><br><span class="line"><span class="comment"># 能只丢失1秒的写操作。</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># AOF和RDB持久化能同时启动并且不会有问题。</span></span><br><span class="line"><span class="comment"># 如果AOF开启，那么在启动时Redis将加载AOF文件，它更能保证数据的可靠性。</span></span><br><span class="line">appendonly no</span><br><span class="line"></span><br><span class="line"><span class="comment"># aof文件名</span></span><br><span class="line">appendfilename <span class="string">"appendonly.aof"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># fsync() 系统调用告诉操作系统把数据写到磁盘上，而不是等更多的数据进入输出缓冲区。</span></span><br><span class="line"><span class="comment"># 有些操作系统会真的把数据马上刷到磁盘上；有些则会尽快去尝试这么做。</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Redis支持三种不同的模式：</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># no：不要立刻刷，只有在操作系统需要刷的时候再刷。比较快。</span></span><br><span class="line"><span class="comment"># always：每次写操作都立刻写入到aof文件。慢，但是最安全。</span></span><br><span class="line"><span class="comment"># everysec：每秒写一次。折中方案。</span></span><br><span class="line">appendfsync everysec</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果AOF的同步策略设置成 "always" 或者 "everysec"，并且后台的存储进程（后台存储或写入AOF</span></span><br><span class="line"><span class="comment"># 日志）会产生很多磁盘I/O开销。某些Linux的配置下会使Redis因为 fsync()系统调用而阻塞很久。</span></span><br><span class="line"><span class="comment"># 注意，目前对这个情况还没有完美修正，甚至不同线程的 fsync() 会阻塞我们同步的write(2)调用。</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 为了缓解这个问题，可以用下面这个选项。它可以在 BGSAVE 或 BGREWRITEAOF 处理时阻止主进程进行fsync()。</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 这就意味着如果有子进程在进行保存操作，那么Redis就处于"不可同步"的状态。</span></span><br><span class="line"><span class="comment"># 这实际上是说，在最差的情况下可能会丢掉30秒钟的日志数据。（默认Linux设定）</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># 如果你有延时问题把这个设置成"yes"，否则就保持"no"，这是保存持久数据的最安全的方式。</span></span><br><span class="line">no-appendfsync-on-rewrite yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自动重写AOF文件</span></span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line"></span><br><span class="line"><span class="comment"># AOF文件可能在尾部是不完整的（这跟system关闭有问题，尤其是mount ext4文件系统时</span></span><br><span class="line"><span class="comment"># 没有加上data=ordered选项。只会发生在os死时，redis自己死不会不完整）。</span></span><br><span class="line"><span class="comment"># 那redis重启时load进内存的时候就有问题了。</span></span><br><span class="line"><span class="comment"># 发生的时候，可以选择redis启动报错，并且通知用户和写日志，或者load尽量多正常的数据。</span></span><br><span class="line"><span class="comment"># 如果aof-load-truncated是yes，会自动发布一个log给客户端然后load（默认）。</span></span><br><span class="line"><span class="comment"># 如果是no，用户必须手动redis-check-aof修复AOF文件才可以。</span></span><br><span class="line"><span class="comment"># 注意，如果在读取的过程中，发现这个aof是损坏的，服务器也是会退出的，</span></span><br><span class="line"><span class="comment"># 这个选项仅仅用于当服务器尝试读取更多的数据但又找不到相应的数据时。</span></span><br><span class="line">aof-load-truncated yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># Lua 脚本的最大执行时间，毫秒为单位</span></span><br><span class="line">lua-time-limit 5000</span><br><span class="line"></span><br><span class="line"><span class="comment"># Redis慢查询日志可以记录超过指定时间的查询</span></span><br><span class="line">slowlog-log-slower-than 10000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这个长度没有限制。只是要主要会消耗内存。你可以通过 SLOWLOG RESET 来回收内存。</span></span><br><span class="line">slowlog-max-len 128</span><br><span class="line"></span><br><span class="line"><span class="comment"># redis延时监控系统在运行时会采样一些操作，以便收集可能导致延时的数据根源。</span></span><br><span class="line"><span class="comment"># 通过 LATENCY命令 可以打印一些图样和获取一些报告，方便监控</span></span><br><span class="line"><span class="comment"># 这个系统仅仅记录那个执行时间大于或等于预定时间（毫秒）的操作,</span></span><br><span class="line"><span class="comment"># 这个预定时间是通过latency-monitor-threshold配置来指定的，</span></span><br><span class="line"><span class="comment"># 当设置为0时，这个监控系统处于停止状态</span></span><br><span class="line">latency-monitor-threshold 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># Redis能通知 Pub/Sub 客户端关于键空间发生的事件，默认关闭</span></span><br><span class="line">notify-keyspace-events <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 当hash只有少量的entry时，并且最大的entry所占空间没有超过指定的限制时，会用一种节省内存的</span></span><br><span class="line"><span class="comment"># 数据结构来编码。可以通过下面的指令来设定限制</span></span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-entries 512</span><br><span class="line"><span class="built_in">hash</span>-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与hash似，数据元素较少的list，可以用另一种方式来编码从而节省大量空间。</span></span><br><span class="line"><span class="comment"># 这种特殊的方式只有在符合下面限制时才可以用</span></span><br><span class="line">list-max-ziplist-entries 512</span><br><span class="line">list-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"><span class="comment"># set有一种特殊编码的情况：当set数据全是十进制64位有符号整型数字构成的字符串时。</span></span><br><span class="line"><span class="comment"># 下面这个配置项就是用来设置set使用这种编码来节省内存的最大长度。</span></span><br><span class="line"><span class="built_in">set</span>-max-intset-entries 512</span><br><span class="line"></span><br><span class="line"><span class="comment"># 与hash和list相似，有序集合也可以用一种特别的编码方式来节省大量空间。</span></span><br><span class="line"><span class="comment"># 这种编码只适合长度和元素都小于下面限制的有序集合</span></span><br><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br><span class="line"></span><br><span class="line"><span class="comment"># HyperLogLog稀疏结构表示字节的限制。该限制包括</span></span><br><span class="line"><span class="comment"># 16个字节的头。当HyperLogLog使用稀疏结构表示</span></span><br><span class="line"><span class="comment"># 这些限制，它会被转换成密度表示。</span></span><br><span class="line"><span class="comment"># 值大于16000是完全没用的，因为在该点</span></span><br><span class="line"><span class="comment"># 密集的表示是更多的内存效率。</span></span><br><span class="line"><span class="comment"># 建议值是3000左右，以便具有的内存好处, 减少内存的消耗</span></span><br><span class="line">hll-sparse-max-bytes 3000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用哈希刷新，每100个CPU毫秒会拿出1个毫秒来刷新Redis的主哈希表（顶级键值映射表）</span></span><br><span class="line">activerehashing yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 客户端的输出缓冲区的限制，可用于强制断开那些因为某种原因从服务器读取数据的速度不够快的客户端</span></span><br><span class="line">client-output-buffer-limit normal 0 0 0</span><br><span class="line">client-output-buffer-limit slave 256mb 64mb 60</span><br><span class="line">client-output-buffer-limit pubsub 32mb 8mb 60</span><br><span class="line"></span><br><span class="line"><span class="comment"># 默认情况下，“hz”的被设定为10。提高该值将在Redis空闲时使用更多的CPU时，但同时当有多个key</span></span><br><span class="line"><span class="comment"># 同时到期会使Redis的反应更灵敏，以及超时可以更精确地处理</span></span><br><span class="line">hz 10</span><br><span class="line"></span><br><span class="line"><span class="comment"># 当一个子进程重写AOF文件时，如果启用下面的选项，则文件每生成32M数据会被同步</span></span><br><span class="line">aof-rewrite-incremental-fsync yes</span><br></pre></td></tr></table></figure>
+<h2 id="12-配置主从关系"><a href="#1-2-配置主从关系" class="headerlink" title="1.2 配置主从关系"></a>1.2 配置主从关系</h2><p><strong>1、启动实例</strong></p>
+<p>三个Redis实例配置相同，分别启动三个Redis实例。建议将<code>redis-server</code>、<code>redis-cli</code>、<code>redis-sentinel</code>的二进制复制到<code>/usr/local/bin</code>的目录下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> 8000</span><br><span class="line">redis-server redis.conf</span><br></pre></td></tr></table></figure>
+<p><strong>2、配置主从关系</strong></p>
+<p>例如，将8000端口实例设为主，8001和8002端口的实例设为从。</p>
+<p>则分别登录8001和8002的实例，执行<code>slaveof &lt;MASTER_IP&gt; &lt;MASTER_PORT&gt;</code>命令。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 8000]<span class="comment"># redis-cli -c -p 8001 -a 0234kz9*l</span></span><br><span class="line">127.0.0.1:8001&gt; slaveof 127.0.0.1 8000</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<p><strong>3、检查集群状态</strong></p>
+<p>登录master和slave实例，执行<code>info replication</code>查看集群状态。</p>
+<p>Master</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 8000]<span class="comment"># redis-cli -c -p 8000 -a 0234kz9*l</span></span><br><span class="line">127.0.0.1:8000&gt; info replication</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=8001,state=online,offset=2853,lag=0</span><br><span class="line">slave1:ip=127.0.0.1,port=8002,state=online,offset=2853,lag=0</span><br><span class="line">master_replid:4f8331d5f180a4669241ab0dd97e43508abd6d8f</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:2853</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:2853</span><br></pre></td></tr></table></figure>
+<p>Slave</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 8000]<span class="comment"># redis-cli -c -p 8001 -a 0234kz9*l</span></span><br><span class="line">127.0.0.1:8001&gt; info replication</span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:slave</span><br><span class="line">master_host:127.0.0.1</span><br><span class="line">master_port:8000</span><br><span class="line">master_link_status:up</span><br><span class="line">master_last_io_seconds_ago:3</span><br><span class="line">master_sync_in_progress:0</span><br><span class="line">slave_repl_offset:2909</span><br><span class="line">slave_priority:100</span><br><span class="line">slave_read_only:1</span><br><span class="line">connected_slaves:0</span><br><span class="line">master_replid:4f8331d5f180a4669241ab0dd97e43508abd6d8f</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:2909</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:2909</span><br></pre></td></tr></table></figure>
+<p>也可以往master写数据，从slave读取数据来验证。</p>
+<h1 id="2-部署sentinel集群"><a href="#2-部署sentinel集群" class="headerlink" title="2. 部署sentinel集群"></a>2. 部署sentinel集群</h1><h2 id="21-部署与配置"><a href="#2-1-部署与配置" class="headerlink" title="2.1 部署与配置"></a>2.1 部署与配置</h2><p>在之前创建的<code>sentinel</code>目录中场景sentinel端口号命名的目录<code>28000</code>，<code>28001</code>，<code>28002</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> sentinel</span><br><span class="line">mkdir 28000 28001 28002</span><br></pre></td></tr></table></figure>
+<p>在对应端口号目录中创建<code>redis.conf</code>的文件，配置文件中的端口号<code>port</code>参数改为对应目录的端口号。配置如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">port 28000</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 8000 2</span><br><span class="line">sentinel down-after-milliseconds mymaster 60000</span><br><span class="line">sentinel failover-timeout mymaster 180000</span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br></pre></td></tr></table></figure>
+<h2 id="22-启动sentinel实例"><a href="#2-2-启动sentinel实例" class="headerlink" title="2.2 启动sentinel实例"></a>2.2 启动sentinel实例</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#&amp; 表示后台运行的方式</span></span><br><span class="line">redis-sentinel sentinel.conf &amp;</span><br></pre></td></tr></table></figure>
+<h2 id="23-查看状态"><a href="#2-3-查看状态" class="headerlink" title="2.3 查看状态"></a>2.3 查看状态</h2><p>使用<code>sentinel masters</code>命令查看监控的master节点。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 28000]<span class="comment"># redis-cli -c -p 28000 -a 0234kz9*l</span></span><br><span class="line">127.0.0.1:28000&gt;</span><br><span class="line">127.0.0.1:28000&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:28000&gt;</span><br><span class="line">127.0.0.1:28000&gt; sentinel masters</span><br><span class="line">1)  1) <span class="string">"name"</span></span><br><span class="line">    1) <span class="string">"mymaster"</span></span><br><span class="line">    2) <span class="string">"ip"</span></span><br><span class="line">    3) <span class="string">"127.0.0.1"</span></span><br><span class="line">    4) <span class="string">"port"</span></span><br><span class="line">    5) <span class="string">"8000"</span></span><br><span class="line">    6) <span class="string">"runid"</span></span><br><span class="line">    7) <span class="string">""</span></span><br><span class="line">    8) <span class="string">"flags"</span></span><br><span class="line">   1)  <span class="string">"s_down,master,disconnected"</span></span><br><span class="line">   2)  <span class="string">"link-pending-commands"</span></span><br><span class="line">   3)  <span class="string">"0"</span></span><br><span class="line">   4)  <span class="string">"link-refcount"</span></span><br><span class="line">   5)  <span class="string">"1"</span></span><br><span class="line">   6)  <span class="string">"last-ping-sent"</span></span><br><span class="line">   7)  <span class="string">"187539"</span></span><br><span class="line">   8)  <span class="string">"last-ok-ping-reply"</span></span><br><span class="line">   9)  <span class="string">"187539"</span></span><br><span class="line">   10) <span class="string">"last-ping-reply"</span></span><br><span class="line">   11) <span class="string">"3943"</span></span><br><span class="line">   12) <span class="string">"s-down-time"</span></span><br><span class="line">   13) <span class="string">"127491"</span></span><br><span class="line">   14) <span class="string">"down-after-milliseconds"</span></span><br><span class="line">   15) <span class="string">"60000"</span></span><br><span class="line">   16) <span class="string">"info-refresh"</span></span><br><span class="line">   17) <span class="string">"1517346914642"</span></span><br><span class="line">   18) <span class="string">"role-reported"</span></span><br><span class="line">   19) <span class="string">"master"</span></span><br><span class="line">   20) <span class="string">"role-reported-time"</span></span><br><span class="line">   21) <span class="string">"187539"</span></span><br><span class="line">   22) <span class="string">"config-epoch"</span></span><br><span class="line">   23) <span class="string">"0"</span></span><br><span class="line">   24) <span class="string">"num-slaves"</span></span><br><span class="line">   25) <span class="string">"0"</span></span><br><span class="line">   26) <span class="string">"num-other-sentinels"</span></span><br><span class="line">   27) <span class="string">"0"</span></span><br><span class="line">   28) <span class="string">"quorum"</span></span><br><span class="line">   29) <span class="string">"2"</span></span><br><span class="line">   30) <span class="string">"failover-timeout"</span></span><br><span class="line">   31) <span class="string">"180000"</span></span><br><span class="line">   32) <span class="string">"parallel-syncs"</span></span><br><span class="line">   33) <span class="string">"1"</span></span><br></pre></td></tr></table></figure>
+<p>参考文章：</p>
+<p><a href="https://redis.io/topics/sentinel" target="_blank" rel="noopener">https://redis.io/topics/sentinel</a></p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/linux-notes/redis/redis-conf-cn/" data-toggle="tooltip" data-placement="top" title="Redis配置详解（中文版）">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/kubernetes-notes/concepts/object/understanding-kubernetes-objects/" data-toggle="tooltip" data-placement="top" title="理解kubernetes对象">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-部署redis集群"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 部署Redis集群</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-部署与配置"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1 部署与配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-配置主从关系"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2 配置主从关系</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-部署sentinel集群"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 部署sentinel集群</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-部署与配置"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1 部署与配置</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-启动sentinel实例"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2 启动sentinel实例</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-查看状态"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3 查看状态</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Redis" title="Redis">Redis</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">CSDN Blog 胡伟煌</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                        <li><a href="http://dockone.io/people/胡伟煌" target="_blank">DockOne 胡伟煌</a></li>
+                    
+                        <li><a href="https://yq.aliyun.com/u/huweihuang" target="_blank">阿里云栖社区 胡伟煌</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
