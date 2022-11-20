@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          basic vimrc - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/linux-notes/vim/basic-vimrc/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#VIM" title="VIM">VIM</a>
+                            
+                        </div>
+                        <h1>basic vimrc</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-05-01
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>以下转自https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim</p>
+</blockquote>
+<h1 id="basic-vimrc">basic vimrc</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Maintainer: </span><br><span class="line"><span class="string">"       Amir Salihefendic — @amix3k</span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="string">" Awesome_version:</span></span><br><span class="line"><span class="string">"</span>       Get this config, nice color schemes and lots of plugins!</span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="string">"</span>       Install the awesome version from:</span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="string">"</span>           https://github.com/amix/vimrc</span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Sections:</span><br><span class="line"><span class="string">"    -&gt; General</span></span><br><span class="line"><span class="string">"</span>    -&gt; VIM user interface</span><br><span class="line"><span class="string">"    -&gt; Colors and Fonts</span></span><br><span class="line"><span class="string">"</span>    -&gt; Files and backups</span><br><span class="line"><span class="string">"    -&gt; Text, tab and indent related</span></span><br><span class="line"><span class="string">"</span>    -&gt; Visual mode related</span><br><span class="line"><span class="string">"    -&gt; Moving around, tabs and buffers</span></span><br><span class="line"><span class="string">"</span>    -&gt; Status line</span><br><span class="line"><span class="string">"    -&gt; Editing mappings</span></span><br><span class="line"><span class="string">"</span>    -&gt; vimgrep searching and cope displaying</span><br><span class="line"><span class="string">"    -&gt; Spell checking</span></span><br><span class="line"><span class="string">"</span>    -&gt; Misc</span><br><span class="line"><span class="string">"    -&gt; Helper functions</span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" =&gt; General</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" Sets how many lines of history VIM has to remember</span></span><br><span class="line"><span class="string">set history=500</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Enable filetype plugins</span><br><span class="line">filetype plugin on</span><br><span class="line">filetype indent on</span><br><span class="line"></span><br><span class="line"><span class="string">" Set to auto read when a file is changed from the outside</span></span><br><span class="line"><span class="string">set autoread</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> With a map leader it<span class="string">'s possible to do extra key combinations</span></span><br><span class="line"><span class="string">" like &lt;leader&gt;w saves the current file</span></span><br><span class="line"><span class="string">let mapleader = ","</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Fast saving</span></span><br><span class="line"><span class="string">nmap &lt;leader&gt;w :w!&lt;cr&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" :W sudo saves the file </span></span><br><span class="line"><span class="string">" (useful for handling the permission-denied error)</span></span><br><span class="line"><span class="string">command W w !sudo tee % &gt; /dev/null</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""</span></span><br><span class="line"><span class="string">" =&gt; VIM user interface</span></span><br><span class="line"><span class="string">"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""</span></span><br><span class="line"><span class="string">" Set 7 lines to the cursor - when moving vertically using j/k</span></span><br><span class="line"><span class="string">set so=7</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Avoid garbled characters in Chinese language windows OS</span></span><br><span class="line"><span class="string">let $LANG='</span>en<span class="string">' </span></span><br><span class="line"><span class="string">set langmenu=en</span></span><br><span class="line"><span class="string">source $VIMRUNTIME/delmenu.vim</span></span><br><span class="line"><span class="string">source $VIMRUNTIME/menu.vim</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Turn on the Wild menu</span></span><br><span class="line"><span class="string">set wildmenu</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Ignore compiled files</span></span><br><span class="line"><span class="string">set wildignore=*.o,*~,*.pyc</span></span><br><span class="line"><span class="string">if has("win16") || has("win32")</span></span><br><span class="line"><span class="string">    set wildignore+=.git\*,.hg\*,.svn\*</span></span><br><span class="line"><span class="string">else</span></span><br><span class="line"><span class="string">    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store</span></span><br><span class="line"><span class="string">endif</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"Always show current position</span></span><br><span class="line"><span class="string">set ruler</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Height of the command bar</span></span><br><span class="line"><span class="string">set cmdheight=2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" A buffer becomes hidden when it is abandoned</span></span><br><span class="line"><span class="string">set hid</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Configure backspace so it acts as it should act</span></span><br><span class="line"><span class="string">set backspace=eol,start,indent</span></span><br><span class="line"><span class="string">set whichwrap+=&lt;,&gt;,h,l</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Ignore case when searching</span></span><br><span class="line"><span class="string">set ignorecase</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" When searching try to be smart about cases </span></span><br><span class="line"><span class="string">set smartcase</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Highlight search results</span></span><br><span class="line"><span class="string">set hlsearch</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Makes search act like search in modern browsers</span></span><br><span class="line"><span class="string">set incsearch </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Don'</span>t redraw <span class="keyword">while</span> executing macros (good performance config)</span><br><span class="line"><span class="built_in">set</span> lazyredraw </span><br><span class="line"></span><br><span class="line"><span class="string">" For regular expressions turn magic on</span></span><br><span class="line"><span class="string">set magic</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Show matching brackets when text indicator is over them</span><br><span class="line"><span class="built_in">set</span> showmatch </span><br><span class="line"><span class="string">" How many tenths of a second to blink when matching brackets</span></span><br><span class="line"><span class="string">set mat=2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> No annoying sound on errors</span><br><span class="line"><span class="built_in">set</span> noerrorbells</span><br><span class="line"><span class="built_in">set</span> novisualbell</span><br><span class="line"><span class="built_in">set</span> t_vb=</span><br><span class="line"><span class="built_in">set</span> tm=500</span><br><span class="line"></span><br><span class="line"><span class="string">" Properly disable sound on errors on MacVim</span></span><br><span class="line"><span class="string">if has("</span>gui_macvim<span class="string">")</span></span><br><span class="line"><span class="string">    autocmd GUIEnter * set vb t_vb=</span></span><br><span class="line"><span class="string">endif</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Add a bit extra margin to the left</span><br><span class="line"><span class="built_in">set</span> foldcolumn=1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Colors and Fonts</span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Enable syntax highlighting</span><br><span class="line">syntax <span class="built_in">enable</span> </span><br><span class="line"></span><br><span class="line"><span class="string">" Enable 256 colors palette in Gnome Terminal</span></span><br><span class="line"><span class="string">if <span class="variable">$COLORTERM</span> == 'gnome-terminal'</span></span><br><span class="line"><span class="string">    set t_Co=256</span></span><br><span class="line"><span class="string">endif</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">try</span></span><br><span class="line"><span class="string">    colorscheme desert</span></span><br><span class="line"><span class="string">catch</span></span><br><span class="line"><span class="string">endtry</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">set background=dark</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Set extra options when running <span class="keyword">in</span> GUI mode</span><br><span class="line"><span class="keyword">if</span> has(<span class="string">"gui_running"</span>)</span><br><span class="line">    <span class="built_in">set</span> guioptions-=T</span><br><span class="line">    <span class="built_in">set</span> guioptions-=e</span><br><span class="line">    <span class="built_in">set</span> t_Co=256</span><br><span class="line">    <span class="built_in">set</span> guitablabel=%M\ %t</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line"><span class="string">" Set utf8 as standard encoding and en_US as the standard language</span></span><br><span class="line"><span class="string">set encoding=utf8</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Use Unix as the standard file <span class="built_in">type</span></span><br><span class="line"><span class="built_in">set</span> ffs=unix,dos,mac</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Files, backups and undo</span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Turn backup off, since most stuff is <span class="keyword">in</span> SVN, git et.c anyway...</span><br><span class="line"><span class="built_in">set</span> nobackup</span><br><span class="line"><span class="built_in">set</span> nowb</span><br><span class="line"><span class="built_in">set</span> noswapfile</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Text, tab and indent related</span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Use spaces instead of tabs</span><br><span class="line"><span class="built_in">set</span> expandtab</span><br><span class="line"></span><br><span class="line"><span class="string">" Be smart when using tabs ;)</span></span><br><span class="line"><span class="string">set smarttab</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> 1 tab == 4 spaces</span><br><span class="line"><span class="built_in">set</span> shiftwidth=4</span><br><span class="line"><span class="built_in">set</span> tabstop=4</span><br><span class="line"></span><br><span class="line"><span class="string">" Linebreak on 500 characters</span></span><br><span class="line"><span class="string">set lbr</span></span><br><span class="line"><span class="string">set tw=500</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">set ai "</span>Auto indent</span><br><span class="line"><span class="built_in">set</span> si <span class="string">"Smart indent</span></span><br><span class="line"><span class="string">set wrap "</span>Wrap lines</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" =&gt; Visual mode related</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Visual mode pressing * or <span class="comment"># searches for the current selection</span></span><br><span class="line"><span class="string">" Super useful! From an idea by Michael Naumann</span></span><br><span class="line"><span class="string">vnoremap &lt;silent&gt; * :&lt;C-u&gt;call VisualSelection('', '')&lt;CR&gt;/&lt;C-R&gt;=@/&lt;CR&gt;&lt;CR&gt;</span></span><br><span class="line"><span class="string">vnoremap &lt;silent&gt; # :&lt;C-u&gt;call VisualSelection('', '')&lt;CR&gt;?&lt;C-R&gt;=@/&lt;CR&gt;&lt;CR&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" =&gt; Moving around, tabs, windows and buffers</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" Map &lt;Space&gt; to / (search) and Ctrl-&lt;Space&gt; to ? (backwards search)</span></span><br><span class="line"><span class="string">map &lt;space&gt; /</span></span><br><span class="line"><span class="string">map &lt;c-space&gt; ?</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Disable highlight when &lt;leader&gt;&lt;cr&gt; is pressed</span><br><span class="line">map &lt;silent&gt; &lt;leader&gt;&lt;cr&gt; :noh&lt;cr&gt;</span><br><span class="line"></span><br><span class="line"><span class="string">" Smart way to move between windows</span></span><br><span class="line"><span class="string">map &lt;C-j&gt; &lt;C-W&gt;j</span></span><br><span class="line"><span class="string">map &lt;C-k&gt; &lt;C-W&gt;k</span></span><br><span class="line"><span class="string">map &lt;C-h&gt; &lt;C-W&gt;h</span></span><br><span class="line"><span class="string">map &lt;C-l&gt; &lt;C-W&gt;l</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Close the current buffer</span><br><span class="line">map &lt;leader&gt;bd :Bclose&lt;cr&gt;:tabclose&lt;cr&gt;gT</span><br><span class="line"></span><br><span class="line"><span class="string">" Close all the buffers</span></span><br><span class="line"><span class="string">map &lt;leader&gt;ba :bufdo bd&lt;cr&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">map &lt;leader&gt;l :bnext&lt;cr&gt;</span></span><br><span class="line"><span class="string">map &lt;leader&gt;h :bprevious&lt;cr&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Useful mappings <span class="keyword">for</span> managing tabs</span><br><span class="line">map &lt;leader&gt;tn :tabnew&lt;cr&gt;</span><br><span class="line">map &lt;leader&gt;to :tabonly&lt;cr&gt;</span><br><span class="line">map &lt;leader&gt;tc :tabclose&lt;cr&gt;</span><br><span class="line">map &lt;leader&gt;tm :tabmove </span><br><span class="line">map &lt;leader&gt;t&lt;leader&gt; :tabnext </span><br><span class="line"></span><br><span class="line"><span class="string">" Let 'tl' toggle between this and the last accessed tab</span></span><br><span class="line"><span class="string">let g:lasttab = 1</span></span><br><span class="line"><span class="string">nmap &lt;Leader&gt;tl :exe "</span>tabn <span class="string">".g:lasttab&lt;CR&gt;</span></span><br><span class="line"><span class="string">au TabLeave * let g:lasttab = tabpagenr()</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Opens a new tab with the current buffer<span class="string">'s path</span></span><br><span class="line"><span class="string">" Super useful when editing files in the same directory</span></span><br><span class="line"><span class="string">map &lt;leader&gt;te :tabedit &lt;c-r&gt;=expand("%:p:h")&lt;cr&gt;/</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Switch CWD to the directory of the open buffer</span></span><br><span class="line"><span class="string">map &lt;leader&gt;cd :cd %:p:h&lt;cr&gt;:pwd&lt;cr&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Specify the behavior when switching between buffers </span></span><br><span class="line"><span class="string">try</span></span><br><span class="line"><span class="string">  set switchbuf=useopen,usetab,newtab</span></span><br><span class="line"><span class="string">  set stal=2</span></span><br><span class="line"><span class="string">catch</span></span><br><span class="line"><span class="string">endtry</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">" Return to last edit position when opening files (You want this!)</span></span><br><span class="line"><span class="string">au BufReadPost * if line("'</span>\"<span class="string">") &gt; 1 &amp;&amp; line("</span><span class="string">'\"") &lt;= line("$") | exe "normal! g'</span>\"<span class="string">" | endif</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Status line</span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" Always show the status line</span></span><br><span class="line"><span class="string">set laststatus=2</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Format the status line</span><br><span class="line"><span class="built_in">set</span> statusline=\ %&#123;HasPaste()&#125;%F%m%r%h\ %w\ \ CWD:\ %r%&#123;getcwd()&#125;%h\ \ \ Line:\ %l\ \ Column:\ %c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Editing mappings</span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Remap VIM 0 to first non-blank character</span><br><span class="line">map 0 ^</span><br><span class="line"></span><br><span class="line"><span class="string">" Move a line of text using ALT+[jk] or Command+[jk] on mac</span></span><br><span class="line"><span class="string">nmap &lt;M-j&gt; mz:m+&lt;cr&gt;`z</span></span><br><span class="line"><span class="string">nmap &lt;M-k&gt; mz:m-2&lt;cr&gt;`z</span></span><br><span class="line"><span class="string">vmap &lt;M-j&gt; :m'&gt;+&lt;cr&gt;`&lt;my`&gt;mzgv`yo`z</span></span><br><span class="line"><span class="string">vmap &lt;M-k&gt; :m'&lt;-2&lt;cr&gt;`&gt;my`&lt;mzgv`yo`z</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">if has("</span>mac<span class="string">") || has("</span>macunix<span class="string">")</span></span><br><span class="line"><span class="string">  nmap &lt;D-j&gt; &lt;M-j&gt;</span></span><br><span class="line"><span class="string">  nmap &lt;D-k&gt; &lt;M-k&gt;</span></span><br><span class="line"><span class="string">  vmap &lt;D-j&gt; &lt;M-j&gt;</span></span><br><span class="line"><span class="string">  vmap &lt;D-k&gt; &lt;M-k&gt;</span></span><br><span class="line"><span class="string">endif</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Delete trailing white space on save, useful <span class="keyword">for</span> some filetypes ;)</span><br><span class="line">fun! CleanExtraSpaces()</span><br><span class="line">    <span class="built_in">let</span> save_cursor = getpos(<span class="string">"."</span>)</span><br><span class="line">    <span class="built_in">let</span> old_query = getreg(<span class="string">'/'</span>)</span><br><span class="line">    silent! %s/\s\+$//e</span><br><span class="line">    call setpos(<span class="string">'.'</span>, save_cursor)</span><br><span class="line">    call setreg(<span class="string">'/'</span>, old_query)</span><br><span class="line">endfun</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> has(<span class="string">"autocmd"</span>)</span><br><span class="line">    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()</span><br><span class="line">endif</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Spell checking</span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Pressing ,ss will toggle and untoggle spell checking</span><br><span class="line">map &lt;leader&gt;ss :setlocal spell!&lt;cr&gt;</span><br><span class="line"></span><br><span class="line"><span class="string">" Shortcuts using &lt;leader&gt;</span></span><br><span class="line"><span class="string">map &lt;leader&gt;sn ]s</span></span><br><span class="line"><span class="string">map &lt;leader&gt;sp [s</span></span><br><span class="line"><span class="string">map &lt;leader&gt;sa zg</span></span><br><span class="line"><span class="string">map &lt;leader&gt;s? z=</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" =&gt; Misc</span></span><br><span class="line"><span class="string">"</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span></span><br><span class="line"><span class="string">" Remove the Windows ^M - when the encodings gets messed up</span></span><br><span class="line"><span class="string">noremap &lt;Leader&gt;m mmHmt:%s/&lt;C-V&gt;&lt;cr&gt;//ge&lt;cr&gt;'tzt'm</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Quickly open a buffer <span class="keyword">for</span> scribble</span><br><span class="line">map &lt;leader&gt;q :e ~/buffer&lt;cr&gt;</span><br><span class="line"></span><br><span class="line"><span class="string">" Quickly open a markdown buffer for scribble</span></span><br><span class="line"><span class="string">map &lt;leader&gt;x :e ~/buffer.md&lt;cr&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"</span> Toggle paste mode on and off</span><br><span class="line">map &lt;leader&gt;pp :setlocal paste!&lt;cr&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> =&gt; Helper <span class="built_in">functions</span></span><br><span class="line"><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">""</span><span class="string">"</span></span><br><span class="line"><span class="string">"</span> Returns <span class="literal">true</span> <span class="keyword">if</span> paste mode is enabled</span><br><span class="line"><span class="keyword">function</span>! HasPaste()</span><br><span class="line">    <span class="keyword">if</span> &amp;paste</span><br><span class="line">        <span class="built_in">return</span> <span class="string">'PASTE MODE  '</span></span><br><span class="line">    endif</span><br><span class="line">    <span class="built_in">return</span> <span class="string">''</span></span><br><span class="line">endfunction</span><br><span class="line"></span><br><span class="line"><span class="string">" Don't close window, when deleting a buffer</span></span><br><span class="line"><span class="string">command! Bclose call &lt;SID&gt;BufcloseCloseIt()</span></span><br><span class="line"><span class="string">function! &lt;SID&gt;BufcloseCloseIt()</span></span><br><span class="line"><span class="string">    let l:currentBufNum = bufnr("</span>%<span class="string">")</span></span><br><span class="line"><span class="string">    let l:alternateBufNum = bufnr("</span><span class="comment">#")</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> buflisted(l:alternateBufNum)</span><br><span class="line">        buffer <span class="comment">#</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        bnext</span><br><span class="line">    endif</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> bufnr(<span class="string">"%"</span>) == l:currentBufNum</span><br><span class="line">        new</span><br><span class="line">    endif</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> buflisted(l:currentBufNum)</span><br><span class="line">        execute(<span class="string">"bdelete! "</span>.l:currentBufNum)</span><br><span class="line">    endif</span><br><span class="line">endfunction</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span>! CmdLine(str)</span><br><span class="line">    call feedkeys(<span class="string">":"</span> . a:str)</span><br><span class="line">endfunction </span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span>! VisualSelection(direction, extra_filter) range</span><br><span class="line">    <span class="built_in">let</span> l:saved_reg = @<span class="string">"</span></span><br><span class="line"><span class="string">    execute "</span>normal! vgvy<span class="string">"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    let l:pattern = escape(@"</span>, <span class="string">"\\/.*'$^~[]"</span>)</span><br><span class="line">    <span class="built_in">let</span> l:pattern = substitute(l:pattern, <span class="string">"\n$"</span>, <span class="string">""</span>, <span class="string">""</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> a:direction == <span class="string">'gv'</span></span><br><span class="line">        call CmdLine(<span class="string">"Ack '"</span> . l:pattern . <span class="string">"' "</span> )</span><br><span class="line">    elseif a:direction == <span class="string">'replace'</span></span><br><span class="line">        call CmdLine(<span class="string">"%s"</span> . <span class="string">'/'</span>. l:pattern . <span class="string">'/'</span>)</span><br><span class="line">    endif</span><br><span class="line"></span><br><span class="line">    <span class="built_in">let</span> @/ = l:pattern</span><br><span class="line">    <span class="built_in">let</span> @<span class="string">" = l:saved_reg</span></span><br><span class="line"><span class="string">endfunction</span></span><br></pre></td></tr></table></figure>
+<p>参考</p>
+<ul>
+<li><a href="https://github.com/amix/vimrc" target="_blank" rel="noopener">https://github.com/amix/vimrc</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/linux-notes/tools/ssh-tips/" data-toggle="tooltip" data-placement="top" title="ssh tips">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/linux-notes/vim/vim-keymap/" data-toggle="tooltip" data-placement="top" title="vim 命令">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#basic-vimrc"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">basic vimrc</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#VIM" title="VIM">VIM</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

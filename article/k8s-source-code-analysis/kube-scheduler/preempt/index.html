@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          kube-scheduler源码分析（六）之 抢占逻辑 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/k8s-source-code-analysis/kube-scheduler/preempt/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>kube-scheduler源码分析（六）之 抢占逻辑</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-10-03
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="kube-scheduler源码分析六之-preempt">kube-scheduler源码分析（六）之 preempt</h1>
+<blockquote>
+<p>以下代码分析基于 <code>kubernetes v1.12.0</code> 版本。</p>
+</blockquote>
+<p>本文主要分析调度中的抢占逻辑，当pod不适合任何节点的时候，可能pod会调度失败，这时候可能会发生抢占。抢占逻辑的具体实现函数为<code>Scheduler.preempt</code>。</p>
+<h1 id="1-调用入口">1. 调用入口</h1>
+<p>当pod不适合任何节点的时候，可能pod会调度失败。这时候可能会发生抢占。</p>
+<p><code>scheduleOne</code>函数中关于抢占调用的逻辑如下：</p>
+<blockquote>
+<p>此部分的代码位于/pkg/scheduler/scheduler.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// scheduleOne does the entire scheduling workflow for a single pod.  It is serialized on the scheduling algorithm's host fitting.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sched *Scheduler)</span> <span class="title">scheduleOne</span><span class="params">()</span></span> &#123;</span><br><span class="line">	...</span><br><span class="line">	suggestedHost, err := sched.schedule(pod)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// schedule() may have failed because the pod would not fit on any host, so we try to</span></span><br><span class="line">		<span class="comment">// preempt, with the expectation that the next time the pod is tried for scheduling it</span></span><br><span class="line">		<span class="comment">// will fit due to the preemption. It is also possible that a different pod will schedule</span></span><br><span class="line">		<span class="comment">// into the resources that were preempted, but this is harmless.</span></span><br><span class="line">		<span class="keyword">if</span> fitError, ok := err.(*core.FitError); ok &#123;</span><br><span class="line">			preemptionStartTime := time.Now()</span><br><span class="line">      <span class="comment">// 执行抢占逻辑</span></span><br><span class="line">			sched.preempt(pod, fitError)</span><br><span class="line">			metrics.PreemptionAttempts.Inc()</span><br><span class="line">			metrics.SchedulingAlgorithmPremptionEvaluationDuration.Observe(metrics.SinceInMicroseconds(preemptionStartTime))</span><br><span class="line">			metrics.SchedulingLatency.WithLabelValues(metrics.PreemptionEvaluation).Observe(metrics.SinceInSeconds(preemptionStartTime))</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中核心代码为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基于sched.schedule(pod)返回的err和当前待调度的pod执行抢占策略</span></span><br><span class="line">sched.preempt(pod, fitError)</span><br></pre></td></tr></table></figure>
+<h1 id="2-schedulerpreempt">2. Scheduler.preempt</h1>
+<p>当pod调度失败的时候，会抢占低优先级pod的空间来给高优先级的pod。其中入参为调度失败的pod对象和调度失败的err。</p>
+<p><strong>抢占的基本流程如下：</strong></p>
+<ol>
+<li>判断是否有关闭抢占机制，如果关闭抢占机制则直接返回。</li>
+<li>获取调度失败pod的最新对象数据。</li>
+<li>执行抢占算法<code>Algorithm.Preempt</code>，返回预调度节点和需要被剔除的pod列表。</li>
+<li>将抢占算法返回的node添加到pod的<code>Status.NominatedNodeName</code>中，并删除需要被剔除的pod。</li>
+<li>当抢占算法返回的node是nil的时候，清除pod的<code>Status.NominatedNodeName</code>信息。</li>
+</ol>
+<p>整个抢占流程的最终结果实际上是更新<code>Pod.Status.NominatedNodeName</code>属性的信息。如果抢占算法返回的节点不为空，则将该node更新到<code>Pod.Status.NominatedNodeName</code>中，否则就将<code>Pod.Status.NominatedNodeName</code>设置为空。</p>
+<h2 id="21-preempt">2.1. preempt</h2>
+<p>preempt的具体实现函数：</p>
+<blockquote>
+<p>此部分的代码位于/pkg/scheduler/scheduler.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// preempt tries to create room for a pod that has failed to schedule, by preempting lower priority pods if possible.</span></span><br><span class="line"><span class="comment">// If it succeeds, it adds the name of the node where preemption has happened to the pod annotations.</span></span><br><span class="line"><span class="comment">// It returns the node name and an error if any.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sched *Scheduler)</span> <span class="title">preempt</span><span class="params">(preemptor *v1.Pod, scheduleErr error)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !util.PodPriorityEnabled() || sched.config.DisablePreemption &#123;</span><br><span class="line">		glog.V(<span class="number">3</span>).Infof(<span class="string">"Pod priority feature is not enabled or preemption is disabled by scheduler configuration."</span> +</span><br><span class="line">			<span class="string">" No preemption is performed."</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	preemptor, err := sched.config.PodPreemptor.GetUpdatedPod(preemptor)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Errorf(<span class="string">"Error getting the updated preemptor pod object: %v"</span>, err)</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	node, victims, nominatedPodsToClear, err := sched.config.Algorithm.Preempt(preemptor, sched.config.NodeLister, scheduleErr)</span><br><span class="line">	metrics.PreemptionVictims.Set(<span class="keyword">float64</span>(<span class="built_in">len</span>(victims)))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Errorf(<span class="string">"Error preempting victims to make room for %v/%v."</span>, preemptor.Namespace, preemptor.Name)</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> nodeName = <span class="string">""</span></span><br><span class="line">	<span class="keyword">if</span> node != <span class="literal">nil</span> &#123;</span><br><span class="line">		nodeName = node.Name</span><br><span class="line">		err = sched.config.PodPreemptor.SetNominatedNodeName(preemptor, nodeName)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			glog.Errorf(<span class="string">"Error in preemption process. Cannot update pod %v/%v annotations: %v"</span>, preemptor.Namespace, preemptor.Name, err)</span><br><span class="line">			<span class="keyword">return</span> <span class="string">""</span>, err</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> _, victim := <span class="keyword">range</span> victims &#123;</span><br><span class="line">			<span class="keyword">if</span> err := sched.config.PodPreemptor.DeletePod(victim); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				glog.Errorf(<span class="string">"Error preempting pod %v/%v: %v"</span>, victim.Namespace, victim.Name, err)</span><br><span class="line">				<span class="keyword">return</span> <span class="string">""</span>, err</span><br><span class="line">			&#125;</span><br><span class="line">			sched.config.Recorder.Eventf(victim, v1.EventTypeNormal, <span class="string">"Preempted"</span>, <span class="string">"by %v/%v on node %v"</span>, preemptor.Namespace, preemptor.Name, nodeName)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Clearing nominated pods should happen outside of "if node != nil". Node could</span></span><br><span class="line">	<span class="comment">// be nil when a pod with nominated node name is eligible to preempt again,</span></span><br><span class="line">	<span class="comment">// but preemption logic does not find any node for it. In that case Preempt()</span></span><br><span class="line">	<span class="comment">// function of generic_scheduler.go returns the pod itself for removal of the annotation.</span></span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> nominatedPodsToClear &#123;</span><br><span class="line">		rErr := sched.config.PodPreemptor.RemoveNominatedNodeName(p)</span><br><span class="line">		<span class="keyword">if</span> rErr != <span class="literal">nil</span> &#123;</span><br><span class="line">			glog.Errorf(<span class="string">"Cannot remove nominated node annotation of pod: %v"</span>, rErr)</span><br><span class="line">			<span class="comment">// We do not return as this error is not critical.</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> nodeName, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以下对<code>preempt</code>的实现分段分析。</p>
+<p>如果设置关闭抢占机制，则直接返回。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> !util.PodPriorityEnabled() || sched.config.DisablePreemption &#123;</span><br><span class="line">	glog.V(<span class="number">3</span>).Infof(<span class="string">"Pod priority feature is not enabled or preemption is disabled by scheduler configuration."</span> +</span><br><span class="line">		<span class="string">" No preemption is performed."</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="string">""</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取当前pod的最新状态。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">preemptor, err := sched.config.PodPreemptor.GetUpdatedPod(preemptor)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.Errorf(<span class="string">"Error getting the updated preemptor pod object: %v"</span>, err)</span><br><span class="line">	<span class="keyword">return</span> <span class="string">""</span>, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>GetUpdatedPod</code>的实现就是去拿pod的对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *podPreemptor)</span> <span class="title">GetUpdatedPod</span><span class="params">(pod *v1.Pod)</span> <span class="params">(*v1.Pod, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> p.Client.CoreV1().Pods(pod.Namespace).Get(pod.Name, metav1.GetOptions&#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着执行抢占的算法。抢占的算法返回预调度节点的信息和因抢占被剔除的pod的信息。具体的抢占算法逻辑下文分析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node, victims, nominatedPodsToClear, err := sched.config.Algorithm.Preempt(preemptor, sched.config.NodeLister, scheduleErr)</span><br></pre></td></tr></table></figure>
+<p>将预调度节点的信息更新到pod的<code>Status.NominatedNodeName</code>属性中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err = sched.config.PodPreemptor.SetNominatedNodeName(preemptor, nodeName)</span><br></pre></td></tr></table></figure>
+<p><code>SetNominatedNodeName</code>的具体实现为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *podPreemptor)</span> <span class="title">SetNominatedNodeName</span><span class="params">(pod *v1.Pod, nominatedNodeName <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	podCopy := pod.DeepCopy()</span><br><span class="line">	podCopy.Status.NominatedNodeName = nominatedNodeName</span><br><span class="line">	_, err := p.Client.CoreV1().Pods(pod.Namespace).UpdateStatus(podCopy)</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着删除因抢占而需要被剔除的pod。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err := sched.config.PodPreemptor.DeletePod(victim)</span><br></pre></td></tr></table></figure>
+<p><code>PodPreemptor.DeletePod</code>的具体实现就是删除具体的pod。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *podPreemptor)</span> <span class="title">DeletePod</span><span class="params">(pod *v1.Pod)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> p.Client.CoreV1().Pods(pod.Namespace).Delete(pod.Name, &amp;metav1.DeleteOptions&#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果抢占算法得出的node对象为nil，则将pod的<code>Status.NominatedNodeName</code>属性设置为空。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Clearing nominated pods should happen outside of "if node != nil". Node could</span></span><br><span class="line"><span class="comment">// be nil when a pod with nominated node name is eligible to preempt again,</span></span><br><span class="line"><span class="comment">// but preemption logic does not find any node for it. In that case Preempt()</span></span><br><span class="line"><span class="comment">// function of generic_scheduler.go returns the pod itself for removal of the annotation.</span></span><br><span class="line"><span class="keyword">for</span> _, p := <span class="keyword">range</span> nominatedPodsToClear &#123;</span><br><span class="line">	rErr := sched.config.PodPreemptor.RemoveNominatedNodeName(p)</span><br><span class="line">	<span class="keyword">if</span> rErr != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Errorf(<span class="string">"Cannot remove nominated node annotation of pod: %v"</span>, rErr)</span><br><span class="line">		<span class="comment">// We do not return as this error is not critical.</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>RemoveNominatedNodeName</code>的具体实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *podPreemptor)</span> <span class="title">RemoveNominatedNodeName</span><span class="params">(pod *v1.Pod)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(pod.Status.NominatedNodeName) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> p.SetNominatedNodeName(pod, <span class="string">""</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="22-nominatednodename">2.2. NominatedNodeName</h2>
+<p><code>Pod.Status.NominatedNodeName</code>的说明：</p>
+<p><code>nominatedNodeName</code>是调度失败的pod抢占别的pod的时候，被抢占pod的运行节点。但在剔除被抢占pod之前该调度失败的pod不会被调度。同时也不保证最终该pod一定会调度到<code>nominatedNodeName</code>的机器上，也可能因为之后资源充足等原因调度到其他节点上。最终该pod会被加到调度的队列中。</p>
+<p>其中加入到调度队列的具体过程如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewConfigFactory</span><span class="params">(args *ConfigFactoryArgs)</span> <span class="title">scheduler</span>.<span class="title">Configurator</span></span> &#123;</span><br><span class="line">  ...</span><br><span class="line">  	<span class="comment">// unscheduled pod queue</span></span><br><span class="line">	args.PodInformer.Informer().AddEventHandler(</span><br><span class="line">			...</span><br><span class="line">			Handler: cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">				AddFunc:    c.addPodToSchedulingQueue,</span><br><span class="line">				UpdateFunc: c.updatePodInSchedulingQueue,</span><br><span class="line">				DeleteFunc: c.deletePodFromSchedulingQueue,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	)</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>addPodToSchedulingQueue:</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *configFactory)</span> <span class="title">addPodToSchedulingQueue</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := c.podQueue.Add(obj.(*v1.Pod)); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		runtime.HandleError(fmt.Errorf(<span class="string">"unable to queue %T: %v"</span>, obj, err))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>PriorityQueue.Add:</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Add adds a pod to the active queue. It should be called only when a new pod</span></span><br><span class="line"><span class="comment">// is added so there is no chance the pod is already in either queue.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">Add</span><span class="params">(pod *v1.Pod)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	p.lock.Lock()</span><br><span class="line">	<span class="keyword">defer</span> p.lock.Unlock()</span><br><span class="line">	err := p.activeQ.Add(pod)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Errorf(<span class="string">"Error adding pod %v/%v to the scheduling queue: %v"</span>, pod.Namespace, pod.Name, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> p.unschedulableQ.get(pod) != <span class="literal">nil</span> &#123;</span><br><span class="line">			glog.Errorf(<span class="string">"Error: pod %v/%v is already in the unschedulable queue."</span>, pod.Namespace, pod.Name)</span><br><span class="line">			p.deleteNominatedPodIfExists(pod)</span><br><span class="line">			p.unschedulableQ.<span class="built_in">delete</span>(pod)</span><br><span class="line">		&#125;</span><br><span class="line">		p.addNominatedPodIfNeeded(pod)</span><br><span class="line">		p.cond.Broadcast()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>addNominatedPodIfNeeded:</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// addNominatedPodIfNeeded adds a pod to nominatedPods if it has a NominatedNodeName and it does not</span></span><br><span class="line"><span class="comment">// already exist in the map. Adding an existing pod is not going to update the pod.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *PriorityQueue)</span> <span class="title">addNominatedPodIfNeeded</span><span class="params">(pod *v1.Pod)</span></span> &#123;</span><br><span class="line">	nnn := NominatedNodeName(pod)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(nnn) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> _, np := <span class="keyword">range</span> p.nominatedPods[nnn] &#123;</span><br><span class="line">			<span class="keyword">if</span> np.UID == pod.UID &#123;</span><br><span class="line">				glog.Errorf(<span class="string">"Pod %v/%v already exists in the nominated map!"</span>, pod.Namespace, pod.Name)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		p.nominatedPods[nnn] = <span class="built_in">append</span>(p.nominatedPods[nnn], pod)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>NominatedNodeName:</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NominatedNodeName returns nominated node name of a Pod.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NominatedNodeName</span><span class="params">(pod *v1.Pod)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> pod.Status.NominatedNodeName</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-genericschedulerpreempt">3. genericScheduler.Preempt</h1>
+<p>抢占算法依然是在<code>ScheduleAlgorithm</code>接口中定义。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ScheduleAlgorithm is an interface implemented by things that know how to schedule pods</span></span><br><span class="line"><span class="comment">// onto machines.</span></span><br><span class="line"><span class="keyword">type</span> ScheduleAlgorithm <span class="keyword">interface</span> &#123;</span><br><span class="line">	Schedule(*v1.Pod, NodeLister) (selectedMachine <span class="keyword">string</span>, err error)</span><br><span class="line">	<span class="comment">// Preempt receives scheduling errors for a pod and tries to create room for</span></span><br><span class="line">	<span class="comment">// the pod by preempting lower priority pods if possible.</span></span><br><span class="line">	<span class="comment">// It returns the node where preemption happened, a list of preempted pods, a</span></span><br><span class="line">	<span class="comment">// list of pods whose nominated node name should be removed, and error if any.</span></span><br><span class="line">	Preempt(*v1.Pod, NodeLister, error) (selectedNode *v1.Node, preemptedPods []*v1.Pod, cleanupNominatedPods []*v1.Pod, err error)</span><br><span class="line">	<span class="comment">// Predicates() returns a pointer to a map of predicate functions. This is</span></span><br><span class="line">	<span class="comment">// exposed for testing.</span></span><br><span class="line">	Predicates() <span class="keyword">map</span>[<span class="keyword">string</span>]FitPredicate</span><br><span class="line">	<span class="comment">// Prioritizers returns a slice of priority config. This is exposed for</span></span><br><span class="line">	<span class="comment">// testing.</span></span><br><span class="line">	Prioritizers() []PriorityConfig</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Preempt</code>的具体实现为<code>genericScheduler</code>结构体。</p>
+<p><code>Preempt</code>的主要实现是找到可以调度的节点和上面因抢占而需要被剔除的pod。</p>
+<p><strong>基本流程如下：</strong></p>
+<ol>
+<li>根据调度失败的原因对所有节点先进行一批筛选，筛选出潜在的被调度节点列表。</li>
+<li>通过<code>selectNodesForPreemption</code>筛选出需要牺牲的pod和其节点。</li>
+<li>基于拓展抢占逻辑再次对上述筛选出来的牺牲者做过滤。</li>
+<li>基于上述的过滤结果，选择一个最终可能因抢占被调度的节点。</li>
+<li>基于上述的候选节点，找出该节点上优先级低于当前被调度pod的牺牲者pod列表。</li>
+</ol>
+<p>完整代码如下：</p>
+<blockquote>
+<p>此部分代码位于pkg/scheduler/core/generic_scheduler.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// preempt finds nodes with pods that can be preempted to make room for "pod" to</span></span><br><span class="line"><span class="comment">// schedule. It chooses one of the nodes and preempts the pods on the node and</span></span><br><span class="line"><span class="comment">// returns 1) the node, 2) the list of preempted pods if such a node is found,</span></span><br><span class="line"><span class="comment">// 3) A list of pods whose nominated node name should be cleared, and 4) any</span></span><br><span class="line"><span class="comment">// possible error.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *genericScheduler)</span> <span class="title">Preempt</span><span class="params">(pod *v1.Pod, nodeLister algorithm.NodeLister, scheduleErr error)</span> <span class="params">(*v1.Node, []*v1.Pod, []*v1.Pod, error)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Scheduler may return various types of errors. Consider preemption only if</span></span><br><span class="line">	<span class="comment">// the error is of type FitError.</span></span><br><span class="line">	fitError, ok := scheduleErr.(*FitError)</span><br><span class="line">	<span class="keyword">if</span> !ok || fitError == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	err := g.cache.UpdateNodeNameToInfoMap(g.cachedNodeInfoMap)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !podEligibleToPreemptOthers(pod, g.cachedNodeInfoMap) &#123;</span><br><span class="line">		glog.V(<span class="number">5</span>).Infof(<span class="string">"Pod %v/%v is not eligible for more preemption."</span>, pod.Namespace, pod.Name)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	allNodes, err := nodeLister.List()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(allNodes) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, ErrNoNodesAvailable</span><br><span class="line">	&#125;</span><br><span class="line">	potentialNodes := nodesWherePreemptionMightHelp(allNodes, fitError.FailedPredicates)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(potentialNodes) == <span class="number">0</span> &#123;</span><br><span class="line">		glog.V(<span class="number">3</span>).Infof(<span class="string">"Preemption will not help schedule pod %v/%v on any node."</span>, pod.Namespace, pod.Name)</span><br><span class="line">		<span class="comment">// In this case, we should clean-up any existing nominated node name of the pod.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, []*v1.Pod&#123;pod&#125;, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	pdbs, err := g.cache.ListPDBs(labels.Everything())</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">  <span class="comment">// 找出可能被抢占的节点</span></span><br><span class="line">	nodeToVictims, err := selectNodesForPreemption(pod, g.cachedNodeInfoMap, potentialNodes, g.predicates,</span><br><span class="line">		g.predicateMetaProducer, g.schedulingQueue, pdbs)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// We will only check nodeToVictims with extenders that support preemption.</span></span><br><span class="line">	<span class="comment">// Extenders which do not support preemption may later prevent preemptor from being scheduled on the nominated</span></span><br><span class="line">	<span class="comment">// node. In that case, scheduler will find a different host for the preemptor in subsequent scheduling cycles.</span></span><br><span class="line">	nodeToVictims, err = g.processPreemptionWithExtenders(pod, nodeToVictims)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 选出最终被抢占的节点</span></span><br><span class="line">	candidateNode := pickOneNodeForPreemption(nodeToVictims)</span><br><span class="line">	<span class="keyword">if</span> candidateNode == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Lower priority pods nominated to run on this node, may no longer fit on</span></span><br><span class="line">	<span class="comment">// this node. So, we should remove their nomination. Removing their</span></span><br><span class="line">	<span class="comment">// nomination updates these pods and moves them to the active queue. It</span></span><br><span class="line">	<span class="comment">// lets scheduler find another place for them.</span></span><br><span class="line">  <span class="comment">// 找出被强占节点上牺牲者pod列表</span></span><br><span class="line">	nominatedPods := g.getLowerPriorityNominatedPods(pod, candidateNode.Name)</span><br><span class="line">	<span class="keyword">if</span> nodeInfo, ok := g.cachedNodeInfoMap[candidateNode.Name]; ok &#123;</span><br><span class="line">		<span class="keyword">return</span> nodeInfo.Node(), nodeToVictims[candidateNode].Pods, nominatedPods, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, fmt.Errorf(</span><br><span class="line">		<span class="string">"preemption failed: the target node %s has been deleted from scheduler cache"</span>,</span><br><span class="line">		candidateNode.Name)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>以下对<code>genericScheduler.Preempt</code>分段进行分析。</p>
+<h2 id="31-selectnodesforpreemption">3.1. selectNodesForPreemption</h2>
+<p><code>selectNodesForPreemption</code>并行地所有节点中找可能被抢占的节点。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nodeToVictims, err := selectNodesForPreemption(pod, g.cachedNodeInfoMap, potentialNodes, g.predicates,g.predicateMetaProducer, g.schedulingQueue, pdbs)</span><br></pre></td></tr></table></figure>
+<p><code>selectNodesForPreemption</code>主要基于<code>selectVictimsOnNode</code>构造一个checkNode的函数，然后并发执行该函数。</p>
+<p><code>selectNodesForPreemption</code>具体实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// selectNodesForPreemption finds all the nodes with possible victims for</span></span><br><span class="line"><span class="comment">// preemption in parallel.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">selectNodesForPreemption</span><span class="params">(pod *v1.Pod,</span></span></span><br><span class="line"><span class="function"><span class="params">	nodeNameToInfo <span class="keyword">map</span>[<span class="keyword">string</span>]*schedulercache.NodeInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">	potentialNodes []*v1.Node,</span></span></span><br><span class="line"><span class="function"><span class="params">	predicates <span class="keyword">map</span>[<span class="keyword">string</span>]algorithm.FitPredicate,</span></span></span><br><span class="line"><span class="function"><span class="params">	metadataProducer algorithm.PredicateMetadataProducer,</span></span></span><br><span class="line"><span class="function"><span class="params">	queue SchedulingQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">	pdbs []*policy.PodDisruptionBudget,</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> <span class="params">(<span class="keyword">map</span>[*v1.Node]*schedulerapi.Victims, error)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	nodeToVictims := <span class="keyword">map</span>[*v1.Node]*schedulerapi.Victims&#123;&#125;</span><br><span class="line">	<span class="keyword">var</span> resultLock sync.Mutex</span><br><span class="line"></span><br><span class="line">	<span class="comment">// We can use the same metadata producer for all nodes.</span></span><br><span class="line">	meta := metadataProducer(pod, nodeNameToInfo)</span><br><span class="line">	checkNode := <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">		nodeName := potentialNodes[i].Name</span><br><span class="line">		<span class="keyword">var</span> metaCopy algorithm.PredicateMetadata</span><br><span class="line">		<span class="keyword">if</span> meta != <span class="literal">nil</span> &#123;</span><br><span class="line">			metaCopy = meta.ShallowCopy()</span><br><span class="line">		&#125;</span><br><span class="line">		pods, numPDBViolations, fits := selectVictimsOnNode(pod, metaCopy, nodeNameToInfo[nodeName], predicates, queue, pdbs)</span><br><span class="line">		<span class="keyword">if</span> fits &#123;</span><br><span class="line">			resultLock.Lock()</span><br><span class="line">			victims := schedulerapi.Victims&#123;</span><br><span class="line">				Pods:             pods,</span><br><span class="line">				NumPDBViolations: numPDBViolations,</span><br><span class="line">			&#125;</span><br><span class="line">			nodeToVictims[potentialNodes[i]] = &amp;victims</span><br><span class="line">			resultLock.Unlock()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	workqueue.Parallelize(<span class="number">16</span>, <span class="built_in">len</span>(potentialNodes), checkNode)</span><br><span class="line">	<span class="keyword">return</span> nodeToVictims, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="311-selectvictimsonnode">3.1.1. selectVictimsOnNode</h3>
+<p><code>selectVictimsOnNode</code>找到应该被抢占的给定节点上的最小pod集合，以便给调度失败的pod安排足够的空间。该函数最终返回的是一个pod的数组。当有更低优先级的pod可能被选择的时候，较高优先级的pod不会被选入该待剔除的pod集合。</p>
+<p><strong>基本流程如下：</strong></p>
+<ol>
+<li>先检查当该节点上所有低于预被调度pod优先级的pod移除后，该pod能否被调度到当前节点上。</li>
+<li>如果上述检查可以，则将该节点的所有低优先级pod按照优先级来排序。</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// selectVictimsOnNode finds minimum set of pods on the given node that should</span></span><br><span class="line"><span class="comment">// be preempted in order to make enough room for "pod" to be scheduled. The</span></span><br><span class="line"><span class="comment">// minimum set selected is subject to the constraint that a higher-priority pod</span></span><br><span class="line"><span class="comment">// is never preempted when a lower-priority pod could be (higher/lower relative</span></span><br><span class="line"><span class="comment">// to one another, not relative to the preemptor "pod").</span></span><br><span class="line"><span class="comment">// The algorithm first checks if the pod can be scheduled on the node when all the</span></span><br><span class="line"><span class="comment">// lower priority pods are gone. If so, it sorts all the lower priority pods by</span></span><br><span class="line"><span class="comment">// their priority and then puts them into two groups of those whose PodDisruptionBudget</span></span><br><span class="line"><span class="comment">// will be violated if preempted and other non-violating pods. Both groups are</span></span><br><span class="line"><span class="comment">// sorted by priority. It first tries to reprieve as many PDB violating pods as</span></span><br><span class="line"><span class="comment">// possible and then does them same for non-PDB-violating pods while checking</span></span><br><span class="line"><span class="comment">// that the "pod" can still fit on the node.</span></span><br><span class="line"><span class="comment">// <span class="doctag">NOTE:</span> This function assumes that it is never called if "pod" cannot be scheduled</span></span><br><span class="line"><span class="comment">// due to pod affinity, node affinity, or node anti-affinity reasons. None of</span></span><br><span class="line"><span class="comment">// these predicates can be satisfied by removing more pods from the node.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">selectVictimsOnNode</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	pod *v1.Pod,</span></span></span><br><span class="line"><span class="function"><span class="params">	meta algorithm.PredicateMetadata,</span></span></span><br><span class="line"><span class="function"><span class="params">	nodeInfo *schedulercache.NodeInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">	fitPredicates <span class="keyword">map</span>[<span class="keyword">string</span>]algorithm.FitPredicate,</span></span></span><br><span class="line"><span class="function"><span class="params">	queue SchedulingQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">	pdbs []*policy.PodDisruptionBudget,</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> <span class="params">([]*v1.Pod, <span class="keyword">int</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	potentialVictims := util.SortableList&#123;CompFunc: util.HigherPriorityPod&#125;</span><br><span class="line">	nodeInfoCopy := nodeInfo.Clone()</span><br><span class="line"></span><br><span class="line">	removePod := <span class="function"><span class="keyword">func</span><span class="params">(rp *v1.Pod)</span></span> &#123;</span><br><span class="line">		nodeInfoCopy.RemovePod(rp)</span><br><span class="line">		<span class="keyword">if</span> meta != <span class="literal">nil</span> &#123;</span><br><span class="line">			meta.RemovePod(rp)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	addPod := <span class="function"><span class="keyword">func</span><span class="params">(ap *v1.Pod)</span></span> &#123;</span><br><span class="line">		nodeInfoCopy.AddPod(ap)</span><br><span class="line">		<span class="keyword">if</span> meta != <span class="literal">nil</span> &#123;</span><br><span class="line">			meta.AddPod(ap, nodeInfoCopy)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// As the first step, remove all the lower priority pods from the node and</span></span><br><span class="line">	<span class="comment">// check if the given pod can be scheduled.</span></span><br><span class="line">	podPriority := util.GetPodPriority(pod)</span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> nodeInfoCopy.Pods() &#123;</span><br><span class="line">		<span class="keyword">if</span> util.GetPodPriority(p) &lt; podPriority &#123;</span><br><span class="line">			potentialVictims.Items = <span class="built_in">append</span>(potentialVictims.Items, p)</span><br><span class="line">			removePod(p)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	potentialVictims.Sort()</span><br><span class="line">	<span class="comment">// If the new pod does not fit after removing all the lower priority pods,</span></span><br><span class="line">	<span class="comment">// we are almost done and this node is not suitable for preemption. The only condition</span></span><br><span class="line">	<span class="comment">// that we should check is if the "pod" is failing to schedule due to pod affinity</span></span><br><span class="line">	<span class="comment">// failure.</span></span><br><span class="line">	<span class="comment">// TODO(bsalamat): Consider checking affinity to lower priority pods if feasible with reasonable performance.</span></span><br><span class="line">	<span class="keyword">if</span> fits, _, err := podFitsOnNode(pod, meta, nodeInfoCopy, fitPredicates, <span class="literal">nil</span>, <span class="literal">nil</span>, queue, <span class="literal">false</span>, <span class="literal">nil</span>); !fits &#123;</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			glog.Warningf(<span class="string">"Encountered error while selecting victims on node %v: %v"</span>, nodeInfo.Node().Name, err)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> victims []*v1.Pod</span><br><span class="line">	numViolatingVictim := <span class="number">0</span></span><br><span class="line">	<span class="comment">// Try to reprieve as many pods as possible. We first try to reprieve the PDB</span></span><br><span class="line">	<span class="comment">// violating victims and then other non-violating ones. In both cases, we start</span></span><br><span class="line">	<span class="comment">// from the highest priority victims.</span></span><br><span class="line">	violatingVictims, nonViolatingVictims := filterPodsWithPDBViolation(potentialVictims.Items, pdbs)</span><br><span class="line">	reprievePod := <span class="function"><span class="keyword">func</span><span class="params">(p *v1.Pod)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">		addPod(p)</span><br><span class="line">		fits, _, _ := podFitsOnNode(pod, meta, nodeInfoCopy, fitPredicates, <span class="literal">nil</span>, <span class="literal">nil</span>, queue, <span class="literal">false</span>, <span class="literal">nil</span>)</span><br><span class="line">		<span class="keyword">if</span> !fits &#123;</span><br><span class="line">			removePod(p)</span><br><span class="line">			victims = <span class="built_in">append</span>(victims, p)</span><br><span class="line">			glog.V(<span class="number">5</span>).Infof(<span class="string">"Pod %v is a potential preemption victim on node %v."</span>, p.Name, nodeInfo.Node().Name)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> fits</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> violatingVictims &#123;</span><br><span class="line">		<span class="keyword">if</span> !reprievePod(p) &#123;</span><br><span class="line">			numViolatingVictim++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Now we try to reprieve non-violating victims.</span></span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> nonViolatingVictims &#123;</span><br><span class="line">		reprievePod(p)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> victims, numViolatingVictim, <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="32-processpreemptionwithextenders">3.2. processPreemptionWithExtenders</h2>
+<p><code>processPreemptionWithExtenders</code>基于<code>selectNodesForPreemption</code>选出的牺牲者进行扩展的抢占逻辑继续筛选牺牲者。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// We will only check nodeToVictims with extenders that support preemption.</span></span><br><span class="line"><span class="comment">// Extenders which do not support preemption may later prevent preemptor from being scheduled on the nominated</span></span><br><span class="line"><span class="comment">// node. In that case, scheduler will find a different host for the preemptor in subsequent scheduling cycles.</span></span><br><span class="line">nodeToVictims, err = g.processPreemptionWithExtenders(pod, nodeToVictims)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>processPreemptionWithExtenders</code>完整代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// processPreemptionWithExtenders processes preemption with extenders</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *genericScheduler)</span> <span class="title">processPreemptionWithExtenders</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	pod *v1.Pod,</span></span></span><br><span class="line"><span class="function"><span class="params">	nodeToVictims <span class="keyword">map</span>[*v1.Node]*schedulerapi.Victims,</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> <span class="params">(<span class="keyword">map</span>[*v1.Node]*schedulerapi.Victims, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(nodeToVictims) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> _, extender := <span class="keyword">range</span> g.extenders &#123;</span><br><span class="line">			<span class="keyword">if</span> extender.SupportsPreemption() &amp;&amp; extender.IsInterested(pod) &#123;</span><br><span class="line">				newNodeToVictims, err := extender.ProcessPreemption(</span><br><span class="line">					pod,</span><br><span class="line">					nodeToVictims,</span><br><span class="line">					g.cachedNodeInfoMap,</span><br><span class="line">				)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					<span class="keyword">if</span> extender.IsIgnorable() &#123;</span><br><span class="line">						glog.Warningf(<span class="string">"Skipping extender %v as it returned error %v and has ignorable flag set"</span>,</span><br><span class="line">							extender, err)</span><br><span class="line">						<span class="keyword">continue</span></span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="comment">// Replace nodeToVictims with new result after preemption. So the</span></span><br><span class="line">				<span class="comment">// rest of extenders can continue use it as parameter.</span></span><br><span class="line">				nodeToVictims = newNodeToVictims</span><br><span class="line"></span><br><span class="line">				<span class="comment">// If node list becomes empty, no preemption can happen regardless of other extenders.</span></span><br><span class="line">				<span class="keyword">if</span> <span class="built_in">len</span>(nodeToVictims) == <span class="number">0</span> &#123;</span><br><span class="line">					<span class="keyword">break</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> nodeToVictims, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="33-pickonenodeforpreemption">3.3. pickOneNodeForPreemption</h2>
+<p><code>pickOneNodeForPreemption</code>从筛选出的node中再挑选一个节点作为最终调度节点。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">candidateNode := pickOneNodeForPreemption(nodeToVictims)</span><br><span class="line"><span class="keyword">if</span> candidateNode == <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span>, <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>pickOneNodeForPreemption</code>完整代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pickOneNodeForPreemption chooses one node among the given nodes. It assumes</span></span><br><span class="line"><span class="comment">// pods in each map entry are ordered by decreasing priority.</span></span><br><span class="line"><span class="comment">// It picks a node based on the following criteria:</span></span><br><span class="line"><span class="comment">// 1. A node with minimum number of PDB violations.</span></span><br><span class="line"><span class="comment">// 2. A node with minimum highest priority victim is picked.</span></span><br><span class="line"><span class="comment">// 3. Ties are broken by sum of priorities of all victims.</span></span><br><span class="line"><span class="comment">// 4. If there are still ties, node with the minimum number of victims is picked.</span></span><br><span class="line"><span class="comment">// 5. If there are still ties, the first such node is picked (sort of randomly).</span></span><br><span class="line"><span class="comment">// The 'minNodes1' and 'minNodes2' are being reused here to save the memory</span></span><br><span class="line"><span class="comment">// allocation and garbage collection time.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pickOneNodeForPreemption</span><span class="params">(nodesToVictims <span class="keyword">map</span>[*v1.Node]*schedulerapi.Victims)</span> *<span class="title">v1</span>.<span class="title">Node</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(nodesToVictims) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	minNumPDBViolatingPods := math.MaxInt32</span><br><span class="line">	<span class="keyword">var</span> minNodes1 []*v1.Node</span><br><span class="line">	lenNodes1 := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> node, victims := <span class="keyword">range</span> nodesToVictims &#123;</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(victims.Pods) == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="comment">// We found a node that doesn't need any preemption. Return it!</span></span><br><span class="line">			<span class="comment">// This should happen rarely when one or more pods are terminated between</span></span><br><span class="line">			<span class="comment">// the time that scheduler tries to schedule the pod and the time that</span></span><br><span class="line">			<span class="comment">// preemption logic tries to find nodes for preemption.</span></span><br><span class="line">			<span class="keyword">return</span> node</span><br><span class="line">		&#125;</span><br><span class="line">		numPDBViolatingPods := victims.NumPDBViolations</span><br><span class="line">		<span class="keyword">if</span> numPDBViolatingPods &lt; minNumPDBViolatingPods &#123;</span><br><span class="line">			minNumPDBViolatingPods = numPDBViolatingPods</span><br><span class="line">			minNodes1 = <span class="literal">nil</span></span><br><span class="line">			lenNodes1 = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> numPDBViolatingPods == minNumPDBViolatingPods &#123;</span><br><span class="line">			minNodes1 = <span class="built_in">append</span>(minNodes1, node)</span><br><span class="line">			lenNodes1++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> lenNodes1 == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> minNodes1[<span class="number">0</span>]</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// There are more than one node with minimum number PDB violating pods. Find</span></span><br><span class="line">	<span class="comment">// the one with minimum highest priority victim.</span></span><br><span class="line">	minHighestPriority := <span class="keyword">int32</span>(math.MaxInt32)</span><br><span class="line">	<span class="keyword">var</span> minNodes2 = <span class="built_in">make</span>([]*v1.Node, lenNodes1)</span><br><span class="line">	lenNodes2 := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; lenNodes1; i++ &#123;</span><br><span class="line">		node := minNodes1[i]</span><br><span class="line">		victims := nodesToVictims[node]</span><br><span class="line">		<span class="comment">// highestPodPriority is the highest priority among the victims on this node.</span></span><br><span class="line">		highestPodPriority := util.GetPodPriority(victims.Pods[<span class="number">0</span>])</span><br><span class="line">		<span class="keyword">if</span> highestPodPriority &lt; minHighestPriority &#123;</span><br><span class="line">			minHighestPriority = highestPodPriority</span><br><span class="line">			lenNodes2 = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> highestPodPriority == minHighestPriority &#123;</span><br><span class="line">			minNodes2[lenNodes2] = node</span><br><span class="line">			lenNodes2++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> lenNodes2 == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> minNodes2[<span class="number">0</span>]</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// There are a few nodes with minimum highest priority victim. Find the</span></span><br><span class="line">	<span class="comment">// smallest sum of priorities.</span></span><br><span class="line">	minSumPriorities := <span class="keyword">int64</span>(math.MaxInt64)</span><br><span class="line">	lenNodes1 = <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; lenNodes2; i++ &#123;</span><br><span class="line">		<span class="keyword">var</span> sumPriorities <span class="keyword">int64</span></span><br><span class="line">		node := minNodes2[i]</span><br><span class="line">		<span class="keyword">for</span> _, pod := <span class="keyword">range</span> nodesToVictims[node].Pods &#123;</span><br><span class="line">			<span class="comment">// We add MaxInt32+1 to all priorities to make all of them &gt;= 0. This is</span></span><br><span class="line">			<span class="comment">// needed so that a node with a few pods with negative priority is not</span></span><br><span class="line">			<span class="comment">// picked over a node with a smaller number of pods with the same negative</span></span><br><span class="line">			<span class="comment">// priority (and similar scenarios).</span></span><br><span class="line">			sumPriorities += <span class="keyword">int64</span>(util.GetPodPriority(pod)) + <span class="keyword">int64</span>(math.MaxInt32+<span class="number">1</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> sumPriorities &lt; minSumPriorities &#123;</span><br><span class="line">			minSumPriorities = sumPriorities</span><br><span class="line">			lenNodes1 = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> sumPriorities == minSumPriorities &#123;</span><br><span class="line">			minNodes1[lenNodes1] = node</span><br><span class="line">			lenNodes1++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> lenNodes1 == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> minNodes1[<span class="number">0</span>]</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// There are a few nodes with minimum highest priority victim and sum of priorities.</span></span><br><span class="line">	<span class="comment">// Find one with the minimum number of pods.</span></span><br><span class="line">	minNumPods := math.MaxInt32</span><br><span class="line">	lenNodes2 = <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; lenNodes1; i++ &#123;</span><br><span class="line">		node := minNodes1[i]</span><br><span class="line">		numPods := <span class="built_in">len</span>(nodesToVictims[node].Pods)</span><br><span class="line">		<span class="keyword">if</span> numPods &lt; minNumPods &#123;</span><br><span class="line">			minNumPods = numPods</span><br><span class="line">			lenNodes2 = <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> numPods == minNumPods &#123;</span><br><span class="line">			minNodes2[lenNodes2] = node</span><br><span class="line">			lenNodes2++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// At this point, even if there are more than one node with the same score,</span></span><br><span class="line">	<span class="comment">// return the first one.</span></span><br><span class="line">	<span class="keyword">if</span> lenNodes2 &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> minNodes2[<span class="number">0</span>]</span><br><span class="line">	&#125;</span><br><span class="line">	glog.Errorf(<span class="string">"Error in logic of node scoring for preemption. We should never reach here!"</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="34-getlowerprioritynominatedpods">3.4. getLowerPriorityNominatedPods</h2>
+<p><code>getLowerPriorityNominatedPods</code>的基本流程如下：</p>
+<ol>
+<li>获取候选节点上的pod列表。</li>
+<li>获取待调度pod的优先级值。</li>
+<li>遍历该节点的pod列表，如果低于待调度pod的优先级则放入低优先级pod列表中。</li>
+</ol>
+<p>genericScheduler.Preempt中相关代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Lower priority pods nominated to run on this node, may no longer fit on</span></span><br><span class="line"><span class="comment">// this node. So, we should remove their nomination. Removing their</span></span><br><span class="line"><span class="comment">// nomination updates these pods and moves them to the active queue. It</span></span><br><span class="line"><span class="comment">// lets scheduler find another place for them.</span></span><br><span class="line">nominatedPods := g.getLowerPriorityNominatedPods(pod, candidateNode.Name)</span><br><span class="line"><span class="keyword">if</span> nodeInfo, ok := g.cachedNodeInfoMap[candidateNode.Name]; ok &#123;</span><br><span class="line">	<span class="keyword">return</span> nodeInfo.Node(), nodeToVictims[candidateNode].Pods, nominatedPods, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>getLowerPriorityNominatedPods</code>代码如下：</p>
+<blockquote>
+<p>此部分代码位于pkg/scheduler/core/generic_scheduler.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// getLowerPriorityNominatedPods returns pods whose priority is smaller than the</span></span><br><span class="line"><span class="comment">// priority of the given "pod" and are nominated to run on the given node.</span></span><br><span class="line"><span class="comment">// Note: We could possibly check if the nominated lower priority pods still fit</span></span><br><span class="line"><span class="comment">// and return those that no longer fit, but that would require lots of</span></span><br><span class="line"><span class="comment">// manipulation of NodeInfo and PredicateMeta per nominated pod. It may not be</span></span><br><span class="line"><span class="comment">// worth the complexity, especially because we generally expect to have a very</span></span><br><span class="line"><span class="comment">// small number of nominated pods per node.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *genericScheduler)</span> <span class="title">getLowerPriorityNominatedPods</span><span class="params">(pod *v1.Pod, nodeName <span class="keyword">string</span>)</span> []*<span class="title">v1</span>.<span class="title">Pod</span></span> &#123;</span><br><span class="line">	pods := g.schedulingQueue.WaitingPodsForNode(nodeName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(pods) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> lowerPriorityPods []*v1.Pod</span><br><span class="line">	podPriority := util.GetPodPriority(pod)</span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> pods &#123;</span><br><span class="line">		<span class="keyword">if</span> util.GetPodPriority(p) &lt; podPriority &#123;</span><br><span class="line">			lowerPriorityPods = <span class="built_in">append</span>(lowerPriorityPods, p)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> lowerPriorityPods</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="4-总结">4. 总结</h1>
+<h2 id="41-schedulerpreempt">4.1. Scheduler.preempt</h2>
+<p>当pod调度失败的时候，会抢占低优先级pod的空间来给高优先级的pod。其中入参为调度失败的pod对象和调度失败的err。</p>
+<p><strong>抢占的基本流程如下：</strong></p>
+<ol>
+<li>判断是否有关闭抢占机制，如果关闭抢占机制则直接返回。</li>
+<li>获取调度失败pod的最新对象数据。</li>
+<li>执行抢占算法<code>Algorithm.Preempt</code>，返回预调度节点和需要被剔除的pod列表。</li>
+<li>将抢占算法返回的node添加到pod的<code>Status.NominatedNodeName</code>中，并删除需要被剔除的pod。</li>
+<li>当抢占算法返回的node是nil的时候，清除pod的<code>Status.NominatedNodeName</code>信息。</li>
+</ol>
+<p>整个抢占流程的最终结果实际上是更新<code>Pod.Status.NominatedNodeName</code>属性的信息。如果抢占算法返回的节点不为空，则将该node更新到<code>Pod.Status.NominatedNodeName</code>中，否则就将<code>Pod.Status.NominatedNodeName</code>设置为空。</p>
+<h2 id="42-genericschedulerpreempt">4.2. genericScheduler.Preempt</h2>
+<p><code>Preempt</code>的主要实现是找到可以调度的节点和上面因抢占而需要被剔除的pod。</p>
+<p><strong>基本流程如下：</strong></p>
+<ol>
+<li>根据调度失败的原因对所有节点先进行一批筛选，筛选出潜在的被调度节点列表。</li>
+<li>通过<code>selectNodesForPreemption</code>筛选出需要牺牲的pod和其节点。</li>
+<li>基于拓展抢占逻辑再次对上述筛选出来的牺牲者做过滤。</li>
+<li>基于上述的过滤结果，选择一个最终可能因抢占被调度的节点。</li>
+<li>基于上述的候选节点，找出该节点上优先级低于当前被调度pod的牺牲者pod列表。</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/scheduler/scheduler.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/scheduler/scheduler.go</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/scheduler/core/generic_scheduler.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/scheduler/core/generic_scheduler.go</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/k8s-source-code-analysis/kube-scheduler/PrioritizeNodes/" data-toggle="tooltip" data-placement="top" title="kube-scheduler源码分析（五）之 优选策略">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/k8s-source-code-analysis/kube-scheduler/findNodesThatFit/" data-toggle="tooltip" data-placement="top" title="kube-scheduler源码分析（四）之 预选策略">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#kube-scheduler源码分析六之-preempt"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">kube-scheduler源码分析（六）之 preempt</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-调用入口"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. 调用入口</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-schedulerpreempt"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. Scheduler.preempt</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-preempt"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">2.1. preempt</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-nominatednodename"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">2.2. NominatedNodeName</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-genericschedulerpreempt"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. genericScheduler.Preempt</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-selectnodesforpreemption"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">3.1. selectNodesForPreemption</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#311-selectvictimsonnode"><span class="toc-nav-number">4.1.1.</span> <span class="toc-nav-text">3.1.1. selectVictimsOnNode</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-processpreemptionwithextenders"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">3.2. processPreemptionWithExtenders</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-pickonenodeforpreemption"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">3.3. pickOneNodeForPreemption</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-getlowerprioritynominatedpods"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">3.4. getLowerPriorityNominatedPods</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-总结"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">4. 总结</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-schedulerpreempt"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">4.1. Scheduler.preempt</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-genericschedulerpreempt"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">4.2. genericScheduler.Preempt</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/golang-notes/principle/understand-channel/">
+    <a href="/article/golang-notes/principle/understand-channel/">
         <h2 class="post-title">
                         
             深入理解Channel
@@ -243,10 +243,10 @@ TODO
 
 <div class="post-preview">
 
-    <a href="/golang-notes/principle/garbage-collection/">
+    <a href="/article/golang-notes/principle/memory-allocation/">
         <h2 class="post-title">
                         
-            垃圾回收
+            内存分配
         </h2>
         <h3 class="post-subtitle">
             
@@ -275,7 +275,7 @@ TODO
 
 <div class="post-preview">
 
-    <a href="/golang-notes/principle/go-scheduler/">
+    <a href="/article/golang-notes/principle/go-scheduler/">
         <h2 class="post-title">
                         
             Goroutine调度
@@ -287,7 +287,8 @@ TODO
             
 本文主要介绍Go的调度模型。
 
-1. 线程实现模型线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
+1. 线程实现模型
+线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
 
 内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。
 
@@ -298,7 +299,7 @@ TODO
 线程模型
 用户线程与KSE之间的对应关系
 特点
-优点......
+优......
         </div>
     </a>
     
@@ -318,7 +319,7 @@ TODO
 
 <div class="post-preview">
 
-    <a href="/golang-notes/web/beego/beego-log/">
+    <a href="/article/golang-notes/web/beego/beego-log/">
         <h2 class="post-title">
                         
             Beego 日志处理
@@ -327,8 +328,9 @@ TODO
             
         </h3>
         <div class="post-content-preview">
-            1. 使用入门beego 的日志处理是基于 logs 模块搭建的，内置了一个变量 BeeLogger，默认已经是 logs.BeeLogger 类型，初始化了 console，也就是默认输出到 console。
-12345678beego.Emergency("this is emergency")beego.Alert("this is alert")beego.Critical("thi......
+            1. 使用入门
+beego 的日志处理是基于 logs 模块搭建的，内置了一个变量 BeeLogger，默认已经是 logs.BeeLogger 类型，初始化了 console，也就是默认输出到 console。
+12345678beego.Emergency("this is emergency")beego.Alert("this is alert")beego.Critical("th......
         </div>
     </a>
     
@@ -348,7 +350,7 @@ TODO
 
 <div class="post-preview">
 
-    <a href="/golang-notes/web/beego/bee/">
+    <a href="/article/golang-notes/web/beego/bee/">
         <h2 class="post-title">
                         
             Bee 工具使用
@@ -357,12 +359,14 @@ TODO
             
         </h3>
         <div class="post-content-preview">
-            1. bee工具bee工具用来进行beego项目的创建、热编译、开发、测试、和部署。
+            1. bee工具
+bee工具用来进行beego项目的创建、热编译、开发、测试、和部署。
 安装:
 1go get github.com/beego/bee
 配置：
 安装完之后，bee可执行文件默认存放在$GOPATH/bin里面，所以要把$GOPATH/bin添加到环境变量中。
-2. bee命令12345678910111213141516Bee is a tool for managing b......
+2. bee命令
+12345678910111213141516Bee is a tool for managing......
         </div>
     </a>
     
@@ -382,7 +386,7 @@ TODO
 
 <div class="post-preview">
 
-    <a href="/golang-notes/web/beego/beego-project/">
+    <a href="/article/golang-notes/web/beego/beego-project/">
         <h2 class="post-title">
                         
             Beego 项目逻辑
@@ -391,11 +395,13 @@ TODO
             
         </h3>
         <div class="post-content-preview">
-            beego项目逻辑1. 路由设置1.1. beego.Router入口文件main.go
+            beego项目逻辑
+1. 路由设置
+1.1. beego.Router
+入口文件main.go
 12345678910package main import (    _ "quickstart/routers"    "github.com/astaxie/beego") func main() &#123;    beego.Run()&#125;
 go中导入包中init函数的执行逻辑
-
-_ ......
+......
         </div>
     </a>
     
@@ -415,7 +421,7 @@ _ ......
 
 <div class="post-preview">
 
-    <a href="/golang-notes/introduction/package/go-modules/">
+    <a href="/article/golang-notes/introduction/package/go-modules/">
         <h2 class="post-title">
                         
             go modules的使用
@@ -424,10 +430,12 @@ _ ......
             
         </h3>
         <div class="post-content-preview">
-            1. Go modules简介Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
-2. go mod的使用项目文件如下：
+            1. Go modules简介
+Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
+2. go mod的使用
+项目文件如下：
 hello.go
-12345678910package mainimport (    "fmt"    "rsc.io/quote")func main()......
+12345678910package mainimport (    "fmt"    "rsc.io/quote")func main......
         </div>
     </a>
     
@@ -447,7 +455,7 @@ hello.go
 
 <div class="post-preview">
 
-    <a href="/golang-notes/introduction/install/">
+    <a href="/article/golang-notes/introduction/install/">
         <h2 class="post-title">
                         
             Golang安装
@@ -456,7 +464,8 @@ hello.go
             
         </h3>
         <div class="post-content-preview">
-            1. install-go.sh12345678910111213141516171819202122232425262728293031323334353637383940414243#!/bin/bashset -xset -e# default versionVERSION=$1VERSION=$&#123;VERSION:-1.14.6&#125;PLATFORM=$2PLATFOR......
+            1. install-go.sh
+12345678910111213141516171819202122232425262728293031323334353637383940414243#!/bin/bashset -xset -e# default versionVERSION=$1VERSION=$&#123;VERSION:-1.14.6&#125;PLATFORM=$2PLATFO......
         </div>
     </a>
     
@@ -476,7 +485,7 @@ hello.go
 
 <div class="post-preview">
 
-    <a href="/golang-notes/framework/cobra/cobra-command/">
+    <a href="/article/golang-notes/framework/cobra/cobra-command/">
         <h2 class="post-title">
                         
             cobra command
@@ -488,8 +497,9 @@ hello.go
             
 本文以cobra-demo为例介绍cobra添加命令的具体使用操作。
 
-0. cobra-democobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
-12345678910111213141516171819202122 $ ./cobra-demo A longer description that......
+0. cobra-demo
+cobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
+12345678910111213141516171819202122 $ ./cobra-demo A longer description tha......
         </div>
     </a>
     
@@ -509,7 +519,7 @@ hello.go
 
 <div class="post-preview">
 
-    <a href="/golang-notes/framework/cobra/cobra-usage/">
+    <a href="/article/golang-notes/framework/cobra/cobra-usage/">
         <h2 class="post-title">
                         
             cobra 介绍
@@ -518,12 +528,13 @@ hello.go
             
         </h3>
         <div class="post-content-preview">
-            1. Cobra简介Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
+            1. Cobra简介
+Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
 Cobra主要包括以下部分
 
 Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
 Args:命令执行相关参数。
-Flags:二进制命令的配置参数，可对应配置文件。参数可分为......
+Flags:二进制命令的配置参数，可对应配置文件。参数可分......
         </div>
     </a>
     
@@ -616,11 +627,11 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -638,7 +649,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -647,10 +658,6 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -670,9 +677,9 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -692,15 +699,13 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -709,6 +714,12 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -798,23 +809,23 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

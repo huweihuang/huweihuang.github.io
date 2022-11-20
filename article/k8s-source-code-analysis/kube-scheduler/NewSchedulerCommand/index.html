@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          kube-scheduler源码分析（一）之 NewSchedulerCommand - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/k8s-source-code-analysis/kube-scheduler/NewSchedulerCommand/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>kube-scheduler源码分析（一）之 NewSchedulerCommand</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-10-03
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>以下代码分析基于 <code>kubernetes v1.12.0</code> 版本。</p>
+</blockquote>
+<p>scheduler的<code>cmd</code>代码目录结构如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">kube-scheduler</span><br><span class="line">├── BUILD</span><br><span class="line">├── OWNERS</span><br><span class="line">├── app            <span class="comment"># app的目录下主要为运行scheduler相关的对象</span></span><br><span class="line">│   ├── BUILD</span><br><span class="line">│   ├── config      </span><br><span class="line">│   │   ├── BUILD</span><br><span class="line">│   │   └── config.go    <span class="comment"># Scheduler的配置对象config</span></span><br><span class="line">│   ├── options      <span class="comment"># options主要记录 Scheduler 使用到的参数</span></span><br><span class="line">│   │   ├── BUILD</span><br><span class="line">│   │   ├── configfile.go</span><br><span class="line">│   │   ├── deprecated.go</span><br><span class="line">│   │   ├── deprecated_test.go</span><br><span class="line">│   │   ├── insecure_serving.go</span><br><span class="line">│   │   ├── insecure_serving_test.go</span><br><span class="line">│   │   ├── options.go    <span class="comment"># 主要包括Options、NewOptions、AddFlags、Config等函数</span></span><br><span class="line">│   │   └── options_test.go</span><br><span class="line">│   └── server.go    <span class="comment"># 主要包括 NewSchedulerCommand、NewSchedulerConfig、Run等函数</span></span><br><span class="line">└── scheduler.go     <span class="comment"># main入口函数</span></span><br></pre></td></tr></table></figure>
+<h1 id="1-main函数">1. <a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/scheduler.go#L34" target="_blank" rel="noopener">Main</a>函数</h1>
+<blockquote>
+<p>此部分的代码为/cmd/kube-scheduler/scheduler.go</p>
+</blockquote>
+<p><code>kube-scheduler</code>的入口函数<code>Main</code>函数，仍然是采用统一的代码风格，使用<a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">Cobra</a>命令行框架。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	rand.Seed(time.Now().UTC().UnixNano())</span><br><span class="line"></span><br><span class="line">	command := app.NewSchedulerCommand()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// <span class="doctag">TODO:</span> once we switch everything over to Cobra commands, we can go back to calling</span></span><br><span class="line">	<span class="comment">// utilflag.InitFlags() (by removing its pflag.Parse() call). For now, we have to set the</span></span><br><span class="line">	<span class="comment">// normalize func and add the go flag set by hand.</span></span><br><span class="line">	pflag.CommandLine.SetNormalizeFunc(utilflag.WordSepNormalizeFunc)</span><br><span class="line">	pflag.CommandLine.AddGoFlagSet(goflag.CommandLine)</span><br><span class="line">	<span class="comment">// utilflag.InitFlags()</span></span><br><span class="line">	logs.InitLogs()</span><br><span class="line">	<span class="keyword">defer</span> logs.FlushLogs()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := command.Execute(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">"%v\n"</span>, err)</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>核心代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化scheduler命令结构体</span></span><br><span class="line">command := app.NewSchedulerCommand()</span><br><span class="line"><span class="comment">// 执行Execute</span></span><br><span class="line">err := command.Execute()</span><br></pre></td></tr></table></figure>
+<h1 id="2-newschedulercommand">2. <a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/app/server.go#L68" target="_blank" rel="noopener">NewSchedulerCommand</a></h1>
+<blockquote>
+<p>此部分的代码为/cmd/kube-scheduler/app/server.go</p>
+</blockquote>
+<p><code>NewSchedulerCommand</code>主要用来构造和初始化SchedulerCommand结构体，</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewSchedulerCommand creates a *cobra.Command object with default parameters</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSchedulerCommand</span><span class="params">()</span> *<span class="title">cobra</span>.<span class="title">Command</span></span> &#123;</span><br><span class="line">	opts, err := options.NewOptions()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Fatalf(<span class="string">"unable to initialize command options: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	cmd := &amp;cobra.Command&#123;</span><br><span class="line">		Use: <span class="string">"kube-scheduler"</span>,</span><br><span class="line">		Long: <span class="string">`The Kubernetes scheduler is a policy-rich, topology-aware,</span></span><br><span class="line"><span class="string">workload-specific function that significantly impacts availability, performance,</span></span><br><span class="line"><span class="string">and capacity. The scheduler needs to take into account individual and collective</span></span><br><span class="line"><span class="string">resource requirements, quality of service requirements, hardware/software/policy</span></span><br><span class="line"><span class="string">constraints, affinity and anti-affinity specifications, data locality, inter-workload</span></span><br><span class="line"><span class="string">interference, deadlines, and so on. Workload-specific requirements will be exposed</span></span><br><span class="line"><span class="string">through the API as necessary.`</span>,</span><br><span class="line">		Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">			verflag.PrintAndExitIfRequested()</span><br><span class="line">			utilflag.PrintFlags(cmd.Flags())</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> <span class="built_in">len</span>(args) != <span class="number">0</span> &#123;</span><br><span class="line">				fmt.Fprint(os.Stderr, <span class="string">"arguments are not supported\n"</span>)</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> errs := opts.Validate(); <span class="built_in">len</span>(errs) &gt; <span class="number">0</span> &#123;</span><br><span class="line">				fmt.Fprintf(os.Stderr, <span class="string">"%v\n"</span>, utilerrors.NewAggregate(errs))</span><br><span class="line">				os.Exit(<span class="number">1</span>)</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> <span class="built_in">len</span>(opts.WriteConfigTo) &gt; <span class="number">0</span> &#123;</span><br><span class="line">				<span class="keyword">if</span> err := options.WriteConfigFile(opts.WriteConfigTo, &amp;opts.ComponentConfig); err != <span class="literal">nil</span> &#123;</span><br><span class="line">					fmt.Fprintf(os.Stderr, <span class="string">"%v\n"</span>, err)</span><br><span class="line">					os.Exit(<span class="number">1</span>)</span><br><span class="line">				&#125;</span><br><span class="line">				glog.Infof(<span class="string">"Wrote configuration to: %s\n"</span>, opts.WriteConfigTo)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			c, err := opts.Config()</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				fmt.Fprintf(os.Stderr, <span class="string">"%v\n"</span>, err)</span><br><span class="line">				os.Exit(<span class="number">1</span>)</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			stopCh := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">			<span class="keyword">if</span> err := Run(c.Complete(), stopCh); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				fmt.Fprintf(os.Stderr, <span class="string">"%v\n"</span>, err)</span><br><span class="line">				os.Exit(<span class="number">1</span>)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	opts.AddFlags(cmd.Flags())</span><br><span class="line">	cmd.MarkFlagFilename(<span class="string">"config"</span>, <span class="string">"yaml"</span>, <span class="string">"yml"</span>, <span class="string">"json"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>核心代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 构造option</span></span><br><span class="line">opts, err := options.NewOptions()</span><br><span class="line"><span class="comment">// 初始化config对象</span></span><br><span class="line">c, err := opts.Config()</span><br><span class="line"><span class="comment">// 执行run函数</span></span><br><span class="line">err := Run(c.Complete(), stopCh)</span><br><span class="line"><span class="comment">// 添加参数</span></span><br><span class="line">opts.AddFlags(cmd.Flags())</span><br></pre></td></tr></table></figure>
+<h2 id="21-newoptions">2.1. NewOptions</h2>
+<p>NewOptions主要用来构造SchedulerServer使用的参数和上下文，其中核心参数是<code>KubeSchedulerConfiguration</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opts, err := options.NewOptions()</span><br></pre></td></tr></table></figure>
+<p><strong>NewOptions</strong>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewOptions returns default scheduler app options.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewOptions</span><span class="params">()</span> <span class="params">(*Options, error)</span></span> &#123;</span><br><span class="line">	cfg, err := newDefaultComponentConfig()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	hhost, hport, err := splitHostIntPort(cfg.HealthzBindAddress)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	o := &amp;Options&#123;</span><br><span class="line">		ComponentConfig: *cfg,</span><br><span class="line">		SecureServing:   <span class="literal">nil</span>, <span class="comment">// <span class="doctag">TODO:</span> enable with apiserveroptions.NewSecureServingOptions()</span></span><br><span class="line">		CombinedInsecureServing: &amp;CombinedInsecureServingOptions&#123;</span><br><span class="line">			Healthz: &amp;apiserveroptions.DeprecatedInsecureServingOptions&#123;</span><br><span class="line">				BindNetwork: <span class="string">"tcp"</span>,</span><br><span class="line">			&#125;,</span><br><span class="line">			Metrics: &amp;apiserveroptions.DeprecatedInsecureServingOptions&#123;</span><br><span class="line">				BindNetwork: <span class="string">"tcp"</span>,</span><br><span class="line">			&#125;,</span><br><span class="line">			BindPort:    hport,</span><br><span class="line">			BindAddress: hhost,</span><br><span class="line">		&#125;,</span><br><span class="line">		Authentication: <span class="literal">nil</span>, <span class="comment">// <span class="doctag">TODO:</span> enable with apiserveroptions.NewDelegatingAuthenticationOptions()</span></span><br><span class="line">		Authorization:  <span class="literal">nil</span>, <span class="comment">// <span class="doctag">TODO:</span> enable with apiserveroptions.NewDelegatingAuthorizationOptions()</span></span><br><span class="line">		Deprecated: &amp;DeprecatedOptions&#123;</span><br><span class="line">			UseLegacyPolicyConfig:    <span class="literal">false</span>,</span><br><span class="line">			PolicyConfigMapNamespace: metav1.NamespaceSystem,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> o, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="22-optionsconfig">2.2. Options.Config</h2>
+<p>Config初始化调度器的配置对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c, err := opts.Config()</span><br></pre></td></tr></table></figure>
+<p>Config函数主要执行以下操作：</p>
+<ul>
+<li>构建scheduler client、leaderElectionClient、eventClient。</li>
+<li>创建event recorder</li>
+<li>设置leader选举</li>
+<li>创建informer对象，主要函数有<code>NewSharedInformerFactory</code>和<code>NewPodInformer</code>。</li>
+</ul>
+<p>Config具体代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Config return a scheduler config object</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Options)</span> <span class="title">Config</span><span class="params">()</span> <span class="params">(*schedulerappconfig.Config, error)</span></span> &#123;</span><br><span class="line">	c := &amp;schedulerappconfig.Config&#123;&#125;</span><br><span class="line">	<span class="keyword">if</span> err := o.ApplyTo(c); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// prepare kube clients.</span></span><br><span class="line">	client, leaderElectionClient, eventClient, err := createClients(c.ComponentConfig.ClientConnection, o.Master, c.ComponentConfig.LeaderElection.RenewDeadline.Duration)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Prepare event clients.</span></span><br><span class="line">	eventBroadcaster := record.NewBroadcaster()</span><br><span class="line">	recorder := eventBroadcaster.NewRecorder(legacyscheme.Scheme, corev1.EventSource&#123;Component: c.ComponentConfig.SchedulerName&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Set up leader election if enabled.</span></span><br><span class="line">	<span class="keyword">var</span> leaderElectionConfig *leaderelection.LeaderElectionConfig</span><br><span class="line">	<span class="keyword">if</span> c.ComponentConfig.LeaderElection.LeaderElect &#123;</span><br><span class="line">		leaderElectionConfig, err = makeLeaderElectionConfig(c.ComponentConfig.LeaderElection, leaderElectionClient, recorder)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	c.Client = client</span><br><span class="line">	c.InformerFactory = informers.NewSharedInformerFactory(client, <span class="number">0</span>)</span><br><span class="line">	c.PodInformer = factory.NewPodInformer(client, <span class="number">0</span>)</span><br><span class="line">	c.EventClient = eventClient</span><br><span class="line">	c.Recorder = recorder</span><br><span class="line">	c.Broadcaster = eventBroadcaster</span><br><span class="line">	c.LeaderElection = leaderElectionConfig</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> c, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="23-addflags">2.3. AddFlags</h2>
+<p><code>AddFlags</code>为SchedulerServer添加指定的参数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opts.AddFlags(cmd.Flags())</span><br></pre></td></tr></table></figure>
+<p>AddFlags函数的具体代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AddFlags adds flags for the scheduler options.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(o *Options)</span> <span class="title">AddFlags</span><span class="params">(fs *pflag.FlagSet)</span></span> &#123;</span><br><span class="line">	fs.StringVar(&amp;o.ConfigFile, <span class="string">"config"</span>, o.ConfigFile, <span class="string">"The path to the configuration file. Flags override values in this file."</span>)</span><br><span class="line">	fs.StringVar(&amp;o.WriteConfigTo, <span class="string">"write-config-to"</span>, o.WriteConfigTo, <span class="string">"If set, write the configuration values to this file and exit."</span>)</span><br><span class="line">	fs.StringVar(&amp;o.Master, <span class="string">"master"</span>, o.Master, <span class="string">"The address of the Kubernetes API server (overrides any value in kubeconfig)"</span>)</span><br><span class="line"></span><br><span class="line">	o.SecureServing.AddFlags(fs)</span><br><span class="line">	o.CombinedInsecureServing.AddFlags(fs)</span><br><span class="line">	o.Authentication.AddFlags(fs)</span><br><span class="line">	o.Authorization.AddFlags(fs)</span><br><span class="line">	o.Deprecated.AddFlags(fs, &amp;o.ComponentConfig)</span><br><span class="line"></span><br><span class="line">	leaderelectionconfig.BindFlags(&amp;o.ComponentConfig.LeaderElection.LeaderElectionConfiguration, fs)</span><br><span class="line">	utilfeature.DefaultFeatureGate.AddFlag(fs)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-run">3. <a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/app/server.go#L126" target="_blank" rel="noopener">Run</a></h1>
+<blockquote>
+<p>此部分的代码为/cmd/kube-scheduler/app/server.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err := Run(c.Complete(), stopCh)</span><br></pre></td></tr></table></figure>
+<p><code>Run</code>运行一个不退出的常驻进程，来执行scheduler的相关操作。</p>
+<p>Run函数的主要内容如下：</p>
+<ul>
+<li>通过scheduler config来创建scheduler的结构体。</li>
+<li>运行event broadcaster、healthz server、metrics server。</li>
+<li>运行所有的informer并在调度前等待cache的同步（重点）。</li>
+<li>执行<code>sched.Run()</code>来运行scheduler的调度逻辑。</li>
+<li>如果多个scheduler并开启了<code>LeaderElect</code>，则执行leader选举。</li>
+</ul>
+<p>以下对重点代码分开分析：</p>
+<h2 id="31-newschedulerconfig">3.1. NewSchedulerConfig</h2>
+<blockquote>
+<p>NewSchedulerConfig初始化SchedulerConfig（此部分具体逻辑待后续专门分析），最后初始化生成scheduler结构体。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Build a scheduler config from the provided algorithm source.</span></span><br><span class="line">schedulerConfig, err := NewSchedulerConfig(c)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Create the scheduler.</span></span><br><span class="line">sched := scheduler.NewFromConfig(schedulerConfig)</span><br></pre></td></tr></table></figure>
+<h2 id="32-informerfactorystart">3.2. InformerFactory.Start</h2>
+<p>运行PodInformer，并运行InformerFactory。此部分的逻辑为client-go的informer机制，在<a href="https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html">Informer机制</a>中有详细分析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start all informers.</span></span><br><span class="line"><span class="keyword">go</span> c.PodInformer.Informer().Run(stopCh)</span><br><span class="line">c.InformerFactory.Start(stopCh)</span><br></pre></td></tr></table></figure>
+<h2 id="33-waitforcachesync">3.3. WaitForCacheSync</h2>
+<p>在调度前等待cache同步。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Wait for all caches to sync before scheduling.</span></span><br><span class="line">c.InformerFactory.WaitForCacheSync(stopCh)</span><br><span class="line">controller.WaitForCacheSync(<span class="string">"scheduler"</span>, stopCh, c.PodInformer.Informer().HasSynced)</span><br></pre></td></tr></table></figure>
+<h3 id="331-informerfactorywaitforcachesync">3.3.1. InformerFactory.WaitForCacheSync</h3>
+<p><code>InformerFactory.WaitForCacheSync</code>等待所有启动的informer的cache进行同步，保持本地的store信息与etcd的信息是最新一致的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WaitForCacheSync waits for all started informers' cache were synced.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *sharedInformerFactory)</span> <span class="title">WaitForCacheSync</span><span class="params">(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">map</span>[<span class="title">reflect</span>.<span class="title">Type</span>]<span class="title">bool</span></span> &#123;</span><br><span class="line">	informers := <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">map</span>[<span class="title">reflect</span>.<span class="title">Type</span>]<span class="title">cache</span>.<span class="title">SharedIndexInformer</span></span> &#123;</span><br><span class="line">		f.lock.Lock()</span><br><span class="line">		<span class="keyword">defer</span> f.lock.Unlock()</span><br><span class="line"></span><br><span class="line">		informers := <span class="keyword">map</span>[reflect.Type]cache.SharedIndexInformer&#123;&#125;</span><br><span class="line">		<span class="keyword">for</span> informerType, informer := <span class="keyword">range</span> f.informers &#123;</span><br><span class="line">			<span class="keyword">if</span> f.startedInformers[informerType] &#123;</span><br><span class="line">				informers[informerType] = informer</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> informers</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	res := <span class="keyword">map</span>[reflect.Type]<span class="keyword">bool</span>&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> informType, informer := <span class="keyword">range</span> informers &#123;</span><br><span class="line">		res[informType] = cache.WaitForCacheSync(stopCh, informer.HasSynced)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着调用<code>cache.WaitForCacheSync</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WaitForCacheSync waits for caches to populate.  It returns true if it was successful, false</span></span><br><span class="line"><span class="comment">// if the controller should shutdown</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WaitForCacheSync</span><span class="params">(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, cacheSyncs ...InformerSynced)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	err := wait.PollUntil(syncedPollPeriod,</span><br><span class="line">		<span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">			<span class="keyword">for</span> _, syncFunc := <span class="keyword">range</span> cacheSyncs &#123;</span><br><span class="line">				<span class="keyword">if</span> !syncFunc() &#123;</span><br><span class="line">					<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">		&#125;,</span><br><span class="line">		stopCh)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.V(<span class="number">2</span>).Infof(<span class="string">"stop requested"</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	glog.V(<span class="number">4</span>).Infof(<span class="string">"caches populated"</span>)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="332-controllerwaitforcachesync">3.3.2. controller.WaitForCacheSync</h3>
+<p><code>controller.WaitForCacheSync</code>是对<code>cache.WaitForCacheSync</code>的一层封装，通过不同的controller的名字来记录不同controller等待cache同步。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">controller.WaitForCacheSync(<span class="string">"scheduler"</span>, stop, s.PodInformer.Informer().HasSynced)</span><br></pre></td></tr></table></figure>
+<p><code>controller.WaitForCacheSync</code>具体代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WaitForCacheSync is a wrapper around cache.WaitForCacheSync that generates log messages</span></span><br><span class="line"><span class="comment">// indicating that the controller identified by controllerName is waiting for syncs, followed by</span></span><br><span class="line"><span class="comment">// either a successful or failed sync.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WaitForCacheSync</span><span class="params">(controllerName <span class="keyword">string</span>, stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, cacheSyncs ...cache.InformerSynced)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	glog.Infof(<span class="string">"Waiting for caches to sync for %s controller"</span>, controllerName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> !cache.WaitForCacheSync(stopCh, cacheSyncs...) &#123;</span><br><span class="line">		utilruntime.HandleError(fmt.Errorf(<span class="string">"Unable to sync caches for %s controller"</span>, controllerName))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	glog.Infof(<span class="string">"Caches are synced for %s controller"</span>, controllerName)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="34-leaderelection">3.4. LeaderElection</h2>
+<p>如果有多个scheduler，并开启leader选举，则运行<code>LeaderElector</code>直到选举结束或退出。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If leader election is enabled, run via LeaderElector until done and exit.</span></span><br><span class="line"><span class="keyword">if</span> c.LeaderElection != <span class="literal">nil</span> &#123;</span><br><span class="line">	c.LeaderElection.Callbacks = leaderelection.LeaderCallbacks&#123;</span><br><span class="line">		OnStartedLeading: run,</span><br><span class="line">		OnStoppedLeading: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			utilruntime.HandleError(fmt.Errorf(<span class="string">"lost master"</span>))</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	leaderElector, err := leaderelection.NewLeaderElector(*c.LeaderElection)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"couldn't create leader elector: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	leaderElector.Run(ctx)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> fmt.Errorf(<span class="string">"lost lease"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="35-schedulerrun">3.5. Scheduler.Run</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Prepare a reusable run function.</span></span><br><span class="line">run := <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">	sched.Run()</span><br><span class="line">	&lt;-ctx.Done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ctx, cancel := context.WithCancel(context.TODO()) <span class="comment">// TODO once Run() accepts a context, it should be used here</span></span><br><span class="line"><span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-stopCh:</span><br><span class="line">		cancel()</span><br><span class="line">	<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">	&#125;</span><br><span class="line">&#125;()</span><br><span class="line">...</span><br><span class="line">run(ctx)</span><br></pre></td></tr></table></figure>
+<p><code>Scheduler.Run</code>先等待cache同步，然后开启调度逻辑的goroutine。</p>
+<p>Scheduler.Run的具体代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run begins watching and scheduling. It waits for cache to be synced, then starts a goroutine and returns immediately.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(sched *Scheduler)</span> <span class="title">Run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !sched.config.WaitForCacheSync() &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> wait.Until(sched.scheduleOne, <span class="number">0</span>, sched.config.StopEverything)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上是对<code>/cmd/kube-scheduler/scheduler.go</code>部分代码的分析，<code>Scheduler.Run</code>后续的具体代码位于<code>pkg/scheduler/scheduler.go</code>待后续文章分析。</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://github.com/kubernetes/kubernetes/tree/v1.12.0/cmd/kube-scheduler" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/tree/v1.12.0/cmd/kube-scheduler</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/scheduler.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/scheduler.go</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/app/server.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kube-scheduler/app/server.go</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/k8s-source-code-analysis/kube-scheduler/registerAlgorithmProvider/" data-toggle="tooltip" data-placement="top" title="kube-scheduler源码分析（二）之 调度算法">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/k8s-source-code-analysis/kube-controller-manager/Informer/" data-toggle="tooltip" data-placement="top" title="kube-controller-manager源码分析（三）之 Informer机制">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-main函数"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Main函数</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-newschedulercommand"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. NewSchedulerCommand</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-newoptions"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. NewOptions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-optionsconfig"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. Options.Config</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-addflags"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. AddFlags</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-run"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Run</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-newschedulerconfig"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. NewSchedulerConfig</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-informerfactorystart"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. InformerFactory.Start</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-waitforcachesync"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. WaitForCacheSync</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#331-informerfactorywaitforcachesync"><span class="toc-nav-number">3.3.1.</span> <span class="toc-nav-text">3.3.1. InformerFactory.WaitForCacheSync</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#332-controllerwaitforcachesync"><span class="toc-nav-number">3.3.2.</span> <span class="toc-nav-text">3.3.2. controller.WaitForCacheSync</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-leaderelection"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">3.4. LeaderElection</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#35-schedulerrun"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">3.5. Scheduler.Run</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

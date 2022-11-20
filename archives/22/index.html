@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,37 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/network/docker-network/">
-        <h2 class="post-title">
-                        
-            Docker网络
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Docker的网络基础1.1. Network Namespace不同的网络命名空间中，协议栈是独立的，完全隔离，彼此之间无法通信。同一个网络命名空间有独立的路由表和独立的Iptables/Netfilter来提供包的转发、NAT、IP包过滤等功能。
-1.1.1. 网络命名空间的实现将与网络协议栈相关的全局变量变成一个Net Namespace变量的成员，然后在调用协议栈函数中加入一个......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/network/kubernetes-network/">
+    <a href="/article/kubernetes-notes/network/kubernetes-network/">
         <h2 class="post-title">
                         
             K8S网络
@@ -250,10 +220,12 @@
             
         </h3>
         <div class="post-content-preview">
-            1. kubernetes网络模型1.1. 基础原则
+            1. kubernetes网络模型
+1.1. 基础原则
+
 每个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、扁平的网络空间中，不管是否运行在同一Node上都可以通过Pod的IP来访问。
 k8s中Pod的IP是最小粒度IP。同一个Pod内所有的容器共享一个网络堆栈，该模型称为IP-per-Pod模型。
-Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口......
+Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
         </div>
     </a>
     
@@ -273,7 +245,40 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口......
 
 <div class="post-preview">
 
-    <a href="/linux-notes/mysql/curd-commands/">
+    <a href="/article/kubernetes-notes/network/docker-network/">
+        <h2 class="post-title">
+                        
+            Docker网络
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Docker的网络基础
+1.1. Network Namespace
+不同的网络命名空间中，协议栈是独立的，完全隔离，彼此之间无法通信。同一个网络命名空间有独立的路由表和独立的Iptables/Netfilter来提供包的转发、NAT、IP包过滤等功能。
+1.1.1. 网络命名空间的实现
+将与网络协议栈相关的全局变量变成一个Net Namespace变量的成员，然后在调用协议栈函数中加......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/mysql/curd-commands/">
         <h2 class="post-title">
                         
             Mysql常用命令之表内容操作
@@ -282,7 +287,9 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口......
             
         </h3>
         <div class="post-content-preview">
-            4. 表内容操作4.1. 增123456insert into 表 (列名,列名...) values (值,值,...)insert into 表 (列名,列名...) values (值,值,...),(值,值,值...)insert into 表 (列名,列名...) select (列名,列名...) from 表例：insert into tab1(name,email) valu......
+            4. 表内容操作
+4.1. 增
+123456insert into 表 (列名,列名...) values (值,值,...)insert into 表 (列名,列名...) values (值,值,...),(值,值,值...)insert into 表 (列名,列名...) select (列名,列名...) from 表例：insert into tab1(name,email) va......
         </div>
     </a>
     
@@ -302,39 +309,7 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口......
 
 <div class="post-preview">
 
-    <a href="/linux-notes/mysql/system-manage/">
-        <h2 class="post-title">
-                        
-            Mysql常用命令之系统管理
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 系统管理1.1. 连接mysql快速部署docker mysql
-1docker pull mysql:5.7
-启动MySQL
-123mkdir -p ~/data/mysqldocker run --name my-mysql -v ~/data/mysql:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d my......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/linux-notes/mysql/table-operation/">
+    <a href="/article/linux-notes/mysql/table-operation/">
         <h2 class="post-title">
                         
             Mysql常用命令之数据表操作
@@ -343,8 +318,11 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口......
             
         </h3>
         <div class="post-content-preview">
-            2. 数据库操作12345678#创建数据库create database &lt;数据库名&gt;#显示数据库show databases#删除数据drop database &lt;数据库名&gt;
-3. 数据表操作3.1. 创建表1234567create table 表名(    列名  类型  是否可以为空，    列名  类型  是否可以为空)ENGINE=InnoDB DEFA......
+            2. 数据库操作
+12345678#创建数据库create database &lt;数据库名&gt;#显示数据库show databases#删除数据drop database &lt;数据库名&gt;
+3. 数据表操作
+3.1. 创建表
+1234567create table 表名(    列名  类型  是否可以为空，    列名  类型  是否可以为空)ENGINE=InnoDB D......
         </div>
     </a>
     
@@ -364,21 +342,21 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/concepts/object/kubernetes-basic-concepts/">
+    <a href="/article/linux-notes/mysql/system-manage/">
         <h2 class="post-title">
                         
-            Kubernetes基本概念
+            Mysql常用命令之系统管理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Master集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
-1.1. Master的组件
-kube-apiserver：资源增删改查的入口
-kube-controller-manager：资源对象的大总管
-kube-scheduler：负责资源调度（Pod调度）
-etcd Server:kubernetes......
+            1. 系统管理
+1.1. 连接mysql
+快速部署docker mysql
+1docker pull mysql:5.7
+启动MySQL
+123mkdir -p ~/data/mysqldocker run --name my-mysql -v ~/data/mysql:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d ......
         </div>
     </a>
     
@@ -388,7 +366,7 @@ etcd Server:kubernetes......
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
             
         </div>
     
@@ -398,38 +376,7 @@ etcd Server:kubernetes......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/concepts/pod/pod-operation/">
-        <h2 class="post-title">
-                        
-            Pod伸缩与升级
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Pod伸缩k8s中RC的用来保持集群中始终运行指定数目的实例，通过RC的scale机制可以完成Pod的扩容和缩容（伸缩）。
-1.1. 手动伸缩（scale）1kubectl scale rc redis-slave --replicas=3
-1.2. 自动伸缩（HPA）Horizontal Pod Autoscaler（HPA）控制器用于实现基于CPU使用率进行自动Pod伸缩的功能。H......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/concepts/configmap/pod-configmap/">
+    <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/">
         <h2 class="post-title">
                         
             ConfigMap
@@ -438,14 +385,16 @@ etcd Server:kubernetes......
             
         </h3>
         <div class="post-content-preview">
-            Pod的配置管理Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。
-1. ConfigMap：容器应用的配置管理使用场景：
+            Pod的配置管理
+Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。
+1. ConfigMap：容器应用的配置管理
+使用场景：
 
 生成为容器内的环境变量。
 设置容器启动命令的启动参数（需设置为环境变量）。
 以Volume的形式挂载为容器内部的文件或目录。
 
-ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可以表......
+ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可......
         </div>
     </a>
     
@@ -465,25 +414,23 @@ ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应�
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/concepts/pod/pod-probe/">
+    <a href="/article/kubernetes-notes/concepts/object/kubernetes-basic-concepts/">
         <h2 class="post-title">
                         
-            Pod健康检查
+            Kubernetes基本概念
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Pod健康检查Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。
-1. 探针类型1. livenessProbe(存活探针)
+            1. Master
+集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
+1.1. Master的组件
 
-表明容器是否正在运行。
-如果存活探测失败，则 kubelet 会杀死容器，并且容器将受到其 重启策略的影响。
-如果容器不提供存活探针，则默认状态为 Success。
-
-2. readinessProbe(就绪探针)
-
-表明容......
+kube-apiserver：资源增删改查的入口
+kube-controller-manager：资源对象的大总管
+kube-scheduler：负责资源调度（Pod调度）
+etcd Server:kubernet......
         </div>
     </a>
     
@@ -503,7 +450,73 @@ ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应�
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/concepts/pod/pod-lifecycle/">
+    <a href="/article/kubernetes-notes/concepts/pod/pod-definition/">
+        <h2 class="post-title">
+                        
+            Pod定义文件
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Pod的基本用法
+1.1. 说明
+
+Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器的主程序需要一直在前台运行，而不是后台运行。应用可以改造成前台运行的方式，例如Go语言的程序，直接运行二进制文件；java语言则运行主类；tomcat程序可以写个运行脚本。或者通过supervisor的进程管理工具，即supervisor在前台运行，应用程序由supervisor管理在后台运......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-operation/">
+        <h2 class="post-title">
+                        
+            Pod伸缩与升级
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Pod伸缩
+k8s中RC的用来保持集群中始终运行指定数目的实例，通过RC的scale机制可以完成Pod的扩容和缩容（伸缩）。
+1.1. 手动伸缩（scale）
+1kubectl scale rc redis-slave --replicas=3
+1.2. 自动伸缩（HPA）
+Horizontal Pod Autoscaler（HPA）控制器用于实现基于CPU使用率进行自动Pod伸缩的功......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-lifecycle/">
         <h2 class="post-title">
                         
             Pod生命周期
@@ -512,9 +525,9 @@ ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应�
             
         </h3>
         <div class="post-content-preview">
-            1. Pod phasePod的phase是Pod生命周期中的简单宏观描述，定义在Pod的PodStatus对象的phase 字段中。
+            1. Pod phase
+Pod的phase是Pod生命周期中的简单宏观描述，定义在Pod的PodStatus对象的phase 字段中。
 phase有以下几种值：
-
 
 
 
@@ -622,11 +635,11 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -644,7 +657,7 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -653,10 +666,6 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -676,9 +685,9 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -698,15 +707,13 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -715,6 +722,12 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -804,23 +817,23 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Kubernetes基本概念 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/concepts/object/kubernetes-basic-concepts/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                        </div>
+                        <h1>Kubernetes基本概念</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-08-13
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="1-master">1. Master</h1>
+<p>集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。</p>
+<h2 id="11-master的组件">1.1. Master的组件</h2>
+<ul>
+<li>kube-apiserver：资源增删改查的入口</li>
+<li>kube-controller-manager：资源对象的大总管</li>
+<li>kube-scheduler：负责资源调度（Pod调度）</li>
+<li>etcd Server:kubernetes的所有的资源对象的数据保存在etcd中。</li>
+</ul>
+<h1 id="2-node">2. Node</h1>
+<p>Node是集群的工作负载节点，默认情况kubelet会向Master注册自己，一旦Node被纳入集群管理范围，kubelet会定时向Master汇报自身的情报，包括操作系统，Docker版本，机器资源情况等。</p>
+<p>如果Node超过指定时间不上报信息，会被Master判断为“失联”，标记为Not Ready，随后Master会触发Pod转移。</p>
+<h2 id="21-node的组件">2.1. Node的组件</h2>
+<ul>
+<li>kubelet:Pod的管家，与Master通信</li>
+<li>kube-proxy：实现kubernetes Service的通信与负载均衡机制的重要组件</li>
+<li>Docker：容器的创建和管理</li>
+</ul>
+<h2 id="22-node相关命令">2.2. Node相关命令</h2>
+<p>kubectl get nodes</p>
+<p>kuebctl describe node {node_name}</p>
+<h2 id="23-describe命令的node信息">2.3. describe命令的Node信息</h2>
+<ul>
+<li>Node基本信息：名称、标签、创建时间等</li>
+<li>Node当前的状态，Node启动后会进行自检工作，磁盘是否满，内存是否不足，若都正常则切换为Ready状态。</li>
+<li>Node的主机地址与主机名</li>
+<li>Node上的资源总量：CPU,内存，最大可调度Pod数量等</li>
+<li>Node可分配资源量：当前Node可用于分配的资源量</li>
+<li>主机系统信息：主机唯一标识符UUID，Linux kernel版本号，操作系统，kubernetes版本，kubelet与kube-proxy版本</li>
+<li>当前正在运行的Pod列表及概要信息</li>
+<li>已分配的资源使用概要，例如资源申请的最低、最大允许使用量占系统总量的百分比</li>
+<li>Node相关的Event信息。</li>
+</ul>
+<h1 id="3-pod">3. Pod</h1>
+<p>Pod是Kubernetes中操作的基本单元。每个Pod中有个根容器(Pause容器)，Pause容器的状态代表整个容器组的状态，其他业务容器共享Pause的IP，即Pod IP，共享Pause挂载的Volume，这样简化了同个Pod中不同容器之间的网络问题和文件共享问题。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578930/article/kubernetes/concept/pod.png" alt="pod"></p>
+<ol>
+<li>Kubernetes集群中，同宿主机的或不同宿主机的Pod之间要求能够TCP/IP直接通信，因此采用虚拟二层网络技术来实现，例如Flannel，Openvswitch(OVS)等，这样在同个集群中，不同的宿主机的Pod IP为不同IP段的IP，集群中的所有Pod IP都是唯一的，不同Pod之间可以直接通信。</li>
+<li>Pod有两种类型：普通Pod和静态Pod。静态Pod即不通过K8S调度和创建，直接在某个具体的Node机器上通过具体的文件来启动。普通Pod则是由K8S创建、调度，同时数据存放在ETCD中。</li>
+<li>Pod IP和具体的容器端口（ContainnerPort）组成一个具体的通信地址，即Endpoint。一个Pod中可以存在多个容器，可以有多个端口，Pod IP一样，即有多个Endpoint。</li>
+<li>Pod Volume是定义在Pod之上，被各个容器挂载到自己的文件系统中，可以用分布式文件系统实现后端存储功能。</li>
+<li>Pod中的Event事件可以用来排查问题，可以通过kubectl describe pod xxx 来查看对应的事件。</li>
+<li>每个Pod可以对其能使用的服务器上的计算资源设置限额，一般为CPU和Memory。K8S中一般将千分之一个的CPU配置作为最小单位，用m表示，是一个绝对值，即100m对于一个Core的机器还是48个Core的机器都是一样的大小。Memory配额也是个绝对值，单位为内存字节数。</li>
+<li>资源配额的两个参数</li>
+</ol>
+<ul>
+<li>Requests:该资源的最小申请量，系统必须满足要求。</li>
+<li>Limits:该资源最大允许使用量，当超过该量，K8S会kill并重启Pod。</li>
+</ul>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578930/article/kubernetes/concept/pod2.png" alt="pod2"></p>
+<h1 id="4-label">4. Label</h1>
+<ol>
+<li>Label是一个键值对，可以附加在任何对象上，比如Node,Pod,Service,RC等。Label和资源对象是多对多的关系，即一个Label可以被添加到多个对象上，一个对象也可以定义多个Label。</li>
+<li>Label的作用主要用来实现精细的、多维度的资源分组管理，以便进行资源分配，调度，配置，部署等工作。</li>
+<li>Label通俗理解就是“标签”，通过标签来过滤筛选指定的对象，进行具体的操作。k8s通过Label Selector(标签选择器)来筛选指定Label的资源对象，类似SQL语句中的条件查询（WHERE语句）。</li>
+<li>Label Selector有基于等式和基于集合的两种表达方式，可以多个条件进行组合使用。</li>
+</ol>
+<ul>
+<li>基于等式：name=redis-slave（匹配name=redis-slave的资源对象）;env!=product(匹配所有不具有标签env=product的资源对象)</li>
+<li>基于集合：name in (redis-slave,redis-master);name not in (php-frontend)（匹配所有不具有标签name=php-frontend的资源对象）</li>
+</ul>
+<p><strong>使用场景</strong></p>
+<ol>
+<li>kube-controller进程通过资源对象RC上定义的Label Selector来筛选要监控的Pod副本数，从而实现副本数始终保持预期数目。</li>
+<li>kube-proxy进程通过Service的Label Selector来选择对应Pod，自动建立每个Service到对应Pod的请求转发路由表，从而实现Service的智能负载均衡机制。</li>
+<li>kube-scheduler实现Pod定向调度：对Node定义特定的Label，并且在Pod定义文件中使用NodeSelector标签调度策略。</li>
+</ol>
+<h1 id="5-replication-controllerrc">5. Replication Controller(RC)</h1>
+<p>RC是k8s系统中的核心概念，定义了一个期望的场景。</p>
+<p>主要包括：</p>
+<ul>
+<li>Pod期望的副本数（replicas）</li>
+<li>用于筛选目标Pod的Label Selector</li>
+<li>用于创建Pod的模板（template）</li>
+</ul>
+<p>RC特性说明：</p>
+<ol>
+<li>Pod的缩放可以通过以下命令实现：kubectl scale rc redis-slave --replicas=3</li>
+<li>删除RC并不会删除该RC创建的Pod，可以将副本数设置为0，即可删除对应Pod。或者通过kubectl stop /delete命令来一次性删除RC和其创建的Pod。</li>
+<li>改变RC中Pod模板的镜像版本可以实现滚动升级（Rolling Update）。具体操作见<a href="https://kubernetes.io/docs/tasks/run-application/rolling-update-replication-controller/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/run-application/rolling-update-replication-controller/</a></li>
+<li>Kubernetes1.2以上版本将RC升级为Replica Set，它与当前RC的唯一区别在于Replica Set支持基于集合的Label Selector(Set-based selector)，而旧版本RC只支持基于等式的Label Selector(equality-based selector)。</li>
+<li>Kubernetes1.2以上版本通过Deployment来维护Replica Set而不是单独使用Replica Set。即控制流为：Delpoyment→Replica Set→Pod。即新版本的Deployment+Replica Set替代了RC的作用。</li>
+</ol>
+<h1 id="6-deployment">6. Deployment</h1>
+<p>Deployment是kubernetes 1.2引入的概念，用来解决Pod的编排问题。Deployment可以理解为RC的升级版（RC+Reolicat Set）。特点在于可以随时知道Pod的部署进度，即对Pod的创建、调度、绑定节点、启动容器完整过程的进度展示。</p>
+<p><strong>使用场景</strong></p>
+<ol>
+<li>创建一个Deployment对象来生成对应的Replica Set并完成Pod副本的创建过程。</li>
+<li>检查Deployment的状态来确认部署动作是否完成（Pod副本的数量是否达到预期值）。</li>
+<li>更新Deployment以创建新的Pod(例如镜像升级的场景)。</li>
+<li>如果当前Deployment不稳定，回退到上一个Deployment版本。</li>
+<li>挂起或恢复一个Deployment。</li>
+</ol>
+<p>可以通过kubectl describe deployment来查看Deployment控制的Pod的水平拓展过程。</p>
+<h1 id="7-horizontal-pod-autoscalerhpa">7. Horizontal Pod Autoscaler(HPA)</h1>
+<p>Horizontal Pod Autoscaler(HPA)即Pod横向自动扩容，与RC一样也属于k8s的资源对象。</p>
+<p>HPA原理：通过追踪分析RC控制的所有目标Pod的负载变化情况，来确定是否针对性调整Pod的副本数。</p>
+<p>Pod负载度量指标：</p>
+<ul>
+<li>CPUUtilizationPercentage：Pod所有副本自身的CPU利用率的平均值。即当前Pod的CPU使用量除以Pod Request的值。</li>
+<li>应用自定义的度量指标，比如服务每秒内响应的请求数（TPS/QPS）。</li>
+</ul>
+<h1 id="8-service服务">8. Service(服务)</h1>
+<h2 id="81-service概述">8.1. Service概述</h2>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578930/article/kubernetes/concept/service.png" alt="service"></p>
+<p>Service定义了一个服务的访问入口地址，前端应用通过这个入口地址访问其背后的一组由Pod副本组成的集群实例，Service与其后端的Pod副本集群之间是通过Label Selector来实现“无缝对接”。RC保证Service的Pod副本实例数目保持预期水平。</p>
+<h2 id="82-kubernetes的服务发现机制">8.2. kubernetes的服务发现机制</h2>
+<p>主要通过kube-dns这个组件来进行DNS方式的服务发现。</p>
+<h2 id="83-外部系统访问service的问题">8.3. 外部系统访问Service的问题</h2>
+<table>
+<thead>
+<tr>
+<th>IP类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node IP</td>
+<td>Node节点的IP地址</td>
+</tr>
+<tr>
+<td>Pod IP</td>
+<td>Pod的IP地址</td>
+</tr>
+<tr>
+<td>Cluster IP</td>
+<td>Service的IP地址</td>
+</tr>
+</tbody>
+</table>
+<h2 id="831-node-ip">8.3.1. Node IP</h2>
+<p>NodeIP是集群中每个节点的物理网卡IP地址，是真实存在的物理网络，kubernetes集群之外的节点访问kubernetes内的某个节点或TCP/IP服务的时候，需要通过NodeIP进行通信。</p>
+<h2 id="832-pod-ip">8.3.2. Pod IP</h2>
+<p>Pod IP是每个Pod的IP地址，是Docker Engine根据docker0网桥的IP段地址进行分配的，是一个虚拟二层网络，集群中一个Pod的容器访问另一个Pod中的容器，是通过Pod IP进行通信的，而真实的TCP/IP流量是通过Node IP所在的网卡流出的。</p>
+<h2 id="833-cluster-ip">8.3.3. Cluster IP</h2>
+<ol>
+<li>Service的Cluster IP是一个虚拟IP，只作用于Service这个对象，由kubernetes管理和分配IP地址（来源于Cluster IP地址池）。</li>
+<li>Cluster IP无法被ping通，因为没有一个实体网络对象来响应。</li>
+<li>Cluster IP结合Service Port组成的具体通信端口才具备TCP/IP通信基础，属于kubernetes集群内，集群外访问该IP和端口需要额外处理。</li>
+<li>k8s集群内Node IP 、Pod IP、Cluster IP之间的通信采取k8s自己的特殊的路由规则，与传统IP路由不同。</li>
+</ol>
+<h2 id="834-外部访问kubernetes集群">8.3.4. 外部访问Kubernetes集群</h2>
+<p>通过宿主机与容器端口映射的方式进行访问，例如：Service定位文件如下：</p>
+<p>可以通过任意Node的IP 加端口访问该服务。也可以通过Nginx或HAProxy来设置负载均衡。</p>
+<h1 id="9-volume存储卷">9. Volume(存储卷)</h1>
+<h2 id="91-volume的功能">9.1. Volume的功能</h2>
+<ol>
+<li>Volume是Pod中能够被多个容器访问的共享目录，可以让容器的数据写到宿主机上或者写文件到网络存储中</li>
+<li>可以实现容器配置文件集中化定义与管理，通过ConfigMap资源对象来实现。</li>
+</ol>
+<h2 id="92-volume的特点">9.2. Volume的特点</h2>
+<p>k8s中的Volume与Docker的Volume相似，但不完全相同。</p>
+<ol>
+<li>k8s上Volume定义在Pod上，然后被一个Pod中的多个容器挂载到具体的文件目录下。</li>
+<li>k8s的Volume与Pod生命周期相关而不是容器是生命周期，即容器挂掉，数据不会丢失但是Pod挂掉，数据则会丢失。</li>
+<li>k8s中的Volume支持多种类型的Volume：Ceph、GlusterFS等分布式系统。</li>
+</ol>
+<h2 id="93-volume的使用方式">9.3. Volume的使用方式</h2>
+<p>先在Pod上声明一个Volume，然后容器引用该Volume并Mount到容器的某个目录。</p>
+<h2 id="94-volume类型">9.4. Volume类型</h2>
+<h2 id="941-emptydir">9.4.1. emptyDir</h2>
+<p>emptyDir Volume是在Pod分配到Node时创建的，初始内容为空，无须指定宿主机上对应的目录文件，由K8S自动分配一个目录，当Pod被删除时，对应的emptyDir数据也会永久删除。</p>
+<p><strong>作用</strong>：</p>
+<ol>
+<li>临时空间，例如程序的临时文件，无须永久保留</li>
+<li>长时间任务的中间过程CheckPoint的临时保存目录</li>
+<li>一个容器需要从另一个容器中获取数据的目录（即多容器共享目录）</li>
+</ol>
+<p><strong>说明</strong>：</p>
+<p>目前用户无法设置emptyVolume的使用介质，如果kubelet的配置使用硬盘则emptyDir将创建在该硬盘上。</p>
+<h2 id="942-hostpath">9.4.2. hostPath</h2>
+<p>hostPath是在Pod上挂载宿主机上的文件或目录。</p>
+<p><strong>作用</strong>：</p>
+<ol>
+<li>容器应用日志需要持久化时，可以使用宿主机的高速文件系统进行存储</li>
+<li>需要访问宿主机上Docker引擎内部数据结构的容器应用时，可以通过定义hostPath为宿主机/var/lib/docker目录，使容器内部应用可以直接访问Docker的文件系统。</li>
+</ol>
+<p><strong>注意点：</strong></p>
+<ol>
+<li>在不同的Node上具有相同配置的Pod可能会因为宿主机上的目录或文件不同导致对Volume上目录或文件的访问结果不一致。</li>
+<li>如果使用了资源配额管理，则kubernetes无法将hostPath在宿主机上使用的资源纳入管理。</li>
+</ol>
+<h2 id="943-gcepersistentdisk">9.4.3. gcePersistentDisk</h2>
+<p>表示使用谷歌公有云提供的永久磁盘（Persistent Disk ,PD）存放Volume的数据，它与EmptyDir不同，PD上的内容会被永久保存。当Pod被删除时，PD只是被卸载时，但不会被删除。需要先创建一个永久磁盘，才能使用gcePersistentDisk。</p>
+<p>使用gcePersistentDisk的限制条件：</p>
+<ul>
+<li>Node(运行kubelet的节点)需要是GCE虚拟机。</li>
+<li>虚拟机需要与PD存在于相同的GCE项目中和Zone中。</li>
+</ul>
+<h1 id="10-persistent-volume">10. Persistent Volume</h1>
+<p>Volume定义在Pod上，属于“计算资源”的一部分，而Persistent Volume和Persistent Volume Claim是网络存储，简称PV和PVC，可以理解为k8s集群中某个网络存储中对应的一块存储。</p>
+<ul>
+<li>PV是网络存储，不属于任何Node，但可以在每个Node上访问。</li>
+<li>PV不是定义在Pod上，而是独立于Pod之外定义。</li>
+<li>PV常见类型：GCE Persistent Disks、NFS、RBD等。</li>
+</ul>
+<p>PV是有状态的对象，状态类型如下：</p>
+<ul>
+<li>Available:空闲状态</li>
+<li>Bound:已经绑定到某个PVC上</li>
+<li>Released:对应的PVC已经删除，但资源还没有回收</li>
+<li>Failed:PV自动回收失败</li>
+</ul>
+<h1 id="11-namespace">11. Namespace</h1>
+<p>Namespace即命名空间，主要用于多租户的资源隔离，通过将资源对象分配到不同的Namespace上，便于不同的分组在共享资源的同时可以被分别管理。</p>
+<p>k8s集群启动后会默认创建一个“default”的Namespace。可以通过kubectl get namespaecs查看。</p>
+<p>可以通过kubectl config use-context <code>namespace</code>配置当前k8s客户端的环境，通过kubectl get pods获取当前namespace的Pod。或者通过kubectl get pods --namespace=<code>NAMESPACE</code>来获取指定namespace的Pod。</p>
+<p><strong>Namespace yaml文件的定义</strong></p>
+<h1 id="12-annotation注解">12. Annotation(注解)</h1>
+<p>Annotation与Label类似，也使用key/value的形式进行定义，Label定义元数据（Metadata）,Annotation定义“附加”信息。</p>
+<p>通常Annotation记录信息如下：</p>
+<ul>
+<li>build信息，release信息，Docker镜像信息等。</li>
+<li>日志库、监控库等。</li>
+</ul>
+<p>参考《Kubernetes权威指南》</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/" data-toggle="tooltip" data-placement="top" title="ConfigMap">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/concepts/pod/pod-definition/" data-toggle="tooltip" data-placement="top" title="Pod定义文件">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-master"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Master</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-master的组件"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. Master的组件</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-node"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. Node</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-node的组件"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. Node的组件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-node相关命令"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. Node相关命令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-describe命令的node信息"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. describe命令的Node信息</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-pod"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Pod</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-label"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. Label</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-replication-controllerrc"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. Replication Controller(RC)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-deployment"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. Deployment</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#7-horizontal-pod-autoscalerhpa"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">7. Horizontal Pod Autoscaler(HPA)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#8-service服务"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">8. Service(服务)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#81-service概述"><span class="toc-nav-number">8.1.</span> <span class="toc-nav-text">8.1. Service概述</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#82-kubernetes的服务发现机制"><span class="toc-nav-number">8.2.</span> <span class="toc-nav-text">8.2. kubernetes的服务发现机制</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#83-外部系统访问service的问题"><span class="toc-nav-number">8.3.</span> <span class="toc-nav-text">8.3. 外部系统访问Service的问题</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#831-node-ip"><span class="toc-nav-number">8.4.</span> <span class="toc-nav-text">8.3.1. Node IP</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#832-pod-ip"><span class="toc-nav-number">8.5.</span> <span class="toc-nav-text">8.3.2. Pod IP</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#833-cluster-ip"><span class="toc-nav-number">8.6.</span> <span class="toc-nav-text">8.3.3. Cluster IP</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#834-外部访问kubernetes集群"><span class="toc-nav-number">8.7.</span> <span class="toc-nav-text">8.3.4. 外部访问Kubernetes集群</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#9-volume存储卷"><span class="toc-nav-number">9.</span> <span class="toc-nav-text">9. Volume(存储卷)</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#91-volume的功能"><span class="toc-nav-number">9.1.</span> <span class="toc-nav-text">9.1. Volume的功能</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#92-volume的特点"><span class="toc-nav-number">9.2.</span> <span class="toc-nav-text">9.2. Volume的特点</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#93-volume的使用方式"><span class="toc-nav-number">9.3.</span> <span class="toc-nav-text">9.3. Volume的使用方式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#94-volume类型"><span class="toc-nav-number">9.4.</span> <span class="toc-nav-text">9.4. Volume类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#941-emptydir"><span class="toc-nav-number">9.5.</span> <span class="toc-nav-text">9.4.1. emptyDir</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#942-hostpath"><span class="toc-nav-number">9.6.</span> <span class="toc-nav-text">9.4.2. hostPath</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#943-gcepersistentdisk"><span class="toc-nav-number">9.7.</span> <span class="toc-nav-text">9.4.3. gcePersistentDisk</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#10-persistent-volume"><span class="toc-nav-number">10.</span> <span class="toc-nav-text">10. Persistent Volume</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#11-namespace"><span class="toc-nav-number">11.</span> <span class="toc-nav-text">11. Namespace</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#12-annotation注解"><span class="toc-nav-number">12.</span> <span class="toc-nav-text">12. Annotation(注解)</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

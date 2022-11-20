@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/volume/dynamic-provisioning/">
+    <a href="/article/kubernetes-notes/storage/volume/dynamic-provisioning/">
         <h2 class="post-title">
                         
             Dynamic Volume Provisioning 介绍
@@ -220,8 +220,10 @@
             
         </h3>
         <div class="post-content-preview">
-            Dynamic Volume ProvisioningDynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。
-1. 开启Dynamic Provisioning需要先提前创建StorageClass对象，StorageClass中定义了使用哪个provisioner，并且在provision......
+            Dynamic Volume Provisioning
+Dynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。
+1. 开启Dynamic Provisioning
+需要先提前创建StorageClass对象，StorageClass中定义了使用哪个provisioner，并且在provisi......
         </div>
     </a>
     
@@ -241,7 +243,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/volume/persistent-volume-claim/">
+    <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/">
         <h2 class="post-title">
                         
             PersistentVolumeClaim 介绍
@@ -250,9 +252,10 @@
             
         </h3>
         <div class="post-content-preview">
-            1. PVC概述PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
+            1. PVC概述
+PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
 当需要不同性质的PV来满足存储需求时，可以使用StorageClass来实现。
-每个 PVC 中都包含一个 spec 规格字段和一个 status 声明状......
+每个 PVC 中都包含一个 spec 规格字段和一个 status 声明......
         </div>
     </a>
     
@@ -272,7 +275,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/volume/persistent-volume/">
+    <a href="/article/kubernetes-notes/storage/volume/persistent-volume/">
         <h2 class="post-title">
                         
             PersistentVolume 介绍
@@ -281,12 +284,15 @@
             
         </h3>
         <div class="post-content-preview">
-            1. PV概述PersistentVolume（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。
-2. PV和PVC的生命周期2.1. 配置（Provision）有两种方式来配置 PV：静态或动态。
+            1. PV概述
+PersistentVolume（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。
+2. PV和PVC的生命周期
+2.1. 配置（Provision）
+有两种方式来配置 PV：静态或动态。
 1、静态
 手动创建PV，可供k8s集群中的对象消费。
 2、动态
-可以通过StorageCla......
+可以通过Storage......
         </div>
     </a>
     
@@ -306,7 +312,38 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/volume/volume/">
+    <a href="/article/kubernetes-notes/storage/volume/storage-class/">
+        <h2 class="post-title">
+                        
+            StorageClass 介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. StorageClass概述
+StorageClass提供了一种描述存储类（class）的方法，不同的class可能会映射到不同的服务质量等级和备份策略或其他策略等。
+StorageClass 对象中包含 provisioner、parameters 和 reclaimPolicy 字段，当需要动态分配 PersistentVolume 时会使用到。当创建 StorageClass 对......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/volume/volume/">
         <h2 class="post-title">
                         
             Volume介绍
@@ -316,11 +353,12 @@
         </h3>
         <div class="post-content-preview">
             1. volume概述
+
 容器上的文件生命周期同容器的生命周期一致，即容器挂掉之后，容器将会以最初镜像中的文件系统内容启动，之前容器运行时产生的文件将会丢失。
 Pod的volume的生命周期同Pod的生命周期一致，当Pod被删除的时候，对应的volume才会被删除。即Pod中的容器重启时，之前的文件仍可以保存。
 
 容器中的进程看到的是由其 Docker 镜像和卷组成的文件系统视图。
-Pod v......
+Pod ......
         </div>
     </a>
     
@@ -340,69 +378,7 @@ Pod v......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/volume/storage-class/">
-        <h2 class="post-title">
-                        
-            StorageClass 介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. StorageClass概述StorageClass提供了一种描述存储类（class）的方法，不同的class可能会映射到不同的服务质量等级和备份策略或其他策略等。
-StorageClass 对象中包含 provisioner、parameters 和 reclaimPolicy 字段，当需要动态分配 PersistentVolume 时会使用到。当创建 StorageClass 对象......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
-        <h2 class="post-title">
-                        
-            部署csi-cephfs
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            0. 说明要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
-涉及镜像
-quay.io/k8scsi/csi-provisioner:v0.3.0
-quay.io/k8scsi/csi-a......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CSI" title="CSI">CSI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
+    <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
         <h2 class="post-title">
                         
             部署cephfs-provisioner
@@ -411,9 +387,12 @@ quay.io/k8scsi/csi-a......
             
         </h3>
         <div class="post-content-preview">
-            1. 安装cephfs客户端所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
+            1. 安装cephfs客户端
+所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
 1yum install -y ceph-common
-2. 部署RBAC2.1. ClusterRole12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/v1m......
+2. 部署RBAC
+2.1. ClusterRole
+12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/......
         </div>
     </a>
     
@@ -433,7 +412,41 @@ quay.io/k8scsi/csi-a......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
+    <a href="/article/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
+        <h2 class="post-title">
+                        
+            部署csi-cephfs
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            0. 说明
+要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
+涉及镜像
+
+quay.io/k8scsi/csi-provisioner:v0.3.0
+quay.io/k8scsi/csi......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CSI" title="CSI">CSI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
         <h2 class="post-title">
                         
             csi-cephfs-plugin
@@ -442,14 +455,18 @@ quay.io/k8scsi/csi-a......
             
         </h3>
         <div class="post-content-preview">
-            1. 编译CSI CephFS pluginCSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
-1.1. 编译二进制1$ make cephfsplugin
-1.2. 编译Docker镜像1$ make image-cephfsplugin
-2. 配置项2.1. 命令行参数
+            1. 编译CSI CephFS plugin
+CSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
+1.1. 编译二进制
+1$ make cephfsplugin
+1.2. 编译Docker镜像
+1$ make image-cephfsplugin
+2. 配置项
+2.1. 命令行参数
 
 
 
-Optio......
+O......
         </div>
     </a>
     
@@ -469,7 +486,7 @@ Optio......
 
 <div class="post-preview">
 
-    <a href="/linux-notes/shell/shell-array/">
+    <a href="/article/linux-notes/shell/shell-array/">
         <h2 class="post-title">
                         
             Shell数组
@@ -478,12 +495,14 @@ Optio......
             
         </h3>
         <div class="post-content-preview">
-            1. 字符串字符串是shell编程中最常用最有用的数据类型（除了数字和字符串，也没啥其它类型好用了），字符串可以用单引号，也可以用双引号，也可以不用引号。单双引号的区别跟PHP类似。
-1.1. 单引号1str='this is a string'
+            1. 字符串
+字符串是shell编程中最常用最有用的数据类型（除了数字和字符串，也没啥其它类型好用了），字符串可以用单引号，也可以用双引号，也可以不用引号。单双引号的区别跟PHP类似。
+1.1. 单引号
+1str='this is a string'
 单引号字符串的限制：
 
 单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；
-单引号字串中不能出现单引号（对单引号使用转义符后也不行）。......
+单引号字串中不能出现单引号（对单引号使用转义符后也不行......
         </div>
     </a>
     
@@ -503,7 +522,7 @@ Optio......
 
 <div class="post-preview">
 
-    <a href="/linux-notes/shell/shell-echo/">
+    <a href="/article/linux-notes/shell/shell-echo/">
         <h2 class="post-title">
                         
             Shell echo命令
@@ -512,15 +531,18 @@ Optio......
             
         </h3>
         <div class="post-content-preview">
-            1. echoecho是Shell的一个内部指令，用于在屏幕上打印出指定的字符串。命令格式：
+            1. echo
+echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符串。命令格式：
 1echo arg
 您可以使用echo实现更复杂的输出格式控制。
-1.1. 显示转义字符1echo "\"It is a test\""
+1.1. 显示转义字符
+1echo "\"It is a test\""
 结果将是：
 1"It is a test"
 双引号也可以省略。
-1.2. 显示变量12name="OK"echo "$name It is a test"
-结果将......
+1.2. 显示变量
+12name="OK"echo "$name It is a test"
+......
         </div>
     </a>
     
@@ -613,11 +635,11 @@ Optio......
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -635,7 +657,7 @@ Optio......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -644,10 +666,6 @@ Optio......
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -667,9 +685,9 @@ Optio......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -689,15 +707,13 @@ Optio......
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -706,6 +722,12 @@ Optio......
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -795,23 +817,23 @@ Optio......
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

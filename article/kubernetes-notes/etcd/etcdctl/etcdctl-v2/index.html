@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          etcdctl-V2 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/etcd/etcdctl/etcdctl-v2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Etcd" title="Etcd">Etcd</a>
+                            
+                        </div>
+                        <h1>etcdctl-V2</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-07-10
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="1-etcdctl介绍">1. etcdctl介绍</h1>
+<p>etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。</p>
+<p>用法：etcdctl [global options] command [command options][args…]</p>
+<h1 id="2-etcd常用命令">2. Etcd常用命令</h1>
+<h2 id="21-数据库操作命令">2.1. 数据库操作命令</h2>
+<p>etcd 在键的组织上采用了层次化的空间结构（类似于文件系统中目录的概念），数据库操作围绕对键值和目录的 CRUD [增删改查]（符合 REST 风格的一套操作：Create, Read, Update, Delete）完整生命周期的管理。</p>
+<p>具体的命令选项参数可以通过 etcdctl command --help来获取相关帮助。</p>
+<h2 id="211-对象为键值">2.1.1. 对象为键值</h2>
+<ol>
+<li>
+<h3 id="set增无论是否存在etcdctl-set-key-value">set[增:无论是否存在]:etcdctl set key value</h3>
+</li>
+<li>
+<h3 id="mk增必须不存在etcdctl-mk-key-value">mk[增:必须不存在]:etcdctl mk key value</h3>
+</li>
+<li>
+<h3 id="rm删etcdctl-rm-key">rm[删]:etcdctl rm key</h3>
+</li>
+<li>
+<h3 id="update改etcdctl-update-key-value">update[改]:etcdctl update key value</h3>
+</li>
+<li>
+<h3 id="get查etcdctl-get-key">get[查]:etcdctl get key</h3>
+</li>
+</ol>
+<h2 id="212-对象为目录">2.1.2. 对象为目录</h2>
+<ol>
+<li>
+<h3 id="setdir增无论是否存在etcdctl-setdir-dir">setdir[增:无论是否存在]:etcdctl setdir dir</h3>
+</li>
+<li>
+<h3 id="mkdir增必须不存在-etcdctl-mkdir-dir">mkdir[增:必须不存在]: etcdctl mkdir dir</h3>
+</li>
+<li>
+<h3 id="rmdir删etcdctl-rmdir-dir">rmdir[删]:etcdctl rmdir dir</h3>
+</li>
+<li>
+<h3 id="updatedir改etcdctl-updatedir-dir">updatedir[改]:etcdctl updatedir dir</h3>
+</li>
+<li>
+<h3 id="ls查etcdclt-ls">ls[查]:etcdclt ls</h3>
+</li>
+</ol>
+<h2 id="22-非数据库操作命令">2.2. 非数据库操作命令</h2>
+<ol>
+<li>
+<h3 id="backup备份-etcd-的数据">backup[备份 etcd 的数据]</h3>
+<p>etcdctl backup</p>
+</li>
+<li>
+<h3 id="watch监测一个键值的变化一旦键值发生更新就会输出最新的值并退出">watch[监测一个键值的变化，一旦键值发生更新，就会输出最新的值并退出]</h3>
+<p>etcdctl watch key</p>
+</li>
+<li>
+<h3 id="exec-watch监测一个键值的变化一旦键值发生更新就执行给定命令">exec-watch[监测一个键值的变化，一旦键值发生更新，就执行给定命令]</h3>
+<p>etcdctl exec-watch key --sh -c “ls”</p>
+</li>
+<li>
+<h3 id="member通过-list-add-remove-update-命令列出-添加-删除-更新etcd-实例到-etcd-集群中">member[通过 list、add、remove、update 命令列出、添加、删除 、更新etcd 实例到 etcd 集群中]</h3>
+<p>etcdctl member list；etcdctl member add 实例；etcdctl member remove 实例；etcdctl member update 实例。</p>
+</li>
+<li>
+<h3 id="etcdctl-cluster-health检查集群健康状态">etcdctl cluster-health[检查集群健康状态]</h3>
+</li>
+</ol>
+<h2 id="23-常用配置参数">2.3. 常用配置参数</h2>
+<p>设置配置文件，默认为/etc/etcd/etcd.conf。</p>
+<table>
+<thead>
+<tr>
+<th>配置参数</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>配置参数</td>
+<td>参数说明</td>
+</tr>
+<tr>
+<td>-name</td>
+<td>节点名称</td>
+</tr>
+<tr>
+<td>-data-dir</td>
+<td>保存日志和快照的目录，默认为当前工作目录，指定节点的数据存储目录</td>
+</tr>
+<tr>
+<td>-addr</td>
+<td>公布的ip地址和端口。 默认为127.0.0.1:2379</td>
+</tr>
+<tr>
+<td>-bind-addr</td>
+<td>用于客户端连接的监听地址，默认为-addr配置</td>
+</tr>
+<tr>
+<td>-peers</td>
+<td>集群成员逗号分隔的列表，例如 127.0.0.1:2380,127.0.0.1:2381</td>
+</tr>
+<tr>
+<td>-peer-addr</td>
+<td>集群服务通讯的公布的IP地址，默认为 127.0.0.1:2380.</td>
+</tr>
+<tr>
+<td>-peer-bind-addr</td>
+<td>集群服务通讯的监听地址，默认为-peer-addr配置</td>
+</tr>
+<tr>
+<td>-wal-dir</td>
+<td>指定节点的was文件的存储目录，若指定了该参数，wal文件会和其他数据文件分开存储</td>
+</tr>
+<tr>
+<td>-listen-client-urls</td>
+<td></td>
+</tr>
+<tr>
+<td>-listen-peer-urls</td>
+<td>监听URL，用于与其他节点通讯</td>
+</tr>
+<tr>
+<td>-initial-advertise-peer-urls</td>
+<td>告知集群其他节点url.</td>
+</tr>
+<tr>
+<td>-advertise-client-urls</td>
+<td>告知客户端url, 也就是服务的url</td>
+</tr>
+<tr>
+<td>-initial-cluster-token</td>
+<td>集群的ID</td>
+</tr>
+<tr>
+<td>-initial-cluster</td>
+<td>集群中所有节点</td>
+</tr>
+<tr>
+<td>-initial-cluster-state</td>
+<td>-initial-cluster-state=new 表示从无到有搭建etcd集群</td>
+</tr>
+<tr>
+<td>-discovery-srv</td>
+<td>用于DNS动态服务发现，指定DNS SRV域名</td>
+</tr>
+<tr>
+<td>-discovery</td>
+<td>用于etcd动态发现，指定etcd发现服务的URL [<a href="https://discovery.etcd.io/" target="_blank" rel="noopener">https://discovery.etcd.io/</a>],用环境变量表示</td>
+</tr>
+</tbody>
+</table>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v3/" data-toggle="tooltip" data-placement="top" title="etcdctl-V3">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（二）之Docker Daemon">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-etcdctl介绍"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. etcdctl介绍</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-etcd常用命令"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. Etcd常用命令</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-数据库操作命令"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 数据库操作命令</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#211-对象为键值"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.1.1. 对象为键值</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#set增无论是否存在etcdctl-set-key-value"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">set[增:无论是否存在]:etcdctl set key value</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#mk增必须不存在etcdctl-mk-key-value"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">mk[增:必须不存在]:etcdctl mk key value</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#rm删etcdctl-rm-key"><span class="toc-nav-number">2.2.3.</span> <span class="toc-nav-text">rm[删]:etcdctl rm key</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#update改etcdctl-update-key-value"><span class="toc-nav-number">2.2.4.</span> <span class="toc-nav-text">update[改]:etcdctl update key value</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#get查etcdctl-get-key"><span class="toc-nav-number">2.2.5.</span> <span class="toc-nav-text">get[查]:etcdctl get key</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#212-对象为目录"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.1.2. 对象为目录</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#setdir增无论是否存在etcdctl-setdir-dir"><span class="toc-nav-number">2.3.1.</span> <span class="toc-nav-text">setdir[增:无论是否存在]:etcdctl setdir dir</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#mkdir增必须不存在-etcdctl-mkdir-dir"><span class="toc-nav-number">2.3.2.</span> <span class="toc-nav-text">mkdir[增:必须不存在]: etcdctl mkdir dir</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#rmdir删etcdctl-rmdir-dir"><span class="toc-nav-number">2.3.3.</span> <span class="toc-nav-text">rmdir[删]:etcdctl rmdir dir</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#updatedir改etcdctl-updatedir-dir"><span class="toc-nav-number">2.3.4.</span> <span class="toc-nav-text">updatedir[改]:etcdctl updatedir dir</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#ls查etcdclt-ls"><span class="toc-nav-number">2.3.5.</span> <span class="toc-nav-text">ls[查]:etcdclt ls</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-非数据库操作命令"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.2. 非数据库操作命令</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#backup备份-etcd-的数据"><span class="toc-nav-number">2.4.1.</span> <span class="toc-nav-text">backup[备份 etcd 的数据]</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#watch监测一个键值的变化一旦键值发生更新就会输出最新的值并退出"><span class="toc-nav-number">2.4.2.</span> <span class="toc-nav-text">watch[监测一个键值的变化，一旦键值发生更新，就会输出最新的值并退出]</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#exec-watch监测一个键值的变化一旦键值发生更新就执行给定命令"><span class="toc-nav-number">2.4.3.</span> <span class="toc-nav-text">exec-watch[监测一个键值的变化，一旦键值发生更新，就执行给定命令]</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#member通过-list-add-remove-update-命令列出-添加-删除-更新etcd-实例到-etcd-集群中"><span class="toc-nav-number">2.4.4.</span> <span class="toc-nav-text">member[通过 list、add、remove、update 命令列出、添加、删除 、更新etcd 实例到 etcd 集群中]</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#etcdctl-cluster-health检查集群健康状态"><span class="toc-nav-number">2.4.5.</span> <span class="toc-nav-text">etcdctl cluster-health[检查集群健康状态]</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-常用配置参数"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.3. 常用配置参数</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Etcd" title="Etcd">Etcd</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

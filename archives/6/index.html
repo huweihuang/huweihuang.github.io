@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/">
+    <a href="/article/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/">
         <h2 class="post-title">
                         
             k8s多集群管理的思考
@@ -220,8 +220,10 @@
             
         </h3>
         <div class="post-content-preview">
-            k8s多集群的思考1. 为什么需要多集群1、k8s单集群的承载能力有限。
- Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下所有标准的配置：
+            k8s多集群的思考
+1. 为什么需要多集群
+1、k8s单集群的承载能力有限。
+Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下所有标准的配置：
 
 每个节点的 Pod 数量不超过 100
 节点数不超过 5000
@@ -229,7 +231,7 @@ Pod 总数不超过 150000
 容器总数不超过 300000
 
 
-参考：https://kubernetes.io/z......
+参考：https://kubernetes.io/......
         </div>
     </a>
     
@@ -249,39 +251,7 @@ Pod 总数不超过 150000
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/network/cni/macvlan/">
-        <h2 class="post-title">
-                        
-            Macvlan介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 简介macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
-示意图：
-
-2. 四种......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CNI" title="CNI">CNI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/network/cni/cni/">
+    <a href="/article/kubernetes-notes/network/cni/cni/">
         <h2 class="post-title">
                         
             CNI接口介绍
@@ -290,8 +260,9 @@ Pod 总数不超过 150000
             
         </h3>
         <div class="post-content-preview">
-            1. CNI（Container Network Interface）CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
-kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认是......
+            1. CNI（Container Network Interface）
+CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
+kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认......
         </div>
     </a>
     
@@ -311,27 +282,30 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/">
+    <a href="/article/kubernetes-notes/network/cni/macvlan/">
         <h2 class="post-title">
                         
-            Cgroup不支持pid资源
+            Macvlan介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            问题描述机器内核版本较低，kubelet启动异常，报错如下：
-1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup subs......
+            1. 简介
+macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
+示意图：
+
+2. 四......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-06-23
+            2021-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -341,7 +315,7 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/trouble-shooting/node/cgroup-subsystem-not-mount/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-subsystem-not-mount/">
         <h2 class="post-title">
                         
             Cgroup子系统无法挂载
@@ -350,8 +324,9 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         </h3>
         <div class="post-content-preview">
-            问题描述内核版本： 5.4.56-200.el7.x86_64
-docker报错 
+            问题描述
+内核版本： 5.4.56-200.el7.x86_64
+docker报错
 12345May 13 16:54:26 8b26d7a8 dockerd[44352]: time=&quot;2021-05-13T16:54:26.565235530+08:00&quot; level=warning msg=&quot;failed to load plugin io.contain......
         </div>
     </a>
@@ -372,68 +347,7 @@ docker报错
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/">
-        <h2 class="post-title">
-                        
-            increase the mlock limit
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题描述容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
-报错如下：
-12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime: ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/">
-        <h2 class="post-title">
-                        
-            runc-v1.1.3-exec-failed
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题描述当使用runc 1.1.3的版本时，如果执行systemctl daemon-reload后，通过exec进入容器则会触发以下错误，无法进入容器。
-1FATA[0000] execing command in container: Internal error occurred: error executing command in container: failed to exec......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/trouble-shooting/node/keycreate-permission-denied/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/keycreate-permission-denied/">
         <h2 class="post-title">
                         
             keycreate permission denied
@@ -442,9 +356,10 @@ docker报错
             
         </h3>
         <div class="post-content-preview">
-            问题描述1write /proc/self/attr/keycreate: permission denied
+            问题描述
+1write /proc/self/attr/keycreate: permission denied
 具体报错：
-1kuberuntime_manager.go:758] createPodSandbox for pod "ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b)......
+1kuberuntime_manager.go:758] createPodSandbox for pod "ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b......
         </div>
     </a>
     
@@ -464,21 +379,116 @@ docker报错
 
 <div class="post-preview">
 
-    <a href="/linux-notes/disk/disk-command/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/">
         <h2 class="post-title">
                         
-            磁盘命令
+            runc-v1.1.3-exec-failed
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 判断磁盘是SSD或HDD盘1、没有使用raid方案
-lsblk -d -o name,rota命令，0表示SSD，1表示HDD
-12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
-2、使用raid方案
-下载工具
-1wget https://raw.githubusercontent.com/eLvErDe/h......
+            问题描述
+当使用runc 1.1.3的版本时，如果执行systemctl daemon-reload后，通过exec进入容器则会触发以下错误，无法进入容器。
+1FATA[0000] execing command in container: Internal error occurred: error executing command in container: failed to exe......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/">
+        <h2 class="post-title">
+                        
+            Cgroup不支持pid资源
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            问题描述
+机器内核版本较低，kubelet启动异常，报错如下：
+1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup sub......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/">
+        <h2 class="post-title">
+                        
+            increase the mlock limit
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            问题描述
+容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
+报错如下：
+12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime:......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/file/linux-file-permission/">
+        <h2 class="post-title">
+                        
+            Linux文件权限
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Linux文件管理
+Linux中的所有数据都被保存在文件中，所有的文件被分配到不同的目录。目录是一种类似于树的结构，称为文件系统。
+1.1. 文件类型
+1、普通文件
+普通文件是以字节为单位的数据流，包括文本文件、源码文件、可执行文件等。文本和二进制对Linux来说并无区别，对普通文件的解释由处理该文件的应用程序进行。
+2、目录
+目录可以包含普通文件和特殊文件，目录相当于Windows和......
         </div>
     </a>
     
@@ -488,7 +498,7 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
         </p>
         <div class="tags">
             
-              <a href="/tags/#disk" title="disk">disk</a>
+              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -498,7 +508,7 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
 
 <div class="post-preview">
 
-    <a href="/linux-notes/disk/lvm-usage/">
+    <a href="/article/linux-notes/disk/lvm-usage/">
         <h2 class="post-title">
                         
             LVM的使用
@@ -510,20 +520,23 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
             
 本文由网络内容整理而成的笔记
 
-1. LVM简介LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。
+1. LVM简介
+LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。
 优点：
+
 
 可以灵活分配和管理磁盘空间
 
+
 可以对分区进行动态的扩容
+
 
 可以增加新的磁盘到lvm中
 
 
-2. LVM核心概念LVM概念图：
-
-
-PV（......
+2. LVM核心概念
+LVM概念图：
+......
         </div>
     </a>
     
@@ -616,11 +629,11 @@ PV（......
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -638,7 +651,7 @@ PV（......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -647,10 +660,6 @@ PV（......
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -670,9 +679,9 @@ PV（......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -692,15 +701,13 @@ PV（......
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -709,6 +716,12 @@ PV（......
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -798,23 +811,23 @@ PV（......
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

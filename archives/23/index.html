@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,70 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/concepts/pod/pod-volume/">
-        <h2 class="post-title">
-                        
-            Pod存储卷
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Pod Volume同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。
-例如：Pod级别的Volume:”app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。
-
-pod-volumes-applogs.yaml
-1234567891011121314......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/concepts/pod/pod-definition/">
-        <h2 class="post-title">
-                        
-            Pod定义文件
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Pod的基本用法1.1. 说明
-Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器的主程序需要一直在前台运行，而不是后台运行。应用可以改造成前台运行的方式，例如Go语言的程序，直接运行二进制文件；java语言则运行主类；tomcat程序可以写个运行脚本。或者通过supervisor的进程管理工具，即supervisor在前台运行，应用程序由supervisor管理在后台运行。......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/concepts/pod/pod-scheduler/">
+    <a href="/article/kubernetes-notes/concepts/pod/pod-scheduler/">
         <h2 class="post-title">
                         
             Pod调度
@@ -283,13 +220,15 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         </h3>
         <div class="post-content-preview">
-            Pod调度在kubernetes集群中，Pod（container）是应用的载体，一般通过RC、Deployment、DaemonSet、Job等对象来完成Pod的调度与自愈功能。
-1. RC、Deployment:全自动调度RC的功能即保持集群中始终运行着指定个数的Pod。
+            Pod调度
+在kubernetes集群中，Pod（container）是应用的载体，一般通过RC、Deployment、DaemonSet、Job等对象来完成Pod的调度与自愈功能。
+1. RC、Deployment:全自动调度
+RC的功能即保持集群中始终运行着指定个数的Pod。
 在调度策略上主要有：
 
 系统内置调度算法[最优Node]
 NodeSelector[定向调度]
-NodeAffini......
+NodeAffi......
         </div>
     </a>
     
@@ -309,7 +248,81 @@ NodeAffini......
 
 <div class="post-preview">
 
-    <a href="/linux-notes/redis/redis-introduction/">
+    <a href="/article/kubernetes-notes/concepts/pod/pod-volume/">
+        <h2 class="post-title">
+                        
+            Pod存储卷
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod Volume
+同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。
+例如：Pod级别的Volume:“app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。
+
+pod-volumes-applogs.yaml
+123456789101112131......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-probe/">
+        <h2 class="post-title">
+                        
+            Pod健康检查
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod健康检查
+Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。
+1. 探针类型
+1. livenessProbe(存活探针)
+
+表明容器是否正在运行。
+如果存活探测失败，则 kubelet 会杀死容器，并且容器将受到其 重启策略的影响。
+如果容器不提供存活探针，则默认状态为 Success。
+
+2. readinessProbe(就绪探针)
+
+表......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/redis/redis-introduction/">
         <h2 class="post-title">
                         
             Redis介绍
@@ -318,8 +331,9 @@ NodeAffini......
             
         </h3>
         <div class="post-content-preview">
-            1. redis是什么？（what）Redis是一个开源（BSD许可），内存存储的数据结构服务器，可用作数据库，高速缓存和消息队列代理。它支持字符串、哈希表、列表、集合、有序集合，位图，hyperloglogs等数据类型。内置复制、Lua脚本、LRU收回、事务以及不同级别磁盘持久化功能，同时通过Redis Sentinel提供高可用，通过Redis Cluster提供自动分区。
-Redis是......
+            1. redis是什么？（what）
+Redis是一个开源（BSD许可），内存存储的数据结构服务器，可用作数据库，高速缓存和消息队列代理。它支持字符串、哈希表、列表、集合、有序集合，位图，hyperloglogs等数据类型。内置复制、Lua脚本、LRU收回、事务以及不同级别磁盘持久化功能，同时通过Redis Sentinel提供高可用，通过Redis Cluster提供自动分区。
+Redis......
         </div>
     </a>
     
@@ -339,7 +353,7 @@ Redis是......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/etcd/etcd-introduction/">
+    <a href="/article/kubernetes-notes/etcd/etcd-introduction/">
         <h2 class="post-title">
                         
             Etcd介绍
@@ -348,9 +362,10 @@ Redis是......
             
         </h3>
         <div class="post-content-preview">
-            1. Etcd是什么（what）etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:
+            1. Etcd是什么（what）
+etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:
 
-Secure: automatic TLS with optional client cert authenticat......
+Secure: automatic TLS with optional client cert authentica......
         </div>
     </a>
     
@@ -370,7 +385,7 @@ Secure: automatic TLS with optional client cert authenticat......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/etcd/etcd-auth-and-security/">
+    <a href="/article/kubernetes-notes/etcd/etcd-auth-and-security/">
         <h2 class="post-title">
                         
             Etcd访问控制
@@ -379,11 +394,12 @@ Secure: automatic TLS with optional client cert authenticat......
             
         </h3>
         <div class="post-content-preview">
-            1. ETCD资源类型There are three types of resources in etcd
+            1. ETCD资源类型
+There are three types of resources in etcd
 
 permission resources: users and roles in the user store
 key-value resources: key-value pairs in the key-value store
-settings resources: securi......
+settings resources: secur......
         </div>
     </a>
     
@@ -403,7 +419,7 @@ settings resources: securi......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/etcd/etcd-setup-flags/">
+    <a href="/article/kubernetes-notes/etcd/etcd-setup-flags/">
         <h2 class="post-title">
                         
             Etcd启动配置参数
@@ -412,7 +428,8 @@ settings resources: securi......
             
         </h3>
         <div class="post-content-preview">
-            1. Etcd配置参数123456789101112131415161718/ # etcd --helpusage: etcd [flags]       start an etcd server       etcd --version       show the version of etcd       etcd -h | --help       show the help in......
+            1. Etcd配置参数
+123456789101112131415161718/ # etcd --helpusage: etcd [flags]       start an etcd server       etcd --version       show the version of etcd       etcd -h | --help       show the help i......
         </div>
     </a>
     
@@ -432,38 +449,7 @@ settings resources: securi......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/etcd/etcdctl/etcdctl-v2/">
-        <h2 class="post-title">
-                        
-            etcdctl-V2
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. etcdctl介绍etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。
-用法：etcdctl [global options] command [command options][args…]
-2. Etcd常用......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/etcd/etcdctl/etcdctl-v3/">
+    <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v3/">
         <h2 class="post-title">
                         
             etcdctl-V3
@@ -475,8 +461,9 @@ settings resources: securi......
             
 etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3版本的命令工具的使用方式。
 
-1. etcdctl的安装etcdctl的二进制文件可以在 github.com/coreos/etcd/releases 选择对应的版本下载，例如可以执行以下install_etcdctl.sh的脚本，修改其中的版本信息。
-1234567891011121314#!/bin/ba......
+1. etcdctl的安装
+etcdctl的二进制文件可以在 github.com/coreos/etcd/releases 选择对应的版本下载，例如可以执行以下install_etcdctl.sh的脚本，修改其中的版本信息。
+1234567891011121314#!/bin/b......
         </div>
     </a>
     
@@ -496,18 +483,52 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
 
 <div class="post-preview">
 
-    <a href="/docker/code-analysis/code-analysis-of-docker-client/">
+    <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v2/">
         <h2 class="post-title">
                         
-            [Docker] Docker源码分析（一）之Docker Client
+            etcdctl-V2
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            一、创建Docker Client​    Docker是一个client/server的架构，通过二进制文件docker创建Docker客户端将请求类型与参数发送给Docker Server，Docker Server具体执行命令调用。Docker Client运行流程图如下：
-说明：本文分析的代码为Docker 1.2.0版本。
-（一）Docker命令flag参数解析Docker Ser......
+            1. etcdctl介绍
+etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。
+用法：etcdctl [global options] command [command options][args…]
+2. Etcd常......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
+        <h2 class="post-title">
+                        
+            [Docker] Docker源码分析（二）之Docker Daemon
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            一、Docker Daemon架构示意图
+
+Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
+Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
+运行过程的作用有以下几种可能：......
         </div>
     </a>
     
@@ -600,11 +621,11 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -622,7 +643,7 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -631,10 +652,6 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -654,9 +671,9 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -676,15 +693,13 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -693,6 +708,12 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -782,23 +803,23 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

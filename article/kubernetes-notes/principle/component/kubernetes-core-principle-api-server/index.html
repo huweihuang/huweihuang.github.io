@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Kubernetes核心原理（一）之API Server - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/principle/component/kubernetes-core-principle-api-server/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                        </div>
+                        <h1>Kubernetes核心原理（一）之API Server</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-09-18
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="1-api-server简介">1. API Server简介</h1>
+<p>k8s API Server提供了k8s各类资源对象（pod,RC,Service等）的增删改查及watch等HTTP Rest接口，是整个系统的数据总线和数据中心。</p>
+<p>kubernetes API Server的功能：</p>
+<ol>
+<li>提供了集群管理的REST API接口(包括认证授权、数据校验以及集群状态变更)；</li>
+<li>提供其他模块之间的数据交互和通信的枢纽（其他模块通过API Server查询或修改数据，只有API Server才直接操作etcd）;</li>
+<li>是资源配额控制的入口；</li>
+<li>拥有完备的集群安全机制.</li>
+</ol>
+<p><strong>kube-apiserver工作原理图</strong></p>
+<p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510579017/article/kubernetes/core/kube-apiserver.png" alt="kube-apiserver"></p>
+<h1 id="2-如何访问kubernetes-api">2. 如何访问kubernetes API</h1>
+<p>k8s通过kube-apiserver这个进程提供服务，该进程运行在单个k8s-master节点上。默认有两个端口。</p>
+<h2 id="21-本地端口">2.1. 本地端口</h2>
+<ol>
+<li>该端口用于接收HTTP请求；</li>
+<li>该端口默认值为8080，可以通过API Server的启动参数“–insecure-port”的值来修改默认值；</li>
+<li>默认的IP地址为“localhost”，可以通过启动参数“–insecure-bind-address”的值来修改该IP地址；</li>
+<li>非认证或授权的HTTP请求通过该端口访问API Server。</li>
+</ol>
+<h2 id="22-安全端口">2.2. 安全端口</h2>
+<ol>
+<li>该端口默认值为6443，可通过启动参数“–secure-port”的值来修改默认值；</li>
+<li>默认IP地址为非本地（Non-Localhost）网络端口，通过启动参数“–bind-address”设置该值；</li>
+<li>该端口用于接收HTTPS请求；</li>
+<li>用于基于Tocken文件或客户端证书及HTTP Base的认证；</li>
+<li>用于基于策略的授权；</li>
+<li>默认不启动HTTPS安全访问控制。</li>
+</ol>
+<h2 id="23-访问方式">2.3. 访问方式</h2>
+<p>Kubernetes REST API可参考<a href="https://kubernetes.io/docs/api-reference/v1.6/" target="_blank" rel="noopener">https://kubernetes.io/docs/api-reference/v1.6/</a></p>
+<h2 id="231-curl">2.3.1. curl</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl localhost:8080/api</span><br><span class="line">curl localhost:8080/api/v1/pods</span><br><span class="line">curl localhost:8080/api/v1/services</span><br><span class="line">curl localhost:8080/api/v1/replicationcontrollers</span><br></pre></td></tr></table></figure>
+<h2 id="232-kubectl-proxy">2.3.2. Kubectl Proxy</h2>
+<p>Kubectl Proxy代理程序既能作为API Server的反向代理，也能作为普通客户端访问API Server的代理。通过master节点的8080端口来启动该代理程序。</p>
+<p>kubectl proxy --port=8080 &amp;</p>
+<p>具体见kubectl proxy --help</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">[root@node5 ~]<span class="comment"># kubectl proxy --help</span></span><br><span class="line">To proxy all of the kubernetes api and nothing <span class="keyword">else</span>, use:</span><br><span class="line">kubectl proxy --api-prefix=/</span><br><span class="line">To proxy only part of the kubernetes api and also some static files:</span><br><span class="line">kubectl proxy --www=/my/files --www-prefix=/static/ --api-prefix=/api/</span><br><span class="line">The above lets you <span class="string">'curl localhost:8001/api/v1/pods'</span>.</span><br><span class="line">To proxy the entire kubernetes api at a different root, use:</span><br><span class="line">kubectl proxy --api-prefix=/custom/</span><br><span class="line">The above lets you <span class="string">'curl localhost:8001/custom/api/v1/pods'</span></span><br><span class="line">Usage:</span><br><span class="line">  kubectl proxy [--port=PORT] [--www=static-dir] [--www-prefix=prefix] [--api-prefix=prefix] [flags]</span><br><span class="line">Examples:</span><br><span class="line"><span class="comment"># Run a proxy to kubernetes apiserver on port 8011, serving static content from ./local/www/</span></span><br><span class="line">$ kubectl proxy --port=8011 --www=./<span class="built_in">local</span>/www/</span><br><span class="line"><span class="comment"># Run a proxy to kubernetes apiserver on an arbitrary local port.</span></span><br><span class="line"><span class="comment"># The chosen port for the server will be output to stdout.</span></span><br><span class="line">$ kubectl proxy --port=0</span><br><span class="line"><span class="comment"># Run a proxy to kubernetes apiserver, changing the api prefix to k8s-api</span></span><br><span class="line"><span class="comment"># This makes e.g. the pods api available at localhost:8011/k8s-api/v1/pods/</span></span><br><span class="line">$ kubectl proxy --api-prefix=/k8s-api</span><br><span class="line">Flags:</span><br><span class="line">      --accept-hosts=<span class="string">"^localhost$,^127//.0//.0//.1$,^//[::1//]$"</span>: Regular expression <span class="keyword">for</span> hosts that the proxy should accept.</span><br><span class="line">      --accept-paths=<span class="string">"^/.*"</span>: Regular expression <span class="keyword">for</span> paths that the proxy should accept.</span><br><span class="line">      --api-prefix=<span class="string">"/"</span>: Prefix to serve the proxied API under.</span><br><span class="line">      --<span class="built_in">disable</span>-filter[=<span class="literal">false</span>]: If <span class="literal">true</span>, <span class="built_in">disable</span> request filtering <span class="keyword">in</span> the proxy. This is dangerous, and can leave you vulnerable to XSRF attacks, when used with an accessible port.</span><br><span class="line">  -p, --port=8001: The port on <span class="built_in">which</span> to run the proxy. Set to 0 to pick a random port.</span><br><span class="line">      --reject-methods=<span class="string">"POST,PUT,PATCH"</span>: Regular expression <span class="keyword">for</span> HTTP methods that the proxy should reject.</span><br><span class="line">      --reject-paths=<span class="string">"^/api/.*/exec,^/api/.*/run"</span>: Regular expression <span class="keyword">for</span> paths that the proxy should reject.</span><br><span class="line">  -u, --unix-socket=<span class="string">""</span>: Unix socket on <span class="built_in">which</span> to run the proxy.</span><br><span class="line">  -w, --www=<span class="string">""</span>: Also serve static files from the given directory under the specified prefix.</span><br><span class="line">  -P, --www-prefix=<span class="string">"/static/"</span>: Prefix to serve static files under, <span class="keyword">if</span> static file directory is specified.</span><br><span class="line"> </span><br><span class="line">Global Flags:</span><br><span class="line">      --alsologtostderr[=<span class="literal">false</span>]: <span class="built_in">log</span> to standard error as well as files</span><br><span class="line">      --api-version=<span class="string">""</span>: The API version to use when talking to the server</span><br><span class="line">      --certificate-authority=<span class="string">""</span>: Path to a cert. file <span class="keyword">for</span> the certificate authority.</span><br><span class="line">      --client-certificate=<span class="string">""</span>: Path to a client key file <span class="keyword">for</span> TLS.</span><br><span class="line">      --client-key=<span class="string">""</span>: Path to a client key file <span class="keyword">for</span> TLS.</span><br><span class="line">      --cluster=<span class="string">""</span>: The name of the kubeconfig cluster to use</span><br><span class="line">      --context=<span class="string">""</span>: The name of the kubeconfig context to use</span><br><span class="line">      --insecure-skip-tls-verify[=<span class="literal">false</span>]: If <span class="literal">true</span>, the server<span class="string">'s certificate will not be checked for validity. This will make your HTTPS connections insecure.</span></span><br><span class="line"><span class="string">      --kubeconfig="": Path to the kubeconfig file to use for CLI requests.</span></span><br><span class="line"><span class="string">      --log-backtrace-at=:0: when logging hits line file:N, emit a stack trace</span></span><br><span class="line"><span class="string">      --log-dir="": If non-empty, write log files in this directory</span></span><br><span class="line"><span class="string">      --log-flush-frequency=5s: Maximum number of seconds between log flushes</span></span><br><span class="line"><span class="string">      --logtostderr[=true]: log to standard error instead of files</span></span><br><span class="line"><span class="string">      --match-server-version[=false]: Require server version to match client version</span></span><br><span class="line"><span class="string">      --namespace="": If present, the namespace scope for this CLI request.</span></span><br><span class="line"><span class="string">      --password="": Password for basic authentication to the API server.</span></span><br><span class="line"><span class="string">  -s, --server="": The address and port of the Kubernetes API server</span></span><br><span class="line"><span class="string">      --stderrthreshold=2: logs at or above this threshold go to stderr</span></span><br><span class="line"><span class="string">      --token="": Bearer token for authentication to the API server.</span></span><br><span class="line"><span class="string">      --user="": The name of the kubeconfig user to use</span></span><br><span class="line"><span class="string">      --username="": Username for basic authentication to the API server.</span></span><br><span class="line"><span class="string">      --v=0: log level for V logs</span></span><br><span class="line"><span class="string">      --vmodule=: comma-separated list of pattern=N settings for file-filtered logging</span></span><br></pre></td></tr></table></figure>
+<h2 id="233-kubectl客户端">2.3.3. kubectl客户端</h2>
+<p>命令行工具kubectl客户端，通过命令行参数转换为对API Server的REST API调用，并将调用结果输出。</p>
+<p>命令格式：kubectl [command] [options]</p>
+<p>具体可参考<a href="http://wiki.haplat.net/pages/viewpage.action?pageId=11899446" target="_blank" rel="noopener">k8s常用命令</a></p>
+<h2 id="234-编程方式调用">2.3.4. 编程方式调用</h2>
+<p>使用场景：</p>
+<p>1、运行在Pod里的用户进程调用kubernetes API,通常用来实现分布式集群搭建的目标。</p>
+<p>2、开发基于kubernetes的管理平台，比如调用kubernetes API来完成Pod、Service、RC等资源对象的图形化创建和管理界面。可以使用kubernetes提供的Client Library。</p>
+<p>具体可参考<a href="https://github.com/kubernetes/client-go" target="_blank" rel="noopener">https://github.com/kubernetes/client-go</a>。</p>
+<h1 id="3-通过api-server访问node-pod和service">3. 通过API Server访问Node、Pod和Service</h1>
+<p>k8s API Server最主要的REST接口是资源对象的增删改查，另外还有一类特殊的REST接口—k8s Proxy API接口，这类接口的作用是代理REST请求，即kubernetes API Server把收到的REST请求转发到某个Node上的kubelet守护进程的REST端口上，由该kubelet进程负责响应。</p>
+<h2 id="31-node相关接口">3.1. Node相关接口</h2>
+<p>关于Node相关的接口的REST路径为：/api/v1/proxy/nodes/{name}，其中{name}为节点的名称或IP地址。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/pods/    <span class="comment">#列出指定节点内所有Pod的信息</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/stats/   <span class="comment">#列出指定节点内物理资源的统计信息</span></span><br><span class="line">/api/v1/prxoy/nodes/&#123;name&#125;/spec/    <span class="comment">#列出指定节点的概要信息</span></span><br></pre></td></tr></table></figure>
+<p>这里获取的Pod信息来自Node而非etcd数据库，两者时间点可能存在偏差。如果在kubelet进程启动时加–enable-debugging-handles=true参数，那么kubernetes Proxy API还会增加以下接口：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/run      <span class="comment">#在节点上运行某个容器</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/<span class="built_in">exec</span>     <span class="comment">#在节点上的某个容器中运行某条命令</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/attach   <span class="comment">#在节点上attach某个容器</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/portForward   <span class="comment">#实现节点上的Pod端口转发</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/logs     <span class="comment">#列出节点的各类日志信息</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/metrics  <span class="comment">#列出和该节点相关的Metrics信息</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/runningpods  <span class="comment">#列出节点内运行中的Pod信息</span></span><br><span class="line">/api/v1/proxy/nodes/&#123;name&#125;/debug/pprof  <span class="comment">#列出节点内当前web服务的状态，包括CPU和内存的使用情况</span></span><br></pre></td></tr></table></figure>
+<h2 id="32-pod相关接口">3.2. Pod相关接口</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/proxy/namespaces/&#123;namespace&#125;/pods/&#123;name&#125;/&#123;path:*&#125;      <span class="comment">#访问pod的某个服务接口</span></span><br><span class="line">/api/v1/proxy/namespaces/&#123;namespace&#125;/pods/&#123;name&#125;               <span class="comment">#访问Pod</span></span><br><span class="line"><span class="comment">#以下写法不同，功能一样</span></span><br><span class="line">/api/v1/namespaces/&#123;namespace&#125;/pods/&#123;name&#125;/proxy/&#123;path:*&#125;      <span class="comment">#访问pod的某个服务接口</span></span><br><span class="line">/api/v1/namespaces/&#123;namespace&#125;/pods/&#123;name&#125;/proxy               <span class="comment">#访问Pod</span></span><br></pre></td></tr></table></figure>
+<h2 id="33-service相关接口">3.3. Service相关接口</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/api/v1/proxy/namespaces/&#123;namespace&#125;/services/&#123;name&#125;</span><br></pre></td></tr></table></figure>
+<p>Pod的proxy接口的作用：在kubernetes集群之外访问某个pod容器的服务（HTTP服务），可以用Proxy API实现，这种场景多用于管理目的，比如逐一排查Service的Pod副本，检查哪些Pod的服务存在异常问题。</p>
+<h1 id="4-集群功能模块之间的通信">4. 集群功能模块之间的通信</h1>
+<p>kubernetes API Server作为集群的核心，负责集群各功能模块之间的通信，集群内各个功能模块通过API Server将信息存入etcd，当需要获取和操作这些数据时，通过API Server提供的REST接口（GET/LIST/WATCH方法）来实现，从而实现各模块之间的信息交互。</p>
+<h2 id="41-kubelet与api-server交互">4.1. kubelet与API Server交互</h2>
+<p>每个Node节点上的kubelet定期就会调用API Server的REST接口报告自身状态，API Server接收这些信息后，将节点状态信息更新到etcd中。kubelet也通过API Server的Watch接口监听Pod信息，从而对Node机器上的POD进行管理。</p>
+<table>
+<thead>
+<tr>
+<th>监听信息</th>
+<th>kubelet动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新的POD副本被调度绑定到本节点</td>
+<td>执行POD对应的容器的创建和启动逻辑</td>
+</tr>
+<tr>
+<td>POD对象被删除</td>
+<td>删除本节点上相应的POD容器</td>
+</tr>
+<tr>
+<td>修改POD信息</td>
+<td>修改本节点的POD容器</td>
+</tr>
+</tbody>
+</table>
+<h2 id="42-kube-controller-manager与api-server交互">4.2. kube-controller-manager与API Server交互</h2>
+<p>kube-controller-manager中的Node Controller模块通过API Server提供的Watch接口，实时监控Node的信息，并做相应处理。</p>
+<h2 id="43-kube-scheduler与api-server交互">4.3. kube-scheduler与API Server交互</h2>
+<p>Scheduler通过API Server的Watch接口监听到新建Pod副本的信息后，它会检索所有符合该Pod要求的Node列表，开始执行Pod调度逻辑。调度成功后将Pod绑定到目标节点上。</p>
+<h2 id="44-特别说明">4.4. 特别说明</h2>
+<p>为了缓解各模块对API Server的访问压力，各功能模块都采用缓存机制来缓存数据，各功能模块定时从API Server获取指定的资源对象信息（LIST/WATCH方法），然后将信息保存到本地缓存，功能模块在某些情况下不直接访问API Server，而是通过访问缓存数据来间接访问API Server。</p>
+<p>参考《kubernetes权威指南》</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/concepts/architecture/paas-based-on-docker-and-kubernetes/" data-toggle="tooltip" data-placement="top" title=" 基于Docker及Kubernetes技术构建容器云（PaaS）平台">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/concepts/pod/pod/" data-toggle="tooltip" data-placement="top" title="Pod介绍">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-api-server简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. API Server简介</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-如何访问kubernetes-api"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 如何访问kubernetes API</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-本地端口"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 本地端口</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-安全端口"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. 安全端口</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-访问方式"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 访问方式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#231-curl"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.3.1. curl</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#232-kubectl-proxy"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.3.2. Kubectl Proxy</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#233-kubectl客户端"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">2.3.3. kubectl客户端</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#234-编程方式调用"><span class="toc-nav-number">2.7.</span> <span class="toc-nav-text">2.3.4. 编程方式调用</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-通过api-server访问node-pod和service"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. 通过API Server访问Node、Pod和Service</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-node相关接口"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. Node相关接口</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-pod相关接口"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. Pod相关接口</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-service相关接口"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. Service相关接口</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-集群功能模块之间的通信"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. 集群功能模块之间的通信</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-kubelet与api-server交互"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. kubelet与API Server交互</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-kube-controller-manager与api-server交互"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. kube-controller-manager与API Server交互</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-kube-scheduler与api-server交互"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. kube-scheduler与API Server交互</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-特别说明"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">4.4. 特别说明</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

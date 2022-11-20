@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-scheduler/PrioritizeNodes/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/PrioritizeNodes/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -231,9 +231,10 @@
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析优选策略逻辑，即从预选的节点中选择出最优的节点。优选策略的具体实现函数为PrioritizeNodes。PrioritizeNodes最终返回是一个记录了各个节点分数的列表。
-1. 调用入口genericScheduler.Schedule中对PrioritizeNodes的调用过程如下：
+1. 调用入口
+genericScheduler.Schedule中对PrioritizeNodes的调用过程如下：
 
-此部分代码位于pkg......
+此部分代码位于pk......
         </div>
     </a>
     
@@ -253,7 +254,7 @@
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-scheduler/preempt/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/preempt/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -270,11 +271,13 @@
         </h3>
         <div class="post-content-preview">
             kube-scheduler源码分析（六）之 preempt
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析调度中的抢占逻辑，当pod不适合任何节点的时候，可能pod会调度失败，这时候可能会发生抢占。抢占逻辑的具体实现函数为Scheduler.preempt。
-1. 调用入口当pod不适合任何节点的时候，可能pod会调度失败。这时候可能会发生抢占。
-sched......
+1. 调用入口
+当pod不适合任何节点的时候，可能pod会调度失败。这时候可能会发生抢占。
+sch......
         </div>
     </a>
     
@@ -294,7 +297,7 @@ sched......
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-scheduler/findNodesThatFit/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/findNodesThatFit/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -314,10 +317,11 @@ sched......
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析调度逻辑中的预选策略，即第一步筛选出符合pod调度条件的节点。
-1. 调用入口预选，通过预选函数来判断每个节点是否适合被该Pod调度。
+1. 调用入口
+预选，通过预选函数来判断每个节点是否适合被该Pod调度。
 genericScheduler.Schedule中对findNodesThatFit的调用过程如下：
 
-此部分代码位于pkg/scheduler/core/generic_sc......
+此部分代码位于pkg/scheduler/core/generic_s......
         </div>
     </a>
     
@@ -337,7 +341,7 @@ genericScheduler.Schedule中对findNodesThatFit的调用过程如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-scheduler/scheduleOne/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduleOne/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -354,11 +358,12 @@ genericScheduler.Schedule中对findNodesThatFit的调用过程如下：
         </h3>
         <div class="post-content-preview">
             scheduleOne
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析/pkg/scheduler/中调度的基本流程。具体的预选调度逻辑、优选调度逻辑、节点抢占逻辑待后续再独立分析。
 scheduler的pkg代码目录结构如下：
-123456789101112131415161718192021222324252627scheduler├── algorith......
+123456789101112131415161718192021222324252627scheduler├── algorit......
         </div>
     </a>
     
@@ -378,7 +383,7 @@ scheduler的pkg代码目录结构如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-scheduler/registerAlgorithmProvider/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/registerAlgorithmProvider/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -398,7 +403,8 @@ scheduler的pkg代码目录结构如下：
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 此部分主要介绍调度中使用的各种调度算法，包括调度算法的注册部分。注册部分的代码主要在/pkg/scheduler/algorithmprovider中，具体的预选策略和优选策略的算法实现在/pkg/scheduler/algorithm中。
-1. ApplyFeatureGates注册调度算法的调用入口在SchedulerC......
+1. ApplyFeatureGates
+注册调度算法的调用入口在Scheduler......
         </div>
     </a>
     
@@ -418,7 +424,7 @@ scheduler的pkg代码目录结构如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-scheduler/NewSchedulerCommand/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/NewSchedulerCommand/">
         <h2 class="post-title">
                         
             kube-scheduler源码分析（一）之 NewSchedulerCommand
@@ -451,7 +457,7 @@ scheduler的cmd代码目录结构如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-controller-manager/Informer/">
+    <a href="/article/k8s-source-code-analysis/kube-controller-manager/Informer/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -468,10 +474,11 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（三）之 Informer机制
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析k8s中各个核心组件经常使用到的Informer机制(即List-Watch)。该部分的代码主要位于client-go这个第三方包中。
-此部分的逻辑主要位于/vendor/k8s.io/client-go/tools/cache包......
+此部分的逻辑主要位于/vendor/k8s.io/client-go/tools/cache......
         </div>
     </a>
     
@@ -491,7 +498,7 @@ scheduler的cmd代码目录结构如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-controller-manager/deployment-controller/">
+    <a href="/article/k8s-source-code-analysis/kube-controller-manager/deployment-controller/">
         <h2 class="post-title">
                         
             kube-controller-manager源码分析（二）之 DeploymentController
@@ -501,9 +508,10 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（二）之 DeploymentController
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
-本文主要以deployment controller为例，分析该类controller的运行逻辑。此部分代码主要为位于pkg/controller/deployment。pkg/controller部分的代码包括了各种类型......
+本文主要以deployment controller为例，分析该类controller的运行逻辑。此部分代码主要为位于pkg/controller/deployment。pkg/controller部分的代码包括了各种类......
         </div>
     </a>
     
@@ -523,7 +531,7 @@ scheduler的cmd代码目录结构如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kube-controller-manager/NewControllerManagerCommand/">
+    <a href="/article/k8s-source-code-analysis/kube-controller-manager/NewControllerManagerCommand/">
         <h2 class="post-title">
                         
             kube-controller-manager源码分析（一）之 NewControllerManagerCommand
@@ -533,10 +541,11 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（一）之 NewControllerManagerCommand
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 本文主要分析https://github.com/kubernetes/kubernetes/tree/v1.12.0/cmd/kube-controller-manager 部分的代码。
 
-本文主要分析 ku......
+本文主要分析 k......
         </div>
     </a>
     
@@ -556,7 +565,7 @@ scheduler的cmd代码目录结构如下：
 
 <div class="post-preview">
 
-    <a href="/k8s-source-code-analysis/kubelet/syncLoopIteration/">
+    <a href="/article/k8s-source-code-analysis/kubelet/syncLoopIteration/">
         <h2 class="post-title">
                         
             kubelet源码分析（四）之 syncLoopIteration
@@ -566,10 +575,12 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（四）之 syncLoopIteration
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析kubelet中syncLoopIteration部分。syncLoopIteration通过几种channel来对不同类型的事件进行监听并做增删改查的处理。
-1. syncLoopsyncLoop是处理变更的循环。 它监听来自三种channel（......
+1. syncLoop
+syncLoop是处理变更的循环。 它监听来自三种channe......
         </div>
     </a>
     
@@ -662,11 +673,11 @@ scheduler的cmd代码目录结构如下：
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -684,7 +695,7 @@ scheduler的cmd代码目录结构如下：
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -693,10 +704,6 @@ scheduler的cmd代码目录结构如下：
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -716,9 +723,9 @@ scheduler的cmd代码目录结构如下：
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -738,15 +745,13 @@ scheduler的cmd代码目录结构如下：
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -755,6 +760,12 @@ scheduler的cmd代码目录结构如下：
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -844,23 +855,23 @@ scheduler的cmd代码目录结构如下：
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          csi-provisioner源码分析 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/develop/csi/csi-provisioner/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>csi-provisioner源码分析</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-06-24
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>本文主要分析<code>csi-provisioner</code>的源码，关于开发一个<code>Dynamic Provisioner</code>，具体可参考<a href="https://www.huweihuang.com/kubernetes-notes/develop/nfs-client-provisioner.html">nfs-client-provisioner的源码分析</a></p>
+</blockquote>
+<h1 id="1-dynamic-provisioner">1. Dynamic Provisioner</h1>
+<h2 id="11-provisioner-interface">1.1. Provisioner Interface</h2>
+<p>开发<code>Dynamic Provisioner</code>需要实现<a href="https://github.com/kubernetes-incubator/external-storage/blob/master/lib/controller/volume.go#L29" target="_blank" rel="noopener">Provisioner</a>接口，该接口有两个方法，分别是：</p>
+<ul>
+<li>Provision：创建存储资源，并且返回一个PV对象。</li>
+<li>Delete：移除对应的存储资源，但并没有删除PV对象。</li>
+</ul>
+<h2 id="12-开发provisioner的步骤">1.2. 开发provisioner的步骤</h2>
+<ol>
+<li>写一个<code>provisioner</code>实现<code>Provisioner</code>接口（包含<code>Provision</code>和<code>Delete</code>的方法）。</li>
+<li>通过该<code>provisioner</code>构建<code>ProvisionController</code>。</li>
+<li>执行<code>ProvisionController</code>的<code>Run</code>方法。</li>
+</ol>
+<h1 id="2-csi-provisioner">2. CSI Provisioner</h1>
+<p>CSI Provisioner的源码可参考：<a href="https://github.com/kubernetes-csi/external-provisioner%E3%80%82" target="_blank" rel="noopener">https://github.com/kubernetes-csi/external-provisioner。</a></p>
+<h2 id="21-main-函数">2.1. <a href="https://github.com/kubernetes-csi/external-provisioner/blob/master/cmd/csi-provisioner/csi-provisioner.go" target="_blank" rel="noopener">Main 函数</a></h2>
+<h3 id="211-读取环境变量">2.1.1. 读取环境变量</h3>
+<p>源码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	provisioner          = flag.String(<span class="string">"provisioner"</span>, <span class="string">""</span>, <span class="string">"Name of the provisioner. The provisioner will only provision volumes for claims that request a StorageClass with a provisioner field set equal to this name."</span>)</span><br><span class="line">	master               = flag.String(<span class="string">"master"</span>, <span class="string">""</span>, <span class="string">"Master URL to build a client config from. Either this or kubeconfig needs to be set if the provisioner is being run out of cluster."</span>)</span><br><span class="line">	kubeconfig           = flag.String(<span class="string">"kubeconfig"</span>, <span class="string">""</span>, <span class="string">"Absolute path to the kubeconfig file. Either this or master needs to be set if the provisioner is being run out of cluster."</span>)</span><br><span class="line">	csiEndpoint          = flag.String(<span class="string">"csi-address"</span>, <span class="string">"/run/csi/socket"</span>, <span class="string">"The gRPC endpoint for Target CSI Volume"</span>)</span><br><span class="line">	connectionTimeout    = flag.Duration(<span class="string">"connection-timeout"</span>, <span class="number">10</span>*time.Second, <span class="string">"Timeout for waiting for CSI driver socket."</span>)</span><br><span class="line">	volumeNamePrefix     = flag.String(<span class="string">"volume-name-prefix"</span>, <span class="string">"pvc"</span>, <span class="string">"Prefix to apply to the name of a created volume"</span>)</span><br><span class="line">	volumeNameUUIDLength = flag.Int(<span class="string">"volume-name-uuid-length"</span>, <span class="number">-1</span>, <span class="string">"Truncates generated UUID of a created volume to this length. Defaults behavior is to NOT truncate."</span>)</span><br><span class="line">	showVersion          = flag.Bool(<span class="string">"version"</span>, <span class="literal">false</span>, <span class="string">"Show version."</span>)</span><br><span class="line"></span><br><span class="line">	provisionController *controller.ProvisionController</span><br><span class="line">	version             = <span class="string">"unknown"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> config *rest.Config</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line"></span><br><span class="line">	flag.Parse()</span><br><span class="line">	flag.Set(<span class="string">"logtostderr"</span>, <span class="string">"true"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> *showVersion &#123;</span><br><span class="line">		fmt.Println(os.Args[<span class="number">0</span>], version)</span><br><span class="line">		os.Exit(<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	glog.Infof(<span class="string">"Version: %s"</span>, version)</span><br><span class="line">	...	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>init函数</code>解析相关参数，其实<code>provisioner</code>指明为PVC提供PV的provisioner的名字，需要和<code>StorageClass</code>对象中的<code>provisioner</code>字段一致。</p>
+<h3 id="212-获取clientset对象">2.1.2. 获取clientset对象</h3>
+<p>源码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// get the KUBECONFIG from env if specified (useful for local/debug cluster)</span></span><br><span class="line">kubeconfigEnv := os.Getenv(<span class="string">"KUBECONFIG"</span>)</span><br><span class="line"><span class="keyword">if</span> kubeconfigEnv != <span class="string">""</span> &#123;</span><br><span class="line">	glog.Infof(<span class="string">"Found KUBECONFIG environment variable set, using that.."</span>)</span><br><span class="line">	kubeconfig = &amp;kubeconfigEnv</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> *master != <span class="string">""</span> || *kubeconfig != <span class="string">""</span> &#123;</span><br><span class="line">	glog.Infof(<span class="string">"Either master or kubeconfig specified. building kube config from that.."</span>)</span><br><span class="line">	config, err = clientcmd.BuildConfigFromFlags(*master, *kubeconfig)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">	glog.Infof(<span class="string">"Building kube configs for running in cluster..."</span>)</span><br><span class="line">	config, err = rest.InClusterConfig()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.Fatalf(<span class="string">"Failed to create config: %v"</span>, err)</span><br><span class="line">&#125;</span><br><span class="line">clientset, err := kubernetes.NewForConfig(config)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.Fatalf(<span class="string">"Failed to create client: %v"</span>, err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// snapclientset.NewForConfig creates a new Clientset for VolumesnapshotV1alpha1Client</span></span><br><span class="line">snapClient, err := snapclientset.NewForConfig(config)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.Fatalf(<span class="string">"Failed to create snapshot client: %v"</span>, err)</span><br><span class="line">&#125;</span><br><span class="line">csiAPIClient, err := csiclientset.NewForConfig(config)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.Fatalf(<span class="string">"Failed to create CSI API client: %v"</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过读取对应的k8s的配置，创建<code>clientset</code>对象，用来执行k8s对应的API，其中主要包括对PV和PVC等对象的创建删除等操作。</p>
+<h3 id="213-k8s版本校验">2.1.3. k8s版本校验</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The controller needs to know what the server version is because out-of-tree</span></span><br><span class="line"><span class="comment">// provisioners aren't officially supported until 1.5</span></span><br><span class="line">serverVersion, err := clientset.Discovery().ServerVersion()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.Fatalf(<span class="string">"Error getting server version: %v"</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取了k8s的版本信息，因为provisioners的功能在k8s 1.5及以上版本才支持。</p>
+<h3 id="214-连接-csi-socket">2.1.4. 连接 csi socket</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Generate a unique ID for this provisioner</span></span><br><span class="line">timeStamp := time.Now().UnixNano() / <span class="keyword">int64</span>(time.Millisecond)</span><br><span class="line">identity := strconv.FormatInt(timeStamp, <span class="number">10</span>) + <span class="string">"-"</span> + strconv.Itoa(rand.Intn(<span class="number">10000</span>)) + <span class="string">"-"</span> + *provisioner</span><br><span class="line"></span><br><span class="line"><span class="comment">// Provisioner will stay in Init until driver opens csi socket, once it's done</span></span><br><span class="line"><span class="comment">// controller will exit this loop and proceed normally.</span></span><br><span class="line">socketDown := <span class="literal">true</span></span><br><span class="line">grpcClient := &amp;grpc.ClientConn&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> socketDown &#123;</span><br><span class="line">	grpcClient, err = ctrl.Connect(*csiEndpoint, *connectionTimeout)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		socketDown = <span class="literal">false</span></span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	&#125;</span><br><span class="line">	time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>Provisioner</code>会停留在初始化状态，直到<code>csi socket</code>连接成功才正常运行。如果连接失败，会暂停<code>10秒</code>后重试，其中涉及以下2个参数：</p>
+<ul>
+<li>csiEndpoint：CSI Volume的gRPC地址，默认通过为<code>/run/csi/socket</code>。</li>
+<li>connectionTimeout：连接CSI driver socket的超时时间，默认为10秒。</li>
+</ul>
+<h3 id="215-构造csi-provisioner对象">2.1.5. 构造csi-Provisioner对象</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create the provisioner: it implements the Provisioner interface expected by</span></span><br><span class="line"><span class="comment">// the controller</span></span><br><span class="line">csiProvisioner := ctrl.NewCSIProvisioner(clientset, csiAPIClient, *csiEndpoint, *connectionTimeout, identity, *volumeNamePrefix, *volumeNameUUIDLength, grpcClient, snapClient)</span><br><span class="line">provisionController = controller.NewProvisionController(</span><br><span class="line">	clientset,</span><br><span class="line">	*provisioner,</span><br><span class="line">	csiProvisioner,</span><br><span class="line">	serverVersion.GitVersion,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>通过参数<code>clientset</code>,<code>csiAPIClient</code>, <code>csiEndpoint</code>, <code>connectionTimeout</code>, <code>identity</code>, <code>volumeNamePrefix</code>, <code>volumeNameUUIDLength</code>,<code>grpcClient</code>, <code>snapClient</code>构造csi-Provisioner对象。</p>
+<p>通过<code>csiProvisioner</code>构造<code>ProvisionController</code>对象。</p>
+<h3 id="216-运行provisioncontroller">2.1.6. 运行ProvisionController</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	provisionController.Run(wait.NeverStop)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ProvisionController</code>实现了具体的PV和PVC的相关逻辑，<code>Run</code>方法以常驻进程的方式运行。</p>
+<h2 id="22-provision和delete方法">2.2. <a href="https://github.com/kubernetes-csi/external-provisioner/blob/master/pkg/controller/controller.go#L336" target="_blank" rel="noopener">Provision</a>和<a href="https://github.com/kubernetes-csi/external-provisioner/blob/master/pkg/controller/controller.go#L606" target="_blank" rel="noopener">Delete</a>方法</h2>
+<h3 id="221-provision方法">2.2.1. Provision方法</h3>
+<blockquote>
+<p><code>csiProvisioner</code>的<code>Provision</code>方法具体源码参考：<a href="https://github.com/kubernetes-csi/external-provisioner/blob/master/pkg/controller/controller.go#L336" target="_blank" rel="noopener">https://github.com/kubernetes-csi/external-provisioner/blob/master/pkg/controller/controller.go#L336</a></p>
+</blockquote>
+<p><code>Provision</code>方法用来创建存储资源，并且返回一个<code>PV</code>对象。其中入参是<code>VolumeOptions</code>，用来指定<code>PV</code>对象的相关属性。</p>
+<p><strong>1、构造PV相关属性</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pvName, err := makeVolumeName(p.volumeNamePrefix, fmt.Sprintf(<span class="string">"%s"</span>, options.PVC.ObjectMeta.UID), p.volumeNameUUIDLength)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2、构造CSIPersistentVolumeSource相关属性</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">driverState, err := checkDriverState(p.grpcClient, p.timeout, needSnapshotSupport)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"><span class="comment">// Resolve controller publish, node stage, node publish secret references</span></span><br><span class="line">controllerPublishSecretRef, err := getSecretReference(controllerPublishSecretNameKey, controllerPublishSecretNamespaceKey, options.Parameters, pvName, options.PVC)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br><span class="line">nodeStageSecretRef, err := getSecretReference(nodeStageSecretNameKey, nodeStageSecretNamespaceKey, options.Parameters, pvName, options.PVC)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br><span class="line">nodePublishSecretRef, err := getSecretReference(nodePublishSecretNameKey, nodePublishSecretNamespaceKey, options.Parameters, pvName, options.PVC)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">volumeAttributes := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;provisionerIDKey: p.identity&#125;</span><br><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> rep.Volume.Attributes &#123;</span><br><span class="line">	volumeAttributes[k] = v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">fsType := <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> options.Parameters &#123;</span><br><span class="line">	<span class="keyword">switch</span> strings.ToLower(k) &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"fstype"</span>:</span><br><span class="line">		fsType = v</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(fsType) == <span class="number">0</span> &#123;</span><br><span class="line">	fsType = defaultFSType</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3、创建CSI CreateVolumeRequest</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create a CSI CreateVolumeRequest and Response</span></span><br><span class="line">req := csi.CreateVolumeRequest&#123;</span><br><span class="line">	Name:               pvName,</span><br><span class="line">	Parameters:         options.Parameters,</span><br><span class="line">	VolumeCapabilities: volumeCaps,</span><br><span class="line">	CapacityRange: &amp;csi.CapacityRange&#123;</span><br><span class="line">		RequiredBytes: <span class="keyword">int64</span>(volSizeBytes),</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">glog.V(<span class="number">5</span>).Infof(<span class="string">"CreateVolumeRequest %+v"</span>, req)</span><br><span class="line"></span><br><span class="line">rep := &amp;csi.CreateVolumeResponse&#123;&#125;</span><br><span class="line">...</span><br><span class="line">opts := wait.Backoff&#123;Duration: backoffDuration, Factor: backoffFactor, Steps: backoffSteps&#125;</span><br><span class="line">err = wait.ExponentialBackoff(opts, <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), p.timeout)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line">	rep, err = p.csiClient.CreateVolume(ctx, &amp;req)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// CreateVolume has finished successfully</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> status, ok := status.FromError(err); ok &#123;</span><br><span class="line">		<span class="keyword">if</span> status.Code() == codes.DeadlineExceeded &#123;</span><br><span class="line">			<span class="comment">// CreateVolume timed out, give it another chance to complete</span></span><br><span class="line">			glog.Warningf(<span class="string">"CreateVolume timeout: %s has expired, operation will be retried"</span>, p.timeout.String())</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// CreateVolume failed , no reason to retry, bailing from ExponentialBackoff</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>, err</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rep.Volume != <span class="literal">nil</span> &#123;</span><br><span class="line">	glog.V(<span class="number">3</span>).Infof(<span class="string">"create volume rep: %+v"</span>, *rep.Volume)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">respCap := rep.GetVolume().GetCapacityBytes()</span><br><span class="line"><span class="keyword">if</span> respCap &lt; volSizeBytes &#123;</span><br><span class="line">	capErr := fmt.Errorf(<span class="string">"created volume capacity %v less than requested capacity %v"</span>, respCap, volSizeBytes)</span><br><span class="line">	delReq := &amp;csi.DeleteVolumeRequest&#123;</span><br><span class="line">		VolumeId: rep.GetVolume().GetId(),</span><br><span class="line">	&#125;</span><br><span class="line">	delReq.ControllerDeleteSecrets = provisionerCredentials</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), p.timeout)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line">	_, err := p.csiClient.DeleteVolume(ctx, delReq)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		capErr = fmt.Errorf(<span class="string">"%v. Cleanup of volume %s failed, volume is orphaned: %v"</span>, capErr, pvName, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span>, capErr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Provison</code>方法核心功能是调用<code>p.csiClient.CreateVolume(ctx, &amp;req)</code>。</p>
+<p><strong>4、构造PV对象</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">pv := &amp;v1.PersistentVolume&#123;</span><br><span class="line">	ObjectMeta: metav1.ObjectMeta&#123;</span><br><span class="line">		Name: pvName,</span><br><span class="line">	&#125;,</span><br><span class="line">	Spec: v1.PersistentVolumeSpec&#123;</span><br><span class="line">		PersistentVolumeReclaimPolicy: options.PersistentVolumeReclaimPolicy,</span><br><span class="line">		AccessModes:                   options.PVC.Spec.AccessModes,</span><br><span class="line">		Capacity: v1.ResourceList&#123;</span><br><span class="line">			v1.ResourceName(v1.ResourceStorage): bytesToGiQuantity(respCap),</span><br><span class="line">		&#125;,</span><br><span class="line">		<span class="comment">// TODO wait for CSI VolumeSource API</span></span><br><span class="line">		PersistentVolumeSource: v1.PersistentVolumeSource&#123;</span><br><span class="line">			CSI: &amp;v1.CSIPersistentVolumeSource&#123;</span><br><span class="line">				Driver:                     driverState.driverName,</span><br><span class="line">				VolumeHandle:               p.volumeIdToHandle(rep.Volume.Id),</span><br><span class="line">				FSType:                     fsType,</span><br><span class="line">				VolumeAttributes:           volumeAttributes,</span><br><span class="line">				ControllerPublishSecretRef: controllerPublishSecretRef,</span><br><span class="line">				NodeStageSecretRef:         nodeStageSecretRef,</span><br><span class="line">				NodePublishSecretRef:       nodePublishSecretRef,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> driverState.capabilities.Has(PluginCapability_ACCESSIBILITY_CONSTRAINTS) &#123;</span><br><span class="line">	pv.Spec.NodeAffinity = GenerateVolumeNodeAffinity(rep.Volume.AccessibleTopology)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">glog.Infof(<span class="string">"successfully created PV %+v"</span>, pv.Spec.PersistentVolumeSource)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> pv, <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+<p><code>Provision</code>方法只是通过<code>VolumeOptions</code>参数来构建<code>PV</code>对象，并没有执行具体<code>PV</code>的创建或删除的操作。</p>
+<p>不同类型的<code>Provisioner</code>的，一般是<code>PersistentVolumeSource</code>类型和参数不同，例如<code>csi-provisioner</code>对应的<code>PersistentVolumeSource</code>为<code>CSI</code>，并且需要传入<code>CSI</code>相关的参数：</p>
+<ul>
+<li><code>Driver</code></li>
+<li><code>VolumeHandle</code></li>
+<li><code>FSType</code></li>
+<li><code>VolumeAttributes</code></li>
+<li><code>ControllerPublishSecretRef</code></li>
+<li><code>NodeStageSecretRef</code></li>
+<li><code>NodePublishSecretRef</code></li>
+</ul>
+<h3 id="222-delete方法">2.2.2. Delete方法</h3>
+<blockquote>
+<p><code>csiProvisioner</code>的<code>delete</code>方法具体源码参考：<a href="https://github.com/kubernetes-csi/external-provisioner/blob/master/pkg/controller/controller.go#L606" target="_blank" rel="noopener">https://github.com/kubernetes-csi/external-provisioner/blob/master/pkg/controller/controller.go#L606</a></p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *csiProvisioner)</span> <span class="title">Delete</span><span class="params">(volume *v1.PersistentVolume)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> volume == <span class="literal">nil</span> || volume.Spec.CSI == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid CSI PV"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	volumeId := p.volumeHandleToId(volume.Spec.CSI.VolumeHandle)</span><br><span class="line"></span><br><span class="line">	_, err := checkDriverState(p.grpcClient, p.timeout, <span class="literal">false</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	req := csi.DeleteVolumeRequest&#123;</span><br><span class="line">		VolumeId: volumeId,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// get secrets if StorageClass specifies it</span></span><br><span class="line">	storageClassName := volume.Spec.StorageClassName</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(storageClassName) != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> storageClass, err := p.client.StorageV1().StorageClasses().Get(storageClassName, metav1.GetOptions&#123;&#125;); err == <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="comment">// Resolve provision secret credentials.</span></span><br><span class="line">			<span class="comment">// No PVC is provided when resolving provision/delete secret names, since the PVC may or may not exist at delete time.</span></span><br><span class="line">			provisionerSecretRef, err := getSecretReference(provisionerSecretNameKey, provisionerSecretNamespaceKey, storageClass.Parameters, volume.Name, <span class="literal">nil</span>)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">return</span> err</span><br><span class="line">			&#125;</span><br><span class="line">			credentials, err := getCredentials(p.client, provisionerSecretRef)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">return</span> err</span><br><span class="line">			&#125;</span><br><span class="line">			req.ControllerDeleteSecrets = credentials</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), p.timeout)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">	_, err = p.csiClient.DeleteVolume(ctx, &amp;req)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Delete</code>方法主要是调用了<code>p.csiClient.DeleteVolume(ctx, &amp;req)</code>方法。</p>
+<h2 id="23-总结">2.3. 总结</h2>
+<p><code>csi provisioner</code>实现了<code>Provisioner</code>接口，其中包含<code>Provison</code>和<code>Delete</code>两个方法:</p>
+<ul>
+<li><code>Provision</code>：调用<code>csiClient.CreateVolume</code>方法，同时构造并返回PV对象。</li>
+<li><code>Delete</code>：调用<code>csiClient.DeleteVolume</code>方法。</li>
+</ul>
+<p><code>csi provisioner</code>的核心方法都调用了<code>csi-client</code>相关方法。</p>
+<h1 id="3-csi-client">3. csi-client</h1>
+<blockquote>
+<p><code>csi client</code>的相关代码参考：<a href="https://github.com/container-storage-interface/spec/blob/master/lib/go/csi/v0/csi.pb.go" target="_blank" rel="noopener">https://github.com/container-storage-interface/spec/blob/master/lib/go/csi/v0/csi.pb.go</a></p>
+</blockquote>
+<h2 id="31-构造csi-client">3.1. 构造csi-client</h2>
+<h3 id="311-构造grpcclient">3.1.1. 构造grpcClient</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Provisioner will stay in Init until driver opens csi socket, once it's done</span></span><br><span class="line"><span class="comment">// controller will exit this loop and proceed normally.</span></span><br><span class="line">socketDown := <span class="literal">true</span></span><br><span class="line">grpcClient := &amp;grpc.ClientConn&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> socketDown &#123;</span><br><span class="line">	grpcClient, err = ctrl.Connect(*csiEndpoint, *connectionTimeout)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		socketDown = <span class="literal">false</span></span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	&#125;</span><br><span class="line">	time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过连接<code>csi socket</code>，连接成功才构造可用的<code>grpcClient</code>。</p>
+<h3 id="312-构造csi-client">3.1.2. 构造csi-client</h3>
+<p>通过<code>grpcClient</code>构造<code>csi-client</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create the provisioner: it implements the Provisioner interface expected by</span></span><br><span class="line"><span class="comment">// the controller</span></span><br><span class="line">csiProvisioner := ctrl.NewCSIProvisioner(clientset, csiAPIClient, *csiEndpoint, *connectionTimeout, identity, *volumeNamePrefix, *volumeNameUUIDLength, grpcClient, snapClient)</span><br></pre></td></tr></table></figure>
+<p><strong>NewCSIProvisioner</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewCSIProvisioner creates new CSI provisioner</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewCSIProvisioner</span><span class="params">(client kubernetes.Interface,</span></span></span><br><span class="line"><span class="function"><span class="params">	csiAPIClient csiclientset.Interface,</span></span></span><br><span class="line"><span class="function"><span class="params">	csiEndpoint <span class="keyword">string</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">	connectionTimeout time.Duration,</span></span></span><br><span class="line"><span class="function"><span class="params">	identity <span class="keyword">string</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">	volumeNamePrefix <span class="keyword">string</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">	volumeNameUUIDLength <span class="keyword">int</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">	grpcClient *grpc.ClientConn,</span></span></span><br><span class="line"><span class="function"><span class="params">	snapshotClient snapclientset.Interface)</span> <span class="title">controller</span>.<span class="title">Provisioner</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	csiClient := csi.NewControllerClient(grpcClient)</span><br><span class="line">	provisioner := &amp;csiProvisioner&#123;</span><br><span class="line">		client:               client,</span><br><span class="line">		grpcClient:           grpcClient,</span><br><span class="line">		csiClient:            csiClient,</span><br><span class="line">		csiAPIClient:         csiAPIClient,</span><br><span class="line">		snapshotClient:       snapshotClient,</span><br><span class="line">		timeout:              connectionTimeout,</span><br><span class="line">		identity:             identity,</span><br><span class="line">		volumeNamePrefix:     volumeNamePrefix,</span><br><span class="line">		volumeNameUUIDLength: volumeNameUUIDLength,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> provisioner</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><a href="https://github.com/container-storage-interface/spec/blob/master/lib/go/csi/v0/csi.pb.go#L4353" target="_blank" rel="noopener">NewControllerClient</a></strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">csiClient := csi.NewControllerClient(grpcClient)</span><br><span class="line">...</span><br><span class="line"><span class="keyword">type</span> controllerClient <span class="keyword">struct</span> &#123;</span><br><span class="line">	cc *grpc.ClientConn</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewControllerClient</span><span class="params">(cc *grpc.ClientConn)</span> <span class="title">ControllerClient</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;controllerClient&#123;cc&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="32-csiclientcreatevolume">3.2. csiClient.CreateVolume</h2>
+<p><code>csi provisoner</code>中调用<code>csiClient.CreateVolume</code>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">opts := wait.Backoff&#123;Duration: backoffDuration, Factor: backoffFactor, Steps: backoffSteps&#125;</span><br><span class="line">err = wait.ExponentialBackoff(opts, <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), p.timeout)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line">	rep, err = p.csiClient.CreateVolume(ctx, &amp;req)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// CreateVolume has finished successfully</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> status, ok := status.FromError(err); ok &#123;</span><br><span class="line">		<span class="keyword">if</span> status.Code() == codes.DeadlineExceeded &#123;</span><br><span class="line">			<span class="comment">// CreateVolume timed out, give it another chance to complete</span></span><br><span class="line">			glog.Warningf(<span class="string">"CreateVolume timeout: %s has expired, operation will be retried"</span>, p.timeout.String())</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// CreateVolume failed , no reason to retry, bailing from ExponentialBackoff</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>, err</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p><strong>CreateVolumeRequest的构造：</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create a CSI CreateVolumeRequest and Response</span></span><br><span class="line">req := csi.CreateVolumeRequest&#123;</span><br><span class="line">	Name:               pvName,</span><br><span class="line">	Parameters:         options.Parameters,</span><br><span class="line">	VolumeCapabilities: volumeCaps,</span><br><span class="line">	CapacityRange: &amp;csi.CapacityRange&#123;</span><br><span class="line">		RequiredBytes: <span class="keyword">int64</span>(volSizeBytes),</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">req.VolumeContentSource = volumeContentSource</span><br><span class="line">...</span><br><span class="line">req.AccessibilityRequirements = requirements</span><br><span class="line">...</span><br><span class="line">req.ControllerCreateSecrets = provisionerCredentials</span><br></pre></td></tr></table></figure>
+<p><strong>具体的<code>Create</code>实现方法如下：</strong></p>
+<blockquote>
+<p>其中<code>csiClient</code>是个接口类型</p>
+</blockquote>
+<p>具体代码参考<a href="https://github.com/container-storage-interface/spec/blob/master/lib/go/csi/v0/csi.pb.go#L4357" target="_blank" rel="noopener">controllerClient.CreateVolume</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *controllerClient)</span> <span class="title">CreateVolume</span><span class="params">(ctx context.Context, in *CreateVolumeRequest, opts ...grpc.CallOption)</span> <span class="params">(*CreateVolumeResponse, error)</span></span> &#123;</span><br><span class="line">	out := <span class="built_in">new</span>(CreateVolumeResponse)</span><br><span class="line">	err := grpc.Invoke(ctx, <span class="string">"/csi.v0.Controller/CreateVolume"</span>, in, out, c.cc, opts...)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> out, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="33-csiclientdeletevolume">3.3. csiClient.DeleteVolume</h2>
+<p><code>csi provisoner</code>中调用<code>csiClient.DeleteVolume</code>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *csiProvisioner)</span> <span class="title">Delete</span><span class="params">(volume *v1.PersistentVolume)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	...</span><br><span class="line">	req := csi.DeleteVolumeRequest&#123;</span><br><span class="line">		VolumeId: volumeId,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// get secrets if StorageClass specifies it</span></span><br><span class="line">	...</span><br><span class="line">    </span><br><span class="line">	ctx, cancel := context.WithTimeout(context.Background(), p.timeout)</span><br><span class="line">	<span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">	_, err = p.csiClient.DeleteVolume(ctx, &amp;req)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>DeleteVolumeRequest的构造：</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">req := csi.DeleteVolumeRequest&#123;</span><br><span class="line">	VolumeId: volumeId,</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">req.ControllerDeleteSecrets = credentials</span><br></pre></td></tr></table></figure>
+<p>将构造的<code>DeleteVolumeRequest</code>传给<code>DeleteVolume</code>方法。</p>
+<p><strong>具体的<code>Delete</code>实现方法如下：</strong></p>
+<p>具体代码参考：<a href="https://github.com/container-storage-interface/spec/blob/master/lib/go/csi/v0/csi.pb.go#L4366" target="_blank" rel="noopener">controllerClient.DeleteVolume</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *controllerClient)</span> <span class="title">DeleteVolume</span><span class="params">(ctx context.Context, in *DeleteVolumeRequest, opts ...grpc.CallOption)</span> <span class="params">(*DeleteVolumeResponse, error)</span></span> &#123;</span><br><span class="line">	out := <span class="built_in">new</span>(DeleteVolumeResponse)</span><br><span class="line">	err := grpc.Invoke(ctx, <span class="string">"/csi.v0.Controller/DeleteVolume"</span>, in, out, c.cc, opts...)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> out, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="4-provisioncontrollerrun">4. <a href="https://github.com/kubernetes-incubator/external-storage/blob/master/lib/controller/controller.go#L565" target="_blank" rel="noopener">ProvisionController.Run</a></h1>
+<p>自定义的<code>provisioner</code>实现了<code>Provisoner接口</code>的<code>Provision</code>和<code>Delete</code>方法，这两个方法主要对后端存储做创建和删除操作，并没有对PV对象进行创建和删除操作。</p>
+<p>PV对象的相关操作具体由<code>ProvisionController</code>中的<code>provisionClaimOperation</code>和<code>deleteVolumeOperation</code>具体执行，同时调用了具体<code>provisioner</code>的<code>Provision</code>和<code>Delete</code>两个方法来对存储数据做处理。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	provisionController.Run(wait.NeverStop)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这块代码逻辑可参考：<a href="https://www.huweihuang.com/kubernetes-notes/develop/nfs-client-provisioner.html#3-provisioncontroller">nfs-client-provisioner 源码分析</a></p>
+<p>参考文章：</p>
+<ul>
+<li><a href="https://github.com/kubernetes-csi/external-provisioner" target="_blank" rel="noopener">https://github.com/kubernetes-csi/external-provisioner</a></li>
+<li><a href="https://github.com/container-storage-interface/spec" target="_blank" rel="noopener">https://github.com/container-storage-interface/spec</a></li>
+<li><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/storage/container-storage-interface.md" target="_blank" rel="noopener">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/storage/container-storage-interface.md</a></li>
+<li><a href="https://github.com/container-storage-interface/spec/blob/master/spec.md" target="_blank" rel="noopener">https://github.com/container-storage-interface/spec/blob/master/spec.md</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/develop/csi/nfs-client-provisioner/" data-toggle="tooltip" data-placement="top" title="nfs-client-provisioner源码分析">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/resource/resource-quota/" data-toggle="tooltip" data-placement="top" title="资源配额">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-dynamic-provisioner"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Dynamic Provisioner</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-provisioner-interface"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. Provisioner Interface</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-开发provisioner的步骤"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. 开发provisioner的步骤</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-csi-provisioner"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. CSI Provisioner</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-main-函数"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. Main 函数</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#211-读取环境变量"><span class="toc-nav-number">2.1.1.</span> <span class="toc-nav-text">2.1.1. 读取环境变量</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#212-获取clientset对象"><span class="toc-nav-number">2.1.2.</span> <span class="toc-nav-text">2.1.2. 获取clientset对象</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#213-k8s版本校验"><span class="toc-nav-number">2.1.3.</span> <span class="toc-nav-text">2.1.3. k8s版本校验</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#214-连接-csi-socket"><span class="toc-nav-number">2.1.4.</span> <span class="toc-nav-text">2.1.4. 连接 csi socket</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#215-构造csi-provisioner对象"><span class="toc-nav-number">2.1.5.</span> <span class="toc-nav-text">2.1.5. 构造csi-Provisioner对象</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#216-运行provisioncontroller"><span class="toc-nav-number">2.1.6.</span> <span class="toc-nav-text">2.1.6. 运行ProvisionController</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-provision和delete方法"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. Provision和Delete方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#221-provision方法"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">2.2.1. Provision方法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#222-delete方法"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">2.2.2. Delete方法</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-总结"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 总结</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-csi-client"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. csi-client</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-构造csi-client"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. 构造csi-client</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#311-构造grpcclient"><span class="toc-nav-number">3.1.1.</span> <span class="toc-nav-text">3.1.1. 构造grpcClient</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#312-构造csi-client"><span class="toc-nav-number">3.1.2.</span> <span class="toc-nav-text">3.1.2. 构造csi-client</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-csiclientcreatevolume"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. csiClient.CreateVolume</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-csiclientdeletevolume"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. csiClient.DeleteVolume</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-provisioncontrollerrun"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. ProvisionController.Run</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2022 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,20 +211,22 @@
 
 <div class="post-preview">
 
-    <a href="/linux-notes/file/linux-file-permission/">
+    <a href="/article/linux-notes/disk/disk-command/">
         <h2 class="post-title">
                         
-            Linux文件权限
+            磁盘命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Linux文件管理Linux中的所有数据都被保存在文件中，所有的文件被分配到不同的目录。目录是一种类似于树的结构，称为文件系统。
-1.1. 文件类型1、普通文件
-普通文件是以字节为单位的数据流，包括文本文件、源码文件、可执行文件等。文本和二进制对Linux来说并无区别，对普通文件的解释由处理该文件的应用程序进行。
-2、目录
-目录可以包含普通文件和特殊文件，目录相当于Windows和Ma......
+            1. 判断磁盘是SSD或HDD盘
+1、没有使用raid方案
+lsblk -d -o name,rota命令，0表示SSD，1表示HDD
+12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
+2、使用raid方案
+下载工具
+1wget https://raw.githubusercontent.com/eLvErDe/......
         </div>
     </a>
     
@@ -234,7 +236,7 @@
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#disk" title="disk">disk</a>
             
         </div>
     
@@ -244,40 +246,7 @@
 
 <div class="post-preview">
 
-    <a href="/linux-notes/file/linux-file-system/">
-        <h2 class="post-title">
-                        
-            Linux文件系统
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 文件系统文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
-不同Linux发行版本之间的文件系统差别很少，主要表现在系统管理的特色工具以及软件包管理方式的不同，文件目录结构基本上都是一样的。
-
-ext2 ： 早期linux中常用的文件系统；
-ext3 ： e......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/linux-notes/file/linux-file-storage/">
+    <a href="/article/linux-notes/file/linux-file-storage/">
         <h2 class="post-title">
                         
             Linux文件存储
@@ -286,13 +255,15 @@ ext3 ： e......
             
         </h3>
         <div class="post-content-preview">
-            文件存储结构大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
+            文件存储结构
+大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
 
 目录项：包括文件名和inode节点号。
 Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
 数据块：包含文件的具体内容。
 
-1. inode理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector），每个扇区储存512字节（相......
+1. inode
+理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
         </div>
     </a>
     
@@ -312,7 +283,41 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
 
 <div class="post-preview">
 
-    <a href="/linux-notes/file/linux-introduction/">
+    <a href="/article/linux-notes/file/linux-file-system/">
+        <h2 class="post-title">
+                        
+            Linux文件系统
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 文件系统
+文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
+不同Linux发行版本之间的文件系统差别很少，主要表现在系统管理的特色工具以及软件包管理方式的不同，文件目录结构基本上都是一样的。
+
+ext2 ： 早期linux中常用的文件系统；
+ext3 ： ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/file/linux-introduction/">
         <h2 class="post-title">
                         
             Linux介绍
@@ -321,9 +326,10 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         </h3>
         <div class="post-content-preview">
-            1. Linux简介严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
+            1. Linux简介
+严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
 Linux内核版本
-Linux内核版本一般格式为：x.y.zz-www，例如：Ker......
+Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
         </div>
     </a>
     
@@ -343,7 +349,7 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ker......
 
 <div class="post-preview">
 
-    <a href="/linux-notes/network/iptables/">
+    <a href="/article/linux-notes/network/iptables/">
         <h2 class="post-title">
                         
             iptables命令
@@ -352,8 +358,10 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ker......
             
         </h3>
         <div class="post-content-preview">
-            添加iptables规则12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
-删除iptables规则12345# 显示iptables规则行号iptable......
+            添加iptables规则
+12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
+删除iptables规则
+12345# 显示iptables规则行号iptab......
         </div>
     </a>
     
@@ -373,7 +381,7 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ker......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/operation/kubectl/kubectl-commands/">
+    <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
         <h2 class="post-title">
                         
             kubectl命令说明
@@ -382,13 +390,16 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ker......
             
         </h3>
         <div class="post-content-preview">
-            1. kubectl命令介绍kubectl的命令语法
+            1. kubectl命令介绍
+kubectl的命令语法
 1kubectl [command] [TYPE] [NAME] [flags]
 其中command，TYPE，NAME，和flags分别是：
 
+
 command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
 
-TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。例如，......
+
+TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。......
         </div>
     </a>
     
@@ -408,7 +419,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/etcd/k8s-etcd-data/">
+    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
         <h2 class="post-title">
                         
             Etcd中的k8s数据
@@ -417,8 +428,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            1. 读取数据key使用以下命令列出所有的key。
-1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki......
+            1. 读取数据key
+使用以下命令列出所有的key。
+1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pk......
         </div>
     </a>
     
@@ -438,7 +450,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
         <h2 class="post-title">
                         
             Virtual Kubelet命令
@@ -447,7 +459,8 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet —help1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggableb......
+            virtual-kubelet --help
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
         </div>
     </a>
     
@@ -467,7 +480,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
         <h2 class="post-title">
                         
             Virtual Kubelet介绍
@@ -476,8 +489,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            1. 简介Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
-一句话概括：Kubernetes API on top, programma......
+            1. 简介
+Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
+一句话概括：Kubernetes API on top, programm......
         </div>
     </a>
     
@@ -497,7 +511,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/trouble-shooting/pod-image-error/">
+    <a href="/article/kubernetes-notes/trouble-shooting/pod-image-error/">
         <h2 class="post-title">
                         
             镜像拉取失败问题
@@ -507,7 +521,8 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
         </h3>
         <div class="post-content-preview">
             常见镜像拉取问题排查
-1. Pod状态为ErrImagePull或ImagePullBackOff12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b  ......
+1. Pod状态为ErrImagePull或ImagePullBackOff
+12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b ......
         </div>
     </a>
     
@@ -600,11 +615,11 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -622,7 +637,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -631,10 +646,6 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -654,9 +665,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -676,15 +687,13 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -693,6 +702,12 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -782,23 +797,23 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

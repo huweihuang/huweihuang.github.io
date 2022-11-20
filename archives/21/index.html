@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/golang-notes/introduction/package/govendor-usage/">
+    <a href="/article/golang-notes/introduction/package/govendor-usage/">
         <h2 class="post-title">
                         
             govendor的使用
@@ -220,8 +220,9 @@
             
         </h3>
         <div class="post-content-preview">
-            1. govendor简介golang工程的依赖包经常使用go get 的方式来获取，例如：go get github.com/kardianos/govendor ，会将依赖包下载到GOPATH的路径下。
-常用的依赖包管理工具有godep，govendor等，在Golang1.5之后，Go提供了 GO15VENDOREXPERIMENT 环境变量，用于将go build时的应用路径搜索调整......
+            1. govendor简介
+golang工程的依赖包经常使用go get 的方式来获取，例如：go get github.com/kardianos/govendor ，会将依赖包下载到GOPATH的路径下。
+常用的依赖包管理工具有godep，govendor等，在Golang1.5之后，Go提供了 GO15VENDOREXPERIMENT 环境变量，用于将go build时的应用路径搜索调......
         </div>
     </a>
     
@@ -241,7 +242,7 @@
 
 <div class="post-preview">
 
-    <a href="/golang-notes/web/beego/beego-introduction/">
+    <a href="/article/golang-notes/web/beego/beego-introduction/">
         <h2 class="post-title">
                         
             Beego 介绍
@@ -250,11 +251,14 @@
             
         </h3>
         <div class="post-content-preview">
-            1. beego的使用1.1. beego的安装1go get github.com/astaxie/beego
-1.2. beego的升级1、直接升级
+            1. beego的使用
+1.1. beego的安装
+1go get github.com/astaxie/beego
+1.2. beego的升级
+1、直接升级
 1go get -u github.com/astaxie/beego
 2、源码下载升级
-用户访问 https://github.com/astaxie/beego ,下载源码，然后覆盖到 $GOPATH/src/github.com/as......
+用户访问 https://github.com/astaxie/beego ,下载源码，然后覆盖到 $GOPATH/src/github.com......
         </div>
     </a>
     
@@ -274,7 +278,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/principle/component/kubernetes-core-principle-kubelet/">
+    <a href="/article/kubernetes-notes/principle/component/kubernetes-core-principle-kubelet/">
         <h2 class="post-title">
                         
             Kubernetes核心原理（四）之kubelet
@@ -283,7 +287,8 @@
             
         </h3>
         <div class="post-content-preview">
-            1. kubelet简介在kubernetes集群中，每个Node节点都会启动kubelet进程，用来处理Master节点下发到本节点的任务，管理Pod和其中的容器。kubelet会在API Server上注册节点信息，定期向Master汇报节点资源使用情况，并通过cAdvisor监控容器和节点资源。可以把kubelet理解成【Server-Agent】架构中的agent，是Node上的po......
+            1. kubelet简介
+在kubernetes集群中，每个Node节点都会启动kubelet进程，用来处理Master节点下发到本节点的任务，管理Pod和其中的容器。kubelet会在API Server上注册节点信息，定期向Master汇报节点资源使用情况，并通过cAdvisor监控容器和节点资源。可以把kubelet理解成【Server-Agent】架构中的agent，是Node上的p......
         </div>
     </a>
     
@@ -303,7 +308,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/principle/component/kubernetes-core-principle-controller-manager/">
+    <a href="/article/kubernetes-notes/principle/component/kubernetes-core-principle-controller-manager/">
         <h2 class="post-title">
                         
             Kubernetes核心原理（二）之Controller Manager
@@ -312,7 +317,8 @@
             
         </h3>
         <div class="post-content-preview">
-            1. Controller Manager简介Controller Manager作为集群内部的管理控制中心，负责集群内的Node、Pod副本、服务端点（Endpoint）、命名空间（Namespace）、服务账号（ServiceAccount）、资源定额（ResourceQuota）的管理，当某个Node意外宕机时，Controller Manager会及时发现并执行自动化修复流程，确保集......
+            1. Controller Manager简介
+Controller Manager作为集群内部的管理控制中心，负责集群内的Node、Pod副本、服务端点（Endpoint）、命名空间（Namespace）、服务账号（ServiceAccount）、资源定额（ResourceQuota）的管理，当某个Node意外宕机时，Controller Manager会及时发现并执行自动化修复流程，确保......
         </div>
     </a>
     
@@ -332,7 +338,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/principle/component/kubernetes-core-principle-scheduler/">
+    <a href="/article/kubernetes-notes/principle/component/kubernetes-core-principle-scheduler/">
         <h2 class="post-title">
                         
             Kubernetes核心原理（三）之Scheduler
@@ -341,10 +347,10 @@
             
         </h3>
         <div class="post-content-preview">
-            1. Scheduler简介Scheduler负责Pod调度。在整个系统中起”承上启下”作用，承上：负责接收Controller Manager创建的新的Pod，为其选择一个合适的Node；启下：Node上的kubelet接管Pod的生命周期。
+            1. Scheduler简介
+Scheduler负责Pod调度。在整个系统中起&quot;承上启下&quot;作用，承上：负责接收Controller Manager创建的新的Pod，为其选择一个合适的Node；启下：Node上的kubelet接管Pod的生命周期。
 Scheduler：
-1）通过调度算法为待调度Pod列表的每个Pod从Node列表中选择一个最适合的Node，并将信息写入etcd中
-2）kubel......
+1）通过调度算法为待调度Pod列表的每个Pod从Node列表中选择一个最适合的Node，并将信息写入et......
         </div>
     </a>
     
@@ -364,7 +370,7 @@ Scheduler：
 
 <div class="post-preview">
 
-    <a href="/database/mysql-commonds/">
+    <a href="/article/database/mysql-commonds/">
         <h2 class="post-title">
                         
             [Database] Mysql常用命令
@@ -373,12 +379,16 @@ Scheduler：
             
         </h3>
         <div class="post-content-preview">
-            1. 系统管理1.1. 连接mysql格式： mysql -h主机地址 -u用户名 －p用户密码
+            1. 系统管理
+1.1. 连接mysql
+格式： mysql -h主机地址 -u用户名 －p用户密码
 连接本地：mysql -hlocalhost/127.0.0.1 -u用户名 －p用户密码
-连接远程：mysql -h主机地址 -u用户名 －p用户密码退出连接：exit
-1.2. 备份数据库1.导出整个数据库
+连接远程：mysql -h主机地址 -u用户名 －p用户密码
+退出连接：exit
+1.2. 备份数据库
+1.导出整个数据库
 导出文件默认是存在mysql\bin目录下
-mysqldump -u 用户名 -p ......
+mysqldump -u 用户名......
         </div>
     </a>
     
@@ -398,7 +408,7 @@ mysqldump -u 用户名 -p ......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/monitor/cadvisor-introduction/">
+    <a href="/article/kubernetes-notes/monitor/cadvisor-introduction/">
         <h2 class="post-title">
                         
             cAdvisor介绍
@@ -407,7 +417,8 @@ mysqldump -u 用户名 -p ......
             
         </h3>
         <div class="post-content-preview">
-            1. cAdvisor简介​    cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数—cadvisor-port可以定义cAdvisor对外......
+            1. cAdvisor简介
+​	cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数–cadvisor-port可以定义cAdvisor对外提供......
         </div>
     </a>
     
@@ -427,37 +438,7 @@ mysqldump -u 用户名 -p ......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/monitor/heapster-introduction/">
-        <h2 class="post-title">
-                        
-            Heapster介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. heapster简介Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。
-2. heapster部署与配置2.1......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/monitor/influxdb-introduction/">
+    <a href="/article/kubernetes-notes/monitor/influxdb-introduction/">
         <h2 class="post-title">
                         
             Influxdb介绍
@@ -466,12 +447,15 @@ mysqldump -u 用户名 -p ......
             
         </h3>
         <div class="post-content-preview">
-            1. InfluxDB简介InfluxDB是一个当下比较流行的时序数据库，InfluxDB使用 Go 语言编写，无需外部依赖，安装配置非常方便，适合构建大型分布式系统的监控系统。
+            1. InfluxDB简介
+InfluxDB是一个当下比较流行的时序数据库，InfluxDB使用 Go 语言编写，无需外部依赖，安装配置非常方便，适合构建大型分布式系统的监控系统。
 主要特色功能：
 1）基于时间序列，支持与时间有关的相关函数（如最大，最小，求和等）
 2）可度量性：你可以实时对大量数据进行计算
 3）基于事件：它支持任意的事件数据
-2. InfluxDB安装1）安装wget htt......
+2. InfluxDB安装
+1）安装
+wget ......
         </div>
     </a>
     
@@ -491,7 +475,40 @@ mysqldump -u 用户名 -p ......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/monitor/kubernetes-cluster-monitoring/">
+    <a href="/article/kubernetes-notes/monitor/heapster-introduction/">
+        <h2 class="post-title">
+                        
+            Heapster介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. heapster简介
+Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。
+Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。
+2. heapster部署与配置
+......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/monitor/kubernetes-cluster-monitoring/">
         <h2 class="post-title">
                         
             Kubernetes集群监控
@@ -500,7 +517,9 @@ mysqldump -u 用户名 -p ......
             
         </h3>
         <div class="post-content-preview">
-            1. 概述1.1. cAdvisorcAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数—cadvisor-port可以定义cAdvisor对外......
+            1. 概述
+1.1. cAdvisor
+cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数–cadvisor-port可以定义cAdvisor......
         </div>
     </a>
     
@@ -593,11 +612,11 @@ mysqldump -u 用户名 -p ......
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -615,7 +634,7 @@ mysqldump -u 用户名 -p ......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -624,10 +643,6 @@ mysqldump -u 用户名 -p ......
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -647,9 +662,9 @@ mysqldump -u 用户名 -p ......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -669,15 +684,13 @@ mysqldump -u 用户名 -p ......
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -686,6 +699,12 @@ mysqldump -u 用户名 -p ......
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -775,23 +794,23 @@ mysqldump -u 用户名 -p ......
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

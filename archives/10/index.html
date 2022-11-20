@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/kvm/vm-concept/">
+    <a href="/article/kubernetes-notes/kvm/vm-concept/">
         <h2 class="post-title">
                         
             虚拟化相关概念
@@ -220,10 +220,12 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 虚拟化借助虚拟化技术，用户能以单个物理硬件系统为基础，创建多个模拟环境或专用资源，并使用一款名为“Hypervisor”（虚拟机监控程序）的软件直接连接到硬件，从而将一个系统划分为不同、单独而安全的环境，即虚拟机 (VM)。
+            1. 虚拟化
+借助虚拟化技术，用户能以单个物理硬件系统为基础，创建多个模拟环境或专用资源，并使用一款名为“Hypervisor”（虚拟机监控程序）的软件直接连接到硬件，从而将一个系统划分为不同、单独而安全的环境，即虚拟机 (VM)。
 虚拟化技术可以重新划分IT资源，提高资源的利用率。
-2. 虚拟化的类型全虚拟化（Full virtualization）
-全虚拟化使用未修改的guest操作系统版......
+2. 虚拟化的类型
+全虚拟化（Full virtualization）
+全虚拟化使用未修改的guest操作系......
         </div>
     </a>
     
@@ -243,7 +245,7 @@
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/setup/k8s-cert/">
+    <a href="/article/kubernetes-notes/setup/k8s-cert/">
         <h2 class="post-title">
                         
             k8s证书及秘钥
@@ -253,15 +255,20 @@
         </h3>
         <div class="post-content-preview">
             1. 证书分类
+
+
 服务器证书：server cert，用于客户端验证服务端的身份。
 
+
 客户端证书：client cert，用于服务端验证客户端的身份。
+
 
 对等证书：peer cert（既是server cert又是client cert），用户成员之间的身份验证，例如 etcd。
 
 
 1.1. k8s集群的证书分类
-etcd节点：需要标识自己服务的server cert，也需要client c......
+
+etcd节点：需要标识自己服务的server cert，也需要cli......
         </div>
     </a>
     
@@ -281,7 +288,7 @@ etcd节点：需要标识自己服务的server cert，也需要client c......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/trouble-shooting/pod-evicted/">
+    <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/">
         <h2 class="post-title">
                         
             Pod驱逐
@@ -290,9 +297,12 @@ etcd节点：需要标识自己服务的server cert，也需要client c......
             
         </h3>
         <div class="post-content-preview">
-            问题描述节点Pod被驱逐
-原因1. 查看节点和该节点pod状态查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
-123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b7  ......
+            问题描述
+节点Pod被驱逐
+原因
+1. 查看节点和该节点pod状态
+查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
+123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b......
         </div>
     </a>
     
@@ -312,7 +322,7 @@ etcd节点：需要标识自己服务的server cert，也需要client c......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/trouble-shooting/pvc-terminating/">
+    <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/">
         <h2 class="post-title">
                         
             PVC Terminating
@@ -321,9 +331,11 @@ etcd节点：需要标识自己服务的server cert，也需要client c......
             
         </h3>
         <div class="post-content-preview">
-            问题描述1pvc terminating
+            问题描述
+1pvc terminating
 pvc在删除时，卡在terminating中。
-解决方法1kubectl patch pvc &#123;PVC_NAME&#125; -p '&#123;"metadata":&#123;"finalizers":null&#125;&#125;'
+解决方法
+1kubectl patch pvc &#123;PVC_NAME&#125; -p '&#123;"metadata":&#123;"finalizers":null&#125;&#125;'
 ...
         </div>
     </a>
@@ -344,41 +356,7 @@ pvc在删除时，卡在terminating中。
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/principle/flow/pvc-flow/">
-        <h2 class="post-title">
-                        
-            PVC创建流程
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            pvc流程
-流程如下：
-
-用户创建了一个包含 PVC 的 Pod，该 PVC 要求使用动态存储卷；
-Scheduler 根据 Pod 配置、节点状态、PV 配置等信息，把 Pod 调度到一个合适的 Worker 节点上；
-PV 控制器 watch 到该 Pod 使用的 PVC 处于 Pending 状态，于是调用 Volume Plugin（in-tree）创建存储卷，并创建 PV 对象（o......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/principle/flow/pod-flow/">
+    <a href="/article/kubernetes-notes/principle/flow/pod-flow/">
         <h2 class="post-title">
                         
             Pod创建流程
@@ -388,7 +366,9 @@ PV 控制器 watch 到该 Pod 使用的 PVC 处于 Pending 状态，于是调用
         </h3>
         <div class="post-content-preview">
             Pod创建基本流程图
+
 Pod创建完整流程图
+
 
 图片来源：https://fuckcloudnative.io/posts/what-happens-when-k8s/
 
@@ -416,7 +396,42 @@ https://fuckcloudnative.io/posts/what-happens-when-k8s/
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/runtime/gpu/nvidia-device-plugin/">
+    <a href="/article/kubernetes-notes/principle/flow/pvc-flow/">
+        <h2 class="post-title">
+                        
+            PVC创建流程
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            pvc流程
+
+流程如下：
+
+用户创建了一个包含 PVC 的 Pod，该 PVC 要求使用动态存储卷；
+Scheduler 根据 Pod 配置、节点状态、PV 配置等信息，把 Pod 调度到一个合适的 Worker 节点上；
+PV 控制器 watch 到该 Pod 使用的 PVC 处于 Pending 状态，于是调用 Volume Plugin（in-tree）创建存储卷，并创建 PV 对象（......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/runtime/gpu/nvidia-device-plugin/">
         <h2 class="post-title">
                         
             nvidia-device-plugin介绍
@@ -425,7 +440,8 @@ https://fuckcloudnative.io/posts/what-happens-when-k8s/
             
         </h3>
         <div class="post-content-preview">
-            1. 简介NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了Kubernetes device plugin的接口。
+            1. 简介
+NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了Kubernetes device plugin的接口。
 提供以下功能：
 
 暴露每个节点的GPU数量给集群
@@ -433,8 +449,9 @@ https://fuckcloudnative.io/posts/what-happens-when-k8s/
 使在k8s的节点可以运行GPU容器
 
 2. 要求
+
 NVIDIA drivers ~= 384.81
-nvidia-docker vers......
+nvidia-docker ve......
         </div>
     </a>
     
@@ -454,7 +471,7 @@ nvidia-docker vers......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/runtime/kata/kata-container-conf/">
+    <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/">
         <h2 class="post-title">
                         
             kata配置
@@ -463,9 +480,10 @@ nvidia-docker vers......
             
         </h3>
         <div class="post-content-preview">
-            1. 配置文件路径默认的配置文件位于/usr/share/defaults/kata-containers/configuration.toml，如果/etc/kata-containers/configuration.toml的配置文件存在，则会替代默认的配置文件。
+            1. 配置文件路径
+默认的配置文件位于/usr/share/defaults/kata-containers/configuration.toml，如果/etc/kata-containers/configuration.toml的配置文件存在，则会替代默认的配置文件。
 查看配置文件的路径命令如下：
-123# kata-runtime --kata-show-default-config-pa......
+123# kata-runtime --kata-show-default-config-p......
         </div>
     </a>
     
@@ -485,7 +503,7 @@ nvidia-docker vers......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/setup/installer/install-k8s-by-kind/">
+    <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/">
         <h2 class="post-title">
                         
             使用kind安装kubernetes
@@ -494,9 +512,11 @@ nvidia-docker vers......
             
         </h3>
         <div class="post-content-preview">
-            1. 安装kindOn mac or linux
+            1. 安装kind
+On mac or linux
 123curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-$(uname)-amd64"chmod +x ./kindmv ./kind /some-dir-in-your-PATH/kind
-2. 创建k8s集群1234......
+2. 创建k8s集群
+12......
         </div>
     </a>
     
@@ -516,7 +536,7 @@ nvidia-docker vers......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/storage/csi/flexvolume/">
+    <a href="/article/kubernetes-notes/storage/csi/flexvolume/">
         <h2 class="post-title">
                         
             FlexVolume介绍
@@ -525,8 +545,10 @@ nvidia-docker vers......
             
         </h3>
         <div class="post-content-preview">
-            1. FlexVolume介绍Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义自己的存储插件。类似的功能的实现还有CSI的方式。Flexvolume在k8s 1.8+以上版本提供GA功能版本。
-2. 使用方式在每个node节点安装存储插件二进制，该二进制实现flexvolume的相关接口，默认存储插件的存放路径为/usr/libexec/kubernetes/kubel......
+            1. FlexVolume介绍
+Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义自己的存储插件。类似的功能的实现还有CSI的方式。Flexvolume在k8s 1.8+以上版本提供GA功能版本。
+2. 使用方式
+在每个node节点安装存储插件二进制，该二进制实现flexvolume的相关接口，默认存储插件的存放路径为/usr/libexec/kubernetes/kub......
         </div>
     </a>
     
@@ -619,11 +641,11 @@ nvidia-docker vers......
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -641,7 +663,7 @@ nvidia-docker vers......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -650,10 +672,6 @@ nvidia-docker vers......
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -673,9 +691,9 @@ nvidia-docker vers......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -695,15 +713,13 @@ nvidia-docker vers......
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -712,6 +728,12 @@ nvidia-docker vers......
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -801,23 +823,23 @@ nvidia-docker vers......
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>

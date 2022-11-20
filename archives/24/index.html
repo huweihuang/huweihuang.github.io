@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,42 @@
 
 <div class="post-preview">
 
-    <a href="/docker/code-analysis/code-analysis-of-docker-server/">
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-client/">
+        <h2 class="post-title">
+                        
+            [Docker] Docker源码分析（一）之Docker Client
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            一、创建Docker Client
+​    Docker是一个client/server的架构，通过二进制文件docker创建Docker客户端将请求类型与参数发送给Docker Server，Docker Server具体执行命令调用。
+Docker Client运行流程图如下：
+
+说明：本文分析的代码为Docker 1.2.0版本。
+（一）Docker命令flag参数解析
+Docker......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-server/">
         <h2 class="post-title">
                         
             [Docker] Docker源码分析（三）之Docker Server
@@ -220,7 +255,9 @@
             
         </h3>
         <div class="post-content-preview">
-            一、Docker Server创建流程Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供API......
+            一、Docker Server创建流程
+Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。
+Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供A......
         </div>
     </a>
     
@@ -240,107 +277,7 @@
 
 <div class="post-preview">
 
-    <a href="/docker/code-analysis/code-analysis-of-docker-daemon/">
-        <h2 class="post-title">
-                        
-            [Docker] Docker源码分析（二）之Docker Daemon
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            一、Docker Daemon架构示意图
-Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
-Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
-运行过程的作用有以下几种可能：
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/runtime/docker/docker-commands-principle/">
-        <h2 class="post-title">
-                        
-            Docker常用命令原理图
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 基本概念1.1. image layer（镜像层）镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
-
-根据上图，镜像层的主要组成部分包括镜像层id，镜像层指针【指向父层】，元数据【layer metadata】包含了docker构建和运行的信息还有父层的层次信息。
-只读层和读写层【top layer】的组成......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/runtime/docker/dockerfile-usage/">
-        <h2 class="post-title">
-                        
-            Dockerfile使用说明
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Dockerfile的说明dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。
-dockerfile指令分为构建指令和设置指令。
-
-构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。
-设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。
-
-2. Dockerfile指令说明2.1. FR......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/kubernetes-notes/runtime/docker/docker-architecture/">
+    <a href="/article/kubernetes-notes/runtime/docker/docker-architecture/">
         <h2 class="post-title">
                         
             Docker整体架构图
@@ -350,11 +287,12 @@ dockerfile指令分为构建指令和设置指令。
         </h3>
         <div class="post-content-preview">
             1. Docker的总架构图
+
 docker是一个C/S模式的架构，后端是一个松耦合架构，模块各司其职。
 
 用户是使用Docker Client与Docker Daemon建立通信，并发送请求给后者。
 Docker Daemon作为Docker架构中的主体部分，首先提供Server的功能使其可以接受Docker Client的请求；
-Engine执行Docker内部的一系列工作，每一项工作都是......
+Engine执行Docker内部的一系列工作，每一项工作都......
         </div>
     </a>
     
@@ -374,7 +312,78 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
 
 <div class="post-preview">
 
-    <a href="/kubernetes-notes/network/flannel/flannel-introduction/">
+    <a href="/article/kubernetes-notes/runtime/docker/docker-commands-principle/">
+        <h2 class="post-title">
+                        
+            Docker常用命令原理图
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 基本概念
+1.1. image layer（镜像层）
+镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
+
+根据上图，镜像层的主要组成部分包括镜像层id，镜像层指针【指向父层】，元数据【layer metadata】包含了docker构建和运行的信息还有父层的层次信息。
+只读层和读写层【top layer】的......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/runtime/docker/dockerfile-usage/">
+        <h2 class="post-title">
+                        
+            Dockerfile使用说明
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Dockerfile的说明
+dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。
+dockerfile指令分为构建指令和设置指令。
+
+构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。
+设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。
+
+2. Dockerfile指令说明
+2.1. ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/network/flannel/flannel-introduction/">
         <h2 class="post-title">
                         
             Flannel介绍
@@ -383,8 +392,13 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         </h3>
         <div class="post-content-preview">
-            1. flannel是什么（what）1.1. 概述Flannel是CoreOS团队针对Kubernetes设计的一个网络规划服务，简单来说，它的功能是让集群中的不同节点主机创建的Docker容器都具有全集群唯一的虚拟IP地址。Flannel官网：https://github.com/coreos/flannel
-1.2. 补充知识点1、覆盖网络[overlay network]运行在一个网......
+            1. flannel是什么（what）
+1.1. 概述
+Flannel是CoreOS团队针对Kubernetes设计的一个网络规划服务，简单来说，它的功能是让集群中的不同节点主机创建的Docker容器都具有全集群唯一的虚拟IP地址。
+Flannel官网：https://github.com/coreos/flannel
+1.2. 补充知识点
+1、覆盖网络[overlay network]
+运......
         </div>
     </a>
     
@@ -473,11 +487,11 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -495,7 +509,7 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -504,10 +518,6 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
@@ -527,9 +537,9 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -549,15 +559,13 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -566,6 +574,12 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
         
             
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -655,23 +669,23 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
     <ul>
       
         <li>
-          <a href="/golang-notes/summary/go-resource/">Golang资源</a>
+          <a href="/article/golang-notes/summary/go-resource/">Golang资源</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/skill-tree/">后端开发技能树</a>
+          <a href="/article/golang-notes/summary/skill-tree/">后端开发技能树</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/functions/">函数与闭包</a>
+          <a href="/article/golang-notes/basis/functions/">函数与闭包</a>
         </li>
       
         <li>
-          <a href="/golang-notes/summary/language/">计算机语言概述</a>
+          <a href="/article/golang-notes/summary/language/">计算机语言概述</a>
         </li>
       
         <li>
-          <a href="/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
         </li>
       
     </ul>
