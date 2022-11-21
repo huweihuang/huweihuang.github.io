@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,38 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/volume/dynamic-provisioning/">
-        <h2 class="post-title">
-                        
-            Dynamic Volume Provisioning 介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Dynamic Volume Provisioning
-Dynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。
-1. 开启Dynamic Provisioning
-需要先提前创建StorageClass对象，StorageClass中定义了使用哪个provisioner，并且在provisi......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/">
         <h2 class="post-title">
                         
@@ -266,6 +234,38 @@ PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/csi/flexvolume/">
+        <h2 class="post-title">
+                        
+            FlexVolume介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. FlexVolume介绍
+Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义自己的存储插件。类似的功能的实现还有CSI的方式。Flexvolume在k8s 1.8+以上版本提供GA功能版本。
+2. 使用方式
+在每个node节点安装存储插件二进制，该二进制实现flexvolume的相关接口，默认存储插件的存放路径为/usr/libexec/kubernetes/kub......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CSI" title="CSI">CSI</a>
             
         </div>
     
@@ -378,21 +378,27 @@ Pod ......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
+    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
         <h2 class="post-title">
                         
-            部署cephfs-provisioner
+            csi-cephfs-plugin
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 安装cephfs客户端
-所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
-1yum install -y ceph-common
-2. 部署RBAC
-2.1. ClusterRole
-12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/......
+            1. 编译CSI CephFS plugin
+CSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
+1.1. 编译二进制
+1$ make cephfsplugin
+1.2. 编译Docker镜像
+1$ make image-cephfsplugin
+2. 配置项
+2.1. 命令行参数
+
+
+
+O......
         </div>
     </a>
     
@@ -446,27 +452,21 @@ quay.io/k8scsi/csi......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
+    <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
         <h2 class="post-title">
                         
-            csi-cephfs-plugin
+            部署cephfs-provisioner
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 编译CSI CephFS plugin
-CSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
-1.1. 编译二进制
-1$ make cephfsplugin
-1.2. 编译Docker镜像
-1$ make image-cephfsplugin
-2. 配置项
-2.1. 命令行参数
-
-
-
-O......
+            1. 安装cephfs客户端
+所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
+1yum install -y ceph-common
+2. 部署RBAC
+2.1. ClusterRole
+12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/......
         </div>
     </a>
     
@@ -522,27 +522,25 @@ O......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-echo/">
+    <a href="/article/linux-notes/shell/shell-char/">
         <h2 class="post-title">
                         
-            Shell echo命令
+            Shell运算符
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. echo
-echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符串。命令格式：
-1echo arg
-您可以使用echo实现更复杂的输出格式控制。
-1.1. 显示转义字符
-1echo "\"It is a test\""
-结果将是：
-1"It is a test"
-双引号也可以省略。
-1.2. 显示变量
-12name="OK"echo "$name It is a test"
-......
+            1. shell运算符
+Bash 支持很多运算符，包括算数运算符、关系运算符、布尔运算符、字符串运算符和文件测试运算符。
+awk 和 expr，expr 最常用
+例如，两个数相加：
+1234#!/bin/bashval=`expr 2 + 2`echo "Total value : $val"
+运行脚本输出：
+1Total value : 4
+两点注意：
+
+表达式和运算符之间要有空格，例如 ......
         </div>
     </a>
     
@@ -611,9 +609,9 @@ echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符�
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -657,19 +655,19 @@ echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符�
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -711,9 +709,11 @@ echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符�
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -721,13 +721,11 @@ echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符�
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -833,7 +831,7 @@ echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符�
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>

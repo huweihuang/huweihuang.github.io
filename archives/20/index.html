@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,39 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/nginx/nginx-http/">
-        <h2 class="post-title">
-                        
-            Nginx http服务器
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Nginx的系统架构
-
-Nginx包含一个单一的master进程和多个worker进程，每个进程都是单进程，并且设计为同时处理成千上万个连接。
-worker进程是处理连接的地方，Nginx使用了操作系统事件机制来快速响应这些请求。
-master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-09-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Nginx" title="Nginx">Nginx</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/linux-notes/nginx/nginx-proxy/">
         <h2 class="post-title">
                         
@@ -270,6 +237,39 @@ Nginx从接受到请求到连接至上游服务器的最长等待时间
 
 
 proxy_cookie_doma......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-09-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Nginx" title="Nginx">Nginx</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/nginx/nginx-http/">
+        <h2 class="post-title">
+                        
+            Nginx http服务器
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Nginx的系统架构
+
+Nginx包含一个单一的master进程和多个worker进程，每个进程都是单进程，并且设计为同时处理成千上万个连接。
+worker进程是处理连接的地方，Nginx使用了操作系统事件机制来快速响应这些请求。
+master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请......
         </div>
     </a>
     
@@ -517,17 +517,21 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/web/golang-http-execution-flow/">
+    <a href="/article/golang-notes/text/json/">
         <h2 class="post-title">
                         
-            Http包源码分析
+            Json处理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. http包建立web服务器
-1234567891011121314151617181920212223242526package mainimport (    "fmt"    "log"    "net/http"    "strings")func sayhelloName(w http.ResponseWriter, r *http.Request) &#123;    r.P......
+            JSON处理
+JSON是一种轻量级的数据交换语言。
+1. 解析JSON[Unmarshal(data []byte, v interface{})]
+1.1. Unmarshal源码
+/src/encoding/json/decode.go
+1234567891011121314151617181920212223242526272829303132func Unmarshal(data [......
         </div>
     </a>
     
@@ -547,21 +551,17 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/text/json/">
+    <a href="/article/golang-notes/web/golang-http-execution-flow/">
         <h2 class="post-title">
                         
-            Json处理
+            Http包源码分析
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            JSON处理
-JSON是一种轻量级的数据交换语言。
-1. 解析JSON[Unmarshal(data []byte, v interface{})]
-1.1. Unmarshal源码
-/src/encoding/json/decode.go
-1234567891011121314151617181920212223242526272829303132func Unmarshal(data [......
+            1. http包建立web服务器
+1234567891011121314151617181920212223242526package mainimport (    "fmt"    "log"    "net/http"    "strings")func sayhelloName(w http.ResponseWriter, r *http.Request) &#123;    r.P......
         </div>
     </a>
     
@@ -630,9 +630,9 @@ JSON是一种轻量级的数据交换语言。
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -676,19 +676,19 @@ JSON是一种轻量级的数据交换语言。
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -730,9 +730,11 @@ JSON是一种轻量级的数据交换语言。
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -740,13 +742,11 @@ JSON是一种轻量级的数据交换语言。
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -852,7 +852,7 @@ JSON是一种轻量级的数据交换语言。
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>

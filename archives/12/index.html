@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,25 +211,27 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-char/">
+    <a href="/article/linux-notes/shell/shell-echo/">
         <h2 class="post-title">
                         
-            Shell运算符
+            Shell echo命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. shell运算符
-Bash 支持很多运算符，包括算数运算符、关系运算符、布尔运算符、字符串运算符和文件测试运算符。
-awk 和 expr，expr 最常用
-例如，两个数相加：
-1234#!/bin/bashval=`expr 2 + 2`echo "Total value : $val"
-运行脚本输出：
-1Total value : 4
-两点注意：
-
-表达式和运算符之间要有空格，例如 ......
+            1. echo
+echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符串。命令格式：
+1echo arg
+您可以使用echo实现更复杂的输出格式控制。
+1.1. 显示转义字符
+1echo "\"It is a test\""
+结果将是：
+1"It is a test"
+双引号也可以省略。
+1.2. 显示变量
+12name="OK"echo "$name It is a test"
+......
         </div>
     </a>
     
@@ -318,25 +320,22 @@ Shell 函数的定义格式如下：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-if/">
+    <a href="/article/linux-notes/shell/shell-introduction/">
         <h2 class="post-title">
                         
-            Shell 判断语句
+            Shell简介
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. if语句
-if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：
+            1. shell简介
+shell是用户和Linux内核之间的一层代理，解释用户输入的命令，传递给内核。
+shell是一种脚本语言（解释性语言）。
+Shell既是一种命令语言，又是一种程序设计语言。作为命令语言，它交互式地解释和执行用户输入的命令；作为程序设计语言，它定义了各种变量和参数，并提供了许多在高级语言中才具有的控制结构，包括循环和分支。
+Shell有两种执行命令的方式：
 
-if … fi 语句；
-if … else … fi 语句；
-if … elif … else … fi 语句。
-
-1.1. if … else
-if … else 语句的语法：
-1234if [ expression ]then   Statement(s) to ......
+交互式（I......
         </div>
     </a>
     
@@ -356,22 +355,25 @@ if … else 语句的语法：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-introduction/">
+    <a href="/article/linux-notes/shell/shell-if/">
         <h2 class="post-title">
                         
-            Shell简介
+            Shell 判断语句
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. shell简介
-shell是用户和Linux内核之间的一层代理，解释用户输入的命令，传递给内核。
-shell是一种脚本语言（解释性语言）。
-Shell既是一种命令语言，又是一种程序设计语言。作为命令语言，它交互式地解释和执行用户输入的命令；作为程序设计语言，它定义了各种变量和参数，并提供了许多在高级语言中才具有的控制结构，包括循环和分支。
-Shell有两种执行命令的方式：
+            1. if语句
+if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：
 
-交互式（I......
+if … fi 语句；
+if … else … fi 语句；
+if … elif … else … fi 语句。
+
+1.1. if … else
+if … else 语句的语法：
+1234if [ expression ]then   Statement(s) to ......
         </div>
     </a>
     
@@ -630,9 +632,9 @@ Shell支持自定义变量。
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -676,19 +678,19 @@ Shell支持自定义变量。
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -730,9 +732,11 @@ Shell支持自定义变量。
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -740,13 +744,11 @@ Shell支持自定义变量。
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -852,7 +854,7 @@ Shell支持自定义变量。
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>

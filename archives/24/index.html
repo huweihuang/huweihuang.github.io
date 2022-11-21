@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -246,18 +246,20 @@ Docker......
 
 <div class="post-preview">
 
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-server/">
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
         <h2 class="post-title">
                         
-            [Docker] Docker源码分析（三）之Docker Server
+            [Docker] Docker源码分析（二）之Docker Daemon
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            一、Docker Server创建流程
-Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。
-Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供A......
+            一、Docker Daemon架构示意图
+
+Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
+Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
+运行过程的作用有以下几种可能：......
         </div>
     </a>
     
@@ -312,21 +314,24 @@ Engine执行Docker内部的一系列工作，每一项工作都......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/runtime/docker/docker-commands-principle/">
+    <a href="/article/kubernetes-notes/runtime/docker/dockerfile-usage/">
         <h2 class="post-title">
                         
-            Docker常用命令原理图
+            Dockerfile使用说明
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 基本概念
-1.1. image layer（镜像层）
-镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
+            1. Dockerfile的说明
+dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。
+dockerfile指令分为构建指令和设置指令。
 
-根据上图，镜像层的主要组成部分包括镜像层id，镜像层指针【指向父层】，元数据【layer metadata】包含了docker构建和运行的信息还有父层的层次信息。
-只读层和读写层【top layer】的......
+构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。
+设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。
+
+2. Dockerfile指令说明
+2.1. ......
         </div>
     </a>
     
@@ -346,24 +351,21 @@ Engine执行Docker内部的一系列工作，每一项工作都......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/runtime/docker/dockerfile-usage/">
+    <a href="/article/kubernetes-notes/runtime/docker/docker-commands-principle/">
         <h2 class="post-title">
                         
-            Dockerfile使用说明
+            Docker常用命令原理图
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Dockerfile的说明
-dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。
-dockerfile指令分为构建指令和设置指令。
+            1. 基本概念
+1.1. image layer（镜像层）
+镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
 
-构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。
-设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。
-
-2. Dockerfile指令说明
-2.1. ......
+根据上图，镜像层的主要组成部分包括镜像层id，镜像层指针【指向父层】，元数据【layer metadata】包含了docker构建和运行的信息还有父层的层次信息。
+只读层和读写层【top layer】的......
         </div>
     </a>
     
@@ -463,9 +465,9 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -509,19 +511,19 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -563,9 +565,11 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -573,13 +577,11 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -685,7 +687,7 @@ Flannel官网：https://github.com/coreos/flannel
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>

@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -251,37 +251,6 @@ Pod 总数不超过 150000
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/cni/cni/">
-        <h2 class="post-title">
-                        
-            CNI接口介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. CNI（Container Network Interface）
-CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
-kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CNI" title="CNI">CNI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/kubernetes-notes/network/cni/macvlan/">
         <h2 class="post-title">
                         
@@ -315,6 +284,68 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/network/cni/cni/">
+        <h2 class="post-title">
+                        
+            CNI接口介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. CNI（Container Network Interface）
+CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
+kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CNI" title="CNI">CNI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/">
+        <h2 class="post-title">
+                        
+            Cgroup不支持pid资源
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            问题描述
+机器内核版本较低，kubelet启动异常，报错如下：
+1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup sub......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-subsystem-not-mount/">
         <h2 class="post-title">
                         
@@ -328,6 +359,38 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
 内核版本： 5.4.56-200.el7.x86_64
 docker报错
 12345May 13 16:54:26 8b26d7a8 dockerd[44352]: time=&quot;2021-05-13T16:54:26.565235530+08:00&quot; level=warning msg=&quot;failed to load plugin io.contain......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/">
+        <h2 class="post-title">
+                        
+            increase the mlock limit
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            问题描述
+容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
+报错如下：
+12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime:......
         </div>
     </a>
     
@@ -410,85 +473,22 @@ docker报错
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/">
+    <a href="/article/linux-notes/disk/disk-command/">
         <h2 class="post-title">
                         
-            Cgroup不支持pid资源
+            磁盘命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            问题描述
-机器内核版本较低，kubelet启动异常，报错如下：
-1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup sub......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/">
-        <h2 class="post-title">
-                        
-            increase the mlock limit
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题描述
-容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
-报错如下：
-12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime:......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/file/linux-file-permission/">
-        <h2 class="post-title">
-                        
-            Linux文件权限
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Linux文件管理
-Linux中的所有数据都被保存在文件中，所有的文件被分配到不同的目录。目录是一种类似于树的结构，称为文件系统。
-1.1. 文件类型
-1、普通文件
-普通文件是以字节为单位的数据流，包括文本文件、源码文件、可执行文件等。文本和二进制对Linux来说并无区别，对普通文件的解释由处理该文件的应用程序进行。
-2、目录
-目录可以包含普通文件和特殊文件，目录相当于Windows和......
+            1. 判断磁盘是SSD或HDD盘
+1、没有使用raid方案
+lsblk -d -o name,rota命令，0表示SSD，1表示HDD
+12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
+2、使用raid方案
+下载工具
+1wget https://raw.githubusercontent.com/eLvErDe/......
         </div>
     </a>
     
@@ -498,7 +498,7 @@ Linux中的所有数据都被保存在文件中，所有的文件被分配到不
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#disk" title="disk">disk</a>
             
         </div>
     
@@ -605,9 +605,9 @@ LVM概念图：
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -651,19 +651,19 @@ LVM概念图：
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -705,9 +705,11 @@ LVM概念图：
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -715,13 +717,11 @@ LVM概念图：
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -827,7 +827,7 @@ LVM概念图：
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>

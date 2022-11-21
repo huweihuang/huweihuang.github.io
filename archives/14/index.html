@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,29 +211,22 @@
 
 <div class="post-preview">
 
-    <a href="/article/k8s-source-code-analysis/kubelet/syncPod/">
+    <a href="/article/k8s-source-code-analysis/kubelet/syncLoopIteration/">
         <h2 class="post-title">
-            
-                <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
-                <!-- <i class="fa fa-thumb-tack" style="color:#F89E8C" ></i> -->
-                <!-- <i class="fa fa-thumb-tack" style="color:#1CB7ED" ></i> -->
-                <font color=#F4711F>置顶</font>
-                <!-- <font color=#F89E8C>置顶</font>  -->
-                <!-- <font color=#1CB7ED>置顶</font>  -->
                         
-            kubelet源码分析（五）之 syncPod
+            kubelet源码分析（四）之 syncLoopIteration
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            kubelet源码分析（五）之 syncPod
+            kubelet源码分析（四）之 syncLoopIteration
 
 以下代码分析基于 kubernetes v1.12.0 版本。
 
-本文主要分析kubelet中syncPod的部分。
-1. managePodLoop
-managePodLoop通过读取podUpdateschannel的信息，执行syncPodFn函数，而syncPodFn函数在newPodWorkers的时候赋值了，即kubelet.sy......
+本文主要分析kubelet中syncLoopIteration部分。syncLoopIteration通过几种channel来对不同类型的事件进行监听并做增删改查的处理。
+1. syncLoop
+syncLoop是处理变更的循环。 它监听来自三种channe......
         </div>
     </a>
     
@@ -392,6 +385,48 @@ kube-apiserver的cmd部分目录代码结构如下：
 
 <div class="post-preview">
 
+    <a href="/article/linux-notes/memcached/memcached/">
+        <h2 class="post-title">
+                        
+            Memcached的使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Memcached简介
+
+
+Memcached是一个开源的，高性能，分布式内存对象缓存系统。
+
+
+Memcached是一种基于内存的key-value存储，用来存储小块的任意数据（字符串、对象）。这些数据可以是数据库调用、API调用或者是页面渲染的结果。
+
+
+一般的使用目的是，通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web应用的速度、提高可扩展性。
+
+
+1.1. 特征
+m......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Memcached" title="Memcached">Memcached</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/linux-notes/memcached/memcached-cmd/">
         <h2 class="post-title">
                         
@@ -441,48 +476,6 @@ cas
 以上几个命令语法格式相似，以set为例：
 12set key flags exptime bytes [noreply] value
 参......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Memcached" title="Memcached">Memcached</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/memcached/memcached/">
-        <h2 class="post-title">
-                        
-            Memcached的使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Memcached简介
-
-
-Memcached是一个开源的，高性能，分布式内存对象缓存系统。
-
-
-Memcached是一种基于内存的key-value存储，用来存储小块的任意数据（字符串、对象）。这些数据可以是数据库调用、API调用或者是页面渲染的结果。
-
-
-一般的使用目的是，通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web应用的速度、提高可扩展性。
-
-
-1.1. 特征
-m......
         </div>
     </a>
     
@@ -715,9 +708,9 @@ Server Erro......
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -761,19 +754,19 @@ Server Erro......
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -815,9 +808,11 @@ Server Erro......
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -825,13 +820,11 @@ Server Erro......
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -937,7 +930,7 @@ Server Erro......
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>

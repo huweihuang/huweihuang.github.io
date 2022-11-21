@@ -134,14 +134,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -288,21 +288,21 @@ etcd节点：需要标识自己服务的server cert，也需要cli......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/">
+    <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/">
         <h2 class="post-title">
                         
-            Pod驱逐
+            PVC Terminating
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             问题描述
-节点Pod被驱逐
-原因
-1. 查看节点和该节点pod状态
-查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
-123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b......
+1pvc terminating
+pvc在删除时，卡在terminating中。
+解决方法
+1kubectl patch pvc &#123;PVC_NAME&#125; -p '&#123;"metadata":&#123;"finalizers":null&#125;&#125;'
+...
         </div>
     </a>
     
@@ -322,21 +322,21 @@ etcd节点：需要标识自己服务的server cert，也需要cli......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/">
+    <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/">
         <h2 class="post-title">
                         
-            PVC Terminating
+            Pod驱逐
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             问题描述
-1pvc terminating
-pvc在删除时，卡在terminating中。
-解决方法
-1kubectl patch pvc &#123;PVC_NAME&#125; -p '&#123;"metadata":&#123;"finalizers":null&#125;&#125;'
-...
+节点Pod被驱逐
+原因
+1. 查看节点和该节点pod状态
+查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
+123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b......
         </div>
     </a>
     
@@ -536,19 +536,19 @@ On mac or linux
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/flexvolume/">
+    <a href="/article/kubernetes-notes/storage/volume/dynamic-provisioning/">
         <h2 class="post-title">
                         
-            FlexVolume介绍
+            Dynamic Volume Provisioning 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. FlexVolume介绍
-Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义自己的存储插件。类似的功能的实现还有CSI的方式。Flexvolume在k8s 1.8+以上版本提供GA功能版本。
-2. 使用方式
-在每个node节点安装存储插件二进制，该二进制实现flexvolume的相关接口，默认存储插件的存放路径为/usr/libexec/kubernetes/kub......
+            Dynamic Volume Provisioning
+Dynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。
+1. 开启Dynamic Provisioning
+需要先提前创建StorageClass对象，StorageClass中定义了使用哪个provisioner，并且在provisi......
         </div>
     </a>
     
@@ -558,7 +558,7 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
         </p>
         <div class="tags">
             
-              <a href="/tags/#CSI" title="CSI">CSI</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -617,9 +617,9 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
             
         
             
-        
-            
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
             
         
             
@@ -663,19 +663,19 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
             <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -717,9 +717,11 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+        
             
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -727,13 +729,11 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -839,7 +839,7 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
         </li>
       
         <li>
-          <a href="/article/golang-notes/basis/control-structures/">流程语句</a>
+          <a href="/article/golang-notes/basis/data-types/">数据类型</a>
         </li>
       
     </ul>
