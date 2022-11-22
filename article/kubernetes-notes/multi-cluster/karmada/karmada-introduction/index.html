@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,26 +212,22 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <blockquote>
+                <div id="vip-container"><blockquote>
 <p>本文由网络资源整理以作记录</p>
 </blockquote>
-<h1 id="简介">简介</h1>
-<p>Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系统。在多云和混合云场景下，Karmada提供可插拔，全自动化管理多集群应用，实现多云集中管理、高可用性、故障恢复和流量调度。</p>
-<h1 id="特性">特性</h1>
-<ul>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系统。在多云和混合云场景下，Karmada提供可插拔，全自动化管理多集群应用，实现多云集中管理、高可用性、故障恢复和流量调度。</p>
+<h1 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h1><ul>
 <li>基于K8s原生API的跨集群应用管理，用户可以方便快捷地将应用从单集群迁移到多集群。</li>
 <li>中心式操作和管理Kubernetes集群。</li>
 <li>跨集群应用可在多集群上自动扩展，故障转移和负载均衡。</li>
 <li>高级的调度策略：区域，可用区，云提供商，集群亲和性/反亲和性。</li>
 <li>支持创建分发用户自定义（CustomResourceDefinitions）资源。</li>
 </ul>
-<h1 id="框架结构">框架结构</h1>
-<p><img src="https://support.huaweicloud.com/productdesc-mcp/zh-cn_image_0000001094636778.png" alt="img"></p>
+<h1 id="框架结构"><a href="#框架结构" class="headerlink" title="框架结构"></a>框架结构</h1><p><img src="https://support.huaweicloud.com/productdesc-mcp/zh-cn_image_0000001094636778.png" alt="img"></p>
 <ul>
 <li>ETCD：存储Karmada API对象。</li>
 <li>Karmada Scheduler：提供高级的多集群调度策略。</li>
-<li>Karmada Controller Manager: 包含多个Controller，Controller监听karmada对象并且与成员集群API server进行通信并创建成员集群的k8s对象。
-<ul>
+<li>Karmada Controller Manager: 包含多个Controller，Controller监听karmada对象并且与成员集群API server进行通信并创建成员集群的k8s对象。<ul>
 <li>Cluster Controller：成员集群的生命周期管理与对象管理。</li>
 <li>Policy Controller：监听PropagationPolicy对象，创建ResourceBinding，配置资源分发策略。</li>
 <li>Binding Controller：监听ResourceBinding对象，并创建work对象响应资源清单。</li>
@@ -239,8 +235,7 @@
 </ul>
 </li>
 </ul>
-<h1 id="资源分发流程">资源分发流程</h1>
-<p><strong>基本概念</strong></p>
+<h1 id="资源分发流程"><a href="#资源分发流程" class="headerlink" title="资源分发流程"></a>资源分发流程</h1><p><strong>基本概念</strong></p>
 <ul>
 <li>资源模板（Resource Template）：Karmada使用K8s原生API定义作为资源模板，便于快速对接K8s生态工具链。</li>
 <li>分发策略（Propagaion Policy）：Karmada提供独立的策略API，用来配置资源分发策略。</li>
@@ -253,7 +248,23 @@
 <li><a href="https://github.com/karmada-io/karmada" target="_blank" rel="noopener">https://github.com/karmada-io/karmada</a></li>
 <li><a href="https://support.huaweicloud.com/productdesc-mcp/mcp_productdesc_0001.html" target="_blank" rel="noopener">https://support.huaweicloud.com/productdesc-mcp/mcp_productdesc_0001.html</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -266,7 +277,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-introduction/" data-toggle="tooltip" data-placement="top" title="KubeVirt的介绍">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/setup/k8s-version-release/" data-toggle="tooltip" data-placement="top" title="k8s版本说明">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

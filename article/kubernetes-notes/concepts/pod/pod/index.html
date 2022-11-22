@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,57 +212,44 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-pod是什么what">1. Pod是什么（what）</h1>
-<h2 id="11-pod概念">1.1. Pod概念</h2>
-<ul>
+                <div id="vip-container"><h1 id="1-pod是什么what"><a href="#1-Pod是什么（what）" class="headerlink" title="1. Pod是什么（what）"></a>1. Pod是什么（what）</h1><h2 id="11-pod概念"><a href="#1-1-Pod概念" class="headerlink" title="1.1. Pod概念"></a>1.1. Pod概念</h2><ul>
 <li>Pod是kubernetes集群中最小的部署和管理的<code>基本单元</code>，协同寻址，协同调度。</li>
 <li>Pod是一个或多个容器的集合，是一个或一组服务（进程）的抽象集合。</li>
 <li>Pod中可以共享网络和存储（可以简单理解为一个逻辑上的虚拟机，但并不是虚拟机）。</li>
 <li>Pod被创建后用一个<code>UID</code>来唯一标识，当Pod生命周期结束，被一个等价Pod替代，UID将重新生成。</li>
 </ul>
-<h3 id="111-pod与docker">1.1.1. Pod与Docker</h3>
-<ul>
+<h3 id="111-pod与docker"><a href="#1-1-1-Pod与Docker" class="headerlink" title="1.1.1. Pod与Docker"></a>1.1.1. Pod与Docker</h3><ul>
 <li>Docker是目前Pod最常用的容器环境，但仍支持其他容器环境。</li>
 <li>Pod是一组被模块化的拥有共享命名空间和共享存储卷的容器，但并没有共享PID 命名空间（即同个Pod的不同容器中进程的PID是独立的，互相看不到非自己容器的进程）。</li>
 </ul>
-<h3 id="112-pod中容器的运行方式">1.1.2. Pod中容器的运行方式</h3>
-<ol>
+<h3 id="112-pod中容器的运行方式"><a href="#1-1-2-Pod中容器的运行方式" class="headerlink" title="1.1.2. Pod中容器的运行方式"></a>1.1.2. Pod中容器的运行方式</h3><ol>
 <li><strong>只运行一个单独的容器</strong></li>
 </ol>
 <p>即<code>one-container-per-Pod</code>模式，是最常用的模式，可以把这样的Pod看成单独的一个容器去管理。</p>
-<ol start="2">
+<ol>
 <li><strong>运行多个强关联的容器</strong></li>
 </ol>
 <p>即<code>sidecar</code>模式，Pod 封装了一组紧耦合、共享资源、协同寻址的容器，将这组容器作为一个管理单元。</p>
-<h2 id="12-pod管理多个容器">1.2. Pod管理多个容器</h2>
-<p>Pod是一组紧耦合的容器的集合，Pod内的容器作为一个整体以Pod形式进行协同寻址，协同调度、协同管理。相同Pod内的容器共享网络和存储。</p>
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1535286616/article/kubernetes/pod/pod.svg" width="50%">
-<h3 id="121-网络">1.2.1. 网络</h3>
-<ul>
+<h2 id="12-pod管理多个容器"><a href="#1-2-Pod管理多个容器" class="headerlink" title="1.2. Pod管理多个容器"></a>1.2. Pod管理多个容器</h2><p>Pod是一组紧耦合的容器的集合，Pod内的容器作为一个整体以Pod形式进行协同寻址，协同调度、协同管理。相同Pod内的容器共享网络和存储。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1535286616/article/kubernetes/pod/pod.svg" width="50%"></p>
+<h3 id="121-网络"><a href="#1-2-1-网络" class="headerlink" title="1.2.1. 网络"></a>1.2.1. 网络</h3><ul>
 <li>每个Pod被分配了唯一的IP地址，该Pod内的所有容器共享一个网络空间，包括IP和端口。</li>
 <li>同个Pod不同容器之间通过<code>localhos</code>t通信，Pod内端口不能冲突。</li>
 <li>不同Pod之间的通信则通过IP+端口的形式来访问到Pod内的具体服务（容器）。</li>
 </ul>
-<h3 id="122-存储">1.2.2. 存储</h3>
-<ul>
+<h3 id="122-存储"><a href="#1-2-2-存储" class="headerlink" title="1.2.2. 存储"></a>1.2.2. 存储</h3><ul>
 <li>可以在Pod中创建共享<code>存储卷</code>的方式来实现不同容器之间数据共享。</li>
 </ul>
-<h1 id="2-为什么需要podwhy">2. 为什么需要Pod(why)</h1>
-<h2 id="21-管理需求">2.1. 管理需求</h2>
-<p>Pod 是一种模式的抽象：互相协作的多个进程（容器）共同形成一个完整的服务。以一个或多个容器的方式组合成一个整体，作为管理的基本单元，通过Pod可以方便部署、水平扩展，协同调度等。</p>
-<h2 id="22-资源共享和通信">2.2. 资源共享和通信</h2>
-<p>Pod作为多个紧耦合的容器的集合，通过共享网络和存储的方式来简化紧耦合容器之间的通信，从这个角度，可以将Pod简单理解为一个逻辑上的“虚拟机”。而不同的Pod之间的通信则通过Pod的IP和端口的方式。</p>
-<h2 id="23-pod设计的优势">2.3. Pod设计的优势</h2>
-<ul>
+<h1 id="2-为什么需要podwhy"><a href="#2-为什么需要Pod-why" class="headerlink" title="2. 为什么需要Pod(why)"></a>2. 为什么需要Pod(why)</h1><h2 id="21-管理需求"><a href="#2-1-管理需求" class="headerlink" title="2.1. 管理需求"></a>2.1. 管理需求</h2><p>Pod 是一种模式的抽象：互相协作的多个进程（容器）共同形成一个完整的服务。以一个或多个容器的方式组合成一个整体，作为管理的基本单元，通过Pod可以方便部署、水平扩展，协同调度等。</p>
+<h2 id="22-资源共享和通信"><a href="#2-2-资源共享和通信" class="headerlink" title="2.2. 资源共享和通信"></a>2.2. 资源共享和通信</h2><p>Pod作为多个紧耦合的容器的集合，通过共享网络和存储的方式来简化紧耦合容器之间的通信，从这个角度，可以将Pod简单理解为一个逻辑上的“虚拟机”。而不同的Pod之间的通信则通过Pod的IP和端口的方式。</p>
+<h2 id="23-pod设计的优势"><a href="#2-3-Pod设计的优势" class="headerlink" title="2.3. Pod设计的优势"></a>2.3. Pod设计的优势</h2><ul>
 <li>调度器和控制器的可拔插性。</li>
 <li>将Pod 的生存期从 controller 中剥离出来，从而减少相互影响。</li>
-<li>高可用–在终止和删除 Pod 前，需要提前生成替代 Pod。</li>
+<li>高可用—在终止和删除 Pod 前，需要提前生成替代 Pod。</li>
 <li>集群级别的功能和 Kubelet（Pod Controller） 级别的功能组合更加清晰。</li>
 </ul>
-<h1 id="3-pod的使用how">3. Pod的使用(how)</h1>
-<p>Pod一般是通过各种不同类型的<code>Controller</code>对Pod进行管理和控制，包括自我恢复（例如Pod因异常退出，则会再起一个相同的Pod替代该Pod，而该Pod则会被清除）。也可以不通过Controller单独创建一个Pod，但一般很少这么操作，因为这个Pod是一个孤立的实体，并不会被Controller管理。</p>
-<h2 id="31-controller">3.1. Controller</h2>
-<p><code>Controller</code>是kubernetes中用于对Pod进行管理的控制器，通过该控制器让Pod始终维持在一个用户原本设定或期望的状态。如果节点宕机或者Pod因其他原因死亡，则会在其他节点起一个相同的Pod来替代该Pod。</p>
+<h1 id="3-pod的使用how"><a href="#3-Pod的使用-how" class="headerlink" title="3. Pod的使用(how)"></a>3. Pod的使用(how)</h1><p>Pod一般是通过各种不同类型的<code>Controller</code>对Pod进行管理和控制，包括自我恢复（例如Pod因异常退出，则会再起一个相同的Pod替代该Pod，而该Pod则会被清除）。也可以不通过Controller单独创建一个Pod，但一般很少这么操作，因为这个Pod是一个孤立的实体，并不会被Controller管理。</p>
+<h2 id="31-controller"><a href="#3-1-Controller" class="headerlink" title="3.1. Controller"></a>3.1. Controller</h2><p><code>Controller</code>是kubernetes中用于对Pod进行管理的控制器，通过该控制器让Pod始终维持在一个用户原本设定或期望的状态。如果节点宕机或者Pod因其他原因死亡，则会在其他节点起一个相同的Pod来替代该Pod。</p>
 <p>常用的Controller有：</p>
 <ul>
 <li><code>Deployment</code></li>
@@ -270,18 +257,14 @@
 <li><code>DaemonSet</code></li>
 </ul>
 <p><code>Controller</code>是通过用户提供的Pod模板来创建和控制Pod。</p>
-<h2 id="32-pod模板">3.2. Pod模板</h2>
-<p>Pod模板用来定义Pod的各种属性，Controller通过Pod模板来生成对应的Pod。</p>
+<h2 id="32-pod模板"><a href="#3-2-Pod模板" class="headerlink" title="3.2. Pod模板"></a>3.2. Pod模板</h2><p>Pod模板用来定义Pod的各种属性，Controller通过Pod模板来生成对应的Pod。</p>
 <p>Pod模板类似一个饼干模具，通过模具已经生成的饼干与原模具已经没有关系，即对原模具的修改不会影响已经生成的饼干，只会对通过修改后的模具生成的饼干有影响。这种方式可以更加方便地控制和管理Pod。</p>
-<h1 id="4-pod的终止">4. Pod的终止</h1>
-<p>用户发起一个删除Pod的请求，系统会先发送<code>TERM</code>信号给每个容器的主进程，如果在宽限期（默认30秒）主进程没有自主终止运行，则系统会发送<code>KILL</code>信号给该进程，接着Pod将被删除。</p>
-<h2 id="41-pod终止的流程">4.1. Pod终止的流程</h2>
-<ol>
+<h1 id="4-pod的终止"><a href="#4-Pod的终止" class="headerlink" title="4. Pod的终止"></a>4. Pod的终止</h1><p>用户发起一个删除Pod的请求，系统会先发送<code>TERM</code>信号给每个容器的主进程，如果在宽限期（默认30秒）主进程没有自主终止运行，则系统会发送<code>KILL</code>信号给该进程，接着Pod将被删除。</p>
+<h2 id="41-pod终止的流程"><a href="#4-1-Pod终止的流程" class="headerlink" title="4.1. Pod终止的流程"></a>4.1. Pod终止的流程</h2><ol>
 <li>用户发送一个删除 Pod 的命令， 并使用默认的宽限期（30s)。</li>
 <li>把 API server 上的 pod 的时间更新成 Pod 与宽限期一起被认为 “dead” 之外的时间点。</li>
 <li>使用客户端的命令，显示出的Pod的状态为 <code>terminating</code>。</li>
-<li>（与第3步同时发生）Kubelet 发现某一个 Pod 由于时间超过第2步的设置而被标志成 terminating 状态时， Kubelet 将启动一个停止进程。
-<ol>
+<li>（与第3步同时发生）Kubelet 发现某一个 Pod 由于时间超过第2步的设置而被标志成 terminating 状态时， Kubelet 将启动一个停止进程。<ol>
 <li>如果 pod 已经被定义成一个 <code>preStop hook</code>，这会在 pod 内部进行调用。如果宽限期已经过期但 preStop 锚依然还在运行，将调用第2步并在原来的宽限期上加一个小的时间窗口（2 秒钟）。</li>
 <li>把 Pod 里的进程发送到 <code>TERM</code>信号。</li>
 </ol>
@@ -290,20 +273,34 @@
 <li>当宽期限过期时， 任何还在 Pod 里运行的进程都会被 <code>SIGKILL</code>杀掉。</li>
 <li>Kubelet 通过在 API server 把宽期限设置成0(立刻删除)的方式完成删除 Pod的过程。 这时 Pod 在 API 里消失，也不再能被用户看到。</li>
 </ol>
-<h2 id="42-强制删除pod">4.2. 强制删除Pod</h2>
-<p>强制删除Pod是指从k8s集群状态和Etcd中立刻删除对应的Pod数据，API Server不会等待kubelet的确认信息。被强制删除后，即可重新创建一个相同名字的Pod。</p>
+<h2 id="42-强制删除pod"><a href="#4-2-强制删除Pod" class="headerlink" title="4.2. 强制删除Pod"></a>4.2. 强制删除Pod</h2><p>强制删除Pod是指从k8s集群状态和Etcd中立刻删除对应的Pod数据，API Server不会等待kubelet的确认信息。被强制删除后，即可重新创建一个相同名字的Pod。</p>
 <p>删除默认的宽限期是30秒，通过将宽限期设置为0的方式可以强制删除Pod。</p>
 <p>通过<code>kubectl delete</code> 命令后加<code>--force</code>和<code>--grace-period=0</code>的参数强制删除Pod。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete pod &lt;pod_name&gt; --namespace=&lt;namespace&gt;  --force --grace-period=0</span><br></pre></td></tr></table></figure>
-<h2 id="43-pod特权模式">4.3. Pod特权模式</h2>
-<p>特权模式是指让Pod中的进程具有访问宿主机系统设备或使用网络栈操作等的能力，例如编写网络插件和卷插件。</p>
+<h2 id="43-pod特权模式"><a href="#4-3-Pod特权模式" class="headerlink" title="4.3. Pod特权模式"></a>4.3. Pod特权模式</h2><p>特权模式是指让Pod中的进程具有访问宿主机系统设备或使用网络栈操作等的能力，例如编写网络插件和卷插件。</p>
 <p>通过将<code>container spec</code>中的<code>SecurityContext</code>设置为<code>privileged</code>即将该容器赋予了特权模式。特权模式的使用要求k8s版本高于<code>v1.1</code>。</p>
 <p>参考文章：</p>
 <ul>
 <li><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/</a></li>
 <li><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/workloads/pods/pod/</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>

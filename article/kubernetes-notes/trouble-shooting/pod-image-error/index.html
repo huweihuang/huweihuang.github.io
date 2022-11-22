@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,25 +212,37 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>常见镜像拉取问题排查</p>
-<h2 id="1-pod状态为errimagepull或imagepullbackoff">1. Pod状态为ErrImagePull或ImagePullBackOff</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   </span><br><span class="line">docker-hub-75d4dfb984-9r57b           0/1     ErrImagePull       0          53s     192.168.0.42   &lt;node ip&gt;</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><p>常见镜像拉取问题排查</p>
+<h2 id="1-pod状态为errimagepull或imagepullbackoff"><a href="#1-Pod状态为ErrImagePull或ImagePullBackOff" class="headerlink" title="1. Pod状态为ErrImagePull或ImagePullBackOff"></a>1. Pod状态为ErrImagePull或ImagePullBackOff</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   </span><br><span class="line">docker-hub-75d4dfb984-9r57b           0/1     ErrImagePull       0          53s     192.168.0.42   &lt;node ip&gt;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>ErrImagePull：表示pod已经调度到node节点，kubelet调用docker去拉取镜像失败。</li>
 <li>ImagePullBackOff：表示kubelet拉取镜像失败后，不断重试去拉取仍然失败。</li>
 </ul>
-<h2 id="2-查看pod的事件">2. 查看pod的事件</h2>
-<p>通过kubectl describe pod 命令查看pod事件，该事件的报错信息在kubelet或docker的日志中也会查看到。</p>
-<h3 id="21-http-server-gave-http-response-to-https-client">2.1. http: server gave HTTP response to HTTPS client</h3>
-<p>如果遇到以下报错，尝试将该镜像仓库添加到docker可信任的镜像仓库配置中。</p>
+<h2 id="2-查看pod的事件"><a href="#2-查看pod的事件" class="headerlink" title="2. 查看pod的事件"></a>2. 查看pod的事件</h2><p>通过kubectl describe pod 命令查看pod事件，该事件的报错信息在kubelet或docker的日志中也会查看到。</p>
+<h3 id="21-http-server-gave-http-response-to-https-client"><a href="#2-1-http-server-gave-HTTP-response-to-HTTPS-client" class="headerlink" title="2.1. http: server gave HTTP response to HTTPS client"></a>2.1. http: server gave HTTP response to HTTPS client</h3><p>如果遇到以下报错，尝试将该镜像仓库添加到docker可信任的镜像仓库配置中。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error getting v2 registry: Get https://docker.com:8080/v2/: http: server gave HTTP response to HTTPS client<span class="string">"</span></span><br></pre></td></tr></table></figure>
 <p>具体操作是修改/etc/docker/daemon.json的insecure-registries参数</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#cat /etc/docker/daemon.json</span></span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">  <span class="string">"insecure-registries"</span>: [</span><br><span class="line">	...</span><br><span class="line">    <span class="string">"docker.com:8080"</span></span><br><span class="line">  ],</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="22-no-basic-auth-credentials">2.2. no basic auth credentials</h3>
-<p>如果遇到<code>no basic auth credentials</code>报错，说明kubelet调用docker接口去拉取镜像时，镜像仓库的认证信息失败。</p>
+<h3 id="22-no-basic-auth-credentials"><a href="#2-2-no-basic-auth-credentials" class="headerlink" title="2.2. no basic auth credentials"></a>2.2. no basic auth credentials</h3><p>如果遇到<code>no basic auth credentials</code>报错，说明kubelet调用docker接口去拉取镜像时，镜像仓库的认证信息失败。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Normal   BackOff    18s               kubelet, 192.168.1.1  Back-off pulling image <span class="string">"docker.com:8080/public/2048:latest"</span></span><br><span class="line">Warning  Failed     18s               kubelet, 192.168.1.1  Error: ImagePullBackOff</span><br><span class="line">Normal   Pulling    5s (x2 over 18s)  kubelet, 192.168.1.1  Pulling image <span class="string">"docker.com:8080/public/2048:latest"</span></span><br><span class="line">Warning  Failed     5s (x2 over 18s)  kubelet, 192.168.1.1  Failed to pull image <span class="string">"docker.com:8080/public/2048:latest"</span>: rpc error: code = Unknown desc = Error response from daemon: Get http://docker.com:8080/v2/public/2048/manifests/latest: no basic auth credentials</span><br><span class="line">Warning  Failed     5s (x2 over 18s)  kubelet, 192.168.1.1  Error: ErrImagePull</span><br></pre></td></tr></table></figure>
 <p>具体操作，在拉取镜像失败的节点上登录该镜像仓库，认证信息会更新到<code>$HOME/.docker/config.json</code>文件中。将该文件拷贝到<code>/var/lib/kubelet/config.json</code>中。</p>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -238,7 +250,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/" data-toggle="tooltip" data-placement="top" title="Virtual Kubelet介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/" data-toggle="tooltip" data-placement="top" title="Virtual Kubelet命令">&larr; Previous Post</a>
                         </li>
                     
                     

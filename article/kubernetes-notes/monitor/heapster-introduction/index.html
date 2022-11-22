@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,38 +212,16 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-heapster简介">1. heapster简介</h1>
-<p>Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。<br>
-Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。</p>
-<h1 id="2-heapster部署与配置">2. heapster部署与配置</h1>
-<h2 id="21-注意事项">2.1. 注意事项</h2>
-<p>需同步部署机器和被采集机器的时间：ntpdate <a href="http://time.windows.com" target="_blank" rel="noopener">time.windows.com</a></p>
+                <div id="vip-container"><h1 id="1-heapster简介"><a href="#1-heapster简介" class="headerlink" title="1. heapster简介"></a>1. heapster简介</h1><p>Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。<br>Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。</p>
+<h1 id="2-heapster部署与配置"><a href="#2-heapster部署与配置" class="headerlink" title="2. heapster部署与配置"></a>2. heapster部署与配置</h1><h2 id="21-注意事项"><a href="#2-1-注意事项" class="headerlink" title="2.1. 注意事项"></a>2.1. 注意事项</h2><p>需同步部署机器和被采集机器的时间：ntpdate time.windows.com</p>
 <p>加入定时任务，定期同步时间</p>
 <p>crontab –e</p>
-<p>30 5 * * *          /usr/sbin/ntpdate <a href="http://time.windows.com" target="_blank" rel="noopener">time.windows.com</a>          //每天早晨5点半执行</p>
-<h2 id="22-容器式部署">2.2. 容器式部署</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#拉取镜像</span></span><br><span class="line">docker pull heapster:latest</span><br><span class="line"><span class="comment">#运行容器</span></span><br><span class="line">docker run -d -p 8082:8082 --net=host heapster:latest --<span class="built_in">source</span>=kubernetes:http://&lt;k8s-server-ip&gt;:8080?inClusterConfig=<span class="literal">false</span>\&amp;useServiceAccount=<span class="literal">false</span> --sink=influxdb:http://&lt;influxdb-ip&gt;:8086?db=&lt;k8s_env_zone&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="23-配置说明">2.3. 配置说明</h2>
-<p>可以参考<a href="https://github.com/kubernetes/heapster/tree/master/docs" target="_blank" rel="noopener">官方文档</a></p>
-<h2 id="231-source">2.3.1. –source</h2>
-<p>–source: 指定数据获取源。这里指定kube-apiserver即可。<br>
-后缀参数：<br>
-inClusterConfig:<br>
-kubeletPort: 指定kubelet的使用端口，默认10255<br>
-kubeletHttps: 是否使用https去连接kubelets(默认：false)<br>
-apiVersion: 指定K8S的apiversion<br>
-insecure: 是否使用安全证书(默认：false)<br>
-auth: 安全认证<br>
-useServiceAccount: 是否使用K8S的安全令牌</p>
-<h2 id="232-sink">2.3.2. –sink</h2>
-<p>–sink: 指定后端数据存储。这里指定influxdb数据库。<br>
-后缀参数：<br>
-user: InfluxDB用户<br>
-pw: InfluxDB密码<br>
-db: 数据库名<br>
-secure: 安全连接到InfluxDB(默认：false)<br>
-withfields： 使用InfluxDB fields(默认：false)。</p>
-<h1 id="3-metrics">3. Metrics</h1>
+<p>30 5 <em> </em> *          /usr/sbin/ntpdate time.windows.com          //每天早晨5点半执行</p>
+<h2 id="22-容器式部署"><a href="#2-2-容器式部署" class="headerlink" title="2.2. 容器式部署"></a>2.2. 容器式部署</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#拉取镜像</span></span><br><span class="line">docker pull heapster:latest</span><br><span class="line"><span class="comment">#运行容器</span></span><br><span class="line">docker run -d -p 8082:8082 --net=host heapster:latest --<span class="built_in">source</span>=kubernetes:http://&lt;k8s-server-ip&gt;:8080?inClusterConfig=<span class="literal">false</span>\&amp;useServiceAccount=<span class="literal">false</span> --sink=influxdb:http://&lt;influxdb-ip&gt;:8086?db=&lt;k8s_env_zone&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="23-配置说明"><a href="#2-3-配置说明" class="headerlink" title="2.3. 配置说明"></a>2.3. 配置说明</h2><p>可以参考<a href="https://github.com/kubernetes/heapster/tree/master/docs" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="231-source"><a href="#2-3-1-–source" class="headerlink" title="2.3.1. –source"></a>2.3.1. –source</h2><p>–source: 指定数据获取源。这里指定kube-apiserver即可。<br>后缀参数：<br>inClusterConfig:<br>kubeletPort: 指定kubelet的使用端口，默认10255<br>kubeletHttps: 是否使用https去连接kubelets(默认：false)<br>apiVersion: 指定K8S的apiversion<br>insecure: 是否使用安全证书(默认：false)<br>auth: 安全认证<br>useServiceAccount: 是否使用K8S的安全令牌</p>
+<h2 id="232-sink"><a href="#2-3-2-–sink" class="headerlink" title="2.3.2. –sink"></a>2.3.2. –sink</h2><p>–sink: 指定后端数据存储。这里指定influxdb数据库。<br>后缀参数：<br>user: InfluxDB用户<br>pw: InfluxDB密码<br>db: 数据库名<br>secure: 安全连接到InfluxDB(默认：false)<br>withfields： 使用InfluxDB fields(默认：false)。</p>
+<h1 id="3-metrics"><a href="#3-Metrics" class="headerlink" title="3. Metrics"></a>3. Metrics</h1><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -472,7 +450,8 @@ withfields： 使用InfluxDB fields(默认：false)。</p>
 </tr>
 </tbody>
 </table>
-<h1 id="4-labels">4. Labels</h1>
+</div>
+<h1 id="4-labels"><a href="#4-Labels" class="headerlink" title="4. Labels"></a>4. Labels</h1><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -523,9 +502,25 @@ withfields： 使用InfluxDB fields(默认：false)。</p>
 </tr>
 </tbody>
 </table>
-<h1 id="5-heapster-api">5. heapster API</h1>
-<p>见官方文档：<a href="https://github.com/kubernetes/heapster/blob/master/docs/model.md" target="_blank" rel="noopener">https://github.com/kubernetes/heapster/blob/master/docs/model.md</a></p>
+</div>
+<h1 id="5-heapster-api"><a href="#5-heapster-API" class="headerlink" title="5. heapster API"></a>5. heapster API</h1><p>见官方文档：<a href="https://github.com/kubernetes/heapster/blob/master/docs/model.md" target="_blank" rel="noopener">https://github.com/kubernetes/heapster/blob/master/docs/model.md</a></p>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -533,12 +528,12 @@ withfields： 使用InfluxDB fields(默认：false)。</p>
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/monitor/cadvisor-introduction/" data-toggle="tooltip" data-placement="top" title="cAdvisor介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/monitor/influxdb-introduction/" data-toggle="tooltip" data-placement="top" title="Influxdb介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/monitor/influxdb-introduction/" data-toggle="tooltip" data-placement="top" title="Influxdb介绍">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/monitor/kubernetes-cluster-monitoring/" data-toggle="tooltip" data-placement="top" title="Kubernetes集群监控">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

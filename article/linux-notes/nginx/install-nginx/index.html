@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,18 +212,11 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-部署">1. 部署</h1>
-<h2 id="11-使用安装包的方式">1.1. 使用安装包的方式</h2>
-<p>rpm -ivh nginx-xxx.rpm</p>
-<h2 id="12-使用源代码安装">1.2. 使用源代码安装</h2>
-<h3 id="121-下载源码包">1.2.1. 下载源码包</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://blob.wae.haplat.net/nginx/nginx-1.9.13.tar.gz</span><br></pre></td></tr></table></figure>
-<h2 id="122-创建临时目录并解压源码包">1.2.2. 创建临时目录并解压源码包</h2>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir $HOME/build</span><br><span class="line">cd $HOME/build &amp;&amp; tar zxvf nginx-&lt;version-number&gt;.tar.gz</span><br></pre></td></tr></table></figure>
-<h3 id="123-编译并安装">1.2.3. 编译并安装</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> cd $HOME/build/nginx-&lt;version-number&gt;</span><br><span class="line"> </span><br><span class="line">./configure \</span><br><span class="line">--prefix=/etc/nginx \</span><br><span class="line">--sbin-path=/usr/sbin/nginx \</span><br><span class="line">--conf-path=/etc/nginx/nginx.conf \</span><br><span class="line">...</span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;更多配置项见以下说明&gt;</span></span><br><span class="line"> </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
-<h3 id="124-配置项">1.2.4. 配置项</h3>
-<h4 id="1241-通用配置项">1.2.4.1. 通用配置项</h4>
+                <div id="vip-container"><h1 id="1-部署"><a href="#1-部署" class="headerlink" title="1. 部署"></a>1. 部署</h1><h2 id="11-使用安装包的方式"><a href="#1-1-使用安装包的方式" class="headerlink" title="1.1. 使用安装包的方式"></a>1.1. 使用安装包的方式</h2><p>rpm -ivh nginx-xxx.rpm</p>
+<h2 id="12-使用源代码安装"><a href="#1-2-使用源代码安装" class="headerlink" title="1.2. 使用源代码安装"></a>1.2. 使用源代码安装</h2><h3 id="121-下载源码包"><a href="#1-2-1-下载源码包" class="headerlink" title="1.2.1. 下载源码包"></a>1.2.1. 下载源码包</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://blob.wae.haplat.net/nginx/nginx-1.9.13.tar.gz</span><br></pre></td></tr></table></figure>
+<h2 id="122-创建临时目录并解压源码包"><a href="#1-2-2-创建临时目录并解压源码包" class="headerlink" title="1.2.2. 创建临时目录并解压源码包"></a>1.2.2. 创建临时目录并解压源码包</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir $HOME/build</span><br><span class="line">cd $HOME/build &amp;&amp; tar zxvf nginx-&lt;version-number&gt;.tar.gz</span><br></pre></td></tr></table></figure>
+<h3 id="123-编译并安装"><a href="#1-2-3-编译并安装" class="headerlink" title="1.2.3. 编译并安装"></a>1.2.3. 编译并安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> cd $HOME/build/nginx-&lt;version-number&gt;</span><br><span class="line"> </span><br><span class="line">./configure \</span><br><span class="line">--prefix=/etc/nginx \</span><br><span class="line">--sbin-path=/usr/sbin/nginx \</span><br><span class="line">--conf-path=/etc/nginx/nginx.conf \</span><br><span class="line">...</span><br><span class="line"><span class="meta">#</span><span class="bash">&lt;更多配置项见以下说明&gt;</span></span><br><span class="line"> </span><br><span class="line">make &amp;&amp; make install</span><br></pre></td></tr></table></figure>
+<h3 id="124-配置项"><a href="#1-2-4-配置项" class="headerlink" title="1.2.4. 配置项"></a>1.2.4. 配置项</h3><h4 id="1241-通用配置项"><a href="#1-2-4-1-通用配置项" class="headerlink" title="1.2.4.1. 通用配置项"></a>1.2.4.1. 通用配置项</h4><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -233,48 +226,49 @@
 </thead>
 <tbody>
 <tr>
-<td>–prefix=<path></path></td>
+<td>—prefix=<path></path></td>
 <td>nginx安装的根路径，所有其他的路径都要依赖与该选项</td>
 </tr>
 <tr>
-<td>–sbin-path=<path></path></td>
-<td>nginx二进制文件的路径，如果没有指定则会依赖于–prefix</td>
+<td>—sbin-path=<path></path></td>
+<td>nginx二进制文件的路径，如果没有指定则会依赖于—prefix</td>
 </tr>
 <tr>
-<td>–conf-path=<path></path></td>
+<td>—conf-path=<path></path></td>
 <td>如果在命令行中没有指定配置文件，则通过该配置项去查找配置文件</td>
 </tr>
 <tr>
-<td>–error-log-path=<path></path></td>
+<td>—error-log-path=<path></path></td>
 <td>指定错误文件的路径</td>
 </tr>
 <tr>
-<td>–pid-path=<path></path></td>
+<td>—pid-path=<path></path></td>
 <td>指定的文件将会写入nginx master进程的pid，通常在/var/run下</td>
 </tr>
 <tr>
-<td>–lock-path=<path></path></td>
+<td>—lock-path=<path></path></td>
 <td>共享存储器互斥锁文件的路径</td>
 </tr>
 <tr>
-<td>–user=<user></user></td>
+<td>—user=<user></user></td>
 <td>worker进程运行的用户</td>
 </tr>
 <tr>
-<td>–group=<group></group></td>
+<td>—group=<group></group></td>
 <td>worker进程运行的组</td>
 </tr>
 <tr>
-<td>–with-file-aio</td>
+<td>—with-file-aio</td>
 <td>启动异步I/O</td>
 </tr>
 <tr>
-<td>–with-debug</td>
+<td>—with-debug</td>
 <td>启用调试日志，生产环境不推荐配置</td>
 </tr>
 </tbody>
 </table>
-<h4 id="1242-优化配置项">1.2.4.2. 优化配置项</h4>
+</div>
+<h4 id="1242-优化配置项"><a href="#1-2-4-2-优化配置项" class="headerlink" title="1.2.4.2. 优化配置项"></a>1.2.4.2. 优化配置项</h4><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -284,28 +278,29 @@
 </thead>
 <tbody>
 <tr>
-<td>–with-cc=<path></path></td>
+<td>—with-cc=<path></path></td>
 <td>如果想设置一个不在默认PATH下的C编译器</td>
 </tr>
 <tr>
-<td>–with-cpp=<path></path></td>
+<td>—with-cpp=<path></path></td>
 <td>设置C预处理器的相应路径</td>
 </tr>
 <tr>
-<td>–with-cc-opt=<options></options></td>
+<td>—with-cc-opt=<options></options></td>
 <td>指定必要的include文件路径</td>
 </tr>
 <tr>
-<td>–with-ld-opt=<options></options></td>
+<td>—with-ld-opt=<options></options></td>
 <td>包含连接器库的路径和运行路径</td>
 </tr>
 <tr>
-<td>–with-cpu-opt=<cpu></cpu></td>
+<td>—with-cpu-opt=<cpu></cpu></td>
 <td>通过该选项为特定的CPU构建nginx</td>
 </tr>
 </tbody>
 </table>
-<h4 id="1243-http模块的配置项">1.2.4.3. http模块的配置项</h4>
+</div>
+<h4 id="1243-http模块的配置项"><a href="#1-2-4-3-http模块的配置项" class="headerlink" title="1.2.4.3. http模块的配置项"></a>1.2.4.3. http模块的配置项</h4><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -315,49 +310,50 @@
 </thead>
 <tbody>
 <tr>
-<td>–without-http-cache</td>
+<td>—without-http-cache</td>
 <td>在使用upstream模块时，nginx能够配置本地缓存内容，该选项可以禁用缓存</td>
 </tr>
 <tr>
-<td>–with-http_perl_module</td>
+<td>—with-http_perl_module</td>
 <td>nginx配置能够扩展使用perl代码。该项启用这个模块，但会降低性能</td>
 </tr>
 <tr>
-<td>–with-perl_modules_path=<path></path></td>
+<td>—with-perl_modules_path=<path></path></td>
 <td>对于额外嵌入的perl模块，该选项指定该perl解析器的路径</td>
 </tr>
 <tr>
-<td>–with-perl=<path></path></td>
+<td>—with-perl=<path></path></td>
 <td>如果在默认的路径中找不到perl则指定perl（5.6版本以上）的路径</td>
 </tr>
 <tr>
-<td>–http-log-path=<path></path></td>
+<td>—http-log-path=<path></path></td>
 <td>http访问日志的默认路径</td>
 </tr>
 <tr>
-<td>–http-client-body-temp-path=<path></path></td>
+<td>—http-client-body-temp-path=<path></path></td>
 <td>从客户端收到请求后，该项用于作为请求体临时存放的目录</td>
 </tr>
 <tr>
-<td>–http-proxy-temp-path=<path></path></td>
+<td>—http-proxy-temp-path=<path></path></td>
 <td>在使用代理后，通过该项设置存放临时文件路径</td>
 </tr>
 <tr>
-<td>–http-fastcgi-temp-path=<path></path></td>
+<td>—http-fastcgi-temp-path=<path></path></td>
 <td>设置FastCGI临时文件的目录</td>
 </tr>
 <tr>
-<td>–http-uwsgi-temp-path=<path></path></td>
+<td>—http-uwsgi-temp-path=<path></path></td>
 <td>设置uWSGI临时文件的目录</td>
 </tr>
 <tr>
-<td>–http-scgi-temp-path=<path></path></td>
+<td>—http-scgi-temp-path=<path></path></td>
 <td>设置SCGI临时文件的目录</td>
 </tr>
 </tbody>
 </table>
-<h4 id="1244-其他模块额外配置项">1.2.4.4. 其他模块额外配置项</h4>
-<p>默认没有安装这些模块，可以通过–with-<module-name>_module来启用相应的模块功能。</module-name></p>
+</div>
+<h4 id="1244-其他模块额外配置项"><a href="#1-2-4-4-其他模块额外配置项" class="headerlink" title="1.2.4.4. 其他模块额外配置项"></a>1.2.4.4. 其他模块额外配置项</h4><p>默认没有安装这些模块，可以通过—with-<module-name>_module来启用相应的模块功能。</module-name></p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -367,74 +363,73 @@
 </thead>
 <tbody>
 <tr>
-<td>–with-http_ssl_module</td>
+<td>—with-http_ssl_module</td>
 <td>如果需要对流量进行加密，可以使用该选项，再URLs中开始部分将会是https(需要OpenSSL库)</td>
 </tr>
 <tr>
-<td>–with-http_realip_module</td>
+<td>—with-http_realip_module</td>
 <td>如果nginx在七层负载均衡器或者其他设备之后，它们将Http头中的客户端IP地址传递，则需要启用该模块，再多个客户处于一个IP地址的情况下使用</td>
 </tr>
 <tr>
-<td>–with-http_addition_module</td>
+<td>—with-http_addition_module</td>
 <td>该模块作为输出过滤器，使能够在请求经过一个location前或后时在该location本身添加内容</td>
 </tr>
 <tr>
-<td>–with-http_xslt_module</td>
+<td>—with-http_xslt_module</td>
 <td>该模块用于处理XML响应转换，基于一个或多个XSLT格式</td>
 </tr>
 <tr>
-<td>–with-http_image_filter_module</td>
+<td>—with-http_image_filter_module</td>
 <td>该模块被作为图像过滤器使用，在将图像投递到客户之前进行处理（需要libgd库）</td>
 </tr>
 <tr>
-<td>–with-http_geoip_module</td>
+<td>—with-http_geoip_module</td>
 <td>使用该模块，能够设置各种变量以便在配置文件中的区段使用，基于地理位置查找客户端IP地址</td>
 </tr>
 <tr>
-<td>–with-http_sub_module</td>
+<td>—with-http_sub_module</td>
 <td>该模块实现替代过滤，在响应中用一个字符串替代另一个字符串</td>
 </tr>
 <tr>
-<td>–with-heep_dav_module</td>
+<td>—with-heep_dav_module</td>
 <td>启用这个模块将激活使用WebDAV的配置指令。</td>
 </tr>
 <tr>
-<td>–with-http_flv_module</td>
+<td>—with-http_flv_module</td>
 <td>如果需要提供Flash流媒体视频文件，那么该模块将会提供伪流媒体</td>
 </tr>
 <tr>
-<td>–with-http_mp4_module</td>
+<td>—with-http_mp4_module</td>
 <td>这个模块支持H.264/AAC文件伪流媒体</td>
 </tr>
 <tr>
-<td>–with-http_gzip_static_module</td>
+<td>—with-http_gzip_static_module</td>
 <td>当被调用的资源没有.gz结尾格式的文件时，如果想支持发送预压缩版本的静态文件，那么使用该模块</td>
 </tr>
 <tr>
-<td>–with-http_gunzip_module</td>
+<td>—with-http_gunzip_module</td>
 <td>对于不支持gzip编码的客户，该模块用于为客户解压缩预压缩内容</td>
 </tr>
 <tr>
-<td>–with-http_random_index_module</td>
+<td>—with-http_random_index_module</td>
 <td>如果你想提供从一个目录中随机选择文件的索引文件，那么该模块需要激活</td>
 </tr>
 <tr>
-<td>–with-http_secure_link_module</td>
+<td>—with-http_secure_link_module</td>
 <td>该模块提供一种机制，它会将一个哈希值链接到一个URL中，因此只有那些使用正确密码能够计算链接</td>
 </tr>
 <tr>
-<td>–with-http_stub_status_module</td>
+<td>—with-http_stub_status_module</td>
 <td>启用这个模块后会收集Nginx自身的状态信息。输出的状态信息可以使用RRDtool或类似的东西绘制成图</td>
 </tr>
 </tbody>
 </table>
-<h1 id="2-配置">2. 配置</h1>
-<p>配置文件一般为/etc/nginx/nginx.conf或/usr/local/nginx/conf/nginx.conf。</p>
-<h2 id="21-基本配置格式">2.1. 基本配置格式</h2>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;section&gt;&#123;</span><br><span class="line">    &lt;directive&gt; &lt;parameters&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div>
+<h1 id="2-配置"><a href="#2-配置" class="headerlink" title="2. 配置"></a>2. 配置</h1><p>配置文件一般为/etc/nginx/nginx.conf或/usr/local/nginx/conf/nginx.conf。</p>
+<h2 id="21-基本配置格式"><a href="#2-1-基本配置格式" class="headerlink" title="2.1. 基本配置格式"></a>2.1. 基本配置格式</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;section&gt;&#123;</span><br><span class="line">    &lt;directive&gt; &lt;parameters&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>每一个指令行由分号结束，大括号{}表示一个新的上下文。</p>
-<h2 id="22-nginx全局配置参数">2.2. Nginx全局配置参数</h2>
-<p>全局配置指令</p>
+<h2 id="22-nginx全局配置参数"><a href="#2-2-Nginx全局配置参数" class="headerlink" title="2.2. Nginx全局配置参数"></a>2.2. Nginx全局配置参数</h2><p>全局配置指令</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -472,27 +467,37 @@
 <tr>
 <td>worker_connections</td>
 <td>用于配置一个工作进程能够接受的并发连接最大数。包括客户连接和向上游服务器的连接。</td>
-<td></td>
 </tr>
 </tbody>
 </table>
-<h2 id="23-使用include文件">2.3. 使用include文件</h2>
-<p>include文件可以在任何地方以增强配置文件的可读性，使用include文件要确保被包含文件自身正确的nginx语法，即配置指令和块，然后指定这些文件的路径。</p>
+</div>
+<h2 id="23-使用include文件"><a href="#2-3-使用include文件" class="headerlink" title="2.3. 使用include文件"></a>2.3. 使用include文件</h2><p>include文件可以在任何地方以增强配置文件的可读性，使用include文件要确保被包含文件自身正确的nginx语法，即配置指令和块，然后指定这些文件的路径。</p>
 <p>include /etc/nginx/mime.types;</p>
 <p>若使用通配符则表示通配的多个文件，若没有给定全路径则依据主配置文件路径进行搜索。</p>
 <p>include /etc/nginx/conf.d/*.conf</p>
 <p>测试配置文件(包括include的配置文件)语法：</p>
 <p>nginx -t -c {path-to-nginx.conf}</p>
-<h2 id="24-配置说明">2.4. 配置说明</h2>
-<h3 id="241-main模块">2.4.1. main模块</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">main模块类似main函数包含其他子模块，非模块配置项(包括模块内)分号结尾，子模块配置花括号结尾</span></span><br><span class="line">user nobady;   #一般按默认设置</span><br><span class="line">pid /var/run/nginx.pid;   #进程标识符存放路径，一般按默认设置</span><br><span class="line">worker_processes auto;   #nginx对外提供web服务时的worder进程数，可将其设置为可用的CPU内核数，auto为自动检测</span><br><span class="line">worker_rlimit_nofile 100000;  # 更改worker进程的最大打开文件数限制</span><br><span class="line">error_log logs/error.log  info;   #错误日志存放路径</span><br><span class="line">keepalive_timeout 60;  #keepalive_timeout 60;</span><br><span class="line">events&#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">见events模块</span></span><br><span class="line">&#125;</span><br><span class="line">http&#123;  #见http模块</span><br><span class="line">  server&#123; </span><br><span class="line">    ...</span><br><span class="line">    location /&#123;</span><br><span class="line">     </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">mail&#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">见mail模块</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="242-events模块">2.4.2. events模块</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">events &#123;</span><br><span class="line">  worker_connections 2048;    #设置可由一个worker进程同时打开的最大连接数</span><br><span class="line">  multi_accept on;   #告诉nginx收到一个新连接通知后接受尽可能多的连接</span><br><span class="line">  use epoll; #设置用于复用客户端线程的轮询方法。Linux 2.6+：使用epoll；*BSD：使用kqueue。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="243-http模块">2.4.3. http模块</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">http &#123;  #http模块</span><br><span class="line">    server &#123;  #server模块，http服务上的虚拟主机， server 当做对应一个域名进行的配置</span><br><span class="line">        listen          80;  #配置监听端口</span><br><span class="line">        server_name     www.linuxidc.com; #配置访问域名</span><br><span class="line">        access_log      logs/linuxidc.access.log main;  #指定日志文件的存放路径</span><br><span class="line">        index index.html;    #默认访问页面</span><br><span class="line">        root  /var/www/androidj.com/htdocs;  # root 是指将本地的一个文件夹作为所有 url 请求的根路径</span><br><span class="line">        upstream backend &#123;   #反向代理的后端机器，实现负载均衡</span><br><span class="line">            ip_hash;    #指明了我们均衡的方式是按照用户的 ip 地址进行分配</span><br><span class="line">            server backend1.example.com;</span><br><span class="line">            server backend2.example.com;</span><br><span class="line">            server backend3.example.com;</span><br><span class="line">            server backend4.example.com;</span><br><span class="line">        &#125;</span><br><span class="line">        location / &#123;  #location 是在一个域名下对更精细的路径进行配置</span><br><span class="line">            proxy_pass http://backend;  #反向代理到后端机器</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        listen          80;</span><br><span class="line">        server_name     www.Androidj.com;</span><br><span class="line">        access_log      logs/androidj.access.log main;</span><br><span class="line">        location / &#123;</span><br><span class="line">            index index.html;</span><br><span class="line">            root  /var/www/androidj.com/htdocs;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="244-mail模块">2.4.4. mail模块</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mail &#123;</span><br><span class="line">    auth_http  127.0.0.1:80/auth.php;</span><br><span class="line">    pop3_capabilities  "TOP"  "USER";</span><br><span class="line">    imap_capabilities  "IMAP4rev1"  "UIDPLUS";</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        listen     110;</span><br><span class="line">        protocol   pop3;</span><br><span class="line">        proxy      on;</span><br><span class="line">    &#125;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen      25;</span><br><span class="line">        protocol    smtp;</span><br><span class="line">        proxy       on;</span><br><span class="line">        smtp_auth   login plain;</span><br><span class="line">        xclient     off;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="24-配置说明"><a href="#2-4-配置说明" class="headerlink" title="2.4. 配置说明"></a>2.4. 配置说明</h2><h3 id="241-main模块"><a href="#2-4-1-main模块" class="headerlink" title="2.4.1. main模块"></a>2.4.1. main模块</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">main模块类似main函数包含其他子模块，非模块配置项(包括模块内)分号结尾，子模块配置花括号结尾</span></span><br><span class="line">user nobady;   #一般按默认设置</span><br><span class="line">pid /var/run/nginx.pid;   #进程标识符存放路径，一般按默认设置</span><br><span class="line">worker_processes auto;   #nginx对外提供web服务时的worder进程数，可将其设置为可用的CPU内核数，auto为自动检测</span><br><span class="line">worker_rlimit_nofile 100000;  # 更改worker进程的最大打开文件数限制</span><br><span class="line">error_log logs/error.log  info;   #错误日志存放路径</span><br><span class="line">keepalive_timeout 60;  #keepalive_timeout 60;</span><br><span class="line">events&#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">见events模块</span></span><br><span class="line">&#125;</span><br><span class="line">http&#123;  #见http模块</span><br><span class="line">  server&#123; </span><br><span class="line">    ...</span><br><span class="line">    location /&#123;</span><br><span class="line">     </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">mail&#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">见mail模块</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="242-events模块"><a href="#2-4-2-events模块" class="headerlink" title="2.4.2. events模块"></a>2.4.2. events模块</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">events &#123;</span><br><span class="line">  worker_connections 2048;    #设置可由一个worker进程同时打开的最大连接数</span><br><span class="line">  multi_accept on;   #告诉nginx收到一个新连接通知后接受尽可能多的连接</span><br><span class="line">  use epoll; #设置用于复用客户端线程的轮询方法。Linux 2.6+：使用epoll；*BSD：使用kqueue。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="243-http模块"><a href="#2-4-3-http模块" class="headerlink" title="2.4.3. http模块"></a>2.4.3. http模块</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">http &#123;  #http模块</span><br><span class="line">    server &#123;  #server模块，http服务上的虚拟主机， server 当做对应一个域名进行的配置</span><br><span class="line">        listen          80;  #配置监听端口</span><br><span class="line">        server_name     www.linuxidc.com; #配置访问域名</span><br><span class="line">        access_log      logs/linuxidc.access.log main;  #指定日志文件的存放路径</span><br><span class="line">        index index.html;    #默认访问页面</span><br><span class="line">        root  /var/www/androidj.com/htdocs;  # root 是指将本地的一个文件夹作为所有 url 请求的根路径</span><br><span class="line">        upstream backend &#123;   #反向代理的后端机器，实现负载均衡</span><br><span class="line">            ip_hash;    #指明了我们均衡的方式是按照用户的 ip 地址进行分配</span><br><span class="line">            server backend1.example.com;</span><br><span class="line">            server backend2.example.com;</span><br><span class="line">            server backend3.example.com;</span><br><span class="line">            server backend4.example.com;</span><br><span class="line">        &#125;</span><br><span class="line">        location / &#123;  #location 是在一个域名下对更精细的路径进行配置</span><br><span class="line">            proxy_pass http://backend;  #反向代理到后端机器</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        listen          80;</span><br><span class="line">        server_name     www.Androidj.com;</span><br><span class="line">        access_log      logs/androidj.access.log main;</span><br><span class="line">        location / &#123;</span><br><span class="line">            index index.html;</span><br><span class="line">            root  /var/www/androidj.com/htdocs;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="244-mail模块"><a href="#2-4-4-mail模块" class="headerlink" title="2.4.4. mail模块"></a>2.4.4. mail模块</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mail &#123;</span><br><span class="line">    auth_http  127.0.0.1:80/auth.php;</span><br><span class="line">    pop3_capabilities  "TOP"  "USER";</span><br><span class="line">    imap_capabilities  "IMAP4rev1"  "UIDPLUS";</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        listen     110;</span><br><span class="line">        protocol   pop3;</span><br><span class="line">        proxy      on;</span><br><span class="line">    &#125;</span><br><span class="line">    server &#123;</span><br><span class="line">        listen      25;</span><br><span class="line">        protocol    smtp;</span><br><span class="line">        proxy       on;</span><br><span class="line">        smtp_auth   login plain;</span><br><span class="line">        xclient     off;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -505,7 +510,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/nginx/nginx-proxy/" data-toggle="tooltip" data-placement="top" title="Nginx作为反向代理">Next Post &rarr;</a>
+                            <a href="/article/python/basics/python-object-oriented-programming/" data-toggle="tooltip" data-placement="top" title="[Python] Python系列（四）之面向对象编程">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

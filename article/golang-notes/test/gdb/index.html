@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,8 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-gdb简介">1. GDB简介</h1>
-<p>GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程序调试工具。使用GDB可以做如下事情：</p>
+                <div id="vip-container"><h1 id="1-gdb简介"><a href="#1-GDB简介" class="headerlink" title="1. GDB简介"></a>1. GDB简介</h1><p>GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程序调试工具。使用GDB可以做如下事情：</p>
 <ol>
 <li>启动程序，可以按照开发者的自定义要求运行程序。</li>
 <li>可让被调试的程序在开发者设定的调置的断点处停住。（断点可以是条件表达式）</li>
@@ -226,20 +225,14 @@
 <li>传递参数-ldflags “-s”，忽略debug的打印信息</li>
 <li>传递-gcflags “-N -l” 参数，这样可以忽略Go内部做的一些优化，聚合变量和函数等优化，这样对于GDB调试来说非常困难，所以在编译的时候加入这两个参数避免这些优化。</li>
 </ol>
-<h1 id="2-常用命令">2. 常用命令</h1>
-<h2 id="21-list">2.1. list</h2>
-<p>简写命令<code>l</code>，用来显示源代码，默认显示十行代码，后面可以带上参数显示的具体行，例如：<code>list 15</code>，显示十行代码，其中第15行在显示的十行里面的中间，如下所示。</p>
+<h1 id="2-常用命令"><a href="#2-常用命令" class="headerlink" title="2. 常用命令"></a>2. 常用命令</h1><h2 id="21-list"><a href="#2-1-list" class="headerlink" title="2.1. list"></a>2.1. list</h2><p>简写命令<code>l</code>，用来显示源代码，默认显示十行代码，后面可以带上参数显示的具体行，例如：<code>list 15</code>，显示十行代码，其中第15行在显示的十行里面的中间，如下所示。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span>	        time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line"><span class="number">11</span>	        c &lt;- i</span><br><span class="line"><span class="number">12</span>	    &#125;</span><br><span class="line"><span class="number">13</span>	    <span class="built_in">close</span>(c)</span><br><span class="line"><span class="number">14</span>	&#125;</span><br><span class="line"><span class="number">15</span>	</span><br><span class="line"><span class="number">16</span>	<span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"><span class="number">17</span>	    msg := <span class="string">"Starting main"</span></span><br><span class="line"><span class="number">18</span>	    fmt.Println(msg)</span><br><span class="line"><span class="number">19</span>	    bus := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="22-break">2.2. break</h2>
-<p>简写命令 <code>b</code>,用来设置断点，后面跟上参数设置断点的行数，例如<code>b 10</code>在第十行设置断点。</p>
-<h2 id="23-delete">2.3. delete</h2>
-<p>简写命令 <code>d</code>,用来删除断点，后面跟上断点设置的序号，这个序号可以通过<code>info breakpoints</code>获取相应的设置的断点序号，如下是显示的设置断点序号。</p>
+<h2 id="22-break"><a href="#2-2-break" class="headerlink" title="2.2. break"></a>2.2. break</h2><p>简写命令 <code>b</code>,用来设置断点，后面跟上参数设置断点的行数，例如<code>b 10</code>在第十行设置断点。</p>
+<h2 id="23-delete"><a href="#2-3-delete" class="headerlink" title="2.3. delete"></a>2.3. delete</h2><p>简写命令 <code>d</code>,用来删除断点，后面跟上断点设置的序号，这个序号可以通过<code>info breakpoints</code>获取相应的设置的断点序号，如下是显示的设置断点序号。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Num     Type           Disp Enb Address            What</span><br><span class="line">2       breakpoint     keep y   0x0000000000400dc3 <span class="keyword">in</span> main.main at /home/xiemengjun/gdb.go:23</span><br><span class="line">breakpoint already hit 1 time</span><br></pre></td></tr></table></figure>
-<h2 id="24-backtrace">2.4. backtrace</h2>
-<p>简写命令 <code>bt</code>,用来打印执行的代码过程，如下所示：</p>
+<h2 id="24-backtrace"><a href="#2-4-backtrace" class="headerlink" title="2.4. backtrace"></a>2.4. backtrace</h2><p>简写命令 <code>bt</code>,用来打印执行的代码过程，如下所示：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#0  main.main () at /home/xiemengjun/gdb.go:23</span></span><br><span class="line"><span class="comment">#1  0x000000000040d61e in runtime.main () at /home/xiemengjun/go/src/pkg/runtime/proc.c:244</span></span><br><span class="line"><span class="comment">#2  0x000000000040d6c1 in schedunlock () at /home/xiemengjun/go/src/pkg/runtime/proc.c:267</span></span><br><span class="line"><span class="comment">#3  0x0000000000000000 in ?? ()</span></span><br></pre></td></tr></table></figure>
-<h2 id="25-info">2.5. info</h2>
-<p>info命令用来显示信息，后面有几种参数，我们常用的有如下几种：</p>
+<h2 id="25-info"><a href="#2-5-info" class="headerlink" title="2.5. info"></a>2.5. info</h2><p>info命令用来显示信息，后面有几种参数，我们常用的有如下几种：</p>
 <p>1、 <code>info locals</code></p>
 <p>显示当前执行的程序中的变量值</p>
 <p>2、 <code>info breakpoints</code></p>
@@ -247,22 +240,14 @@
 <p>3、 <code>info goroutines</code></p>
 <p>显示当前执行的goroutine列表，如下代码所示,带*的表示当前执行的</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* 1  running runtime.gosched</span><br><span class="line">* 2  syscall runtime.entersyscall</span><br><span class="line">  3  waiting runtime.gosched</span><br><span class="line">  4  runnable runtime.gosched</span><br></pre></td></tr></table></figure>
-<h2 id="26-print">2.6. print</h2>
-<p>简写命令<code>p</code>，用来打印变量或者其他信息，后面跟上需要打印的变量名，当然还有一些很有用的函数$len()和$cap()，用来返回当前string、slices或者maps的长度和容量。</p>
-<h2 id="27-whatis">2.7. whatis</h2>
-<p>用来显示当前变量的类型，后面跟上变量名，例如<code>whatis msg</code>,显示如下：</p>
+<h2 id="26-print"><a href="#2-6-print" class="headerlink" title="2.6. print"></a>2.6. print</h2><p>简写命令<code>p</code>，用来打印变量或者其他信息，后面跟上需要打印的变量名，当然还有一些很有用的函数$len()和$cap()，用来返回当前string、slices或者maps的长度和容量。</p>
+<h2 id="27-whatis"><a href="#2-7-whatis" class="headerlink" title="2.7. whatis"></a>2.7. whatis</h2><p>用来显示当前变量的类型，后面跟上变量名，例如<code>whatis msg</code>,显示如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">type</span> = struct string</span><br></pre></td></tr></table></figure>
-<h2 id="28-next">2.8. next</h2>
-<p>简写命令 <code>n</code>,用来单步调试，跳到下一步，当有断点之后，可以输入<code>n</code>跳转到下一步继续执行</p>
-<h2 id="29-coutinue">2.9. coutinue</h2>
-<p>简称命令 <code>c</code>，用来跳出当前断点处，后面可以跟参数N，跳过多少次断点</p>
-<h2 id="210-set-variable">2.10. set variable</h2>
-<p>该命令用来改变运行过程中的变量值，格式如：<code>set variable &lt;var&gt;=&lt;value&gt;</code></p>
-<h1 id="3-调试过程">3. 调试过程</h1>
-<h2 id="31-示例代码">3.1. 示例代码</h2>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">counting</span><span class="params">(c <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">        c &lt;- i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(c)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    msg := <span class="string">"Starting main"</span></span><br><span class="line">    fmt.Println(msg)</span><br><span class="line">    bus := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">    msg = <span class="string">"starting a gofunc"</span></span><br><span class="line">    <span class="keyword">go</span> counting(bus)</span><br><span class="line">    <span class="keyword">for</span> count := <span class="keyword">range</span> bus &#123;</span><br><span class="line">        fmt.Println(<span class="string">"count:"</span>, count)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="32-调试步骤">3.2. 调试步骤</h2>
-<p>编译文件，生成可执行文件gdbfile:</p>
+<h2 id="28-next"><a href="#2-8-next" class="headerlink" title="2.8. next"></a>2.8. next</h2><p>简写命令 <code>n</code>,用来单步调试，跳到下一步，当有断点之后，可以输入<code>n</code>跳转到下一步继续执行</p>
+<h2 id="29-coutinue"><a href="#2-9-coutinue" class="headerlink" title="2.9. coutinue"></a>2.9. coutinue</h2><p>简称命令 <code>c</code>，用来跳出当前断点处，后面可以跟参数N，跳过多少次断点</p>
+<h2 id="210-set-variable"><a href="#2-10-set-variable" class="headerlink" title="2.10. set variable"></a>2.10. set variable</h2><p>该命令用来改变运行过程中的变量值，格式如：<code>set variable &lt;var&gt;=&lt;value&gt;</code></p>
+<h1 id="3-调试过程"><a href="#3-调试过程" class="headerlink" title="3. 调试过程"></a>3. 调试过程</h1><h2 id="31-示例代码"><a href="#3-1-示例代码" class="headerlink" title="3.1. 示例代码"></a>3.1. 示例代码</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">counting</span><span class="params">(c <span class="keyword">chan</span>&lt;- <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">        c &lt;- i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">close</span>(c)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    msg := <span class="string">"Starting main"</span></span><br><span class="line">    fmt.Println(msg)</span><br><span class="line">    bus := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">    msg = <span class="string">"starting a gofunc"</span></span><br><span class="line">    <span class="keyword">go</span> counting(bus)</span><br><span class="line">    <span class="keyword">for</span> count := <span class="keyword">range</span> bus &#123;</span><br><span class="line">        fmt.Println(<span class="string">"count:"</span>, count)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="32-调试步骤"><a href="#3-2-调试步骤" class="headerlink" title="3.2. 调试步骤"></a>3.2. 调试步骤</h2><p>编译文件，生成可执行文件gdbfile:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go build -gcflags <span class="string">"-N -l"</span> gdbfile.go</span><br></pre></td></tr></table></figure>
 <p>通过gdb命令启动调试：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb gdbfile</span><br></pre></td></tr></table></figure>
@@ -282,7 +267,23 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(gdb) info goroutines</span><br><span class="line">* 1 running runtime.gosched</span><br><span class="line">* 2 syscall runtime.entersyscall</span><br><span class="line">3 waiting runtime.gosched</span><br><span class="line">4 runnable runtime.gosched</span><br><span class="line">(gdb) goroutine 1 bt</span><br><span class="line"><span class="comment">#0 0x000000000040e33b in runtime.gosched () at /home/xiemengjun/go/src/pkg/runtime/proc.c:927</span></span><br><span class="line"><span class="comment">#1 0x0000000000403091 in runtime.chanrecv (c=void, ep=void, selected=void, received=void)</span></span><br><span class="line">at /home/xiemengjun/go/src/pkg/runtime/chan.c:327</span><br><span class="line"><span class="comment">#2 0x000000000040316f in runtime.chanrecv2 (t=void, c=void)</span></span><br><span class="line">at /home/xiemengjun/go/src/pkg/runtime/chan.c:420</span><br><span class="line"><span class="comment">#3 0x0000000000400d6f in main.main () at /home/xiemengjun/gdbfile.go:22</span></span><br><span class="line"><span class="comment">#4 0x000000000040d0c7 in runtime.main () at /home/xiemengjun/go/src/pkg/runtime/proc.c:244</span></span><br><span class="line"><span class="comment">#5 0x000000000040d16a in schedunlock () at /home/xiemengjun/go/src/pkg/runtime/proc.c:267</span></span><br><span class="line"><span class="comment">#6 0x0000000000000000 in ?? ()</span></span><br></pre></td></tr></table></figure>
 <p>通过查看goroutines的命令我们可以清楚地了解goruntine内部是怎么执行的，每个函数的调用顺序已经明明白白地显示出来了。</p>
 <p>参考《Go Web编程》</p>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -295,7 +296,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/golang-notes/web/golang-http-execution-flow/" data-toggle="tooltip" data-placement="top" title="Http包源码分析">Next Post &rarr;</a>
+                            <a href="/article/golang-notes/text/json/" data-toggle="tooltip" data-placement="top" title="Json处理">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

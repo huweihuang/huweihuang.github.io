@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,44 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-if/">
-        <h2 class="post-title">
-                        
-            Shell 判断语句
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. if语句
-if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：
-
-if … fi 语句；
-if … else … fi 语句；
-if … elif … else … fi 语句。
-
-1.1. if … else
-if … else 语句的语法：
-1234if [ expression ]then   Statement(s) to ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-04-17
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Shell" title="Shell">Shell</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/linux-notes/shell/shell-function/">
         <h2 class="post-title">
                         
@@ -258,12 +220,11 @@ if … else 语句的语法：
             
         </h3>
         <div class="post-content-preview">
-            1. 函数定义
-函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。Shell 也支持函数。Shell 函数必须先定义后使用。
+            1. 函数定义函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。Shell 也支持函数。Shell 函数必须先定义后使用。
 Shell 函数的定义格式如下：
 1234function_name () &#123;    list of commands    [ return value ]&#125;
 也可以在函数名前加上关键字 function：
-12......
+123......
         </div>
     </a>
     
@@ -292,13 +253,49 @@ Shell 函数的定义格式如下：
             
         </h3>
         <div class="post-content-preview">
-            1. shell简介
-shell是用户和Linux内核之间的一层代理，解释用户输入的命令，传递给内核。
+            1. shell简介shell是用户和Linux内核之间的一层代理，解释用户输入的命令，传递给内核。
 shell是一种脚本语言（解释性语言）。
 Shell既是一种命令语言，又是一种程序设计语言。作为命令语言，它交互式地解释和执行用户输入的命令；作为程序设计语言，它定义了各种变量和参数，并提供了许多在高级语言中才具有的控制结构，包括循环和分支。
 Shell有两种执行命令的方式：
 
-交互式（I......
+交互式（In......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-04-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Shell" title="Shell">Shell</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/shell/shell-var/">
+        <h2 class="post-title">
+                        
+            Shell变量
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. shell变量Shell支持自定义变量。
+1.1. 定义变量定义变量时，变量名不加美元符号（$），如：
+1variableName=&quot;value&quot;
+注意，变量名和等号之间不能有空格，这可能和你熟悉的所有编程语言都不一样。同时，变量名的命名须遵循如下规则：
+
+首个字符必须为字母（a-z，A-Z）。
+中间不能有空格，可以使用下划线（_）。
+不能使用标点符号。
+不能使用b......
         </div>
     </a>
     
@@ -328,12 +325,11 @@ Shell有两种执行命令的方式：
         </h3>
         <div class="post-content-preview">
             Unix 命令默认从标准输入设备(stdin)获取输入，将结果输出到标准输出设备(stdout)显示。一般情况下，标准输入设备就是键盘，标准输出设备就是终端，即显示器。
-1. 输出重定向
-命令的输出不仅可以是显示器，还可以很容易的转移向到文件，这被称为输出重定向。
+1. 输出重定向命令的输出不仅可以是显示器，还可以很容易的转移向到文件，这被称为输出重定向。
 命令输出重定向的语法为：
 1$ command &gt; file
 这样，输出到显示器的内容就可以被重定向到文件。
-输出重定向会......
+输出重定向会覆......
         </div>
     </a>
     
@@ -353,26 +349,20 @@ Shell有两种执行命令的方式：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-var/">
+    <a href="/article/linux-notes/shell/shell-loop/">
         <h2 class="post-title">
                         
-            Shell变量
+            Shell 循环语句
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. shell变量
-Shell支持自定义变量。
-1.1. 定义变量
-定义变量时，变量名不加美元符号（$），如：
-1variableName=&quot;value&quot;
-注意，变量名和等号之间不能有空格，这可能和你熟悉的所有编程语言都不一样。同时，变量名的命名须遵循如下规则：
-
-首个字符必须为字母（a-z，A-Z）。
-中间不能有空格，可以使用下划线（_）。
-不能使用标点符号。
-不能使......
+            1. forfor循环一般格式为：
+1234567for 变量 in 列表do    command1    command2    ...    commandNdone
+列表是一组值（数字、字符串等）组成的序列，每个值通过空格分隔。每循环一次，就将列表中的下一个值赋给变量。in 列表是可选的，如果不用它，for 循环使用命令行的位置参数。
+示例：
+12345678910for loop ......
         </div>
     </a>
     
@@ -435,10 +425,9 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（二）之 DeploymentController
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
-本文主要以deployment controller为例，分析该类controller的运行逻辑。此部分代码主要为位于pkg/controller/deployment。pkg/controller部分的代码包括了各种类......
+本文主要以deployment controller为例，分析该类controller的运行逻辑。此部分代码主要为位于pkg/controller/deployment。pkg/controller部分的代码包括了各种类型......
         </div>
     </a>
     
@@ -468,11 +457,10 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（一）之 NewControllerManagerCommand
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 本文主要分析https://github.com/kubernetes/kubernetes/tree/v1.12.0/cmd/kube-controller-manager 部分的代码。
 
-本文主要分析 k......
+本文主要分析 ku......
         </div>
     </a>
     
@@ -502,12 +490,10 @@ scheduler的cmd代码目录结构如下：
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（四）之 syncLoopIteration
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析kubelet中syncLoopIteration部分。syncLoopIteration通过几种channel来对不同类型的事件进行监听并做增删改查的处理。
-1. syncLoop
-syncLoop是处理变更的循环。 它监听来自三种channe......
+1. syncLoopsyncLoop是处理变更的循环。 它监听来自三种channel（......
         </div>
     </a>
     
@@ -537,11 +523,10 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（三）之 startKubelet
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析startKubelet，其中主要是kubelet.Run部分，该部分的内容主要是初始化并运行一些manager。对于kubelet所包含的各种manager的执行逻辑和pod的生命周期管理逻辑待后续文章分析。
-后续的文章主要会分类分析pkg/kubele......
+后续的文章主要会分类分析pkg/kubelet......
         </div>
     </a>
     
@@ -602,8 +587,6 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
@@ -686,11 +669,11 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -820,19 +803,19 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/">kubelet 源码思维导图</a>
+          <a href="/article/kubernetes-notes/operation/kubectl/kubectl-node-shell/">kubectl进入node shell</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">kube-scheduler 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">controller-manager 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">使用etcdadm部署Etcd集群</a>
+          <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
     </ul>
@@ -861,7 +844,7 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>

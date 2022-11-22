@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,32 +212,41 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="问题描述">问题描述</h1>
-<p>节点Pod被驱逐</p>
-<h1 id="原因">原因</h1>
-<h2 id="1-查看节点和该节点pod状态">1. 查看节点和该节点pod状态</h2>
-<p>查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending</p>
+                <div id="vip-container"><h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>节点Pod被驱逐</p>
+<h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1><h2 id="1-查看节点和该节点pod状态"><a href="#1-查看节点和该节点pod状态" class="headerlink" title="1. 查看节点和该节点pod状态"></a>1. 查看节点和该节点pod状态</h2><p>查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@host:~$ kgpoallowide |grep 192.168.1.1</span><br><span class="line">department-56   173e397c-ea35-4aac-85d8-07106e55d7b7   0/1       Evicted             0          52d       &lt;none&gt;            192.168.1.1   &lt;none&gt;</span><br><span class="line">kube-system     nvidia-device-plugin-daemonset-d58d2   0/1       Pending             0          1s        &lt;none&gt;            192.168.1.1   &lt;none&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="2-查看对应节点kubelet的日志">2. 查看对应节点kubelet的日志</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0905 15:42:13.182280   23506 eviction_manager.go:142] Failed to admit pod rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432) - node has conditions: [DiskPressure]</span><br><span class="line">I0905 15:42:14.827343   23506 kubelet.go:1836] SyncLoop (ADD, <span class="string">"api"</span>): <span class="string">"nvidia-device-plugin-daemonset-88sm6_kube-system(adbd9227-cfb0-11e9-9729-6c92bf5e2432)"</span></span><br><span class="line">W0905 15:42:14.827372   23506 eviction_manager.go:142] Failed to admit pod nvidia-device-plugin-daemonset-88sm6_kube-system(adbd9227-cfb0-11e9-9729-6c92bf5e2432) - node has conditions: [DiskPressure]</span><br><span class="line">I0905 15:42:15.722378   23506 kubelet_node_status.go:607] Update capacity <span class="keyword">for</span> nvidia.com/gpu-share to 0</span><br><span class="line">I0905 15:42:16.692488   23506 kubelet.go:1852] SyncLoop (DELETE, <span class="string">"api"</span>): <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span></span><br><span class="line">W0905 15:42:16.698445   23506 status_manager.go:489] Failed to delete status <span class="keyword">for</span> pod <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span>: pod <span class="string">"rdma-device-plugin-daemonset-8nwb8"</span> not found</span><br><span class="line">I0905 15:42:16.698490   23506 kubelet.go:1846] SyncLoop (REMOVE, <span class="string">"api"</span>): <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span></span><br><span class="line">I0905 15:42:16.699267   23506 kubelet.go:2040] Failed to delete pod <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span>, err: pod not found</span><br><span class="line">W0905 15:42:16.777355   23506 eviction_manager.go:332] eviction manager: attempting to reclaim nodefs</span><br><span class="line">I0905 15:42:16.777384   23506 eviction_manager.go:346] eviction manager: must evict pod(s) to reclaim nodefs</span><br><span class="line">E0905 15:42:16.777390   23506 eviction_manager.go:357] eviction manager: eviction thresholds have been met, but no pods are active to evict</span><br></pre></td></tr></table></figure>
+<h2 id="2-查看对应节点kubelet的日志"><a href="#2-查看对应节点kubelet的日志" class="headerlink" title="2. 查看对应节点kubelet的日志"></a>2. 查看对应节点kubelet的日志</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">0905 15:42:13.182280   23506 eviction_manager.go:142] Failed to admit pod rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432) - node has conditions: [DiskPressure]</span><br><span class="line">I0905 15:42:14.827343   23506 kubelet.go:1836] SyncLoop (ADD, <span class="string">"api"</span>): <span class="string">"nvidia-device-plugin-daemonset-88sm6_kube-system(adbd9227-cfb0-11e9-9729-6c92bf5e2432)"</span></span><br><span class="line">W0905 15:42:14.827372   23506 eviction_manager.go:142] Failed to admit pod nvidia-device-plugin-daemonset-88sm6_kube-system(adbd9227-cfb0-11e9-9729-6c92bf5e2432) - node has conditions: [DiskPressure]</span><br><span class="line">I0905 15:42:15.722378   23506 kubelet_node_status.go:607] Update capacity <span class="keyword">for</span> nvidia.com/gpu-share to 0</span><br><span class="line">I0905 15:42:16.692488   23506 kubelet.go:1852] SyncLoop (DELETE, <span class="string">"api"</span>): <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span></span><br><span class="line">W0905 15:42:16.698445   23506 status_manager.go:489] Failed to delete status <span class="keyword">for</span> pod <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span>: pod <span class="string">"rdma-device-plugin-daemonset-8nwb8"</span> not found</span><br><span class="line">I0905 15:42:16.698490   23506 kubelet.go:1846] SyncLoop (REMOVE, <span class="string">"api"</span>): <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span></span><br><span class="line">I0905 15:42:16.699267   23506 kubelet.go:2040] Failed to delete pod <span class="string">"rdma-device-plugin-daemonset-8nwb8_kube-system(acc28a85-cfb0-11e9-9729-6c92bf5e2432)"</span>, err: pod not found</span><br><span class="line">W0905 15:42:16.777355   23506 eviction_manager.go:332] eviction manager: attempting to reclaim nodefs</span><br><span class="line">I0905 15:42:16.777384   23506 eviction_manager.go:346] eviction manager: must evict pod(s) to reclaim nodefs</span><br><span class="line">E0905 15:42:16.777390   23506 eviction_manager.go:357] eviction manager: eviction thresholds have been met, but no pods are active to evict</span><br></pre></td></tr></table></figure>
 <p>存在关于pod驱逐相关的日志，驱逐的原因为<code>node has conditions: [DiskPressure]</code>。</p>
-<h2 id="3-查看磁盘相关信息">3. 查看磁盘相关信息</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@host /]<span class="comment"># df -h</span></span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">devtmpfs        126G     0  126G   0% /dev</span><br><span class="line">tmpfs           126G     0  126G   0% /dev/shm</span><br><span class="line">tmpfs           126G   27M  126G   1% /run</span><br><span class="line">tmpfs           126G     0  126G   0% /sys/fs/cgroup</span><br><span class="line">/dev/sda1        20G   19G     0 100% /   <span class="comment"># 根目录磁盘满</span></span><br><span class="line">/dev/nvme1n1    3.0T  191G  2.8T   7% /data2</span><br><span class="line">/dev/nvme0n1    3.0T  1.3T  1.7T  44% /data1</span><br><span class="line">/dev/sda4       182G   95G   87G  53% /data</span><br><span class="line">/dev/sda3        20G  3.8G   15G  20% /usr/<span class="built_in">local</span></span><br><span class="line">tmpfs            26G     0   26G   0% /run/user/0</span><br></pre></td></tr></table></figure>
+<h2 id="3-查看磁盘相关信息"><a href="#3-查看磁盘相关信息" class="headerlink" title="3. 查看磁盘相关信息"></a>3. 查看磁盘相关信息</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@host /]<span class="comment"># df -h</span></span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">devtmpfs        126G     0  126G   0% /dev</span><br><span class="line">tmpfs           126G     0  126G   0% /dev/shm</span><br><span class="line">tmpfs           126G   27M  126G   1% /run</span><br><span class="line">tmpfs           126G     0  126G   0% /sys/fs/cgroup</span><br><span class="line">/dev/sda1        20G   19G     0 100% /   <span class="comment"># 根目录磁盘满</span></span><br><span class="line">/dev/nvme1n1    3.0T  191G  2.8T   7% /data2</span><br><span class="line">/dev/nvme0n1    3.0T  1.3T  1.7T  44% /data1</span><br><span class="line">/dev/sda4       182G   95G   87G  53% /data</span><br><span class="line">/dev/sda3        20G  3.8G   15G  20% /usr/<span class="built_in">local</span></span><br><span class="line">tmpfs            26G     0   26G   0% /run/user/0</span><br></pre></td></tr></table></figure>
 <p>发现根目录的磁盘盘，接着查看哪些文件占用磁盘。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@host ~/kata]<span class="comment"># du -sh ./*</span></span><br><span class="line">1.0M	./<span class="built_in">log</span></span><br><span class="line">944K	./netlink</span><br><span class="line">6.6G	./kernel3</span><br></pre></td></tr></table></figure>
 <p>/var/log/下存在7G 的日志。清理相关日志和无用文件后，根目录恢复空间。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@host /data]<span class="comment"># df -h</span></span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">devtmpfs        126G     0  126G   0% /dev</span><br><span class="line">tmpfs           126G     0  126G   0% /dev/shm</span><br><span class="line">tmpfs           126G   27M  126G   1% /run</span><br><span class="line">tmpfs           126G     0  126G   0% /sys/fs/cgroup</span><br><span class="line">/dev/sda1        20G  5.8G   13G  32% /   <span class="comment"># 根目录正常</span></span><br><span class="line">/dev/nvme1n1    3.0T  191G  2.8T   7% /data2</span><br></pre></td></tr></table></figure>
 <p>查看节点pod状态，相关plugin的pod恢复正常。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@host:~$ kgpoallowide |grep 192.168.1.1</span><br><span class="line">kube-system     nvidia-device-plugin-daemonset-h4pjc   1/1       Running             0          16m       192.168.1.1   192.168.1.1   &lt;none&gt;</span><br><span class="line">kube-system     rdma-device-plugin-daemonset-xlkbv     1/1       Running             0          16m       192.168.1.1   192.168.1.1   &lt;none&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="4-查看kubelet配置">4. 查看kubelet配置</h2>
-<p>查看kubelet关于pod驱逐相关的参数配置，可见节点kubelet开启了驱逐机制，正常情况下该配置应该是关闭的。</p>
+<h2 id="4-查看kubelet配置"><a href="#4-查看kubelet配置" class="headerlink" title="4. 查看kubelet配置"></a>4. 查看kubelet配置</h2><p>查看kubelet关于pod驱逐相关的参数配置，可见节点kubelet开启了驱逐机制，正常情况下该配置应该是关闭的。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/<span class="built_in">local</span>/bin/kubelet \</span><br><span class="line">	...</span><br><span class="line">  --eviction-hard=nodefs.available&lt;1% \</span><br></pre></td></tr></table></figure>
-<h1 id="解决方案">解决方案</h1>
-<p>总结以上原因为，kubelet开启了pod驱逐的机制，根目录的磁盘达到100%，pod被驱逐，且无法再正常创建在该节点。</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p>总结以上原因为，kubelet开启了pod驱逐的机制，根目录的磁盘达到100%，pod被驱逐，且无法再正常创建在该节点。</p>
 <p>解决方案如下：</p>
 <p>1、关闭kubelet的驱逐机制。</p>
 <p>2、清除根目录的文件，恢复根目录空间，并后续增加根目录的磁盘监控。</p>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -245,12 +254,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/" data-toggle="tooltip" data-placement="top" title="PVC Terminating">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/setup/k8s-cert/" data-toggle="tooltip" data-placement="top" title="k8s证书及秘钥">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/principle/flow/pod-flow/" data-toggle="tooltip" data-placement="top" title="Pod创建流程">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/" data-toggle="tooltip" data-placement="top" title="PVC Terminating">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

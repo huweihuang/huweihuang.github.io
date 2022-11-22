@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,18 +211,19 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/mysql/curd-commands/">
+    <a href="/article/linux-notes/mysql/system-manage/">
         <h2 class="post-title">
                         
-            Mysql常用命令之表内容操作
+            Mysql常用命令之系统管理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            4. 表内容操作
-4.1. 增
-123456insert into 表 (列名,列名...) values (值,值,...)insert into 表 (列名,列名...) values (值,值,...),(值,值,值...)insert into 表 (列名,列名...) select (列名,列名...) from 表例：insert into tab1(name,email) va......
+            1. 系统管理1.1. 连接mysql快速部署docker mysql
+1docker pull mysql:5.7
+启动MySQL
+123mkdir -p ~/data/mysqldocker run --name my-mysql -v ~/data/mysql:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d my......
         </div>
     </a>
     
@@ -242,20 +243,23 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/mysql/table-operation/">
+    <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/">
         <h2 class="post-title">
                         
-            Mysql常用命令之数据表操作
+            ConfigMap
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            2. 数据库操作
-12345678#创建数据库create database &lt;数据库名&gt;#显示数据库show databases#删除数据drop database &lt;数据库名&gt;
-3. 数据表操作
-3.1. 创建表
-1234567create table 表名(    列名  类型  是否可以为空，    列名  类型  是否可以为空)ENGINE=InnoDB D......
+            Pod的配置管理Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。
+1. ConfigMap：容器应用的配置管理使用场景：
+
+生成为容器内的环境变量。
+设置容器启动命令的启动参数（需设置为环境变量）。
+以Volume的形式挂载为容器内部的文件或目录。
+
+ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可以表......
         </div>
     </a>
     
@@ -265,7 +269,7 @@
         </p>
         <div class="tags">
             
-              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -284,14 +288,80 @@
             
         </h3>
         <div class="post-content-preview">
-            1. Master
-集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
+            1. Master集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
 1.1. Master的组件
-
 kube-apiserver：资源增删改查的入口
 kube-controller-manager：资源对象的大总管
 kube-scheduler：负责资源调度（Pod调度）
-etcd Server:kubernet......
+etcd Server:kubernetes......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-definition/">
+        <h2 class="post-title">
+                        
+            Pod定义文件
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Pod的基本用法1.1. 说明
+Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器的主程序需要一直在前台运行，而不是后台运行。应用可以改造成前台运行的方式，例如Go语言的程序，直接运行二进制文件；java语言则运行主类；tomcat程序可以写个运行脚本。或者通过supervisor的进程管理工具，即supervisor在前台运行，应用程序由supervisor管理在后台运行。......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-probe/">
+        <h2 class="post-title">
+                        
+            Pod健康检查
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod健康检查Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。
+1. 探针类型1. livenessProbe(存活探针)
+
+表明容器是否正在运行。
+如果存活探测失败，则 kubelet 会杀死容器，并且容器将受到其 重启策略的影响。
+如果容器不提供存活探针，则默认状态为 Success。
+
+2. readinessProbe(就绪探针)
+
+表明容......
         </div>
     </a>
     
@@ -320,9 +390,9 @@ etcd Server:kubernet......
             
         </h3>
         <div class="post-content-preview">
-            1. Pod phase
-Pod的phase是Pod生命周期中的简单宏观描述，定义在Pod的PodStatus对象的phase 字段中。
+            1. Pod phasePod的phase是Pod生命周期中的简单宏观描述，定义在Pod的PodStatus对象的phase 字段中。
 phase有以下几种值：
+
 
 
 
@@ -357,44 +427,6 @@ Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/">
-        <h2 class="post-title">
-                        
-            ConfigMap
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Pod的配置管理
-Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。
-1. ConfigMap：容器应用的配置管理
-使用场景：
-
-生成为容器内的环境变量。
-设置容器启动命令的启动参数（需设置为环境变量）。
-以Volume的形式挂载为容器内部的文件或目录。
-
-ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/kubernetes-notes/concepts/pod/pod-operation/">
         <h2 class="post-title">
                         
@@ -404,84 +436,9 @@ ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应�
             
         </h3>
         <div class="post-content-preview">
-            1. Pod伸缩
-k8s中RC的用来保持集群中始终运行指定数目的实例，通过RC的scale机制可以完成Pod的扩容和缩容（伸缩）。
-1.1. 手动伸缩（scale）
-1kubectl scale rc redis-slave --replicas=3
-1.2. 自动伸缩（HPA）
-Horizontal Pod Autoscaler（HPA）控制器用于实现基于CPU使用率进行自动Pod伸缩的功......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/concepts/pod/pod-definition/">
-        <h2 class="post-title">
-                        
-            Pod定义文件
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Pod的基本用法
-1.1. 说明
-
-Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器的主程序需要一直在前台运行，而不是后台运行。应用可以改造成前台运行的方式，例如Go语言的程序，直接运行二进制文件；java语言则运行主类；tomcat程序可以写个运行脚本。或者通过supervisor的进程管理工具，即supervisor在前台运行，应用程序由supervisor管理在后台运......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/concepts/pod/pod-probe/">
-        <h2 class="post-title">
-                        
-            Pod健康检查
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Pod健康检查
-Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。
-1. 探针类型
-1. livenessProbe(存活探针)
-
-表明容器是否正在运行。
-如果存活探测失败，则 kubelet 会杀死容器，并且容器将受到其 重启策略的影响。
-如果容器不提供存活探针，则默认状态为 Success。
-
-2. readinessProbe(就绪探针)
-
-表......
+            1. Pod伸缩k8s中RC的用来保持集群中始终运行指定数目的实例，通过RC的scale机制可以完成Pod的扩容和缩容（伸缩）。
+1.1. 手动伸缩（scale）1kubectl scale rc redis-slave --replicas=3
+1.2. 自动伸缩（HPA）Horizontal Pod Autoscaler（HPA）控制器用于实现基于CPU使用率进行自动Pod伸缩的功能。H......
         </div>
     </a>
     
@@ -510,15 +467,13 @@ Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。
             
         </h3>
         <div class="post-content-preview">
-            Pod调度
-在kubernetes集群中，Pod（container）是应用的载体，一般通过RC、Deployment、DaemonSet、Job等对象来完成Pod的调度与自愈功能。
-1. RC、Deployment:全自动调度
-RC的功能即保持集群中始终运行着指定个数的Pod。
+            Pod调度在kubernetes集群中，Pod（container）是应用的载体，一般通过RC、Deployment、DaemonSet、Job等对象来完成Pod的调度与自愈功能。
+1. RC、Deployment:全自动调度RC的功能即保持集群中始终运行着指定个数的Pod。
 在调度策略上主要有：
 
 系统内置调度算法[最优Node]
 NodeSelector[定向调度]
-NodeAffi......
+NodeAffini......
         </div>
     </a>
     
@@ -547,12 +502,11 @@ NodeAffi......
             
         </h3>
         <div class="post-content-preview">
-            Pod Volume
-同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。
-例如：Pod级别的Volume:“app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。
+            Pod Volume同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。
+例如：Pod级别的Volume:”app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。
 
 pod-volumes-applogs.yaml
-123456789101112131......
+1234567891011121314......
         </div>
     </a>
     
@@ -563,6 +517,36 @@ pod-volumes-applogs.yaml
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/redis/redis-introduction/">
+        <h2 class="post-title">
+                        
+            Redis介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. redis是什么？（what）Redis是一个开源（BSD许可），内存存储的数据结构服务器，可用作数据库，高速缓存和消息队列代理。它支持字符串、哈希表、列表、集合、有序集合，位图，hyperloglogs等数据类型。内置复制、Lua脚本、LRU收回、事务以及不同级别磁盘持久化功能，同时通过Redis Sentinel提供高可用，通过Redis Cluster提供自动分区。
+Redis是......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-15
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Redis" title="Redis">Redis</a>
             
         </div>
     
@@ -613,8 +597,6 @@ pod-volumes-applogs.yaml
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
@@ -697,11 +679,11 @@ pod-volumes-applogs.yaml
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -831,19 +813,19 @@ pod-volumes-applogs.yaml
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/">kubelet 源码思维导图</a>
+          <a href="/article/kubernetes-notes/operation/kubectl/kubectl-node-shell/">kubectl进入node shell</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">kube-scheduler 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">controller-manager 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">使用etcdadm部署Etcd集群</a>
+          <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
     </ul>
@@ -872,7 +854,7 @@ pod-volumes-applogs.yaml
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>

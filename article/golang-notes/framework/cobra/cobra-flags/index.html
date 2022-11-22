@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,31 +212,41 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="添加flags">添加Flags</h1>
-<h2 id="1-persistent-flags">1. Persistent Flags</h2>
-<p><code>Persistent Flags</code>表示该类参数可以被用于当前命令及其子命令。</p>
+                <div id="vip-container"><h1 id="添加flags"><a href="#添加Flags" class="headerlink" title="添加Flags"></a>添加Flags</h1><h2 id="1-persistent-flags"><a href="#1-Persistent-Flags" class="headerlink" title="1. Persistent Flags"></a>1. Persistent Flags</h2><p><code>Persistent Flags</code>表示该类参数可以被用于当前命令及其子命令。</p>
 <p>例如，以下表示<code>verbose</code>参数可以被用于<code>rootCmd</code>及其子命令。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, <span class="string">"verbose"</span>, <span class="string">"v"</span>, <span class="literal">false</span>, <span class="string">"verbose output"</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="2-local-flags">2. Local Flags</h2>
-<p><code>Local Flags</code>表示该类参数只能用于当前命令。</p>
+<h2 id="2-local-flags"><a href="#2-Local-Flags" class="headerlink" title="2. Local Flags"></a>2. Local Flags</h2><p><code>Local Flags</code>表示该类参数只能用于当前命令。</p>
 <p>例如，以下表示<code>source</code>只能用于<code>localCmd</code>这个命令，不能用于其子命令。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localCmd.Flags().StringVarP(&amp;Source, <span class="string">"source"</span>, <span class="string">"s"</span>, <span class="string">""</span>, <span class="string">"Source directory to read from"</span>)</span><br></pre></td></tr></table></figure>
-<h2 id="3-local-flag-on-parent-commands">3. Local Flag on Parent Commands</h2>
-<p>cobra默认只解析当前命令的local flags，通过开启<code>Command.TraverseChildren</code>参数，可以解析每个命令的local flags。</p>
+<h2 id="3-local-flag-on-parent-commands"><a href="#3-Local-Flag-on-Parent-Commands" class="headerlink" title="3. Local Flag on Parent Commands"></a>3. Local Flag on Parent Commands</h2><p>cobra默认只解析当前命令的local flags，通过开启<code>Command.TraverseChildren</code>参数，可以解析每个命令的local flags。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">command</span> := cobra.Command&#123;</span><br><span class="line">  Use: <span class="string">"print [OPTIONS] [COMMANDS]"</span>,</span><br><span class="line">  TraverseChildren: <span class="literal">true</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="4-bind-flags-with-config">4. Bind Flags with Config</h2>
-<p>可以通过 <a href="https://github.com/spf13/viper" target="_blank" rel="noopener">viper</a>来绑定flags。</p>
+<h2 id="4-bind-flags-with-config"><a href="#4-Bind-Flags-with-Config" class="headerlink" title="4. Bind Flags with Config"></a>4. Bind Flags with Config</h2><p>可以通过 <a href="https://github.com/spf13/viper" target="_blank" rel="noopener">viper</a>来绑定flags。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var author string</span><br><span class="line"></span><br><span class="line">func <span class="function"><span class="title">init</span></span>() &#123;</span><br><span class="line">  rootCmd.PersistentFlags().StringVar(&amp;author, <span class="string">"author"</span>, <span class="string">"YOUR NAME"</span>, <span class="string">"Author name for copyright attribution"</span>)</span><br><span class="line">  viper.BindPFlag(<span class="string">"author"</span>, rootCmd.PersistentFlags().Lookup(<span class="string">"author"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>更多参考： <a href="https://github.com/spf13/viper#working-with-flags" target="_blank" rel="noopener">viper documentation</a>。</p>
-<h2 id="5-required-flags">5. Required flags</h2>
-<p>默认添加的flags的<code>可选</code>参数，如果需要在二进制运行时添加<code>必要</code>参数，即当该参数没指定时会报错。可使用以下设置。</p>
+<h2 id="5-required-flags"><a href="#5-Required-flags" class="headerlink" title="5. Required flags"></a>5. Required flags</h2><p>默认添加的flags的<code>可选</code>参数，如果需要在二进制运行时添加<code>必要</code>参数，即当该参数没指定时会报错。可使用以下设置。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rootCmd.Flags().StringVarP(&amp;Region, <span class="string">"region"</span>, <span class="string">"r"</span>, <span class="string">""</span>, <span class="string">"AWS region (required)"</span>)</span><br><span class="line">rootCmd.MarkFlagRequired(<span class="string">"region"</span>)</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
 <li><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">https://github.com/spf13/cobra</a></li>
 <li><a href="https://github.com/spf13/cobra/blob/master/cobra/README.md" target="_blank" rel="noopener">https://github.com/spf13/cobra/blob/master/cobra/README.md</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -249,7 +259,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/golang-notes/framework/cobra/cobra-usage/" data-toggle="tooltip" data-placement="top" title="cobra 介绍">Next Post &rarr;</a>
+                            <a href="/article/golang-notes/framework/cobra/cobra-command/" data-toggle="tooltip" data-placement="top" title="cobra command">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,19 +212,16 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="资源配额resourcequota">资源配额（ResourceQuota）</h1>
-<p><code>ResourceQuota</code>对象用来定义某个命名空间下所有资源的使用限额，其实包括：</p>
+                <div id="vip-container"><h1 id="资源配额resourcequota"><a href="#资源配额（ResourceQuota）" class="headerlink" title="资源配额（ResourceQuota）"></a>资源配额（ResourceQuota）</h1><p><code>ResourceQuota</code>对象用来定义某个命名空间下所有资源的使用限额，其实包括：</p>
 <ul>
 <li>计算资源的配额</li>
 <li>存储资源的配额</li>
 <li>对象数量的配额</li>
 </ul>
-<p>如果集群的总容量小于命名空间的配额总额，可能会产生资源竞争。这时会按照先到先得来处理。<br>
-资源竞争和配额的更新都不会影响已经创建好的资源。</p>
-<h2 id="1-启动资源配额">1. 启动资源配额</h2>
-<p>Kubernetes 的众多发行版本默认开启了资源配额的支持。当在apiserver的<code>--admission-control</code>配置中添加<code>ResourceQuota</code>参数后，便启用了。 当一个命名空间中含有<code>ResourceQuota</code>对象时，资源配额将强制执行。</p>
-<h2 id="2-计算资源配额">2. 计算资源配额</h2>
-<p>可以在给定的命名空间中限制可以请求的计算资源（<a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/" target="_blank" rel="noopener">compute resources</a>）的总量。</p>
+<p>如果集群的总容量小于命名空间的配额总额，可能会产生资源竞争。这时会按照先到先得来处理。<br>资源竞争和配额的更新都不会影响已经创建好的资源。</p>
+<h2 id="1-启动资源配额"><a href="#1-启动资源配额" class="headerlink" title="1. 启动资源配额"></a>1. 启动资源配额</h2><p>Kubernetes 的众多发行版本默认开启了资源配额的支持。当在apiserver的<code>--admission-control</code>配置中添加<code>ResourceQuota</code>参数后，便启用了。 当一个命名空间中含有<code>ResourceQuota</code>对象时，资源配额将强制执行。</p>
+<h2 id="2-计算资源配额"><a href="#2-计算资源配额" class="headerlink" title="2. 计算资源配额"></a>2. 计算资源配额</h2><p>可以在给定的命名空间中限制可以请求的计算资源（<a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/" target="_blank" rel="noopener">compute resources</a>）的总量。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -259,8 +256,9 @@
 </tr>
 </tbody>
 </table>
-<h2 id="3-存储资源配额">3. 存储资源配额</h2>
-<p>可以在给定的命名空间中限制可以请求的存储资源（<a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener">storage resources</a>）的总量。</p>
+</div>
+<h2 id="3-存储资源配额"><a href="#3-存储资源配额" class="headerlink" title="3. 存储资源配额"></a>3. 存储资源配额</h2><p>可以在给定的命名空间中限制可以请求的存储资源（<a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener">storage resources</a>）的总量。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -287,7 +285,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="4-对象数量的配额">4. 对象数量的配额</h2>
+</div>
+<h2 id="4-对象数量的配额"><a href="#4-对象数量的配额" class="headerlink" title="4. 对象数量的配额"></a>4. 对象数量的配额</h2><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -334,8 +333,9 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>例如：可以定义pod的限额来避免某用户消耗过多的Pod IPs。</p>
-<h2 id="5-限额的作用域">5. 限额的作用域</h2>
+<h2 id="5-限额的作用域"><a href="#5-限额的作用域" class="headerlink" title="5. 限额的作用域"></a>5. 限额的作用域</h2><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -362,18 +362,31 @@
 </tr>
 </tbody>
 </table>
-<h2 id="6-request和limit">6. request和limit</h2>
-<p>当分配计算资源时，每个容器可以为cpu或者内存指定一个请求值和一个限度值。可以配置限额值来限制它们中的任何一个值。<br>
-如果指定了<code>requests.cpu</code> 或者 <code>requests.memory</code>的限额值，那么就要求传入的每一个容器显式的指定这些资源的请求。如果指定了<code>limits.cpu</code>或者<code>limits.memory</code>，那么就要求传入的每一个容器显式的指定这些资源的限度。</p>
-<h2 id="7-查看和设置配额">7. 查看和设置配额</h2>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建namespace</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create namespace myspace</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建resourcequota</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat &lt;&lt;EOF &gt; compute-resources.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ResourceQuota</span><br><span class="line">metadata:</span><br><span class="line">  name: compute-resources</span><br><span class="line">spec:</span><br><span class="line">  hard:</span><br><span class="line">    pods: "4"</span><br><span class="line">    requests.cpu: "1"</span><br><span class="line">    requests.memory: 1Gi</span><br><span class="line">    limits.cpu: "2"</span><br><span class="line">    limits.memory: 2Gi</span><br><span class="line">EOF</span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f ./compute-resources.yaml --namespace=myspace</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询resourcequota</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get quota --namespace=myspace</span></span><br><span class="line">NAME                    AGE</span><br><span class="line">compute-resources       30s</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询resourcequota的详细信息</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl describe quota compute-resources --namespace=myspace</span></span><br><span class="line">Name:                  compute-resources</span><br><span class="line">Namespace:             myspace</span><br><span class="line">Resource               Used Hard</span><br><span class="line">--------               ---- ----</span><br><span class="line">limits.cpu             0    2</span><br><span class="line">limits.memory          0    2Gi</span><br><span class="line">pods                   0    4</span><br><span class="line">requests.cpu           0    1</span><br><span class="line">requests.memory        0    1Gi</span><br></pre></td></tr></table></figure>
-<h2 id="8-配额和集群容量">8. 配额和集群容量</h2>
-<p>资源配额对象与集群容量无关，它们以绝对单位表示。即增加节点的资源并不会增加已经配置的namespace的资源。</p>
+</div>
+<h2 id="6-request和limit"><a href="#6-request和limit" class="headerlink" title="6. request和limit"></a>6. request和limit</h2><p>当分配计算资源时，每个容器可以为cpu或者内存指定一个请求值和一个限度值。可以配置限额值来限制它们中的任何一个值。<br>如果指定了<code>requests.cpu</code> 或者 <code>requests.memory</code>的限额值，那么就要求传入的每一个容器显式的指定这些资源的请求。如果指定了<code>limits.cpu</code>或者<code>limits.memory</code>，那么就要求传入的每一个容器显式的指定这些资源的限度。</p>
+<h2 id="7-查看和设置配额"><a href="#7-查看和设置配额" class="headerlink" title="7. 查看和设置配额"></a>7. 查看和设置配额</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建namespace</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create namespace myspace</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建resourcequota</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> cat &lt;&lt;EOF &gt; compute-resources.yaml</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ResourceQuota</span><br><span class="line">metadata:</span><br><span class="line">  name: compute-resources</span><br><span class="line">spec:</span><br><span class="line">  hard:</span><br><span class="line">    pods: "4"</span><br><span class="line">    requests.cpu: "1"</span><br><span class="line">    requests.memory: 1Gi</span><br><span class="line">    limits.cpu: "2"</span><br><span class="line">    limits.memory: 2Gi</span><br><span class="line">EOF</span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl create -f ./compute-resources.yaml --namespace=myspace</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询resourcequota</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl get quota --namespace=myspace</span></span><br><span class="line">NAME                    AGE</span><br><span class="line">compute-resources       30s</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查询resourcequota的详细信息</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> kubectl describe quota compute-resources --namespace=myspace</span></span><br><span class="line">Name:                  compute-resources</span><br><span class="line">Namespace:             myspace</span><br><span class="line">Resource               Used Hard</span><br><span class="line">--------               ---- ----</span><br><span class="line">limits.cpu             0    2</span><br><span class="line">limits.memory          0    2Gi</span><br><span class="line">pods                   0    4</span><br><span class="line">requests.cpu           0    1</span><br><span class="line">requests.memory        0    1Gi</span><br></pre></td></tr></table></figure>
+<h2 id="8-配额和集群容量"><a href="#8-配额和集群容量" class="headerlink" title="8. 配额和集群容量"></a>8. 配额和集群容量</h2><p>资源配额对象与集群容量无关，它们以绝对单位表示。即增加节点的资源并不会增加已经配置的namespace的资源。</p>
 <p>参考文章：</p>
 <ul>
 <li><a href="https://kubernetes.io/docs/concepts/policy/resource-quotas/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/policy/resource-quotas/</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>

@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,16 +212,29 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="添加iptables规则">添加iptables规则</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 单个端口</span></span><br><span class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 多个端口</span></span><br><span class="line">iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT</span><br></pre></td></tr></table></figure>
-<h2 id="删除iptables规则">删除iptables规则</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示iptables规则行号</span></span><br><span class="line">iptables -nL --line-numbers</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除某行规则</span></span><br><span class="line">iptables -D INPUT 11</span><br></pre></td></tr></table></figure>
-<h2 id="持久化iptables重启仍生效">持久化iptables（重启仍生效）</h2>
-<p>持久化iptables规则，添加规则到文件中/etc/sysconfig/iptables</p>
+                <div id="vip-container"><h2 id="添加iptables规则"><a href="#添加iptables规则" class="headerlink" title="添加iptables规则"></a>添加iptables规则</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 单个端口</span></span><br><span class="line">iptables -A INPUT -p tcp --dport 22 -j ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 多个端口</span></span><br><span class="line">iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<h2 id="删除iptables规则"><a href="#删除iptables规则" class="headerlink" title="删除iptables规则"></a>删除iptables规则</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 显示iptables规则行号</span></span><br><span class="line">iptables -nL --line-numbers</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除某行规则</span></span><br><span class="line">iptables -D INPUT 11</span><br></pre></td></tr></table></figure>
+<h2 id="持久化iptables重启仍生效"><a href="#持久化iptables（重启仍生效）" class="headerlink" title="持久化iptables（重启仍生效）"></a>持久化iptables（重启仍生效）</h2><p>持久化iptables规则，添加规则到文件中/etc/sysconfig/iptables</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vi /etc/sysconfig/iptables</span></span><br><span class="line"></span><br><span class="line">-A INPUT -p vrrp -j ACCEPT</span><br><span class="line">-A OUTPUT -p vrrp -j ACCEPT</span><br></pre></td></tr></table></figure>
 <p>或者</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apt-get install iptables-persistent</span><br><span class="line"></span><br><span class="line">netfilter-persistent save</span><br><span class="line">netfilter-persistent reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成的规则存储在以下文件</span></span><br><span class="line">/etc/iptables/rules.v4</span><br><span class="line">/etc/iptables/rules.v6</span><br></pre></td></tr></table></figure>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -229,7 +242,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/golang-notes/framework/cobra/cobra-command/" data-toggle="tooltip" data-placement="top" title="cobra command">&larr; Previous Post</a>
+                            <a href="/article/golang-notes/framework/cobra/cobra-usage/" data-toggle="tooltip" data-placement="top" title="cobra 介绍">&larr; Previous Post</a>
                         </li>
                     
                     

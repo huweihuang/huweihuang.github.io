@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,66 +212,61 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="文件操作">文件操作</h1>
-<p>更多文件操作见Go的os包。</p>
-<h2 id="1-目录操作">1. 目录操作</h2>
-<ul>
-<li><strong>func Mkdir(name string, perm FileMode) error</strong><br>
-创建名称为 name 的目录，权限设置是 perm，例如 0777</li>
+                <div id="vip-container"><h1 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h1><p>更多文件操作见Go的os包。</p>
+<h2 id="1-目录操作"><a href="#1-目录操作" class="headerlink" title="1. 目录操作"></a>1. 目录操作</h2><ul>
+<li><strong>func Mkdir(name string, perm FileMode) error</strong><br>创建名称为 name 的目录，权限设置是 perm，例如 0777</li>
 </ul>
 <ul>
-<li><strong>func MkdirAll(path string, perm FileMode) error</strong><br>
-根据 path 创建多级子目录，例如 astaxie/test1/test2。</li>
-<li><strong>func Remove(name string) error</strong><br>
-删除名称为 name 的目录，当目录下有文件或者其他目录是会出错</li>
-<li><strong>func RemoveAll(path string) error</strong><br>
-根据 path 删除多级子目录，如果 path 是单个名称，那么该目录不删除</li>
+<li><strong>func MkdirAll(path string, perm FileMode) error</strong><br>根据 path 创建多级子目录，例如 astaxie/test1/test2。</li>
+<li><strong>func Remove(name string) error</strong><br>删除名称为 name 的目录，当目录下有文件或者其他目录是会出错</li>
+<li><strong>func RemoveAll(path string) error</strong><br>根据 path 删除多级子目录，如果 path 是单个名称，那么该目录不删除</li>
 </ul>
-<h2 id="2-文件操作">2. 文件操作</h2>
-<h2 id="21-建立与打开文件">2.1. 建立与打开文件</h2>
-<p><strong>新建文件：</strong></p>
+<h2 id="2-文件操作"><a href="#2-文件操作" class="headerlink" title="2. 文件操作"></a>2. 文件操作</h2><h2 id="21-建立与打开文件"><a href="#2-1-建立与打开文件" class="headerlink" title="2.1. 建立与打开文件"></a>2.1. 建立与打开文件</h2><p> <strong>新建文件：</strong> </p>
 <ul>
-<li><strong>func Create(name string) (file *File, err Error)</strong><br>
-根据提供的文件名创建新的文件，返回一个文件对象，默认权限是 0666 的文件，返回的文件对象是可读写的。</li>
-<li>** func NewFile(fd uintptr, name string) *File**<br>
-根据文件描述符创建相应的文件，返回一个文件对象</li>
+<li><strong>func Create(name string) (file *File, err Error)</strong><br>根据提供的文件名创建新的文件，返回一个文件对象，默认权限是 0666 的文件，返回的文件对象是可读写的。</li>
+<li><strong> func NewFile(fd uintptr, name string) *File</strong><br>根据文件描述符创建相应的文件，返回一个文件对象</li>
 </ul>
-<p><strong>打开文件：</strong></p>
+<p><strong>打开文件：</strong> </p>
 <ul>
-<li><strong>func Open(name string) (file *File, err Error)</strong><br>
-该方法打开一个名称为 name 的文件，但是是只读方式，内部实现其实调用了 OpenFile。</li>
-<li><strong>func OpenFile(name string, flag int, perm uint32) (file *File, err Error)</strong><br>
-打开名称为 name 的文件，flag 是打开的方式，只读、读写等，perm 是权限</li>
+<li><strong>func Open(name string) (file *File, err Error)</strong><br>该方法打开一个名称为 name 的文件，但是是只读方式，内部实现其实调用了 OpenFile。</li>
+<li><strong>func OpenFile(name string, flag int, perm uint32) (file *File, err Error)</strong><br>打开名称为 name 的文件，flag 是打开的方式，只读、读写等，perm 是权限</li>
 </ul>
-<h2 id="22-写文件">2.2. 写文件</h2>
-<p><strong>写文件函数：</strong></p>
+<h2 id="22-写文件"><a href="#2-2-写文件" class="headerlink" title="2.2. 写文件"></a>2.2. 写文件</h2><p><strong>写文件函数：</strong></p>
 <ul>
-<li><strong>func (file *File) Write(b []byte) (n int, err Error)</strong><br>
-写入 byte 类型的信息到文件</li>
-<li><strong>func (file *File) WriteAt(b []byte, off int64) (n int, err Error)</strong><br>
-在指定位置开始写入 byte 类型的信息</li>
-<li><strong>func (file *File) WriteString(s string) (ret int, err Error)</strong><br>
-写入 string 信息到文件</li>
+<li><strong>func (file *File) Write(b []byte) (n int, err Error)</strong><br>写入 byte 类型的信息到文件 </li>
+<li><strong>func (file *File) WriteAt(b []byte, off int64) (n int, err Error)</strong><br>在指定位置开始写入 byte 类型的信息 </li>
+<li><strong>func (file *File) WriteString(s string) (ret int, err Error)</strong><br>写入 string 信息到文件</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    userFile := <span class="string">"test.txt"</span></span><br><span class="line">    fout, err := os.Create(userFile)</span><br><span class="line">    <span class="keyword">defer</span> fout.Close()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(userFile, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">        fout.WriteString(<span class="string">"Just a test!\r\n"</span>)</span><br><span class="line">        fout.Write([]<span class="keyword">byte</span>(<span class="string">"Just a test!\r\n"</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="23-读文件">2.3. 读文件</h2>
-<p><strong>读文件函数：</strong></p>
+<h2 id="23-读文件"><a href="#2-3-读文件" class="headerlink" title="2.3. 读文件"></a>2.3. 读文件</h2><p><strong>读文件函数：</strong></p>
 <ul>
-<li>func (file *File) Read(b []byte) (n int, err Error)<br>
-读取数据到 b 中</li>
+<li>func (file *File) Read(b []byte) (n int, err Error)<br>读取数据到 b 中 </li>
 </ul>
 <ul>
-<li>func (file *File) ReadAt(b []byte, off int64) (n int, err Error)<br>
-从 off 开始读取数据到 b 中</li>
+<li>func (file *File) ReadAt(b []byte, off int64) (n int, err Error)<br> 从 off 开始读取数据到 b 中</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    userFile := <span class="string">"text.txt"</span></span><br><span class="line">    fl, err := os.Open(userFile)</span><br><span class="line">    <span class="keyword">defer</span> fl.Close()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(userFile, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        n, _ := fl.Read(buf)</span><br><span class="line">        <span class="keyword">if</span> <span class="number">0</span> == n &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">        os.Stdout.Write(buf[:n])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="24-删除文件">2.4. 删除文件</h2>
-<p>Go 语言里面删除文件和删除文件夹是同一个函数</p>
+<h2 id="24-删除文件"><a href="#2-4-删除文件" class="headerlink" title="2.4. 删除文件"></a>2.4. 删除文件</h2><p>Go 语言里面删除文件和删除文件夹是同一个函数</p>
 <ul>
-<li>func Remove(name string) Error<br>
-调用该函数就可以删除文件名为 name 的文件</li>
+<li>func Remove(name string) Error<br>调用该函数就可以删除文件名为 name 的文件</li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>

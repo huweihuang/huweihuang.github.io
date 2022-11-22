@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,8 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-查看系统event事件">1. 查看系统Event事件</h1>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="1-查看系统event事件"><a href="#1-查看系统Event事件" class="headerlink" title="1. 查看系统Event事件"></a>1. 查看系统Event事件</h1> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
 <p>该命令可以显示Pod创建时的配置定义、状态等信息和最近的Event事件，事件信息可用于排错。例如当Pod状态为Pending，可通过查看Event事件确认原因，一般原因有几种：</p>
 <ul>
 <li>没有可用的Node可调度</li>
@@ -221,35 +220,28 @@
 <li>正在下载镜像（镜像拉取耗时太久）或镜像下载失败。</li>
 </ul>
 <p>kubectl describe还可以查看其它k8s对象：NODE,RC,Service,Namespace,Secrets。</p>
-<h2 id="11-pod">1.1. Pod</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="11-pod"><a href="#1-1-Pod" class="headerlink" title="1.1. Pod"></a>1.1. Pod</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
 <p>以下是容器的启动命令非阻塞式导致容器挂掉，被k8s频繁重启所产生的事件。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;  </span><br><span class="line"></span><br><span class="line">Events:</span><br><span class="line">  FirstSeen LastSeen    Count   From            SubobjectPath       Reason      Message</span><br><span class="line">  ───────── ────────    ─────   ────            ─────────────       ──────      ───────</span><br><span class="line">  7m        7m      1   &#123;scheduler &#125;                    Scheduled   Successfully assigned yangsc-1-0-0-index0 to 10.8.216.19</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;infra&#125;   Pulled      Container image <span class="string">"gcr.io/kube-system/pause:0.8.0"</span> already present on machine</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;infra&#125;   Created     Created with docker id 84f133c324d0</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;infra&#125;   Started     Started with docker id 84f133c324d0</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id 3f9f82abb145</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id 3f9f82abb145</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id fb112e4002f4</span><br><span class="line">  7m        7m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id fb112e4002f4</span><br><span class="line">  6m        6m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id 613b119d4474</span><br><span class="line">  6m        6m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id 613b119d4474</span><br><span class="line">  6m        6m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id 25cb68d1fd3d</span><br><span class="line">  6m        6m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id 25cb68d1fd3d</span><br><span class="line">  5m        5m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id 7d9ee8610b28</span><br><span class="line">  5m        5m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id 7d9ee8610b28</span><br><span class="line">  3m        3m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id 88b9e8d582dd</span><br><span class="line">  3m        3m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id 88b9e8d582dd</span><br><span class="line">  7m        1m      7   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Pulling     Pulling image <span class="string">"gcr.io/test/tcp-hello:1.0.0"</span></span><br><span class="line">  1m        1m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Started     Started with docker id 089abff050e7</span><br><span class="line">  1m        1m      1   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Created     Created with docker id 089abff050e7</span><br><span class="line">  7m        1m      7   &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Pulled      Successfully pulled image <span class="string">"gcr.io/test/tcp-hello:1.0.0"</span></span><br><span class="line">  6m        7s      34  &#123;kubelet 10.8.216.19&#125;   containers&#123;yangsc0&#125; Backoff     Back-off restarting failed docker container</span><br></pre></td></tr></table></figure>
-<h2 id="12-node">1.2. NODE</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe node 10.8.216.20</span><br></pre></td></tr></table></figure>
+<h2 id="12-node"><a href="#1-2-NODE" class="headerlink" title="1.2. NODE"></a>1.2. NODE</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe node 10.8.216.20</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">[root@FC-43745A-10 ~]<span class="comment"># kubectl describe node 10.8.216.20  </span></span><br><span class="line">Name:           10.8.216.20  </span><br><span class="line">Labels:         kubernetes.io/hostname=10.8.216.20,namespace/bcs-cc=<span class="literal">true</span>,namespace/myview=<span class="literal">true</span>  </span><br><span class="line">CreationTimestamp:  Mon, 17 Apr 2017 11:32:52 +0800  </span><br><span class="line">Phase:            </span><br><span class="line">Conditions:  </span><br><span class="line">  Type      Status  LastHeartbeatTime           LastTransitionTime          Reason              Message  </span><br><span class="line">  ────      ──────  ─────────────────           ──────────────────          ──────              ───────  </span><br><span class="line">  Ready     True    Fri, 18 Aug 2017 09:38:33 +0800     Tue, 02 May 2017 17:40:58 +0800     KubeletReady            kubelet is posting ready status  </span><br><span class="line">  OutOfDisk     False   Fri, 18 Aug 2017 09:38:33 +0800     Mon, 17 Apr 2017 11:31:27 +0800     KubeletHasSufficientDisk    kubelet has sufficient disk space available  </span><br><span class="line">Addresses:  10.8.216.20,10.8.216.20  </span><br><span class="line">Capacity:  </span><br><span class="line"> cpu:       32  </span><br><span class="line"> memory:    67323039744  </span><br><span class="line"> pods:      40  </span><br><span class="line">System Info:  </span><br><span class="line"> Machine ID:            723bafc7f6764022972b3eae1ce6b198  </span><br><span class="line"> System UUID:           4C4C4544-0042-4210-8044-C3C04F595631  </span><br><span class="line"> Boot ID:           da01f2e3-987a-425a-9ca7-1caaec35d1e5  </span><br><span class="line"> Kernel Version:        3.10.0-327.28.3.el7.x86_64  </span><br><span class="line"> OS Image:          CentOS Linux 7 (Core)  </span><br><span class="line"> Container Runtime Version: docker://1.13.1  </span><br><span class="line"> Kubelet Version:       v1.1.1-xxx2-13.1+79c90c68bfb72f-dirty  </span><br><span class="line"> Kube-Proxy Version:        v1.1.1-xxx2-13.1+79c90c68bfb72f-dirty  </span><br><span class="line">ExternalID:         10.8.216.20  </span><br><span class="line">Non-terminated Pods:        (6 <span class="keyword">in</span> total)  </span><br><span class="line">  Namespace         Name                    CPU Requests    CPU Limits  Memory Requests Memory Limits  </span><br><span class="line">  ─────────         ────                    ────────────    ──────────  ─────────────── ─────────────  </span><br><span class="line">  bcs-cc            bcs-cc-api-0-0-1364-index0      1 (3%)      1 (3%)      4294967296 (6%) 4294967296 (6%)  </span><br><span class="line">  bcs-cc            bcs-cc-api-0-0-1444-index0      1 (3%)      1 (3%)      4294967296 (6%) 4294967296 (6%)  </span><br><span class="line">  fw                fw-demo2-0-0-1519-index0        1 (3%)      1 (3%)      4294967296 (6%) 4294967296 (6%)  </span><br><span class="line">  myview            myview-api-0-0-1362-index0      1 (3%)      1 (3%)      4294967296 (6%) 4294967296 (6%)  </span><br><span class="line">  myview            myview-api-0-0-1442-index0      1 (3%)      1 (3%)      4294967296 (6%) 4294967296 (6%)  </span><br><span class="line">  qa-ts-dna         ts-dna-console3-0-0-1434-index0     1 (3%)      1 (3%)      4294967296 (6%) 4294967296 (6%)  </span><br><span class="line">Allocated resources:  </span><br><span class="line">  (Total limits may be over 100%, i.e., overcommitted. More info: http://releases.k8s.io/HEAD/docs/user-guide/compute-resources.md)  </span><br><span class="line">  CPU Requests  CPU Limits  Memory Requests     Memory Limits  </span><br><span class="line">  ────────────  ──────────  ───────────────     ─────────────  </span><br><span class="line">  6 (18%)   6 (18%)     25769803776 (38%)   25769803776 (38%)  </span><br><span class="line">No events.</span><br></pre></td></tr></table></figure>
-<h2 id="13-rc">1.3. RC</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe rc mytest-1-0-0 --namespace=test</span><br></pre></td></tr></table></figure>
+<h2 id="13-rc"><a href="#1-3-RC" class="headerlink" title="1.3. RC"></a>1.3. RC</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe rc mytest-1-0-0 --namespace=test</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@FC-43745A-10 ~]<span class="comment"># kubectl describe rc mytest-1-0-0 --namespace=test  </span></span><br><span class="line">Name:       mytest-1-0-0  </span><br><span class="line">Namespace:  <span class="built_in">test</span>  </span><br><span class="line">Image(s):   gcr.io/<span class="built_in">test</span>/mywebcalculator:1.0.1  </span><br><span class="line">Selector:   app=mytest,appVersion=1.0.0  </span><br><span class="line">Labels:     app=mytest,appVersion=1.0.0,env=ts,zone=inner  </span><br><span class="line">Replicas:   1 current / 1 desired  </span><br><span class="line">Pods Status:    1 Running / 0 Waiting / 0 Succeeded / 0 Failed  </span><br><span class="line">No volumes.  </span><br><span class="line">Events:  </span><br><span class="line">  FirstSeen LastSeen    Count   From                SubobjectPath   Reason          Message  </span><br><span class="line">  ───────── ────────    ─────   ────                ─────────────   ──────          ───────  </span><br><span class="line">  20h       19h     9   &#123;replication-controller &#125;           FailedCreate        Error creating: Pod <span class="string">"mytest-1-0-0-index0"</span> is forbidden: limited to 10 pods  </span><br><span class="line">  20h       17h     7   &#123;replication-controller &#125;           FailedCreate        Error creating: pods <span class="string">"mytest-1-0-0-index0"</span> already exists  </span><br><span class="line">  20h       17h     4   &#123;replication-controller &#125;           SuccessfulCreate    Created pod: mytest-1-0-0-index0</span><br></pre></td></tr></table></figure>
-<h2 id="14-namespace">1.4. NAMESPACE</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe namespace test</span><br></pre></td></tr></table></figure>
+<h2 id="14-namespace"><a href="#1-4-NAMESPACE" class="headerlink" title="1.4. NAMESPACE"></a>1.4. NAMESPACE</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe namespace test</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@FC-43745A-10 ~]<span class="comment"># kubectl describe namespace test  </span></span><br><span class="line">Name:   <span class="built_in">test</span>  </span><br><span class="line">Labels: &lt;none&gt;  </span><br><span class="line">Status: Active  </span><br><span class="line">  </span><br><span class="line">Resource Quotas  </span><br><span class="line"> Resource       Used        Hard  </span><br><span class="line"> ---            ---     ---  </span><br><span class="line"> cpu            5       20  </span><br><span class="line"> memory         1342177280  53687091200  </span><br><span class="line"> persistentvolumeclaims 0       10  </span><br><span class="line"> pods           4       10  </span><br><span class="line"> replicationcontrollers 8       20  </span><br><span class="line"> resourcequotas     1       1  </span><br><span class="line"> secrets        3       10  </span><br><span class="line"> services       8       20  </span><br><span class="line">  </span><br><span class="line">No resource limits.</span><br></pre></td></tr></table></figure>
-<h2 id="15-service">1.5. Service</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe service xxx-containers-1-1-0 --namespace=test</span><br></pre></td></tr></table></figure>
+<h2 id="15-service"><a href="#1-5-Service" class="headerlink" title="1.5. Service"></a>1.5. Service</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe service xxx-containers-1-1-0 --namespace=test</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@FC-43745A-10 ~]<span class="comment"># kubectl describe service xxx-containers-1-1-0 --namespace=test  </span></span><br><span class="line">Name:           xxx-containers-1-1-0  </span><br><span class="line">Namespace:      <span class="built_in">test</span>  </span><br><span class="line">Labels:         app=xxx-containers,appVersion=1.1.0,env=ts,zone=inner  </span><br><span class="line">Selector:       app=xxx-containers,appVersion=1.1.0  </span><br><span class="line">Type:           ClusterIP  </span><br><span class="line">IP:         10.254.46.42  </span><br><span class="line">Port:           port-dna-tcp-35913  35913/TCP  </span><br><span class="line">Endpoints:      10.0.92.17:35913  </span><br><span class="line">Port:           port-l7-tcp-8080    8080/TCP  </span><br><span class="line">Endpoints:      10.0.92.17:8080  </span><br><span class="line">Session Affinity:   None  </span><br><span class="line">No events.</span><br></pre></td></tr></table></figure>
-<h1 id="2-查看容器日志">2. 查看容器日志</h1>
-<p>1、查看指定pod的日志</p>
+<h1 id="2-查看容器日志"><a href="#2-查看容器日志" class="headerlink" title="2. 查看容器日志"></a>2. 查看容器日志</h1><p>1、查看指定pod的日志</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs &lt;pod_name&gt;</span><br><span class="line"></span><br><span class="line">kubectl logs -f &lt;pod_name&gt; <span class="comment">#类似tail -f的方式查看</span></span><br></pre></td></tr></table></figure>
 <p>2、查看上一个pod的日志</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -p &lt;pod_name&gt;</span><br></pre></td></tr></table></figure>
 <p>3、查看指定pod中指定容器的日志</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs &lt;pod_name&gt; -c &lt;container_name&gt;</span><br></pre></td></tr></table></figure>
-<p>4、kubectl logs --help</p>
+<p>4、kubectl logs —help</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@node5 ~]<span class="comment"># kubectl logs --help  </span></span><br><span class="line">Print the logs <span class="keyword">for</span> a container <span class="keyword">in</span> a pod. If the pod has only one container, the container name is optional.  </span><br><span class="line">Usage:  </span><br><span class="line">  kubectl logs [-f] [-p] POD [-c CONTAINER] [flags]  </span><br><span class="line">Aliases:  </span><br><span class="line">  logs, <span class="built_in">log</span>  </span><br><span class="line">   </span><br><span class="line">Examples:  </span><br><span class="line"><span class="comment"># Return snapshot logs from pod nginx with only one container  </span></span><br><span class="line">$ kubectl logs nginx  </span><br><span class="line"><span class="comment"># Return snapshot of previous terminated ruby container logs from pod web-1  </span></span><br><span class="line">$ kubectl logs -p -c ruby web-1  </span><br><span class="line"><span class="comment"># Begin streaming the logs of the ruby container in pod web-1  </span></span><br><span class="line">$ kubectl logs -f -c ruby web-1  </span><br><span class="line"><span class="comment"># Display only the most recent 20 lines of output in pod nginx  </span></span><br><span class="line">$ kubectl logs --tail=20 nginx  </span><br><span class="line"><span class="comment"># Show all logs from pod nginx written in the last hour  </span></span><br><span class="line">$ kubectl logs --since=1h nginx</span><br></pre></td></tr></table></figure>
-<h1 id="3-查看k8s服务日志">3. 查看k8s服务日志</h1>
-<h2 id="31-journalctl">3.1. journalctl</h2>
-<p>在Linux系统上systemd系统来管理kubernetes服务，并且journal系统会接管服务程序的输出日志，可以通过<strong>systemctl status <xxx>或journalctl -u <xxx> -f</xxx></xxx></strong>来查看kubernetes服务的日志。</p>
+<h1 id="3-查看k8s服务日志"><a href="#3-查看k8s服务日志" class="headerlink" title="3. 查看k8s服务日志"></a>3. 查看k8s服务日志</h1><h2 id="31-journalctl"><a href="#3-1-journalctl" class="headerlink" title="3.1. journalctl"></a>3.1. journalctl</h2><p>在Linux系统上systemd系统来管理kubernetes服务，并且journal系统会接管服务程序的输出日志，可以通过<strong>systemctl status <xxx>或journalctl -u <xxx> -f</xxx></xxx></strong>来查看kubernetes服务的日志。</p>
 <p>其中kubernetes组件包括：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -282,22 +274,19 @@
 <tr>
 <td>etcd</td>
 <td></td>
-<td></td>
 </tr>
 </tbody>
 </table>
-<h2 id="32-日志文件">3.2. 日志文件</h2>
-<p>也可以通过指定日志存放目录来保存和查看日志</p>
+</div>
+<h2 id="32-日志文件"><a href="#3-2-日志文件" class="headerlink" title="3.2. 日志文件"></a>3.2. 日志文件</h2><p>也可以通过指定日志存放目录来保存和查看日志</p>
 <ul>
-<li>–logtostderr=false：不输出到stderr</li>
-<li>–log-dir=/var/log/kubernetes:日志的存放目录</li>
-<li>–alsologtostderr=false:设置为true表示日志输出到文件也输出到stderr</li>
-<li>–v=0:glog的日志级别</li>
-<li>–vmodule=gfs*=2,test*=4：glog基于模块的详细日志级别</li>
+<li>—logtostderr=false：不输出到stderr</li>
+<li>—log-dir=/var/log/kubernetes:日志的存放目录</li>
+<li>—alsologtostderr=false:设置为true表示日志输出到文件也输出到stderr</li>
+<li>—v=0:glog的日志级别</li>
+<li>—vmodule=gfs<em>=2,test</em>=4：glog基于模块的详细日志级别</li>
 </ul>
-<h1 id="4-常见问题">4. 常见问题</h1>
-<h2 id="41-pod状态一直为pending">4.1. Pod状态一直为Pending</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe &lt;pod_name&gt; --namespace=&lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="4-常见问题"><a href="#4-常见问题" class="headerlink" title="4. 常见问题"></a>4. 常见问题</h1><h2 id="41-pod状态一直为pending"><a href="#4-1-Pod状态一直为Pending" class="headerlink" title="4.1. Pod状态一直为Pending"></a>4.1. Pod状态一直为Pending</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe &lt;pod_name&gt; --namespace=&lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
 <p>查看该POD的事件。</p>
 <ul>
 <li>正在下载镜像但拉取不下来（镜像拉取耗时太久）[一般都是该原因]</li>
@@ -309,8 +298,7 @@
 <li>查看该POD所在宿主机与镜像仓库之间的网络是否有问题，可以手动拉取镜像</li>
 <li>删除POD实例，让POD调度到别的宿主机上</li>
 </ol>
-<h2 id="42-pod创建后不断重启">4.2. Pod创建后不断重启</h2>
-<p>kubectl get pods中Pod状态一会running，一会不是，且RESTARTS次数不断增加。</p>
+<h2 id="42-pod创建后不断重启"><a href="#4-2-Pod创建后不断重启" class="headerlink" title="4.2. Pod创建后不断重启"></a>4.2. Pod创建后不断重启</h2><p>kubectl get pods中Pod状态一会running，一会不是，且RESTARTS次数不断增加。</p>
 <p>一般原因为容器启动命令不是阻塞式命令，导致容器运行后马上退出。</p>
 <p>非阻塞式命令：</p>
 <ul>
@@ -318,13 +306,29 @@
 <li>将服务启动方式设置为后台运行</li>
 </ul>
 <p>解决方法：</p>
-<p>1、将命令改为阻塞式命令（前台运行），例如：<strong><a href="http://zkServer.sh" target="_blank" rel="noopener">zkServer.sh</a> start-foreground</strong></p>
+<p>1、将命令改为阻塞式命令（前台运行），例如：<strong>zkServer.sh start-foreground</strong></p>
 <p>2、java运行程序的启动脚本将 nohup xxx &amp;的nobup和&amp;去掉，例如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup JAVA_HOME/bin/java JAVA_OPTS -cp <span class="variable">$CLASSPATH</span> com.cnc.open.processor.Main &amp;</span><br></pre></td></tr></table></figure>
 <p>改为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JAVA_HOME/bin/java JAVA_OPTS -cp <span class="variable">$CLASSPATH</span> com.cnc.open.processor.Main</span><br></pre></td></tr></table></figure>
 <p>文章参考《Kubernetes权威指南》</p>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>

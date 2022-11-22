@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,14 +212,12 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <blockquote>
+                <div id="vip-container"><blockquote>
 <p>本文介绍通过pod指定 ImagePullSecrets来拉取私有镜像仓库的镜像</p>
 </blockquote>
-<h2 id="1-创建secret">1. 创建secret</h2>
-<p>secret是namespace级别的，创建时候需要指定namespace。</p>
+<h2 id="1-创建secret"><a href="#1-创建secret" class="headerlink" title="1. 创建secret"></a>1. 创建secret</h2><p>secret是namespace级别的，创建时候需要指定namespace。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD -n &lt;NAMESPACE&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="2-添加imagepullsecrets到serviceaccount">2. 添加ImagePullSecrets到serviceAccount</h2>
-<p>可以通过将ImagePullSecrets到serviceAccount的方式来自动给pod添加imagePullSecrets参数值。</p>
+<h2 id="2-添加imagepullsecrets到serviceaccount"><a href="#2-添加ImagePullSecrets到serviceAccount" class="headerlink" title="2. 添加ImagePullSecrets到serviceAccount"></a>2. 添加ImagePullSecrets到serviceAccount</h2><p>可以通过将ImagePullSecrets到serviceAccount的方式来自动给pod添加imagePullSecrets参数值。</p>
 <p>serviceAccount同样是namespace级别，只对该namespace生效。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#kubectl get secrets -n dev</span></span><br><span class="line">NAME                  TYPE                                  DATA   AGE</span><br><span class="line">docker.xxxx.com         kubernetes.io/dockerconfigjson        1      6h23m</span><br></pre></td></tr></table></figure>
 <p>将ImagePullSecrets添加到serviceAccount对象中。</p>
@@ -230,18 +228,32 @@
 <p><code>kubectl edit serviceaccount default -n dev</code></p>
 <p>修改后内容为：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="string">"2020-02-27T03:30:38Z"</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">dev</span></span><br><span class="line">  <span class="attr">resourceVersion:</span> <span class="string">"11651567"</span></span><br><span class="line">  <span class="attr">selfLink:</span> <span class="string">/api/v1/namespaces/dev/serviceaccounts/default</span></span><br><span class="line">  <span class="attr">uid:</span> <span class="string">85bcdd31-5911-11ea-9429-6c92bf3b7c33</span></span><br><span class="line"><span class="attr">secrets:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">default-token-s7wfn</span></span><br><span class="line"><span class="attr">imagePullSecrets:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker.xxxx.com</span></span><br></pre></td></tr></table></figure>
-<h2 id="3-创建带有imagepullsecrets的pod">3. 创建带有imagePullSecrets的pod</h2>
-<p>如果已经执行了第二步操作，添加ImagePullSecrets到serviceAccount，则无需在pod中指定imagePullSecrets参数，默认会自动添加。</p>
+<h2 id="3-创建带有imagepullsecrets的pod"><a href="#3-创建带有imagePullSecrets的pod" class="headerlink" title="3. 创建带有imagePullSecrets的pod"></a>3. 创建带有imagePullSecrets的pod</h2><p>如果已经执行了第二步操作，添加ImagePullSecrets到serviceAccount，则无需在pod中指定imagePullSecrets参数，默认会自动添加。</p>
 <p>如果没有添加ImagePullSecrets到serviceAccount，则在pod中指定imagePullSecrets参数引用创建的镜像仓库的secret。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">imagePullSecrets:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">docker.xxxx.com</span></span><br></pre></td></tr></table></figure>
-<h2 id="4-说明">4. 说明</h2>
-<p>由于secret和serviceaccount对象是对namespace级别生效，因此不同的namespace需要再次创建和更新这两个对象。该场景适合不同用户具有独立的镜像仓库的密码，可以通过该方式创建不同的镜像密码使用的secret来拉取不同的镜像部署。</p>
+<h2 id="4-说明"><a href="#4-说明" class="headerlink" title="4. 说明"></a>4. 说明</h2><p>由于secret和serviceaccount对象是对namespace级别生效，因此不同的namespace需要再次创建和更新这两个对象。该场景适合不同用户具有独立的镜像仓库的密码，可以通过该方式创建不同的镜像密码使用的secret来拉取不同的镜像部署。</p>
 <p>参考：</p>
 <ul>
 <li><a href="https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod</a></li>
 <li><a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>

@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,10 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-install-gosh">1. <a href="http://install-go.sh" target="_blank" rel="noopener">install-go.sh</a></h1>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -x</span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line"><span class="comment"># default version</span></span><br><span class="line">VERSION=<span class="variable">$1</span></span><br><span class="line">VERSION=<span class="variable">$&#123;VERSION:-1.14.6&#125;</span></span><br><span class="line"></span><br><span class="line">PLATFORM=<span class="variable">$2</span></span><br><span class="line">PLATFORM=<span class="variable">$&#123;PLATFORM:-linux&#125;</span></span><br><span class="line"></span><br><span class="line">GOROOT=<span class="string">"/usr/local/go"</span></span><br><span class="line">GOPATH=<span class="variable">$HOME</span>/gopath</span><br><span class="line">GO_DOWNLOAD_URL=<span class="string">"https://golang.org/dl"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># download and install</span></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$&#123;PLATFORM&#125;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">"linux"</span>)</span><br><span class="line">    wget <span class="variable">$&#123;GO_DOWNLOAD_URL&#125;</span>/go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    tar -C /usr/<span class="built_in">local</span> -xzf go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    ;;</span><br><span class="line"><span class="string">"mac"</span>)</span><br><span class="line">    PLATFORM=<span class="string">"darwin"</span></span><br><span class="line">    wget <span class="variable">$&#123;GO_DOWNLOAD_URL&#125;</span>/go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    tar -C /usr/<span class="built_in">local</span> -xzf go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    ;;</span><br><span class="line">*)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"platform not found"</span></span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span>    </span><br><span class="line"></span><br><span class="line"><span class="comment"># set golang env</span></span><br><span class="line">cat &gt;&gt; <span class="variable">$HOME</span>/.bashrc &lt;&lt; EOF </span><br><span class="line"><span class="comment"># Golang env</span></span><br><span class="line"><span class="built_in">export</span> GOROOT=/usr/<span class="built_in">local</span>/go</span><br><span class="line"><span class="built_in">export</span> GOPATH=\<span class="variable">$HOME</span>/gopath</span><br><span class="line"><span class="built_in">export</span> PATH=\<span class="variable">$PATH</span>:\<span class="variable">$GOROOT</span>/bin:\<span class="variable">$GOPATH</span>/bin</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> <span class="variable">$HOME</span>/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># mkdir gopath</span></span><br><span class="line">mkdir -p <span class="variable">$GOPATH</span>/src <span class="variable">$GOPATH</span>/pkg <span class="variable">$GOPATH</span>/bin</span><br></pre></td></tr></table></figure>
-<h1 id="2-安装">2. 安装</h1>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x install-go.sh</span><br><span class="line">./install-go.sh 1.14.6 linux</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="1-install-gosh"><a href="#1-install-go-sh" class="headerlink" title="1. install-go.sh"></a>1. install-go.sh</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -x</span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"></span><br><span class="line"><span class="comment"># default version</span></span><br><span class="line">VERSION=<span class="variable">$1</span></span><br><span class="line">VERSION=<span class="variable">$&#123;VERSION:-1.14.6&#125;</span></span><br><span class="line"></span><br><span class="line">PLATFORM=<span class="variable">$2</span></span><br><span class="line">PLATFORM=<span class="variable">$&#123;PLATFORM:-linux&#125;</span></span><br><span class="line"></span><br><span class="line">GOROOT=<span class="string">"/usr/local/go"</span></span><br><span class="line">GOPATH=<span class="variable">$HOME</span>/gopath</span><br><span class="line">GO_DOWNLOAD_URL=<span class="string">"https://golang.org/dl"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># download and install</span></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$&#123;PLATFORM&#125;</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">"linux"</span>)</span><br><span class="line">    wget <span class="variable">$&#123;GO_DOWNLOAD_URL&#125;</span>/go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    tar -C /usr/<span class="built_in">local</span> -xzf go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    ;;</span><br><span class="line"><span class="string">"mac"</span>)</span><br><span class="line">    PLATFORM=<span class="string">"darwin"</span></span><br><span class="line">    wget <span class="variable">$&#123;GO_DOWNLOAD_URL&#125;</span>/go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    tar -C /usr/<span class="built_in">local</span> -xzf go<span class="variable">$&#123;VERSION&#125;</span>.<span class="variable">$&#123;PLATFORM&#125;</span>-amd64.tar.gz</span><br><span class="line">    ;;</span><br><span class="line">*)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"platform not found"</span></span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span>    </span><br><span class="line"></span><br><span class="line"><span class="comment"># set golang env</span></span><br><span class="line">cat &gt;&gt; <span class="variable">$HOME</span>/.bashrc &lt;&lt; EOF </span><br><span class="line"><span class="comment"># Golang env</span></span><br><span class="line"><span class="built_in">export</span> GOROOT=/usr/<span class="built_in">local</span>/go</span><br><span class="line"><span class="built_in">export</span> GOPATH=\<span class="variable">$HOME</span>/gopath</span><br><span class="line"><span class="built_in">export</span> PATH=\<span class="variable">$PATH</span>:\<span class="variable">$GOROOT</span>/bin:\<span class="variable">$GOPATH</span>/bin</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="built_in">source</span> <span class="variable">$HOME</span>/.bashrc</span><br><span class="line"></span><br><span class="line"><span class="comment"># mkdir gopath</span></span><br><span class="line">mkdir -p <span class="variable">$GOPATH</span>/src <span class="variable">$GOPATH</span>/pkg <span class="variable">$GOPATH</span>/bin</span><br></pre></td></tr></table></figure>
+<h1 id="2-安装"><a href="#2-安装" class="headerlink" title="2. 安装"></a>2. 安装</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x install-go.sh</span><br><span class="line">./install-go.sh 1.14.6 linux</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>更多版本号可参考：<a href="https://golang.org/dl/" target="_blank" rel="noopener">https://golang.org/dl/</a></p>
 </blockquote>
@@ -223,7 +221,23 @@
 <ul>
 <li><a href="https://golang.org/doc/install" target="_blank" rel="noopener">https://golang.org/doc/install</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -231,12 +245,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/golang-notes/introduction/golang/" data-toggle="tooltip" data-placement="top" title="Golang介绍">&larr; Previous Post</a>
+                            <a href="/article/golang-notes/basis/var-const/" data-toggle="tooltip" data-placement="top" title="变量与常量">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/golang-notes/oop/golang-object-oriented-programming/" data-toggle="tooltip" data-placement="top" title="Golang系列（二）之面向对象编程">Next Post &rarr;</a>
+                            <a href="/article/golang-notes/introduction/golang/" data-toggle="tooltip" data-placement="top" title="Golang介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

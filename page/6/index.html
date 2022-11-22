@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -220,13 +220,9 @@
             
         </h3>
         <div class="post-content-preview">
-            类型
-1. 基础类型
-1.1. 布尔类型
-12345//布尔类型的关键字为bool,值为true或false，不可写为0或1var v1 boolv1=true//接受表达式判断赋值，不支持自动或强制类型转换v2:=(1==2)
-1.2. 整型
-
-1234567891011121314151617181920//1、类型表示//int和int32为不同类型，不会自动类型转换需要强制类型转换/......
+            类型1. 基础类型1.1. 布尔类型12345//布尔类型的关键字为bool,值为true或false，不可写为0或1var v1 boolv1=true//接受表达式判断赋值，不支持自动或强制类型转换v2:=(1==2)
+1.2. 整型 
+1234567891011121314151617181920//1、类型表示//int和int32为不同类型，不会自动类型转换需要强制类型转换//强制......
         </div>
     </a>
     
@@ -255,9 +251,7 @@
             
         </h3>
         <div class="post-content-preview">
-            错误处理
-1. error接口
-1234567891011121314//定义error接口type error interface&#123;  Error() string&#125;//调用error接口func Foo(param int) (n int,err error)&#123;  //...&#125;n,err:=Foo(0)if err!=nil&#123;  //错误......
+            错误处理1. error接口1234567891011121314//定义error接口type error interface&#123;  Error() string&#125;//调用error接口func Foo(param int) (n int,err error)&#123;  //...&#125;n,err:=Foo(0)if err!=nil&#123;  //错误处理......
         </div>
     </a>
     
@@ -286,13 +280,12 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 判断磁盘是SSD或HDD盘
-1、没有使用raid方案
+            1. 判断磁盘是SSD或HDD盘1、没有使用raid方案
 lsblk -d -o name,rota命令，0表示SSD，1表示HDD
 12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
 2、使用raid方案
 下载工具
-1wget https://raw.githubusercontent.com/eLvErDe/......
+1wget https://raw.githubusercontent.com/eLvErDe/h......
         </div>
     </a>
     
@@ -312,24 +305,65 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-file-storage/">
+    <a href="/article/linux-notes/disk/lvm-usage/">
         <h2 class="post-title">
                         
-            Linux文件存储
+            LVM的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            文件存储结构
-大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
+            
+本文由网络内容整理而成的笔记
 
-目录项：包括文件名和inode节点号。
-Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
-数据块：包含文件的具体内容。
+1. LVM简介LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。
+优点：
 
-1. inode
-理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
+可以灵活分配和管理磁盘空间
+
+可以对分区进行动态的扩容
+
+可以增加新的磁盘到lvm中
+
+
+2. LVM核心概念LVM概念图：
+
+
+PV（......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#disk" title="disk">disk</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/file/linux-file-permission/">
+        <h2 class="post-title">
+                        
+            Linux文件权限
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Linux文件管理Linux中的所有数据都被保存在文件中，所有的文件被分配到不同的目录。目录是一种类似于树的结构，称为文件系统。
+1.1. 文件类型1、普通文件
+普通文件是以字节为单位的数据流，包括文本文件、源码文件、可执行文件等。文本和二进制对Linux来说并无区别，对普通文件的解释由处理该文件的应用程序进行。
+2、目录
+目录可以包含普通文件和特殊文件，目录相当于Windows和Ma......
         </div>
     </a>
     
@@ -349,22 +383,22 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-file-permission/">
+    <a href="/article/linux-notes/file/linux-file-storage/">
         <h2 class="post-title">
                         
-            Linux文件权限
+            Linux文件存储
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Linux文件管理
-Linux中的所有数据都被保存在文件中，所有的文件被分配到不同的目录。目录是一种类似于树的结构，称为文件系统。
-1.1. 文件类型
-1、普通文件
-普通文件是以字节为单位的数据流，包括文本文件、源码文件、可执行文件等。文本和二进制对Linux来说并无区别，对普通文件的解释由处理该文件的应用程序进行。
-2、目录
-目录可以包含普通文件和特殊文件，目录相当于Windows和......
+            文件存储结构大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
+
+目录项：包括文件名和inode节点号。
+Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
+数据块：包含文件的具体内容。
+
+1. inode理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector），每个扇区储存512字节（相......
         </div>
     </a>
     
@@ -393,12 +427,11 @@ Linux中的所有数据都被保存在文件中，所有的文件被分配到不
             
         </h3>
         <div class="post-content-preview">
-            1. 文件系统
-文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
+            1. 文件系统文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
 不同Linux发行版本之间的文件系统差别很少，主要表现在系统管理的特色工具以及软件包管理方式的不同，文件目录结构基本上都是一样的。
 
 ext2 ： 早期linux中常用的文件系统；
-ext3 ： ......
+ext3 ： e......
         </div>
     </a>
     
@@ -427,10 +460,9 @@ ext3 ： ......
             
         </h3>
         <div class="post-content-preview">
-            1. Linux简介
-严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
+            1. Linux简介严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
 Linux内核版本
-Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
+Linux内核版本一般格式为：x.y.zz-www，例如：Ker......
         </div>
     </a>
     
@@ -441,54 +473,6 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
         <div class="tags">
             
               <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/disk/lvm-usage/">
-        <h2 class="post-title">
-                        
-            LVM的使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-本文由网络内容整理而成的笔记
-
-1. LVM简介
-LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。
-优点：
-
-
-可以灵活分配和管理磁盘空间
-
-
-可以对分区进行动态的扩容
-
-
-可以增加新的磁盘到lvm中
-
-
-2. LVM核心概念
-LVM概念图：
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#disk" title="disk">disk</a>
             
         </div>
     
@@ -510,8 +494,7 @@ LVM概念图：
             
 本文主要介绍Go的调度模型。
 
-1. 线程实现模型
-线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
+1. 线程实现模型线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
 
 内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。
 
@@ -522,7 +505,7 @@ LVM概念图：
 线程模型
 用户线程与KSE之间的对应关系
 特点
-优......
+优点......
         </div>
     </a>
     
@@ -551,12 +534,10 @@ LVM概念图：
             
         </h3>
         <div class="post-content-preview">
-            添加Flags
-1. Persistent Flags
-Persistent Flags表示该类参数可以被用于当前命令及其子命令。
+            添加Flags1. Persistent FlagsPersistent Flags表示该类参数可以被用于当前命令及其子命令。
 例如，以下表示verbose参数可以被用于rootCmd及其子命令。
 1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
-2. Lo......
+2. Loca......
         </div>
     </a>
     
@@ -617,8 +598,6 @@ Persistent Flags表示该类参数可以被用于当前命令及其子命令。
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
@@ -701,11 +680,11 @@ Persistent Flags表示该类参数可以被用于当前命令及其子命令。
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -835,19 +814,19 @@ Persistent Flags表示该类参数可以被用于当前命令及其子命令。
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/">kubelet 源码思维导图</a>
+          <a href="/article/kubernetes-notes/operation/kubectl/kubectl-node-shell/">kubectl进入node shell</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">kube-scheduler 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">controller-manager 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">使用etcdadm部署Etcd集群</a>
+          <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
     </ul>
@@ -876,7 +855,7 @@ Persistent Flags表示该类参数可以被用于当前命令及其子命令。
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>

@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,10 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="pod健康检查">Pod健康检查</h1>
-<p>Pod的健康状态由两类探针来检查：<code>LivenessProbe</code>和<code>ReadinessProbe</code>。</p>
-<h2 id="1-探针类型">1. 探针类型</h2>
-<p><strong>1. livenessProbe(存活探针)</strong></p>
+                <div id="vip-container"><h1 id="pod健康检查"><a href="#Pod健康检查" class="headerlink" title="Pod健康检查"></a>Pod健康检查</h1><p>Pod的健康状态由两类探针来检查：<code>LivenessProbe</code>和<code>ReadinessProbe</code>。</p>
+<h2 id="1-探针类型"><a href="#1-探针类型" class="headerlink" title="1. 探针类型"></a>1. 探针类型</h2><p><strong>1. livenessProbe(存活探针)</strong></p>
 <ul>
 <li>表明容器是否正在运行。</li>
 <li>如果存活探测失败，则 kubelet 会杀死容器，并且容器将受到其 <code>重启策略</code>的影响。</li>
@@ -228,8 +226,7 @@
 <li>初始延迟之前的就绪状态默认为 <code>Failure</code>。</li>
 <li>如果容器不提供就绪探针，则默认状态为 <code>Success</code>。</li>
 </ul>
-<h2 id="2-handler">2. Handler</h2>
-<p><code>探针</code>是<code>kubelet</code>对容器执行定期的诊断，主要通过调用容器配置的三类<code>Handler</code>实现：</p>
+<h2 id="2-handler"><a href="#2-Handler" class="headerlink" title="2. Handler"></a>2. Handler</h2><p><code>探针</code>是<code>kubelet</code>对容器执行定期的诊断，主要通过调用容器配置的三类<code>Handler</code>实现：</p>
 <p><strong>Handler的类型</strong>：</p>
 <ul>
 <li><code>ExecAction</code>：在容器内执行指定命令。如果命令退出时返回码为 0 则认为诊断成功。</li>
@@ -242,20 +239,17 @@
 <li><code>失败</code>：容器未通过诊断。</li>
 <li><code>未知</code>：诊断失败，因此不会采取任何行动。</li>
 </ul>
-<h2 id="3-探针使用方式">3. 探针使用方式</h2>
-<ul>
+<h2 id="3-探针使用方式"><a href="#3-探针使用方式" class="headerlink" title="3. 探针使用方式"></a>3. 探针使用方式</h2><ul>
 <li>如果容器异常可以自动崩溃，则不一定要使用探针，可以由Pod的<code>restartPolicy</code>执行重启操作。</li>
 <li><code>存活探针</code>适用于希望容器探测失败后被杀死并重新启动，需要指定<code>restartPolicy</code> 为 Always 或 OnFailure。</li>
 <li><code>就绪探针</code>适用于希望Pod在不能正常接收流量的时候被剔除，并且在就绪探针探测成功后才接收流量。</li>
 </ul>
 <p>存活探针由 kubelet 来执行，因此所有的请求都在 kubelet 的网络命名空间中进行。</p>
-<h3 id="31-livenessprobe参数">3.1. LivenessProbe参数</h3>
-<ul>
+<h3 id="31-livenessprobe参数"><a href="#3-1-LivenessProbe参数" class="headerlink" title="3.1. LivenessProbe参数"></a>3.1. LivenessProbe参数</h3><ul>
 <li><strong>initialDelaySeconds</strong>：启动容器后首次进行健康检查的等待时间，单位为秒。</li>
 <li><strong>timeoutSeconds</strong>:健康检查发送请求后等待响应的时间，如果超时响应kubelet则认为容器非健康，重启该容器，单位为秒。</li>
 </ul>
-<h3 id="32-livenessprobe三种实现方式">3.2. LivenessProbe三种实现方式</h3>
-<p>1）ExecAction:在一个容器内部执行一个命令，如果该命令状态返回值为0，则表明容器健康。</p>
+<h3 id="32-livenessprobe三种实现方式"><a href="#3-2-LivenessProbe三种实现方式" class="headerlink" title="3.2. LivenessProbe三种实现方式"></a>3.2. LivenessProbe三种实现方式</h3><p>1）ExecAction:在一个容器内部执行一个命令，如果该命令状态返回值为0，则表明容器健康。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-exec</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">tomcagcr.io/google_containers/busybox</span></span><br><span class="line">    <span class="attr">args:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/bin/sh</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">ok</span> <span class="string">&gt;</span> <span class="string">/tmp/health;sleep</span> <span class="number">10</span><span class="string">;rm</span> <span class="string">-fr</span> <span class="string">/tmp/health;sleep</span> <span class="number">600</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">exec:</span></span><br><span class="line">        <span class="attr">command:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">cat</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">/tmp/health</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
 <p>2）TCPSocketAction:通过容器IP地址和端口号执行TCP检查，如果能够建立TCP连接，则表明容器健康。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">pod-with-healthcheck</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containnerPort:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">livenessProbe:</span></span><br><span class="line">      <span class="attr">tcpSocket:</span></span><br><span class="line">        <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
@@ -266,7 +260,23 @@
 <li><a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/</a></li>
 <li>《Kubernetes权威指南》</li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -279,7 +289,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/concepts/pod/pod-scheduler/" data-toggle="tooltip" data-placement="top" title="Pod调度">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/concepts/pod/pod-lifecycle/" data-toggle="tooltip" data-placement="top" title="Pod生命周期">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

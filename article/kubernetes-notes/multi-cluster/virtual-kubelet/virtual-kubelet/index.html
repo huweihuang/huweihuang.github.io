@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,13 +212,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-简介">1. 简介</h1>
-<p><code>Virtual Kubelet</code>是 <a href="https://kubernetes.io/docs/reference/generated/kubelet/" target="_blank" rel="noopener">Kubernetes kubelet</a> 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他<code>提供者（provider）</code>提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、<a href="https://github.com/Azure/iot-edge-virtual-kubelet-provider" target="_blank" rel="noopener">IoT Edge</a>等。</p>
+                <div id="vip-container"><h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h1><p><code>Virtual Kubelet</code>是 <a href="https://kubernetes.io/docs/reference/generated/kubelet/" target="_blank" rel="noopener">Kubernetes kubelet</a> 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他<code>提供者（provider）</code>提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、<a href="https://github.com/Azure/iot-edge-virtual-kubelet-provider" target="_blank" rel="noopener">IoT Edge</a>等。</p>
 <p>一句话概括：Kubernetes API on top, programmable back。</p>
-<h1 id="2-架构图">2. 架构图</h1>
-<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1566560767/article/kubernetes/virtual-kubelet/vk-diagram.svg">
-<h1 id="3-功能">3. 功能</h1>
-<p>virtual kubelet提供一个可以自定义k8s node的依赖库。</p>
+<h1 id="2-架构图"><a href="#2-架构图" class="headerlink" title="2. 架构图"></a>2. 架构图</h1><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1566560767/article/kubernetes/virtual-kubelet/vk-diagram.svg"></p>
+<h1 id="3-功能"><a href="#3-功能" class="headerlink" title="3. 功能"></a>3. 功能</h1><p>virtual kubelet提供一个可以自定义k8s node的依赖库。</p>
 <p>目前支持的功能如下：</p>
 <ul>
 <li>创建、删除、更新 pod</li>
@@ -228,8 +225,7 @@
 <li>操作系统</li>
 <li>自定义virtual network</li>
 </ul>
-<h1 id="4-providers">4. Providers</h1>
-<p>virtual kubelet提供一个插件式的<strong>provider</strong>接口，让开发者可以自定义实现传统kubelet的功能。自定义的provider可以用自己的配置文件和环境参数。</p>
+<h1 id="4-providers"><a href="#4-Providers" class="headerlink" title="4. Providers"></a>4. Providers</h1><p>virtual kubelet提供一个插件式的<strong>provider</strong>接口，让开发者可以自定义实现传统kubelet的功能。自定义的provider可以用自己的配置文件和环境参数。</p>
 <p>自定义的provider必须提供以下功能：</p>
 <ul>
 <li>提供pod、容器、资源的生命周期管理的功能</li>
@@ -242,37 +238,28 @@
 <li><a href="https://github.com/virtual-kubelet/azure-aci" target="_blank" rel="noopener">Azure Container Instances Provider</a></li>
 <li><a href="https://github.com/virtual-kubelet/aws-fargate" target="_blank" rel="noopener">AWS Fargate Provider</a></li>
 </ul>
-<h1 id="5-自定义provider">5. 自定义provider</h1>
-<p>创建自定义provider的目录。</p>
+<h1 id="5-自定义provider"><a href="#5-自定义provider" class="headerlink" title="5. 自定义provider"></a>5. 自定义provider</h1><p>创建自定义provider的目录。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/virtual-kubelet/virtual-kubelet</span><br><span class="line"><span class="built_in">cd</span> virtual-kubelet</span><br><span class="line">mkdir providers/my-provider</span><br></pre></td></tr></table></figure>
-<h2 id="51-podlifecylcehandler">5.1. PodLifecylceHandler</h2>
-<p>当pod被k8s创建、更新、删除时，会调用以下方法。</p>
+<h2 id="51-podlifecylcehandler"><a href="#5-1-PodLifecylceHandler" class="headerlink" title="5.1. PodLifecylceHandler"></a>5.1. PodLifecylceHandler</h2><p>当pod被k8s创建、更新、删除时，会调用以下方法。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PodLifecycleHandler <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// CreatePod takes a Kubernetes Pod and deploys it within the provider.</span></span><br><span class="line">    CreatePod(ctx context.Context, pod *corev1.Pod) error</span><br><span class="line"></span><br><span class="line">    <span class="comment">// UpdatePod takes a Kubernetes Pod and updates it within the provider.</span></span><br><span class="line">    UpdatePod(ctx context.Context, pod *corev1.Pod) error</span><br><span class="line"></span><br><span class="line">    <span class="comment">// DeletePod takes a Kubernetes Pod and deletes it from the provider.</span></span><br><span class="line">    DeletePod(ctx context.Context, pod *corev1.Pod) error</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GetPod retrieves a pod by name from the provider (can be cached).</span></span><br><span class="line">    GetPod(ctx context.Context, namespace, name <span class="keyword">string</span>) (*corev1.Pod, error)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GetPodStatus retrieves the status of a pod by name from the provider.</span></span><br><span class="line">    GetPodStatus(ctx context.Context, namespace, name <span class="keyword">string</span>) (*corev1.PodStatus, error)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// GetPods retrieves a list of all pods running on the provider (can be cached).</span></span><br><span class="line">    GetPods(context.Context) ([]*corev1.Pod, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>PodLifecycleHandler</code>是被<code>PodController</code>来调用，来管理被分配到node上的pod。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pc, _ := node.NewPodController(podControllerConfig) <span class="comment">// &lt;-- instatiates the pod controller</span></span><br><span class="line">pc.Run(ctx) <span class="comment">// &lt;-- starts watching for pods to be scheduled on the node</span></span><br></pre></td></tr></table></figure>
-<h2 id="52-podnotifieroptional">5.2. PodNotifier(optional)</h2>
-<p><code>PodNotifier</code>是可选实现，该接口主要用来通知virtual kubelet的pod状态变化。如果没有实现该接口，virtual-kubelet会定期检查所有pod的状态。</p>
+<h2 id="52-podnotifieroptional"><a href="#5-2-PodNotifier-optional" class="headerlink" title="5.2. PodNotifier(optional)"></a>5.2. PodNotifier(optional)</h2><p><code>PodNotifier</code>是可选实现，该接口主要用来通知virtual kubelet的pod状态变化。如果没有实现该接口，virtual-kubelet会定期检查所有pod的状态。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> PodNotifier <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// NotifyPods instructs the notifier to call the passed in function when</span></span><br><span class="line">    <span class="comment">// the pod status changes.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// NotifyPods should not block callers.</span></span><br><span class="line">    NotifyPods(context.Context, <span class="function"><span class="keyword">func</span><span class="params">(*corev1.Pod)</span>)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="53-nodeprovider">5.3. NodeProvider</h2>
-<p><code>NodeProvider</code>用来通知virtual-kubelet关于node状态的变化，virtual-kubelet会定期检查node是状态并相应地更新k8s。</p>
+<h2 id="53-nodeprovider"><a href="#5-3-NodeProvider" class="headerlink" title="5.3. NodeProvider"></a>5.3. NodeProvider</h2><p><code>NodeProvider</code>用来通知virtual-kubelet关于node状态的变化，virtual-kubelet会定期检查node是状态并相应地更新k8s。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> NodeProvider <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// Ping checks if the node is still active.</span></span><br><span class="line">    <span class="comment">// This is intended to be lightweight as it will be called periodically as a</span></span><br><span class="line">    <span class="comment">// heartbeat to keep the node marked as ready in Kubernetes.</span></span><br><span class="line">    Ping(context.Context) error</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NotifyNodeStatus is used to asynchronously monitor the node.</span></span><br><span class="line">    <span class="comment">// The passed in callback should be called any time there is a change to the</span></span><br><span class="line">    <span class="comment">// node's status.</span></span><br><span class="line">    <span class="comment">// This will generally trigger a call to the Kubernetes API server to update</span></span><br><span class="line">    <span class="comment">// the status.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// NotifyNodeStatus should not block callers.</span></span><br><span class="line">    NotifyNodeStatus(ctx context.Context, cb <span class="function"><span class="keyword">func</span><span class="params">(*corev1.Node)</span>)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>NodeProvider</code>是被NodeController调用，来管理k8s中的node对象。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nc, _ := node.NewNodeController(nodeProvider, nodeSpec) <span class="comment">// &lt;-- instantiate a node controller from a node provider and a kubernetes node spec</span></span><br><span class="line">nc.Run(ctx) <span class="comment">// &lt;-- creates the node in kubernetes and starts up he controller</span></span><br></pre></td></tr></table></figure>
-<h2 id="54-测试">5.4. 测试</h2>
-<p>进入到项目根目录</p>
+<h2 id="54-测试"><a href="#5-4-测试" class="headerlink" title="5.4. 测试"></a>5.4. 测试</h2><p>进入到项目根目录</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-<h2 id="55-示例代码">5.5. 示例代码</h2>
-<ul>
-<li>
-<p>Azure Container Instances Provider</p>
+<h2 id="55-示例代码"><a href="#5-5-示例代码" class="headerlink" title="5.5. 示例代码"></a>5.5. 示例代码</h2><ul>
+<li><p>Azure Container Instances Provider</p>
 <p><a href="https://github.com/virtual-kubelet/azure-aci/blob/master/aci.go#L541" target="_blank" rel="noopener">https://github.com/virtual-kubelet/azure-aci/blob/master/aci.go#L541</a></p>
 </li>
-<li>
-<p>Alibaba Cloud ECI Provider</p>
+<li><p>Alibaba Cloud ECI Provider</p>
 <p><a href="https://github.com/virtual-kubelet/alibabacloud-eci/blob/master/eci.go#L177" target="_blank" rel="noopener">https://github.com/virtual-kubelet/alibabacloud-eci/blob/master/eci.go#L177</a></p>
 </li>
-<li>
-<p>AWS Fargate Provider</p>
+<li><p>AWS Fargate Provider</p>
 <p><a href="https://github.com/virtual-kubelet/aws-fargate/blob/master/provider.go#L110" target="_blank" rel="noopener">https://github.com/virtual-kubelet/aws-fargate/blob/master/provider.go#L110</a></p>
 </li>
 </ul>
@@ -281,7 +268,23 @@
 <li><a href="https://github.com/virtual-kubelet/virtual-kubelet" target="_blank" rel="noopener">https://github.com/virtual-kubelet/virtual-kubelet</a></li>
 <li><a href="https://virtual-kubelet.io/docs/" target="_blank" rel="noopener">https://virtual-kubelet.io/docs/</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -289,12 +292,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/" data-toggle="tooltip" data-placement="top" title="Virtual Kubelet命令">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/" data-toggle="tooltip" data-placement="top" title="Etcd中的k8s数据">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/trouble-shooting/pod-image-error/" data-toggle="tooltip" data-placement="top" title="镜像拉取失败问题">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/" data-toggle="tooltip" data-placement="top" title="Virtual Kubelet命令">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

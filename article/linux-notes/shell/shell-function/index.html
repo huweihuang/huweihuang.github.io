@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,19 +212,16 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h1 id="1-函数定义">1. 函数定义</h1>
-<p>函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。Shell 也支持函数。Shell 函数必须先定义后使用。</p>
+                <div id="vip-container"><h1 id="1-函数定义"><a href="#1-函数定义" class="headerlink" title="1. 函数定义"></a>1. 函数定义</h1><p>函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。Shell 也支持函数。Shell 函数必须先定义后使用。</p>
 <p>Shell 函数的定义格式如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">function_name</span></span> () &#123;</span><br><span class="line">    list of commands</span><br><span class="line">    [ <span class="built_in">return</span> value ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>也可以在函数名前加上关键字 function：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">function_name</span></span> () &#123;</span><br><span class="line">    list of commands</span><br><span class="line">    [ <span class="built_in">return</span> value ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="2-函数返回值">2. 函数返回值</h1>
-<p>函数返回值，可以显式增加return语句；如果不加，会将最后一条命令运行结果作为返回值。</p>
+<h1 id="2-函数返回值"><a href="#2-函数返回值" class="headerlink" title="2. 函数返回值"></a>2. 函数返回值</h1><p>函数返回值，可以显式增加return语句；如果不加，会将最后一条命令运行结果作为返回值。</p>
 <p>Shell 函数返回值只能是整数，一般用来表示函数执行成功与否，0表示成功，其他值表示失败。</p>
 <p>如果 return 其他数据，比如一个字符串，往往会得到错误提示：“numeric argument required”。</p>
 <p>如果一定要让函数返回字符串，那么可以先定义一个变量，用来接收函数的计算结果，脚本在需要的时候访问这个变量来获得函数返回值。函数返回值在调用该函数后通过 $?【$?表示上个命令的退出状态，或函数的返回值。】 来获得。</p>
-<h1 id="3-函数调用">3. 函数调用</h1>
-<p>调用函数只需要给出函数名，不需要加括号。</p>
+<h1 id="3-函数调用"><a href="#3-函数调用" class="headerlink" title="3. 函数调用"></a>3. 函数调用</h1><p>调用函数只需要给出函数名，不需要加括号。</p>
 <p>像删除变量一样，删除函数也可以使用 unset 不过要加上 .f 选项</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$unset .f function_name</span><br></pre></td></tr></table></figure>
 <p>如果你希望直接从终端调用函数，可以将函数定义在主目录下的 .profile 文件，这样每次登录后，在命令提示符后面输入函数名字就可以立即调用。</p>
@@ -232,10 +229,10 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Define your function here</span></span><br><span class="line"><span class="function"><span class="title">Hello</span></span> () &#123;</span><br><span class="line">   <span class="built_in">echo</span> <span class="string">"Url is http://see.xidian.edu.cn/cpp/shell/"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># Invoke your function</span></span><br><span class="line">Hello</span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$./test.sh</span><br><span class="line">Hello World</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
-<h1 id="4-函数参数">4. 函数参数</h1>
-<p>在Shell中，调用函数时可以向其传递参数。在函数体内部，通过 $n 的形式来获取参数的值，例如，$1表示第一个参数，$2表示第二个参数…</p>
+<h1 id="4-函数参数"><a href="#4-函数参数" class="headerlink" title="4. 函数参数"></a>4. 函数参数</h1><p>在Shell中，调用函数时可以向其传递参数。在函数体内部，通过 $n 的形式来获取参数的值，例如，$1表示第一个参数，$2表示第二个参数…</p>
 <p>注意，$10 不能获取第十个参数，获取第十个参数需要${10}。当n&gt;=10时，需要使用${n}来获取参数。</p>
 <p>特殊变量用来处理参数:</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -262,6 +259,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>带参数的函数示例：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="function"><span class="title">funWithParam</span></span>()&#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The value of the first parameter is <span class="variable">$1</span> !"</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The value of the second parameter is <span class="variable">$2</span> !"</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The value of the tenth parameter is <span class="variable">$10</span> !"</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The value of the tenth parameter is <span class="variable">$&#123;10&#125;</span> !"</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The value of the eleventh parameter is <span class="variable">$&#123;11&#125;</span> !"</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The amount of the parameters is <span class="variable">$#</span> !"</span>  <span class="comment"># 参数个数</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"The string of the parameters is $* !"</span>  <span class="comment"># 传递给函数的所有参数</span></span><br><span class="line">&#125;</span><br><span class="line">funWithParam 1 2 3 4 5 6 7 8 9 34 73</span><br></pre></td></tr></table></figure>
 <p>运行脚本：</p>
@@ -270,7 +268,23 @@
 <ul>
 <li><a href="http://c.biancheng.net/cpp/shell/" target="_blank" rel="noopener">http://c.biancheng.net/cpp/shell/</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>

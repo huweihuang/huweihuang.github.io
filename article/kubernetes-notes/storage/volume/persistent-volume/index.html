@@ -142,6 +142,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -150,13 +157,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,21 +212,15 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="1-pv概述">1. PV概述</h2>
-<p><code>PersistentVolume</code>（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。</p>
-<h2 id="2-pv和pvc的生命周期">2. PV和PVC的生命周期</h2>
-<h3 id="21-配置provision">2.1. 配置（Provision）</h3>
-<p>有两种方式来配置 PV：静态或动态。</p>
+                <div id="vip-container"><h2 id="1-pv概述"><a href="#1-PV概述" class="headerlink" title="1. PV概述"></a>1. PV概述</h2><p><code>PersistentVolume</code>（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。</p>
+<h2 id="2-pv和pvc的生命周期"><a href="#2-PV和PVC的生命周期" class="headerlink" title="2. PV和PVC的生命周期"></a>2. PV和PVC的生命周期</h2><h3 id="21-配置provision"><a href="#2-1-配置（Provision）" class="headerlink" title="2.1. 配置（Provision）"></a>2.1. 配置（Provision）</h3><p>有两种方式来配置 PV：静态或动态。</p>
 <p><strong>1、静态</strong></p>
 <p>手动创建PV，可供k8s集群中的对象消费。</p>
 <p><strong>2、动态</strong></p>
 <p>可以通过<code>StorageClass</code>和具体的<code>Provisioner</code>（例如<code>nfs-client-provisioner</code>）来动态地创建和删除PV。</p>
-<h3 id="22-绑定">2.2. 绑定</h3>
-<p>在动态配置的情况下，用户创建了特定的PVC，k8s会监听新的PVC，并寻找匹配的PV绑定。一旦绑定后，这种绑定是排他性的，PVC和PV的绑定是一对一的映射。</p>
-<h3 id="23-使用">2.3. 使用</h3>
-<p>Pod 使用PVC作为卷。集群检查PVC以查找绑定的卷并为集群挂载该卷。用户通过在 Pod 的 volume 配置中包含 <code>persistentVolumeClaim</code> 来调度 Pod 并访问用户声明的 PV。</p>
-<h3 id="24-回收">2.4. 回收</h3>
-<p>PV的回收策略可以设定PVC在释放后如何处理对应的Volume，目前有 <code>Retained</code>， <code>Recycled</code>和<code>Deleted</code>三种策略。</p>
+<h3 id="22-绑定"><a href="#2-2-绑定" class="headerlink" title="2.2. 绑定"></a>2.2. 绑定</h3><p>在动态配置的情况下，用户创建了特定的PVC，k8s会监听新的PVC，并寻找匹配的PV绑定。一旦绑定后，这种绑定是排他性的，PVC和PV的绑定是一对一的映射。</p>
+<h3 id="23-使用"><a href="#2-3-使用" class="headerlink" title="2.3. 使用"></a>2.3. 使用</h3><p>Pod 使用PVC作为卷。集群检查PVC以查找绑定的卷并为集群挂载该卷。用户通过在 Pod 的 volume 配置中包含 <code>persistentVolumeClaim</code> 来调度 Pod 并访问用户声明的 PV。</p>
+<h3 id="24-回收"><a href="#2-4-回收" class="headerlink" title="2.4. 回收"></a>2.4. 回收</h3><p>PV的回收策略可以设定PVC在释放后如何处理对应的Volume，目前有 <code>Retained</code>， <code>Recycled</code>和<code>Deleted</code>三种策略。</p>
 <p><strong>1、保留</strong>（Retain）</p>
 <p>保留策略允许手动回收资源，当删除PVC的时候，PV仍然存在，可以通过以下步骤回收卷：</p>
 <ol>
@@ -244,8 +238,7 @@
 <p>动态配置的卷继承其<code>StorageClass</code>的回收策略，默认为Delete，即当用户删除PVC的时候，会自动执行PV的删除策略。</p>
 <p>如果要修改PV的回收策略，可执行以下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Get pv </span></span><br><span class="line">kubectl get pv</span><br><span class="line"><span class="comment"># Change policy to Retaion</span></span><br><span class="line">kubectl patch pv &lt;pv_name&gt; -p ‘&#123;“spec”:&#123;“persistentVolumeReclaimPolicy”:“Retain”&#125;&#125;’</span><br></pre></td></tr></table></figure>
-<h2 id="3-pv的类型">3. PV的类型</h2>
-<p><code>PersistentVolume</code> 类型以插件形式实现。以下仅列部分常用类型：</p>
+<h2 id="3-pv的类型"><a href="#3-PV的类型" class="headerlink" title="3. PV的类型"></a>3. PV的类型</h2><p><code>PersistentVolume</code> 类型以插件形式实现。以下仅列部分常用类型：</p>
 <ul>
 <li>GCEPersistentDisk</li>
 <li>AWSElasticBlockStore</li>
@@ -254,15 +247,11 @@
 <li>CephFS</li>
 <li>Glusterfs</li>
 </ul>
-<h2 id="4-pv的属性">4. PV的属性</h2>
-<p>每个<code>PV</code> 配置中都包含一个 <code>sepc</code>规格字段和一个 <code>status</code> 卷状态字段。</p>
+<h2 id="4-pv的属性"><a href="#4-PV的属性" class="headerlink" title="4. PV的属性"></a>4. PV的属性</h2><p>每个<code>PV</code> 配置中都包含一个 <code>sepc</code>规格字段和一个 <code>status</code> 卷状态字段。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolume</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="attr">pv.kubernetes.io/provisioned-by:</span> <span class="string">fuseim.pri/ifs</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="number">2018</span><span class="number">-07</span><span class="string">-12T06:46:48Z</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default-test-web-0-pvc-58cf5ec1-859f-11e8-bb61-005056b83985</span></span><br><span class="line">  <span class="attr">resourceVersion:</span> <span class="string">"100163256"</span></span><br><span class="line">  <span class="attr">selfLink:</span> <span class="string">/api/v1/persistentvolumes/default-test-web-0-pvc-58cf5ec1-859f-11e8-bb61-005056b83985</span></span><br><span class="line">  <span class="attr">uid:</span> <span class="string">59796ba3-859f-11e8-9c50-c81f66bcff65</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">capacity:</span></span><br><span class="line">    <span class="attr">storage:</span> <span class="string">2Gi</span></span><br><span class="line">  <span class="attr">volumeMode:</span> <span class="string">Filesystem</span>  </span><br><span class="line">  <span class="attr">claimRef:</span></span><br><span class="line">    <span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-web-0</span></span><br><span class="line">    <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">    <span class="attr">resourceVersion:</span> <span class="string">"100163248"</span></span><br><span class="line">    <span class="attr">uid:</span> <span class="string">58cf5ec1-859f-11e8-bb61-005056b83985</span></span><br><span class="line">  <span class="attr">nfs:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/data/nfs-storage/default-test-web-0-pvc-58cf5ec1-859f-11e8-bb61-005056b83985</span></span><br><span class="line">    <span class="attr">server:</span> <span class="number">172.16</span><span class="number">.201</span><span class="number">.54</span></span><br><span class="line">  <span class="attr">persistentVolumeReclaimPolicy:</span> <span class="string">Delete</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">managed-nfs-storage</span></span><br><span class="line">  <span class="attr">mountOptions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">hard</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nfsvers=4.1</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">phase:</span> <span class="string">Bound</span></span><br></pre></td></tr></table></figure>
-<h3 id="41-capacity">4.1. Capacity</h3>
-<p>给PV设置特定的<code>存储容量</code>，更多 <code>capacity</code> 可参考Kubernetes <a href="https://git.k8s.io/community/contributors/design-proposals/scheduling/resources.md" target="_blank" rel="noopener">资源模型</a> 。</p>
-<h3 id="42-volume-mode">4.2. Volume Mode</h3>
-<p><code>volumeMode</code> 的有效值可以是<code>Filesystem</code>或<code>Block</code>。如果未指定，volumeMode 将默认为<code>Filesystem</code>。</p>
-<h3 id="43-access-modes">4.3. Access Modes</h3>
-<p>访问模式包括：</p>
+<h3 id="41-capacity"><a href="#4-1-Capacity" class="headerlink" title="4.1. Capacity"></a>4.1. Capacity</h3><p>给PV设置特定的<code>存储容量</code>，更多 <code>capacity</code> 可参考Kubernetes <a href="https://git.k8s.io/community/contributors/design-proposals/scheduling/resources.md" target="_blank" rel="noopener">资源模型</a> 。</p>
+<h3 id="42-volume-mode"><a href="#4-2-Volume-Mode" class="headerlink" title="4.2. Volume Mode"></a>4.2. Volume Mode</h3><p><code>volumeMode</code> 的有效值可以是<code>Filesystem</code>或<code>Block</code>。如果未指定，volumeMode 将默认为<code>Filesystem</code>。</p>
+<h3 id="43-access-modes"><a href="#4-3-Access-Modes" class="headerlink" title="4.3. Access Modes"></a>4.3. Access Modes</h3><p>访问模式包括：</p>
 <ul>
 <li><code>ReadWriteOnce</code>——该卷可以被单个节点以读/写模式挂载</li>
 <li><code>ReadOnlyMany</code>——该卷可以被多个节点以只读模式挂载</li>
@@ -278,6 +267,7 @@
 <p>一个卷一次只能使用一种访问模式挂载，即使它支持很多访问模式。</p>
 </blockquote>
 <p>以下只列举部分常用插件：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -338,18 +328,16 @@
 </tr>
 </tbody>
 </table>
-<h3 id="44-class">4.4. Class</h3>
-<p><code>PV</code>可以指定一个<code>StorageClass</code>来动态绑定PV和PVC，其中通过 <code>storageClassName</code> 属性来指定具体的<code>StorageClass</code>，如果没有指定该属性的PV，它只能绑定到不需要特定类的 PVC。</p>
-<h3 id="45-reclaim-policy">4.5. Reclaim Policy</h3>
-<p>回收策略包括：</p>
+</div>
+<h3 id="44-class"><a href="#4-4-Class" class="headerlink" title="4.4. Class"></a>4.4. Class</h3><p><code>PV</code>可以指定一个<code>StorageClass</code>来动态绑定PV和PVC，其中通过 <code>storageClassName</code> 属性来指定具体的<code>StorageClass</code>，如果没有指定该属性的PV，它只能绑定到不需要特定类的 PVC。</p>
+<h3 id="45-reclaim-policy"><a href="#4-5-Reclaim-Policy" class="headerlink" title="4.5. Reclaim Policy"></a>4.5. Reclaim Policy</h3><p>回收策略包括：</p>
 <ul>
 <li><code>Retain</code>（保留）——手动回收</li>
 <li><code>Recycle</code>（回收）——基本擦除（<code>rm -rf /thevolume/*</code>）</li>
 <li><code>Delete</code>（删除）——关联的存储资产（例如 AWS EBS、GCE PD、Azure Disk 和 OpenStack Cinder 卷）将被删除</li>
 </ul>
 <p>当前，只有 NFS 和 HostPath 支持回收策略。AWS EBS、GCE PD、Azure Disk 和 Cinder 卷支持删除策略。</p>
-<h3 id="46-mount-options">4.6. Mount Options</h3>
-<p>Kubernetes 管理员可以指定在节点上为挂载持久卷指定挂载选项。</p>
+<h3 id="46-mount-options"><a href="#4-6-Mount-Options" class="headerlink" title="4.6. Mount Options"></a>4.6. Mount Options</h3><p>Kubernetes 管理员可以指定在节点上为挂载持久卷指定挂载选项。</p>
 <blockquote>
 <p><strong>注意</strong>：不是所有的持久化卷类型都支持挂载选项。</p>
 </blockquote>
@@ -365,8 +353,7 @@
 <li>Cinder （OpenStack 卷存储）</li>
 <li>Glusterfs</li>
 </ul>
-<h3 id="47-phase">4.7. Phase</h3>
-<p>PV可以处于以下的某种状态：</p>
+<h3 id="47-phase"><a href="#4-7-Phase" class="headerlink" title="4.7. Phase"></a>4.7. Phase</h3><p>PV可以处于以下的某种状态：</p>
 <ul>
 <li><code>Available</code>（可用）——一块空闲资源还没有被任何声明绑定</li>
 <li><code>Bound</code>（已绑定）——卷已经被声明绑定</li>
@@ -379,7 +366,23 @@
 <li><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/storage/persistent-volumes/</a></li>
 <li><a href="https://kubernetes.io/docs/tasks/administer-cluster/change-pv-reclaim-policy/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/change-pv-reclaim-policy/</a></li>
 </ul>
+</div>
 
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
                 
 
                 <hr>
@@ -387,12 +390,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/" data-toggle="tooltip" data-placement="top" title="PersistentVolumeClaim 介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/" data-toggle="tooltip" data-placement="top" title="kata配置">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/storage/csi/flexvolume/" data-toggle="tooltip" data-placement="top" title="FlexVolume介绍">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/storage/volume/volume/" data-toggle="tooltip" data-placement="top" title="Volume介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

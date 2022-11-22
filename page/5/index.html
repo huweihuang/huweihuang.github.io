@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/archive/">Archives</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,28 +211,29 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/resource/lxcfs/lxcfs/">
+    <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/">
         <h2 class="post-title">
                         
-            Lxcfs资源视图隔离
+            kubelet 源码思维导图
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 资源视图隔离
-容器中的执行top、free等命令展示出来的CPU，内存等信息是从/proc目录中的相关文件里读取出来的。而容器并没有对/proc，/sys等文件系统做隔离，因此容器中读取出来的CPU和内存的信息是宿主机的信息，与容器实际分配和限制的资源量不同。
-123456/proc/cpuinfo/proc/diskstats/proc/meminfo/proc/stat/proc/......
+            kubelet 源码思维导图源码整体结构图
+
+
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-07-18
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -242,37 +243,29 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">
         <h2 class="post-title">
                         
-            k8s多集群管理的思考
+            kube-scheduler 源码思维导图
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            k8s多集群的思考
-1. 为什么需要多集群
-1、k8s单集群的承载能力有限。
-Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下所有标准的配置：
-
-每个节点的 Pod 数量不超过 100
-节点数不超过 5000
-Pod 总数不超过 150000
-容器总数不超过 300000
+            kube-scheduler 源码思维导图源码整体结构图
 
 
-参考：https://kubernetes.io/......
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-07-10
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#多集群" title="多集群">多集群</a>
             
         </div>
     
@@ -282,30 +275,25 @@ Pod 总数不超过 150000
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/cni/macvlan/">
+    <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">
         <h2 class="post-title">
                         
-            Macvlan介绍
+            使用etcdadm部署Etcd集群
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
-示意图：
-
-2. 四......
+            1. 安装etcdadm在Releases · kubernetes-sigs/etcdadm · GitHub中选择需要部署的版本，示例如下：
+123wget https://github.com/kubernetes-sigs/etcdadm/releases/download/v0.1.5/etcdadm-linux-amd64mv etcdadm-linux-amd64 /usr/b......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-07-10
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -315,28 +303,29 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/cni/cni/">
+    <a href="/article/kubernetes-notes/runtime/docker/docker-notes/">
         <h2 class="post-title">
                         
-            CNI接口介绍
+            Docker学习笔记
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. CNI（Container Network Interface）
-CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
-kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认......
+            Docker学习笔记详见：Docker学习笔记
+
+
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebO......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-07-10
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -355,9 +344,8 @@ kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         </h3>
         <div class="post-content-preview">
-            问题描述
-机器内核版本较低，kubelet启动异常，报错如下：
-1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup sub......
+            问题描述机器内核版本较低，kubelet启动异常，报错如下：
+1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup subs......
         </div>
     </a>
     
@@ -386,9 +374,8 @@ kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         </h3>
         <div class="post-content-preview">
-            问题描述
-内核版本： 5.4.56-200.el7.x86_64
-docker报错
+            问题描述内核版本： 5.4.56-200.el7.x86_64
+docker报错 
 12345May 13 16:54:26 8b26d7a8 dockerd[44352]: time=&quot;2021-05-13T16:54:26.565235530+08:00&quot; level=warning msg=&quot;failed to load plugin io.contain......
         </div>
     </a>
@@ -418,10 +405,9 @@ docker报错
             
         </h3>
         <div class="post-content-preview">
-            问题描述
-容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
+            问题描述容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
 报错如下：
-12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime:......
+12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime: ......
         </div>
     </a>
     
@@ -450,10 +436,9 @@ docker报错
             
         </h3>
         <div class="post-content-preview">
-            问题描述
-1write /proc/self/attr/keycreate: permission denied
+            问题描述1write /proc/self/attr/keycreate: permission denied
 具体报错：
-1kuberuntime_manager.go:758] createPodSandbox for pod "ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b......
+1kuberuntime_manager.go:758] createPodSandbox for pod "ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b)......
         </div>
     </a>
     
@@ -482,9 +467,8 @@ docker报错
             
         </h3>
         <div class="post-content-preview">
-            问题描述
-当使用runc 1.1.3的版本时，如果执行systemctl daemon-reload后，通过exec进入容器则会触发以下错误，无法进入容器。
-1FATA[0000] execing command in container: Internal error occurred: error executing command in container: failed to exe......
+            问题描述当使用runc 1.1.3的版本时，如果执行systemctl daemon-reload后，通过exec进入容器则会触发以下错误，无法进入容器。
+1FATA[0000] execing command in container: Internal error occurred: error executing command in container: failed to exec......
         </div>
     </a>
     
@@ -513,9 +497,7 @@ docker报错
             
         </h3>
         <div class="post-content-preview">
-            流程语句
-1. 条件语句
-12345678910111213141516//在if之后条件语句之前可以添加变量初始化语句，用;号隔离if &lt;条件语句&gt; &#123;    //条件语句不需要用括号括起来，花括号必须存在  //语句体&#125;else&#123;  //语句体&#125;//在有返回值的函数中，不允许将最后的return语句放在if...else...的结构中，......
+            流程语句1. 条件语句12345678910111213141516//在if之后条件语句之前可以添加变量初始化语句，用;号隔离if &lt;条件语句&gt; &#123;    //条件语句不需要用括号括起来，花括号必须存在  //语句体&#125;else&#123;  //语句体&#125;//在有返回值的函数中，不允许将最后的return语句放在if...else...的结构中，否则......
         </div>
     </a>
     
@@ -576,8 +558,6 @@ docker报错
     <!-- no hr -->
     <h5><a href="/tags/">FEATURED TAGS</a></h5>
     <div class="tags">
-        
-            
         
             
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
@@ -660,11 +640,11 @@ docker报错
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -794,19 +774,19 @@ docker报错
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/">kubelet 源码思维导图</a>
+          <a href="/article/kubernetes-notes/operation/kubectl/kubectl-node-shell/">kubectl进入node shell</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">kube-scheduler 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
         <li>
-          <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">controller-manager 源码思维导图</a>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">使用etcdadm部署Etcd集群</a>
+          <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
     </ul>
@@ -835,7 +815,7 @@ docker报错
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>
