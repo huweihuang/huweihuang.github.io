@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -279,8 +279,9 @@
 
 
 
-
-2. 内存地址说明2.1. 内存定义计算机的内存 RAM 可以把它想象成一些有序的盒......
+2. 内存地址说明
+2.1. 内存定义
+计算机的内存 RAM 可以把它想象成一些有序的......
         </div>
     </a>
     
@@ -309,10 +310,11 @@
             
         </h3>
         <div class="post-content-preview">
-            （一）并发基础1.概念并发意味着程序在运行时有多个执行上下文，对应多个调用栈。
+            （一）并发基础
+1.概念
+并发意味着程序在运行时有多个执行上下文，对应多个调用栈。
 并发与并行的区别：
 并发的主流实现模型：
-
 
 
 
@@ -339,7 +341,7 @@
 
 
 协程
-用户态线程，不需要操......
+用户态线程，不需要......
         </div>
     </a>
     
@@ -359,31 +361,20 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/nginx/nginx-proxy/">
+    <a href="/article/linux-notes/nginx/nginx-http/">
         <h2 class="post-title">
                         
-            Nginx作为反向代理
+            Nginx http服务器
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 反向代理简介Nginx可以作为反向代理，接收客户端的请求，并向上游服务器发起新的请求。该请求可以根据客户端请求的URI，客户机参数或其他逻辑进行拆分，原始URL中的任何部分可以以这种方式进行转换。
-1.1. 代理模块指令
+            1. Nginx的系统架构
 
-
-
-指令
-说明
-
-
-
-
-proxy_connect_timeout
-Nginx从接受到请求到连接至上游服务器的最长等待时间
-
-
-proxy_cookie_domai......
+Nginx包含一个单一的master进程和多个worker进程，每个进程都是单进程，并且设计为同时处理成千上万个连接。
+worker进程是处理连接的地方，Nginx使用了操作系统事件机制来快速响应这些请求。
+master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请......
         </div>
     </a>
     
@@ -403,19 +394,32 @@ proxy_cookie_domai......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/nginx/nginx-http/">
+    <a href="/article/linux-notes/nginx/nginx-proxy/">
         <h2 class="post-title">
                         
-            Nginx http服务器
+            Nginx作为反向代理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Nginx的系统架构
-Nginx包含一个单一的master进程和多个worker进程，每个进程都是单进程，并且设计为同时处理成千上万个连接。
-worker进程是处理连接的地方，Nginx使用了操作系统事件机制来快速响应这些请求。
-master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请求......
+            1. 反向代理简介
+Nginx可以作为反向代理，接收客户端的请求，并向上游服务器发起新的请求。该请求可以根据客户端请求的URI，客户机参数或其他逻辑进行拆分，原始URL中的任何部分可以以这种方式进行转换。
+1.1. 代理模块指令
+
+
+
+指令
+说明
+
+
+
+
+proxy_connect_timeout
+Nginx从接受到请求到连接至上游服务器的最长等待时间
+
+
+proxy_cookie_doma......
         </div>
     </a>
     
@@ -444,9 +448,14 @@ master进程负责读取配置文件、处理套接字、派生worker进程、�
             
         </h3>
         <div class="post-content-preview">
-            1. 部署1.1. 使用安装包的方式rpm -ivh nginx-xxx.rpm
-1.2. 使用源代码安装1.2.1. 下载源码包1wget http://blob.wae.haplat.net/nginx/nginx-1.9.13.tar.gz
-1.2.2. 创建临时目录并解压源码包12mkdir $HOME/buildcd $HOME/build &amp;&amp; tar zxvf ......
+            1. 部署
+1.1. 使用安装包的方式
+rpm -ivh nginx-xxx.rpm
+1.2. 使用源代码安装
+1.2.1. 下载源码包
+1wget http://blob.wae.haplat.net/nginx/nginx-1.9.13.tar.gz
+1.2.2. 创建临时目录并解压源码包
+12mkdir $HOME/buildcd $HOME/build &amp;&amp; tar ......
         </div>
     </a>
     
@@ -475,10 +484,11 @@ master进程负责读取配置文件、处理套接字、派生worker进程、�
             
         </h3>
         <div class="post-content-preview">
-            1. 类和实例在Python中所有的数据类型都可以视为对象，也可以自定义对象。自定义的对象数据类型即面向对象中的类（Class）概念。类是抽象的模板，实例是具体的对象。
+            1. 类和实例
+在Python中所有的数据类型都可以视为对象，也可以自定义对象。自定义的对象数据类型即面向对象中的类（Class）概念。类是抽象的模板，实例是具体的对象。
 类的定义
 Python使用class关键字定义类：
-12345678class Student(object):    def __init__(self, name, score):        self.name = ......
+12345678class Student(object):    def __init__(self, name, score):        self.name =......
         </div>
     </a>
     
@@ -507,14 +517,15 @@ Python使用class关键字定义类：
             
         </h3>
         <div class="post-content-preview">
-            1. 切片切片操作（slice），即从list（tuple是一种特殊的list）中获取部分元素。
+            1. 切片
+切片操作（slice），即从list（tuple是一种特殊的list）中获取部分元素。
 
 L[m,n]表示从L[m]~L[n-1]的list。
 L[:n]表示从L[0]~L[n-1]的list。
 L[m:]表示从L[m]~L[len(L)-1]。
 L[-m:]表示倒数m个数的list。
 L[m:n:k]表示从L[m:n]list中每k个取一个数组成一个新的list。
-L[::k]表......
+L[::k]......
         </div>
     </a>
     
@@ -543,9 +554,9 @@ L[::k]表......
             
         </h3>
         <div class="post-content-preview">
-            1. 内置函数python的内置参数详见以下链接，也可以通过help(function_name)来查看具体函数的使用帮助。
+            1. 内置函数
+python的内置参数详见以下链接，也可以通过help(function_name)来查看具体函数的使用帮助。
 http://docs.python.org/3/library/functions.html#abs
-
 
 
 
@@ -596,9 +607,11 @@ h......
             
         </h3>
         <div class="post-content-preview">
-            1. 数据类型和变量​    Python使用缩进来组织代码块，一般使用4个空格的缩进。使用#来注释一行，其他每一行都是一个语句，当语句以冒号:结尾时，缩进的语句视为代码块。Python对大小写敏感。
-1.1 整数​    Python可以处理任意大小的整数，包括负整数，写法与数学上写法一致，例如：-100。如果用十六进制表示，则用前缀为0x和0-9，a-f表示，例如：0xff00。
-1.2......
+            1. 数据类型和变量
+​	Python使用缩进来组织代码块，一般使用4个空格的缩进。使用#来注释一行，其他每一行都是一个语句，当语句以冒号:结尾时，缩进的语句视为代码块。Python对大小写敏感。
+1.1 整数
+​	Python可以处理任意大小的整数，包括负整数，写法与数学上写法一致，例如：-100。如果用十六进制表示，则用前缀为0x和0-9，a-f表示，例如：0xff00。
+1.2 浮点数......
         </div>
     </a>
     
@@ -661,13 +674,13 @@ h......
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -677,19 +690,7 @@ h......
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -701,9 +702,9 @@ h......
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -711,11 +712,11 @@ h......
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -735,9 +736,9 @@ h......
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -745,7 +746,7 @@ h......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -765,9 +766,21 @@ h......
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -879,15 +892,15 @@ h......
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -990,7 +1003,7 @@ h......
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

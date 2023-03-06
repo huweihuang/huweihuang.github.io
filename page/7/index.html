@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,6 +211,50 @@
 
 <div class="post-preview">
 
+    <a href="/article/golang-notes/principle/go-scheduler/">
+        <h2 class="post-title">
+                        
+            Goroutine调度
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+本文主要介绍Go的调度模型。
+
+1. 线程实现模型
+线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
+
+内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。
+
+1.1. 线程模型对比
+
+
+
+线程模型
+用户线程与KSE之间的对应关系
+特点
+优......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-16
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/golang-notes/framework/cobra/cobra-command/">
         <h2 class="post-title">
                         
@@ -223,8 +267,9 @@
             
 本文以cobra-demo为例介绍cobra添加命令的具体使用操作。
 
-0. cobra-democobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
-12345678910111213141516171819202122 $ ./cobra-demo A longer description that......
+0. cobra-demo
+cobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
+12345678910111213141516171819202122 $ ./cobra-demo A longer description tha......
         </div>
     </a>
     
@@ -235,70 +280,6 @@
         <div class="tags">
             
               <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/framework/cobra/cobra-usage/">
-        <h2 class="post-title">
-                        
-            cobra 介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Cobra简介Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
-Cobra主要包括以下部分
-
-Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
-Args:命令执行相关参数。
-Flags:二进制命令的配置参数，可对应配置文件。参数可分为......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-16
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/network/iptables/">
-        <h2 class="post-title">
-                        
-            iptables命令
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            添加iptables规则12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
-删除iptables规则12345# 显示iptables规则行号iptable......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#iptables" title="iptables">iptables</a>
             
         </div>
     
@@ -317,13 +298,16 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分为..
             
         </h3>
         <div class="post-content-preview">
-            1. kubectl命令介绍kubectl的命令语法
+            1. kubectl命令介绍
+kubectl的命令语法
 1kubectl [command] [TYPE] [NAME] [flags]
 其中command，TYPE，NAME，和flags分别是：
 
+
 command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
 
-TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。例如，......
+
+TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。......
         </div>
     </a>
     
@@ -343,27 +327,29 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
+    <a href="/article/linux-notes/network/iptables/">
         <h2 class="post-title">
                         
-            Etcd中的k8s数据
+            iptables命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 读取数据key使用以下命令列出所有的key。
-1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki......
+            添加iptables规则
+12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
+删除iptables规则
+12345# 显示iptables规则行号iptab......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-07-10
+            2020-08-13
         </p>
         <div class="tags">
             
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+              <a href="/tags/#iptables" title="iptables">iptables</a>
             
         </div>
     
@@ -382,8 +368,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            1. 简介Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
-一句话概括：Kubernetes API on top, programma......
+            1. 简介
+Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
+一句话概括：Kubernetes API on top, programm......
         </div>
     </a>
     
@@ -412,7 +399,8 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet —help1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggableb......
+            virtual-kubelet --help
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
         </div>
     </a>
     
@@ -432,6 +420,37 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
+        <h2 class="post-title">
+                        
+            Etcd中的k8s数据
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 读取数据key
+使用以下命令列出所有的key。
+1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pk......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/trouble-shooting/pod-image-error/">
         <h2 class="post-title">
                         
@@ -442,7 +461,8 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
         </h3>
         <div class="post-content-preview">
             常见镜像拉取问题排查
-1. Pod状态为ErrImagePull或ImagePullBackOff12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b  ......
+1. Pod状态为ErrImagePull或ImagePullBackOff
+12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b ......
         </div>
     </a>
     
@@ -474,8 +494,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
 本文介绍通过pod指定 ImagePullSecrets来拉取私有镜像仓库的镜像
 
-1. 创建secretsecret是namespace级别的，创建时候需要指定namespace。
-1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-user......
+1. 创建secret
+secret是namespace级别的，创建时候需要指定namespace。
+1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-use......
         </div>
     </a>
     
@@ -504,9 +525,13 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            1. 镜像仓库的基本操作1.1. 登录镜像仓库1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
-1.2. 拉取镜像1docker pull https://registry.xxx.com/dev/nginx:latest
-1.3. 推送镜像1docker push https://regi......
+            1. 镜像仓库的基本操作
+1.1. 登录镜像仓库
+1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
+1.2. 拉取镜像
+1docker pull https://registry.xxx.com/dev/nginx:latest
+1.3. 推送镜像
+1docker push https://......
         </div>
     </a>
     
@@ -569,13 +594,13 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -585,19 +610,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -609,9 +622,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -619,11 +632,11 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -643,9 +656,9 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -653,7 +666,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -673,9 +686,21 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -787,15 +812,15 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -898,7 +923,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

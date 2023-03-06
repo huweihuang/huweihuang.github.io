@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,16 +212,22 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-安装ceph-fuse"><a href="#1-安装ceph-fuse" class="headerlink" title="1. 安装ceph-fuse"></a>1. 安装ceph-fuse</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y ceph-fuse</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="1-安装ceph-fuse">1. 安装ceph-fuse</h1>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y ceph-fuse</span><br></pre></td></tr></table></figure>
 <p>如果安装失败，先执行以下命令，再执行上述安装命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum -y install epel-release</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rpm -Uhv http://download.ceph.com/rpm-jewel/el7/noarch/ceph-release-1-1.el7.noarch.rpm</span><br></pre></td></tr></table></figure>
-<h1 id="2-配置客户端访问的key"><a href="#2-配置客户端访问的key" class="headerlink" title="2. 配置客户端访问的key"></a>2. 配置客户端访问的key</h1><p>mkdir /etc/ceph/<br>vi /etc/ceph/ceph.client.admin.keyring</p>
+<h1 id="2-配置客户端访问的key">2. 配置客户端访问的key</h1>
+<p>mkdir /etc/ceph/<br>
+vi /etc/ceph/ceph.client.admin.keyring</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[client.admin]</span><br><span class="line">key = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx==</span><br></pre></td></tr></table></figure>
-<h1 id="3-ceph-fuse-挂载"><a href="#3-ceph-fuse-挂载" class="headerlink" title="3. ceph-fuse 挂载"></a>3. ceph-fuse 挂载</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ceph-fuse -m &lt;mons_IP1&gt;:6789,&lt;mons_IP2&gt;:6789,&lt;mons_IP3&gt;:6789 -r &lt;ceph集群中的目录&gt; &lt;宿主机目录&gt; -o nonempty</span><br></pre></td></tr></table></figure>
+<h1 id="3-ceph-fuse-挂载">3. ceph-fuse 挂载</h1>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ceph-fuse -m &lt;mons_IP1&gt;:6789,&lt;mons_IP2&gt;:6789,&lt;mons_IP3&gt;:6789 -r &lt;ceph集群中的目录&gt; &lt;宿主机目录&gt; -o nonempty</span><br></pre></td></tr></table></figure>
 <p>例如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># ceph-fuse -m 192.168.18.3:6789,192.168.18.4:6789,192.168.18.5:6789 -r /pvc-volumes /root/cephfsdir -o nonempty</span><br><span class="line">2019-03-27 17:58:04.435985 7fc61b67cec0 -1 did not load config file, using default settings.</span><br><span class="line">ceph-fuse[18051]: starting ceph client</span><br><span class="line">2019-03-27 17:58:04.469144 7fc61b67cec0 -1 init, newargv = 0x55cecaba81c0 newargc=13</span><br><span class="line">ceph-fuse[18051]: starting fuse</span><br></pre></td></tr></table></figure>
-<h1 id="4-查看是否挂载成功"><a href="#4-查看是否挂载成功" class="headerlink" title="4. 查看是否挂载成功"></a>4. 查看是否挂载成功</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># df -h</span><br><span class="line">Filesystem Size Used Avail Use% Mounted on</span><br><span class="line">...</span><br><span class="line">ceph-fuse 1.6T  8.8G  1.6T   1% /root/cephfsdir</span><br></pre></td></tr></table></figure>
-<h1 id="5-ceph-fuse命令说明"><a href="#5-ceph-fuse命令说明" class="headerlink" title="5. ceph-fuse命令说明"></a>5. ceph-fuse命令说明</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># ceph-fuse --help</span><br><span class="line">2019-03-27 18:01:16.421376 7fae11998ec0 -1 did not load config file, using default settings.</span><br><span class="line">usage: ceph-fuse [-m mon-ip-addr:mon-port] &lt;mount point&gt; [OPTIONS]</span><br><span class="line">  --client_mountpoint/-r &lt;root_directory&gt;</span><br><span class="line">                    use root_directory as the mounted root, rather than the full Ceph tree.</span><br><span class="line"></span><br><span class="line">usage: ceph-fuse mountpoint [options]</span><br><span class="line"></span><br><span class="line">general options:</span><br><span class="line">    -o opt,[opt...]        mount options</span><br><span class="line">    -h   --help            print help</span><br><span class="line">    -V   --version         print version</span><br><span class="line"></span><br><span class="line">FUSE options:</span><br><span class="line">    -d   -o debug          enable debug output (implies -f)</span><br><span class="line">    -f                     foreground operation</span><br><span class="line">    -s                     disable multi-threaded operation</span><br><span class="line"></span><br><span class="line">  --conf/-c FILE    read configuration from the given configuration file</span><br><span class="line">  --id/-i ID        set ID portion of my name</span><br><span class="line">  --name/-n TYPE.ID set name</span><br><span class="line">  --cluster NAME    set cluster name (default: ceph)</span><br><span class="line">  --setuser USER    set uid to user or uid (and gid to user&apos;s gid)</span><br><span class="line">  --setgroup GROUP  set gid to group or gid</span><br><span class="line">  --version         show version and quit</span><br></pre></td></tr></table></figure>
+<h1 id="4-查看是否挂载成功">4. 查看是否挂载成功</h1>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># df -h</span><br><span class="line">Filesystem Size Used Avail Use% Mounted on</span><br><span class="line">...</span><br><span class="line">ceph-fuse 1.6T  8.8G  1.6T   1% /root/cephfsdir</span><br></pre></td></tr></table></figure>
+<h1 id="5-ceph-fuse命令说明">5. ceph-fuse命令说明</h1>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># ceph-fuse --help</span><br><span class="line">2019-03-27 18:01:16.421376 7fae11998ec0 -1 did not load config file, using default settings.</span><br><span class="line">usage: ceph-fuse [-m mon-ip-addr:mon-port] &lt;mount point&gt; [OPTIONS]</span><br><span class="line">  --client_mountpoint/-r &lt;root_directory&gt;</span><br><span class="line">                    use root_directory as the mounted root, rather than the full Ceph tree.</span><br><span class="line"></span><br><span class="line">usage: ceph-fuse mountpoint [options]</span><br><span class="line"></span><br><span class="line">general options:</span><br><span class="line">    -o opt,[opt...]        mount options</span><br><span class="line">    -h   --help            print help</span><br><span class="line">    -V   --version         print version</span><br><span class="line"></span><br><span class="line">FUSE options:</span><br><span class="line">    -d   -o debug          enable debug output (implies -f)</span><br><span class="line">    -f                     foreground operation</span><br><span class="line">    -s                     disable multi-threaded operation</span><br><span class="line"></span><br><span class="line">  --conf/-c FILE    read configuration from the given configuration file</span><br><span class="line">  --id/-i ID        set ID portion of my name</span><br><span class="line">  --name/-n TYPE.ID set name</span><br><span class="line">  --cluster NAME    set cluster name (default: ceph)</span><br><span class="line">  --setuser USER    set uid to user or uid (and gid to user&apos;s gid)</span><br><span class="line">  --setgroup GROUP  set gid to group or gid</span><br><span class="line">  --version         show version and quit</span><br></pre></td></tr></table></figure>
 </div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
@@ -246,12 +252,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/tools/ansible-usage/" data-toggle="tooltip" data-placement="top" title="ansible的使用">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/vim/basic-vimrc/" data-toggle="tooltip" data-placement="top" title="basic vimrc">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/tools/confd-usage/" data-toggle="tooltip" data-placement="top" title="confd的使用">Next Post &rarr;</a>
+                            <a href="/article/linux-notes/tools/ssh-tips/" data-toggle="tooltip" data-placement="top" title="ssh tips">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -525,7 +531,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

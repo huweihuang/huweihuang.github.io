@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,37 +212,73 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-etcdctl介绍"><a href="#1-etcdctl介绍" class="headerlink" title="1. etcdctl介绍"></a>1. etcdctl介绍</h1><p>etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。</p>
+                <div id="vip-container"><h1 id="1-etcdctl介绍">1. etcdctl介绍</h1>
+<p>etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。</p>
 <p>用法：etcdctl [global options] command [command options][args…]</p>
-<h1 id="2-etcd常用命令"><a href="#2-Etcd常用命令" class="headerlink" title="2. Etcd常用命令"></a>2. Etcd常用命令</h1><h2 id="21-数据库操作命令"><a href="#2-1-数据库操作命令" class="headerlink" title="2.1. 数据库操作命令"></a>2.1. 数据库操作命令</h2><p>etcd 在键的组织上采用了层次化的空间结构（类似于文件系统中目录的概念），数据库操作围绕对键值和目录的 CRUD [增删改查]（符合 REST 风格的一套操作：Create, Read, Update, Delete）完整生命周期的管理。</p>
-<p>具体的命令选项参数可以通过 etcdctl command —help来获取相关帮助。</p>
-<h2 id="211-对象为键值"><a href="#2-1-1-对象为键值" class="headerlink" title="2.1.1. 对象为键值"></a>2.1.1. 对象为键值</h2><ol>
-<li><h3 id="set增无论是否存在etcdctl-set-key-value"><a href="#set-增-无论是否存在-etcdctl-set-key-value" class="headerlink" title="set[增:无论是否存在]:etcdctl set key value"></a>set[增:无论是否存在]:etcdctl set key value</h3></li>
-<li><h3 id="mk增必须不存在etcdctl-mk-key-value"><a href="#mk-增-必须不存在-etcdctl-mk-key-value" class="headerlink" title="mk[增:必须不存在]:etcdctl mk key value"></a>mk[增:必须不存在]:etcdctl mk key value</h3></li>
-<li><h3 id="rm删etcdctl-rm-key"><a href="#rm-删-etcdctl-rm-key" class="headerlink" title="rm[删]:etcdctl rm key"></a>rm[删]:etcdctl rm key</h3></li>
-<li><h3 id="update改etcdctl-update-key-value"><a href="#update-改-etcdctl-update-key-value" class="headerlink" title="update[改]:etcdctl update key value"></a>update[改]:etcdctl update key value</h3></li>
-<li><h3 id="get查etcdctl-get-key"><a href="#get-查-etcdctl-get-key" class="headerlink" title="get[查]:etcdctl get key"></a>get[查]:etcdctl get key</h3></li>
+<h1 id="2-etcd常用命令">2. Etcd常用命令</h1>
+<h2 id="21-数据库操作命令">2.1. 数据库操作命令</h2>
+<p>etcd 在键的组织上采用了层次化的空间结构（类似于文件系统中目录的概念），数据库操作围绕对键值和目录的 CRUD [增删改查]（符合 REST 风格的一套操作：Create, Read, Update, Delete）完整生命周期的管理。</p>
+<p>具体的命令选项参数可以通过 etcdctl command --help来获取相关帮助。</p>
+<h2 id="211-对象为键值">2.1.1. 对象为键值</h2>
+<ol>
+<li>
+<h3 id="set增无论是否存在etcdctl-set-key-value">set[增:无论是否存在]:etcdctl set key value</h3>
+</li>
+<li>
+<h3 id="mk增必须不存在etcdctl-mk-key-value">mk[增:必须不存在]:etcdctl mk key value</h3>
+</li>
+<li>
+<h3 id="rm删etcdctl-rm-key">rm[删]:etcdctl rm key</h3>
+</li>
+<li>
+<h3 id="update改etcdctl-update-key-value">update[改]:etcdctl update key value</h3>
+</li>
+<li>
+<h3 id="get查etcdctl-get-key">get[查]:etcdctl get key</h3>
+</li>
 </ol>
-<h2 id="212-对象为目录"><a href="#2-1-2-对象为目录" class="headerlink" title="2.1.2. 对象为目录"></a>2.1.2. 对象为目录</h2><ol>
-<li><h3 id="setdir增无论是否存在etcdctl-setdir-dir"><a href="#setdir-增-无论是否存在-etcdctl-setdir-dir" class="headerlink" title="setdir[增:无论是否存在]:etcdctl setdir dir"></a>setdir[增:无论是否存在]:etcdctl setdir dir</h3></li>
-<li><h3 id="mkdir增必须不存在-etcdctl-mkdir-dir"><a href="#mkdir-增-必须不存在-etcdctl-mkdir-dir" class="headerlink" title="mkdir[增:必须不存在]: etcdctl mkdir dir"></a>mkdir[增:必须不存在]: etcdctl mkdir dir</h3></li>
-<li><h3 id="rmdir删etcdctl-rmdir-dir"><a href="#rmdir-删-etcdctl-rmdir-dir" class="headerlink" title="rmdir[删]:etcdctl rmdir dir"></a>rmdir[删]:etcdctl rmdir dir</h3></li>
-<li><h3 id="updatedir改etcdctl-updatedir-dir"><a href="#updatedir-改-etcdctl-updatedir-dir" class="headerlink" title="updatedir[改]:etcdctl updatedir dir"></a>updatedir[改]:etcdctl updatedir dir</h3></li>
-<li><h3 id="ls查etcdclt-ls"><a href="#ls-查-etcdclt-ls" class="headerlink" title="ls[查]:etcdclt ls"></a>ls[查]:etcdclt ls</h3></li>
+<h2 id="212-对象为目录">2.1.2. 对象为目录</h2>
+<ol>
+<li>
+<h3 id="setdir增无论是否存在etcdctl-setdir-dir">setdir[增:无论是否存在]:etcdctl setdir dir</h3>
+</li>
+<li>
+<h3 id="mkdir增必须不存在-etcdctl-mkdir-dir">mkdir[增:必须不存在]: etcdctl mkdir dir</h3>
+</li>
+<li>
+<h3 id="rmdir删etcdctl-rmdir-dir">rmdir[删]:etcdctl rmdir dir</h3>
+</li>
+<li>
+<h3 id="updatedir改etcdctl-updatedir-dir">updatedir[改]:etcdctl updatedir dir</h3>
+</li>
+<li>
+<h3 id="ls查etcdclt-ls">ls[查]:etcdclt ls</h3>
+</li>
 </ol>
-<h2 id="22-非数据库操作命令"><a href="#2-2-非数据库操作命令" class="headerlink" title="2.2. 非数据库操作命令"></a>2.2. 非数据库操作命令</h2><ol>
-<li><h3 id="backup备份-etcd-的数据"><a href="#backup-备份-etcd-的数据" class="headerlink" title="backup[备份 etcd 的数据]"></a>backup[备份 etcd 的数据]</h3><p>etcdctl backup</p>
+<h2 id="22-非数据库操作命令">2.2. 非数据库操作命令</h2>
+<ol>
+<li>
+<h3 id="backup备份-etcd-的数据">backup[备份 etcd 的数据]</h3>
+<p>etcdctl backup</p>
 </li>
-<li><h3 id="watch监测一个键值的变化一旦键值发生更新就会输出最新的值并退出"><a href="#watch-监测一个键值的变化，一旦键值发生更新，就会输出最新的值并退出" class="headerlink" title="watch[监测一个键值的变化，一旦键值发生更新，就会输出最新的值并退出]"></a>watch[监测一个键值的变化，一旦键值发生更新，就会输出最新的值并退出]</h3><p>etcdctl watch key</p>
+<li>
+<h3 id="watch监测一个键值的变化一旦键值发生更新就会输出最新的值并退出">watch[监测一个键值的变化，一旦键值发生更新，就会输出最新的值并退出]</h3>
+<p>etcdctl watch key</p>
 </li>
-<li><h3 id="exec-watch监测一个键值的变化一旦键值发生更新就执行给定命令"><a href="#exec-watch-监测一个键值的变化，一旦键值发生更新，就执行给定命令" class="headerlink" title="exec-watch[监测一个键值的变化，一旦键值发生更新，就执行给定命令]"></a>exec-watch[监测一个键值的变化，一旦键值发生更新，就执行给定命令]</h3><p>etcdctl exec-watch key —sh -c “ls”</p>
+<li>
+<h3 id="exec-watch监测一个键值的变化一旦键值发生更新就执行给定命令">exec-watch[监测一个键值的变化，一旦键值发生更新，就执行给定命令]</h3>
+<p>etcdctl exec-watch key --sh -c “ls”</p>
 </li>
-<li><h3 id="member通过-list-add-remove-update-命令列出-添加-删除-更新etcd-实例到-etcd-集群中"><a href="#member-通过-list、add、remove、update-命令列出、添加、删除-、更新etcd-实例到-etcd-集群中" class="headerlink" title="member[通过 list、add、remove、update 命令列出、添加、删除 、更新etcd 实例到 etcd 集群中]"></a>member[通过 list、add、remove、update 命令列出、添加、删除 、更新etcd 实例到 etcd 集群中]</h3><p>etcdctl member list；etcdctl member add 实例；etcdctl member remove 实例；etcdctl member update 实例。</p>
+<li>
+<h3 id="member通过-list-add-remove-update-命令列出-添加-删除-更新etcd-实例到-etcd-集群中">member[通过 list、add、remove、update 命令列出、添加、删除 、更新etcd 实例到 etcd 集群中]</h3>
+<p>etcdctl member list；etcdctl member add 实例；etcdctl member remove 实例；etcdctl member update 实例。</p>
 </li>
-<li><h3 id="etcdctl-cluster-health检查集群健康状态"><a href="#etcdctl-cluster-health-检查集群健康状态" class="headerlink" title="etcdctl cluster-health[检查集群健康状态]"></a>etcdctl cluster-health[检查集群健康状态]</h3></li>
+<li>
+<h3 id="etcdctl-cluster-health检查集群健康状态">etcdctl cluster-health[检查集群健康状态]</h3>
+</li>
 </ol>
-<h2 id="23-常用配置参数"><a href="#2-3-常用配置参数" class="headerlink" title="2.3. 常用配置参数"></a>2.3. 常用配置参数</h2><p>设置配置文件，默认为/etc/etcd/etcd.conf。</p>
-<div class="table-container">
+<h2 id="23-常用配置参数">2.3. 常用配置参数</h2>
+<p>设置配置文件，默认为/etc/etcd/etcd.conf。</p>
 <table>
 <thead>
 <tr>
@@ -321,11 +357,10 @@
 </tr>
 <tr>
 <td>-discovery</td>
-<td>用于etcd动态发现，指定etcd发现服务的URL [<a href="https://discovery.etcd.io/],用环境变量表示" target="_blank" rel="noopener">https://discovery.etcd.io/],用环境变量表示</a></td>
+<td>用于etcd动态发现，指定etcd发现服务的URL [<a href="https://discovery.etcd.io/" target="_blank" rel="noopener">https://discovery.etcd.io/</a>],用环境变量表示</td>
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
@@ -350,12 +385,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/etcd/etcd-setup-flags/" data-toggle="tooltip" data-placement="top" title="Etcd启动配置参数">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v3/" data-toggle="tooltip" data-placement="top" title="etcdctl-V3">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v3/" data-toggle="tooltip" data-placement="top" title="etcdctl-V3">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/runtime/docker/docker-architecture/" data-toggle="tooltip" data-placement="top" title="Docker整体架构图">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -629,7 +664,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

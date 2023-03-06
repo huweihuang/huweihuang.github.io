@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,12 +212,15 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。</p>
+                <div id="vip-container"><h2 id="问题描述">问题描述</h2>
+<p>容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。</p>
 <p>报错如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">runtime: mlock of signal stack failed: 12</span><br><span class="line">runtime: increase the mlock <span class="built_in">limit</span> (<span class="built_in">ulimit</span> -l) or</span><br><span class="line">runtime: update your kernel to 5.3.15+, 5.4.2+, or 5.5+</span><br><span class="line">fatal error: mlock failed</span><br><span class="line"></span><br><span class="line">runtime stack:</span><br><span class="line">runtime.throw(0x1a7729f, 0xc)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/panic.go:1112 +0x72</span><br><span class="line">runtime.mlockGsignal(0xc000702300)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/os_linux_x86.go:72 +0x107</span><br><span class="line">runtime.mpreinit(0xc000588380)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/os_linux.go:341 +0x78</span><br><span class="line">runtime.mcommoninit(0xc000588380)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:630 +0x108</span><br><span class="line">runtime.allocm(0xc000072000, 0x1adcb70, 0x0)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:1390 +0x14e</span><br><span class="line">runtime.newm(0x1adcb70, 0xc000072000)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:1704 +0x39</span><br><span class="line">runtime.startm(0x0, 0xc000267e01)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:1869 +0x12a</span><br><span class="line">runtime.wakep(...)</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:1953</span><br><span class="line">runtime.resetspinning()</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:2415 +0x93</span><br><span class="line">runtime.schedule()</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:2527 +0x2de</span><br><span class="line">runtime.mstart1()</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:1104 +0x8e</span><br><span class="line">runtime.mstart()</span><br><span class="line">    /usr/<span class="built_in">local</span>/go/src/runtime/proc.go:1062 +0x6e</span><br><span class="line"></span><br><span class="line">goroutine 1 [runnable, locked to thread]:</span><br><span class="line">github.com/xdg/stringprep.init()</span><br><span class="line">    /root/go/pkg/mod/github.com/xdg/stringprep@v1.0.3/tables.go:443 +0x19087</span><br><span class="line"></span><br><span class="line">goroutine 43 [select]:</span><br><span class="line">go.opencensus.io/stats/view.(*worker).start(0xc00067e800)</span><br><span class="line">    /root/go/pkg/mod/go.opencensus.io@v0.23.0/stats/view/worker.go:276 +0x100</span><br><span class="line">created by go.opencensus.io/stats/view.init.0</span><br><span class="line">    /root/go/pkg/mod/go.opencensus.io@v0.23.0/stats/view/worker.go:34 +0x68</span><br></pre></td></tr></table></figure>
-<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>宿主机的ulimit值比较小，需要将内存的ulimit值调大。</p>
+<h2 id="原因">原因</h2>
+<p>宿主机的ulimit值比较小，需要将内存的ulimit值调大。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">ulimit</span> -l</span><br><span class="line">64</span><br></pre></td></tr></table></figure>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>vi /lib/systemd/system/containerd.service。在containerd.service文件中增加<code>LimitMEMLOCK=infinity</code> 参数。</p>
+<h2 id="解决方案">解决方案</h2>
+<p>vi /lib/systemd/system/containerd.service。在containerd.service文件中增加<code>LimitMEMLOCK=infinity</code> 参数。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=containerd container runtime</span><br><span class="line">Documentation=https://containerd.io</span><br><span class="line">After=network.target <span class="built_in">local</span>-fs.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">ExecStartPre=-/sbin/modprobe overlay</span><br><span class="line">ExecStart=/usr/<span class="built_in">local</span>/bin/containerd</span><br><span class="line"></span><br><span class="line">Type=notify</span><br><span class="line">Delegate=yes</span><br><span class="line">KillMode=process</span><br><span class="line">Restart=always</span><br><span class="line">RestartSec=5</span><br><span class="line"><span class="comment"># Having non-zero Limit*s causes performance problems due to accounting overhead</span></span><br><span class="line"><span class="comment"># in the kernel. We recommend using cgroups to do container-local accounting.</span></span><br><span class="line">LimitMEMLOCK=infinity</span><br><span class="line">LimitNPROC=infinity</span><br><span class="line">LimitCORE=infinity</span><br><span class="line">LimitNOFILE=infinity</span><br><span class="line"><span class="comment"># Comment TasksMax if your systemd version does not supports it.</span></span><br><span class="line"><span class="comment"># Only systemd 226 and above support this version.</span></span><br><span class="line">TasksMax=infinity</span><br><span class="line">OOMScoreAdjust=-999</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
 <p>重启containerd</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart containerd</span><br><span class="line">systemctl status containerd</span><br></pre></td></tr></table></figure>
@@ -245,7 +248,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-subsystem-not-mount/" data-toggle="tooltip" data-placement="top" title="Cgroup子系统无法挂载">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/" data-toggle="tooltip" data-placement="top" title="使用etcdadm部署Etcd集群">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -524,7 +527,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

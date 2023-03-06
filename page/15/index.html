@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -223,7 +223,8 @@
             
 以下内容基于Linux系统，特别为Ubuntu系统
 
-1. 安装kubectl1curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux......
+1. 安装kubectl
+1curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linu......
         </div>
     </a>
     
@@ -253,10 +254,13 @@
         </h3>
         <div class="post-content-preview">
             1. CentOS 安装Docker
+
 建议使用centos7
 
-1.1. 安装Docker1.1.1. 卸载旧版本旧版本的Docker命名为docker或docker-engine，如果有安装旧版本，先卸载旧版本
-12345678910$ sudo yum remove -y docker \                  docker-client \                 ......
+1.1. 安装Docker
+1.1.1. 卸载旧版本
+旧版本的Docker命名为docker或docker-engine，如果有安装旧版本，先卸载旧版本
+12345678910$ sudo yum remove -y docker \                  docker-client \              ......
         </div>
     </a>
     
@@ -288,12 +292,47 @@
             
 以下主要介绍PaaS平台设计架构中使用到的方法论，统称为12-Factor(要素)
 
-简介软件通常会作为一种服务来交付，即软件即服务(SaaS)。12-Factor原则为构建SaaS应用提供了以下的方法论：
+简介
+软件通常会作为一种服务来交付，即软件即服务(SaaS)。12-Factor原则为构建SaaS应用提供了以下的方法论：
 
 使用标准化流程自动配置，减少开发者的学习成本。
 和操作系统解耦，使其可以在各个系统间提供最大的移植性。
 适合部署在现代的云计算平台上，从而在服务器和系统管理方面节省资源。
-将开发环境......
+将开发环......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/node/nodeselector-and-taint/">
+        <h2 class="post-title">
+                        
+            指定节点调度与隔离
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. NodeSelector
+1.1. 概念
+如果需要限制Pod到指定的Node上运行，则可以给Node打标签并给Pod配置NodeSelector。
+1.2. 使用方式
+1.2.1. 给Node打标签
+12345678910111213# get node的namekubectl get nodes# 设置Labelkubectl label nodes &lt;node-name&gt......
         </div>
     </a>
     
@@ -322,17 +361,86 @@
             
         </h3>
         <div class="post-content-preview">
-            1. k8s知识体系以下整理了k8s涉及的相关知识体系。
+            1. k8s知识体系
+以下整理了k8s涉及的相关知识体系。
 
 思维导图：https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2
 2. k8s重点开源项目
+
 TODO
 
 
 
 			
 			
-			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|......
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/resource/quality-of-service/">
+        <h2 class="post-title">
+                        
+            资源服务质量
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Resource Quality of Service
+1. 资源QoS简介
+request值表示容器保证可被分配到资源。limit表示容器可允许使用的最大资源。Pod级别的request和limit是其所有容器的request和limit之和。
+2. Requests and Limits
+Pod可以指定request和limit资源。其中0 &lt;= request &lt;=Node......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/node/safely-drain-node/">
+        <h2 class="post-title">
+                        
+            安全迁移节点
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 迁移Pod
+1.1. 设置节点是否可调度
+确定需要迁移和被迁移的节点，将不允许被迁移的节点设置为不可调度。
+12345678# 查看节点kubectl get nodes# 设置节点为不可调度kubectl cordon &lt;NodeName&gt;# 设置节点为可调度kubectl uncordon &lt;NodeName&gt;
+1.2. 执行kubectl drain命令
+......
         </div>
     </a>
     
@@ -362,102 +470,12 @@ TODO
         </h3>
         <div class="post-content-preview">
             Pod限额（LimitRange）
+
 ResourceQuota对象是限制某个namespace下所有Pod(容器)的资源限额
 LimitRange对象是限制某个namespace单个Pod(容器)的资源限额
 
 LimitRange对象用来定义某个命名空间下某种资源对象的使用限额，其中资源对象包括：Pod、Container、PersistentVolumeClaim。
-1. 为namespa......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/resource/quality-of-service/">
-        <h2 class="post-title">
-                        
-            资源服务质量
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Resource Quality of Service1. 资源QoS简介request值表示容器保证可被分配到资源。limit表示容器可允许使用的最大资源。Pod级别的request和limit是其所有容器的request和limit之和。
-2. Requests and LimitsPod可以指定request和limit资源。其中0 &lt;= request &lt;=Node Al......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/node/nodeselector-and-taint/">
-        <h2 class="post-title">
-                        
-            指定节点调度与隔离
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. NodeSelector1.1. 概念如果需要限制Pod到指定的Node上运行，则可以给Node打标签并给Pod配置NodeSelector。
-1.2. 使用方式1.2.1. 给Node打标签12345678910111213# get node的namekubectl get nodes# 设置Labelkubectl label nodes &lt;node-name&gt; &l......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/node/safely-drain-node/">
-        <h2 class="post-title">
-                        
-            安全迁移节点
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 迁移Pod1.1. 设置节点是否可调度确定需要迁移和被迁移的节点，将不允许被迁移的节点设置为不可调度。
-12345678# 查看节点kubectl get nodes# 设置节点为不可调度kubectl cordon &lt;NodeName&gt;# 设置节点为可调度kubectl uncordon &lt;NodeName&gt;
-1.2. 执行kubectl drain命令1ku......
+1. 为namesp......
         </div>
     </a>
     
@@ -486,8 +504,9 @@ LimitRange对象用来定义某个命名空间下某种资源对象的使用限�
             
         </h3>
         <div class="post-content-preview">
-            1. Supervisor简介Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要求管理的程序是非 daemon 程序，supervisord 会帮你把它转成 daemon 程序，因此如果用 supervisord 来管理进程，进程需要以非daemon的方式启动。  
-例如：管理nginx 的话，必须在 nginx 的配置文件里添加一行设置 dae......
+            1. Supervisor简介
+Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要求管理的程序是非 daemon 程序，supervisord 会帮你把它转成 daemon 程序，因此如果用 supervisord 来管理进程，进程需要以非daemon的方式启动。
+例如：管理nginx 的话，必须在 nginx 的配置文件里添加一行设置 daem......
         </div>
     </a>
     
@@ -507,23 +526,23 @@ LimitRange对象用来定义某个命名空间下某种资源对象的使用限�
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/tools/ansible-usage/">
+    <a href="/article/linux-notes/vim/vim-keymap/">
         <h2 class="post-title">
                         
-            ansible的使用
+            vim 命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 安装以centos为例。
-1yum install -y ansible
-2. 配置默认配置目录在/etc/ansible/，主要有以下两个配置：
+            1. vi的模式
 
-ansible.cfg：ansible的配置文件
-hosts：配置ansible所连接的机器IP信息
-
-2.1. ansible.cfg2.2. hosts12345678910111213141516171819202122232425......
+1.1. 普通模式
+由Shell进入vi编辑器时，首先进入普通模式。在普通模式下，从键盘输入任何字符都被当作命令来解释。普通模式下没有任何提示符，输入命令后立即执行，不需要回车，而且输入的字符不会在屏幕上显示出来。
+1.2. 编辑模式
+编辑模式主要用于文本的编辑。该模式下用户输入的任何字符都被作为文件的内容保存起来，并在屏幕上显示出来。
+1.3. 命令模式
+命令模式下，用......
         </div>
     </a>
     
@@ -533,7 +552,7 @@ hosts：配置ansible所连接的机器IP信息
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#VIM" title="VIM">VIM</a>
             
         </div>
     
@@ -586,13 +605,13 @@ hosts：配置ansible所连接的机器IP信息
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -602,19 +621,7 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -626,9 +633,9 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -636,11 +643,11 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -660,9 +667,9 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -670,7 +677,7 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -690,9 +697,21 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -804,15 +823,15 @@ hosts：配置ansible所连接的机器IP信息
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -915,7 +934,7 @@ hosts：配置ansible所连接的机器IP信息
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

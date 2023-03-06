@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,18 +211,21 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/etcd/etcd-introduction/">
+    <a href="/article/kubernetes-notes/etcd/etcd-auth-and-security/">
         <h2 class="post-title">
                         
-            Etcd介绍
+            Etcd访问控制
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Etcd是什么（what）etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:
+            1. ETCD资源类型
+There are three types of resources in etcd
 
-Secure: automatic TLS with optional client cert authenticat......
+permission resources: users and roles in the user store
+key-value resources: key-value pairs in the key-value store
+settings resources: secur......
         </div>
     </a>
     
@@ -242,20 +245,19 @@ Secure: automatic TLS with optional client cert authenticat......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/etcd/etcd-auth-and-security/">
+    <a href="/article/kubernetes-notes/etcd/etcd-introduction/">
         <h2 class="post-title">
                         
-            Etcd访问控制
+            Etcd介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. ETCD资源类型There are three types of resources in etcd
+            1. Etcd是什么（what）
+etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:
 
-permission resources: users and roles in the user store
-key-value resources: key-value pairs in the key-value store
-settings resources: securi......
+Secure: automatic TLS with optional client cert authentica......
         </div>
     </a>
     
@@ -284,38 +286,8 @@ settings resources: securi......
             
         </h3>
         <div class="post-content-preview">
-            1. Etcd配置参数123456789101112131415161718/ # etcd --helpusage: etcd [flags]       start an etcd server       etcd --version       show the version of etcd       etcd -h | --help       show the help in......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v2/">
-        <h2 class="post-title">
-                        
-            etcdctl-V2
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. etcdctl介绍etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。
-用法：etcdctl [global options] command [command options][args…]
-2. Etcd常用......
+            1. Etcd配置参数
+123456789101112131415161718/ # etcd --helpusage: etcd [flags]       start an etcd server       etcd --version       show the version of etcd       etcd -h | --help       show the help i......
         </div>
     </a>
     
@@ -347,8 +319,9 @@ settings resources: securi......
             
 etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3版本的命令工具的使用方式。
 
-1. etcdctl的安装etcdctl的二进制文件可以在 github.com/coreos/etcd/releases 选择对应的版本下载，例如可以执行以下install_etcdctl.sh的脚本，修改其中的版本信息。
-1234567891011121314#!/bin/ba......
+1. etcdctl的安装
+etcdctl的二进制文件可以在 github.com/coreos/etcd/releases 选择对应的版本下载，例如可以执行以下install_etcdctl.sh的脚本，修改其中的版本信息。
+1234567891011121314#!/bin/b......
         </div>
     </a>
     
@@ -368,90 +341,29 @@ etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3�
 
 <div class="post-preview">
 
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
+    <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v2/">
         <h2 class="post-title">
                         
-            [Docker] Docker源码分析（二）之Docker Daemon
+            etcdctl-V2
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            一、Docker Daemon架构示意图
-Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
-Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
-运行过程的作用有以下几种可能：
-......
+            1. etcdctl介绍
+etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。
+用法：etcdctl [global options] command [command options][args…]
+2. Etcd常......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-07-09
+            2017-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-server/">
-        <h2 class="post-title">
-                        
-            [Docker] Docker源码分析（三）之Docker Server
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            一、Docker Server创建流程Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供API......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-client/">
-        <h2 class="post-title">
-                        
-            [Docker] Docker源码分析（一）之Docker Client
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            一、创建Docker Client​    Docker是一个client/server的架构，通过二进制文件docker创建Docker客户端将请求类型与参数发送给Docker Server，Docker Server具体执行命令调用。Docker Client运行流程图如下：
-说明：本文分析的代码为Docker 1.2.0版本。
-（一）Docker命令flag参数解析Docker Ser......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
             
         </div>
     
@@ -471,11 +383,82 @@ Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请�
         </h3>
         <div class="post-content-preview">
             1. Docker的总架构图
+
 docker是一个C/S模式的架构，后端是一个松耦合架构，模块各司其职。
 
 用户是使用Docker Client与Docker Daemon建立通信，并发送请求给后者。
 Docker Daemon作为Docker架构中的主体部分，首先提供Server的功能使其可以接受Docker Client的请求；
-Engine执行Docker内部的一系列工作，每一项工作都是......
+Engine执行Docker内部的一系列工作，每一项工作都......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
+        <h2 class="post-title">
+                        
+            [Docker] Docker源码分析（二）之Docker Daemon
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            一、Docker Daemon架构示意图
+
+Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
+Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
+运行过程的作用有以下几种可能：......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/runtime/docker/dockerfile-usage/">
+        <h2 class="post-title">
+                        
+            Dockerfile使用说明
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Dockerfile的说明
+dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。
+dockerfile指令分为构建指令和设置指令。
+
+构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。
+设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。
+
+2. Dockerfile指令说明
+2.1. ......
         </div>
     </a>
     
@@ -504,10 +487,47 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         </h3>
         <div class="post-content-preview">
-            1. 基本概念1.1. image layer（镜像层）镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
+            1. 基本概念
+1.1. image layer（镜像层）
+镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
 
 根据上图，镜像层的主要组成部分包括镜像层id，镜像层指针【指向父层】，元数据【layer metadata】包含了docker构建和运行的信息还有父层的层次信息。
-只读层和读写层【top layer】的组成......
+只读层和读写层【top layer】的......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Docker" title="Docker">Docker</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-client/">
+        <h2 class="post-title">
+                        
+            [Docker] Docker源码分析（一）之Docker Client
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            一、创建Docker Client
+​    Docker是一个client/server的架构，通过二进制文件docker创建Docker客户端将请求类型与参数发送给Docker Server，Docker Server具体执行命令调用。
+Docker Client运行流程图如下：
+
+说明：本文分析的代码为Docker 1.2.0版本。
+（一）Docker命令flag参数解析
+Docker......
         </div>
     </a>
     
@@ -570,13 +590,13 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -586,19 +606,7 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -610,9 +618,9 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -620,11 +628,11 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -644,9 +652,9 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -654,7 +662,7 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -674,9 +682,21 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -788,15 +808,15 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -899,7 +919,7 @@ Engine执行Docker内部的一系列工作，每一项工作都是......
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

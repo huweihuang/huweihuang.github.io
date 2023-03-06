@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -220,11 +220,13 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 安装kubevirt1.1. 修改镜像仓库针对私有环境，需要将所需镜像上传到自己的镜像仓库中。
+            1. 安装kubevirt
+1.1. 修改镜像仓库
+针对私有环境，需要将所需镜像上传到自己的镜像仓库中。
 涉及的镜像组件有
 1234virt-operatorvirt-apivirt-controllervirt-launcher
 重命名镜像脚本如下:
-123456789101112131415161718192021222324252627282930#!/bin/bash# kubevirt......
+123456789101112131415161718192021222324252627282930#!/bin/bash# kubevi......
         </div>
     </a>
     
@@ -256,10 +258,12 @@
             
 本文由网络资源整理以作记录
 
-简介Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系统。在多云和混合云场景下，Karmada提供可插拔，全自动化管理多集群应用，实现多云集中管理、高可用性、故障恢复和流量调度。
+简介
+Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系统。在多云和混合云场景下，Karmada提供可插拔，全自动化管理多集群应用，实现多云集中管理、高可用性、故障恢复和流量调度。
 特性
+
 基于K8s原生API的跨集群应用管理，用户可以方便快捷地将应用从单集群迁移到多集群。
-中心式操作和管理Kubernetes集......
+中心式操作和管理Kubernete......
         </div>
     </a>
     
@@ -288,9 +292,12 @@
             
         </h3>
         <div class="post-content-preview">
-            1. k8s版本号说明k8s维护最新三个版本的发布分支（[2022.7.2]当前最新三个版本为1.24、1.23、1.22），Kubernetes 1.19 和更新的版本获得大约 1 年的补丁支持。
-Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本，z 是补丁版本。遵循语义化版本规范。
-2. 最新发行版本1.24最新发行版本：1.24.2 (发布日期: 2......
+            1. k8s版本号说明
+k8s维护最新三个版本的发布分支（[2022.7.2]当前最新三个版本为1.24、1.23、1.22），Kubernetes 1.19 和更新的版本获得大约 1 年的补丁支持。
+Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本，z 是补丁版本。遵循语义化版本规范。
+2. 最新发行版本
+1.24
+最新发行版本：1.24.2 (发布日期......
         </div>
     </a>
     
@@ -310,36 +317,6 @@ Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/trouble-shooting/configmap-yaml-format/">
-        <h2 class="post-title">
-                        
-            ConfigMap多行格式
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题configmap出现多行文本无法正常显示换行格式，而是以\n连接文本，查看和编辑时可读性很差。
-12345678910111213apiVersion: v1data:  config.yaml: "# log options\nlog_level: \"info\"\nlog_output: \"stderr\"\ncert_file:    \"/etc/webhook/certs......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/kubernetes-notes/runtime/containerd/containerd-ctl/">
         <h2 class="post-title">
                         
@@ -349,7 +326,8 @@ Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本
             
         </h3>
         <div class="post-content-preview">
-            crictl1234567#!/bin/bashCrictlVersion=$1CrictlVersion=$&#123;CrictlVersion:-1.24.2&#125;echo "--------------install crictl--------------"wget https://github.com/kubernetes-sigs/cri-tools/releases/d......
+            crictl
+1234567#!/bin/bashCrictlVersion=$1CrictlVersion=$&#123;CrictlVersion:-1.24.2&#125;echo "--------------install crictl--------------"wget https://github.com/kubernetes-sigs/cri-tools/releases/......
         </div>
     </a>
     
@@ -378,7 +356,8 @@ Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本
             
         </h3>
         <div class="post-content-preview">
-            1. Ubuntu安装containerd以下以Ubuntu为例
+            1. Ubuntu安装containerd
+以下以Ubuntu为例
 
 说明：安装containerd与安装docker流程基本一致，差别在于不需要安装docker-ce
 
@@ -386,7 +365,7 @@ containerd: apt-get install -y containerd.io
 docker: apt-get install docker-ce docker-ce-cli containerd.io
 
 
-1. ......
+1.......
         </div>
     </a>
     
@@ -397,6 +376,37 @@ docker: apt-get install docker-ce docker-ce-cli containerd.io
         <div class="tags">
             
               <a href="/tags/#Containerd" title="Containerd">Containerd</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/configmap-yaml-format/">
+        <h2 class="post-title">
+                        
+            ConfigMap多行格式
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            问题
+configmap出现多行文本无法正常显示换行格式，而是以\n连接文本，查看和编辑时可读性很差。
+12345678910111213apiVersion: v1data:  config.yaml: "# log options\nlog_level: \"info\"\nlog_output: \"stderr\"\ncert_file:    \"/etc/webhook/cert......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -420,15 +430,20 @@ TODO
 
 参考：
 
+
 更新：移除 Dockershim 的常见问题 | Kubernetes
+
 
 别慌: Kubernetes 和 Docker | Kubernetes
 
+
 关于 dockershim 移除和使用兼容 CRI 运行时的文章 | Kubernetes
+
 
 KEP-2221: Removing dockershim from kubelete-dockershim
 
-Dockers......
+
+Do......
         </div>
     </a>
     
@@ -458,12 +473,14 @@ Dockers......
             
 本文主要分析OCI，CRI，runc，containerd，cri-containerd，dockershim等组件说明及调用关系。
 
-1. 概述各个组件调用关系图如下：
+1. 概述
+各个组件调用关系图如下：
 
 
 图片来源：https://www.jianshu.com/p/62e71584d1cb
 
-2. OCI（Open Container Initiative）OCI（Open Container Initiative）......
+2. OCI（Open Container Initiative）
+OCI（Open Container Initiativ......
         </div>
     </a>
     
@@ -485,16 +502,21 @@ Dockers......
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/functions/">
+    <a href="/article/golang-notes/introduction/package/go-modules/">
         <h2 class="post-title">
                         
-            函数与闭包
+            go modules的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            函数1. 函数定义与调用12345678910111213141516171819//1、函数组成：关键字func ,函数名，参数列表，返回值，函数体，返回语句//先名称后类型func 函数名(参数列表)(返回值列表)&#123;  //参数列表和返回值列表以变量声明的形式，如果单返回值可以直接加类型  函数体  return    //返回语句&#125;//例子func Add(a,b ......
+            1. Go modules简介
+Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
+2. go mod的使用
+项目文件如下：
+hello.go
+12345678910package mainimport (    "fmt"    "rsc.io/quote")func main......
         </div>
     </a>
     
@@ -514,19 +536,18 @@ Dockers......
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/introduction/package/go-modules/">
+    <a href="/article/golang-notes/basis/functions/">
         <h2 class="post-title">
                         
-            go modules的使用
+            函数与闭包
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Go modules简介Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
-2. go mod的使用项目文件如下：
-hello.go
-12345678910package mainimport (    "fmt"    "rsc.io/quote")func main()......
+            函数
+1. 函数定义与调用
+12345678910111213141516171819//1、函数组成：关键字func ,函数名，参数列表，返回值，函数体，返回语句//先名称后类型func 函数名(参数列表)(返回值列表)&#123;  //参数列表和返回值列表以变量声明的形式，如果单返回值可以直接加类型  函数体  return    //返回语句&#125;//例子func Add(a,......
         </div>
     </a>
     
@@ -589,13 +610,13 @@ hello.go
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -605,19 +626,7 @@ hello.go
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -629,9 +638,9 @@ hello.go
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -639,11 +648,11 @@ hello.go
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -663,9 +672,9 @@ hello.go
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -673,7 +682,7 @@ hello.go
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -693,9 +702,21 @@ hello.go
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -807,15 +828,15 @@ hello.go
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -918,7 +939,7 @@ hello.go
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

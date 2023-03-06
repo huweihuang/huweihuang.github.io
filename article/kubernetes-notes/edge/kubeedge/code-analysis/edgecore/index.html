@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,7 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="kubeedge源码分析之edgecore"><a href="#kubeedge源码分析之edgecore" class="headerlink" title="kubeedge源码分析之edgecore"></a>kubeedge源码分析之edgecore</h1><blockquote>
+                <div id="vip-container"><h1 id="kubeedge源码分析之edgecore">kubeedge源码分析之edgecore</h1>
+<blockquote>
 <p>本文源码分析基于<a href="https://github.com/kubeedge/kubeedge/releases/tag/v1.1.0" target="_blank" rel="noopener">kubeedge v1.1.0</a></p>
 </blockquote>
 <p>本文主要分析<code>edgecore</code>中<code>EdgeCoreCommand</code>的基本流程，具体的<code>edged</code>、<code>edgehub</code>、<code>metamanager</code>等模块的实现逻辑待后续单独文章分析。</p>
@@ -228,24 +229,28 @@
 <li>devicetwin</li>
 <li>edgemesh</li>
 </ul>
-<h1 id="1-main函数"><a href="#1-main函数" class="headerlink" title="1. main函数"></a>1. main函数</h1><p>main入口函数，仍然是cobra命令框架格式。</p>
+<h1 id="1-main函数">1. main函数</h1>
+<p>main入口函数，仍然是cobra命令框架格式。</p>
 <blockquote>
 <p>edge/cmd/edgecore/edgecore.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	command := app.NewEdgeCoreCommand()</span><br><span class="line">	logs.InitLogs()</span><br><span class="line">	<span class="keyword">defer</span> logs.FlushLogs()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := command.Execute(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="2-newedgecorecommand"><a href="#2-NewEdgeCoreCommand" class="headerlink" title="2. NewEdgeCoreCommand"></a>2. NewEdgeCoreCommand</h1><p><code>NewEdgeCoreCommand</code>与<code>NewCloudCoreCommand</code>一样构造对应的cobra command结构体。</p>
+<h1 id="2-newedgecorecommand">2. NewEdgeCoreCommand</h1>
+<p><code>NewEdgeCoreCommand</code>与<code>NewCloudCoreCommand</code>一样构造对应的cobra command结构体。</p>
 <blockquote>
 <p>edge/cmd/edgecore/app/server.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewEdgeCoreCommand create edgecore cmd</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewEdgeCoreCommand</span><span class="params">()</span> *<span class="title">cobra</span>.<span class="title">Command</span></span> &#123;</span><br><span class="line">	opts := options.NewEdgeCoreOptions()</span><br><span class="line">	cmd := &amp;cobra.Command&#123;</span><br><span class="line">		Use: <span class="string">"edgecore"</span>,</span><br><span class="line">		Long: <span class="string">`Edgecore is the core edge part of KubeEdge, which contains six modules: devicetwin, edged, </span></span><br><span class="line"><span class="string">edgehub, eventbus, metamanager, and servicebus. DeviceTwin is responsible for storing device status </span></span><br><span class="line"><span class="string">and syncing device status to the cloud. It also provides query interfaces for applications. Edged is an </span></span><br><span class="line"><span class="string">agent that runs on edge nodes and manages containerized applications and devices. Edgehub is a web socket </span></span><br><span class="line"><span class="string">client responsible for interacting with Cloud Service for the edge computing (like Edge Controller as in the KubeEdge </span></span><br><span class="line"><span class="string">Architecture). This includes syncing cloud-side resource updates to the edge, and reporting </span></span><br><span class="line"><span class="string">edge-side host and device status changes to the cloud. EventBus is a MQTT client to interact with MQTT </span></span><br><span class="line"><span class="string">servers (mosquito), offering publish and subscribe capabilities to other components. MetaManager </span></span><br><span class="line"><span class="string">is the message processor between edged and edgehub. It is also responsible for storing/retrieving metadata </span></span><br><span class="line"><span class="string">to/from a lightweight database (SQLite).ServiceBus is a HTTP client to interact with HTTP servers (REST), </span></span><br><span class="line"><span class="string">offering HTTP client capabilities to components of cloud to reach HTTP servers running at edge. `</span>,</span><br><span class="line">		Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">			verflag.PrintAndExitIfRequested()</span><br><span class="line">			flag.PrintFlags(cmd.Flags())</span><br><span class="line"></span><br><span class="line">			<span class="comment">// To help debugging, immediately log version</span></span><br><span class="line">			klog.Infof(<span class="string">"Version: %+v"</span>, version.Get())</span><br><span class="line"></span><br><span class="line">			registerModules()</span><br><span class="line">			<span class="comment">// start all modules</span></span><br><span class="line">			core.Run()</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	fs := cmd.Flags()</span><br><span class="line">	namedFs := opts.Flags()</span><br><span class="line">	verflag.AddFlags(namedFs.FlagSet(<span class="string">"global"</span>))</span><br><span class="line">	globalflag.AddGlobalFlags(namedFs.FlagSet(<span class="string">"global"</span>), cmd.Name())</span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> namedFs.FlagSets &#123;</span><br><span class="line">		fs.AddFlagSet(f)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	usageFmt := <span class="string">"Usage:\n  %s\n"</span></span><br><span class="line">	cols, _, _ := term.TerminalSize(cmd.OutOrStdout())</span><br><span class="line">	cmd.SetUsageFunc(<span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">		fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine())</span><br><span class="line">		cliflag.PrintSections(cmd.OutOrStderr(), namedFs, cols)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;)</span><br><span class="line">	cmd.SetHelpFunc(<span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">		fmt.Fprintf(cmd.OutOrStdout(), <span class="string">"%s\n\n"</span>+usageFmt, cmd.Long, cmd.UseLine())</span><br><span class="line">		cliflag.PrintSections(cmd.OutOrStdout(), namedFs, cols)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>核心代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opts := options.NewEdgeCoreOptions()</span><br><span class="line">registerModules()</span><br><span class="line">core.Run()</span><br></pre></td></tr></table></figure>
-<h1 id="3-registermodules"><a href="#3-registerModules" class="headerlink" title="3. registerModules"></a>3. registerModules</h1><p>edgecore仍然采用<a href="https://kubeedge.readthedocs.io/en/latest/modules/beehive.html" target="_blank" rel="noopener">Beehive</a>通信框架，模块调用前先注册对应的模块。具体参考<a href="https://www.huweihuang.com/kubernetes-notes/kubeedge/code-analysis/cloudcore.html#3-registermodules">cloudcore.registerModules</a>处的分析，此处不再展开分析注册流程。此处注册的是edgecore中涉及的组件。</p>
+<h1 id="3-registermodules">3. registerModules</h1>
+<p>edgecore仍然采用<a href="https://kubeedge.readthedocs.io/en/latest/modules/beehive.html" target="_blank" rel="noopener">Beehive</a>通信框架，模块调用前先注册对应的模块。具体参考<a href="https://www.huweihuang.com/kubernetes-notes/kubeedge/code-analysis/cloudcore.html#3-registermodules">cloudcore.registerModules</a>处的分析，此处不再展开分析注册流程。此处注册的是edgecore中涉及的组件。</p>
 <blockquote>
 <p>edge/cmd/edgecore/app/server.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// registerModules register all the modules started in edgecore</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">registerModules</span><span class="params">()</span></span> &#123;</span><br><span class="line">	devicetwin.Register()</span><br><span class="line">	edged.Register()</span><br><span class="line">	edgehub.Register()</span><br><span class="line">	eventbus.Register()</span><br><span class="line">	edgemesh.Register()</span><br><span class="line">	metamanager.Register()</span><br><span class="line">	servicebus.Register()</span><br><span class="line">	test.Register()</span><br><span class="line">	dbm.InitDBManager()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="4-corerun"><a href="#4-core-Run" class="headerlink" title="4. core.Run"></a>4. core.Run</h1><p>core.Run与<a href="https://www.huweihuang.com/kubernetes-notes/kubeedge/code-analysis/cloudcore.html#4-corerun">cloudcore.run</a>处逻辑一致不再展开分析。</p>
+<h1 id="4-corerun">4. core.Run</h1>
+<p>core.Run与<a href="https://www.huweihuang.com/kubernetes-notes/kubeedge/code-analysis/cloudcore.html#4-corerun">cloudcore.run</a>处逻辑一致不再展开分析。</p>
 <blockquote>
 <p>vendor/github.com/kubeedge/beehive/pkg/core/core.go</p>
 </blockquote>
@@ -278,7 +283,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/edge/kubeedge/kubeedge-arch/" data-toggle="tooltip" data-placement="top" title="KubeEdge介绍">&larr; Previous Post</a>
+                            <a href="/article/golang-notes/basis/functions/" data-toggle="tooltip" data-placement="top" title="函数与闭包">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -557,7 +562,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

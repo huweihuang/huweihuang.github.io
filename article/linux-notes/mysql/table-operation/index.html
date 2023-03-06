@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,18 +212,26 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="2-数据库操作"><a href="#2-数据库操作" class="headerlink" title="2. 数据库操作"></a>2. 数据库操作</h1><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建数据库</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> &lt;数据库名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#显示数据库</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">databases</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#删除数据</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> &lt;数据库名&gt;</span><br></pre></td></tr></table></figure>
-<h1 id="3-数据表操作"><a href="#3-数据表操作" class="headerlink" title="3. 数据表操作"></a>3. 数据表操作</h1><h2 id="31-创建表"><a href="#3-1-创建表" class="headerlink" title="3.1. 创建表"></a>3.1. 创建表</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> 表名(</span><br><span class="line"></span><br><span class="line">    列名  类型  是否可以为空，</span><br><span class="line"></span><br><span class="line">    列名  类型  是否可以为空</span><br><span class="line"></span><br><span class="line">)<span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="2-数据库操作">2. 数据库操作</h1>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#创建数据库</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> &lt;数据库名&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#显示数据库</span></span><br><span class="line"><span class="keyword">show</span> <span class="keyword">databases</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#删除数据</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> &lt;数据库名&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="3-数据表操作">3. 数据表操作</h1>
+<h2 id="31-创建表">3.1. 创建表</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> 表名(</span><br><span class="line"></span><br><span class="line">    列名  类型  是否可以为空，</span><br><span class="line"></span><br><span class="line">    列名  类型  是否可以为空</span><br><span class="line"></span><br><span class="line">)<span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8</span><br></pre></td></tr></table></figure>
 <ul>
 <li>默认值，创建列时可以指定默认值，当插入数据时如果未主动设置，则自动添加默认值</li>
 <li>自增，如果为某列设置自增列，插入数据时无需设置此列，默认将自增（表中只能有一个自增列）注意：1、对于自增列，必须是索引（含主键）2、对于自增可以设置步长和起始值</li>
 <li>主键，一种特殊的唯一索引，不允许有空值，如果主键使用单个列，则它的值必须唯一，如果是多列，则其组合必须唯一。</li>
 </ul>
-<h2 id="32-查看表"><a href="#3-2-查看表" class="headerlink" title="3.2. 查看表"></a>3.2. 查看表</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">tables</span>;                    <span class="comment"># 查看数据库全部表</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> 表名;             <span class="comment"># 查看表所有内容</span></span><br></pre></td></tr></table></figure>
-<h2 id="33-删除表"><a href="#3-3-删除表" class="headerlink" title="3.3. 删除表"></a>3.3. 删除表</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> 表名</span><br></pre></td></tr></table></figure>
-<h2 id="34-清空表内容"><a href="#3-4-清空表内容" class="headerlink" title="3.4. 清空表内容"></a>3.4. 清空表内容</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> 表名</span><br><span class="line"><span class="keyword">truncate</span> <span class="keyword">table</span> 表名</span><br></pre></td></tr></table></figure>
-<h2 id="35-查看表结构"><a href="#3-5-查看表结构" class="headerlink" title="3.5. 查看表结构"></a>3.5. 查看表结构</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">desc 表名</span><br></pre></td></tr></table></figure>
-<h2 id="36-修改表"><a href="#3-6-修改表" class="headerlink" title="3.6. 修改表"></a>3.6. 修改表</h2><p><strong>列操作</strong></p>
+<h2 id="32-查看表">3.2. 查看表</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">tables</span>;                    <span class="comment"># 查看数据库全部表</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> 表名;             <span class="comment"># 查看表所有内容</span></span><br></pre></td></tr></table></figure>
+<h2 id="33-删除表">3.3. 删除表</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> 表名</span><br></pre></td></tr></table></figure>
+<h2 id="34-清空表内容">3.4. 清空表内容</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> 表名</span><br><span class="line"><span class="keyword">truncate</span> <span class="keyword">table</span> 表名</span><br></pre></td></tr></table></figure>
+<h2 id="35-查看表结构">3.5. 查看表结构</h2>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">desc 表名</span><br></pre></td></tr></table></figure>
+<h2 id="36-修改表">3.6. 修改表</h2>
+<p><strong>列操作</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#添加列  </span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> 列名 类型</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> 列名 类型 <span class="keyword">after</span> <span class="string">`列名`</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#删除列   </span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">drop</span> <span class="keyword">column</span> 列名</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改列</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">modify</span> <span class="keyword">column</span> 列名 类型;  <span class="comment">-- 类型</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">change</span> 原列名 新列名 类型; <span class="comment">-- 列名，类型</span></span><br></pre></td></tr></table></figure>
 <p><strong>主键操作</strong></p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#添加主键</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> primary <span class="keyword">key</span>(列名);</span><br><span class="line"></span><br><span class="line"><span class="comment">#删除主键</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">drop</span> primary <span class="keyword">key</span>;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名  <span class="keyword">modify</span>  列名 <span class="built_in">int</span>, <span class="keyword">drop</span> primary <span class="keyword">key</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">#修改主键：先删除后添加</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">drop</span> primary <span class="keyword">key</span>;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">add</span> primary <span class="keyword">key</span>(列名);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#添加外键</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 从表 <span class="keyword">add</span> <span class="keyword">constraint</span> 外键名称（形如：FK从表主表） <span class="keyword">foreign</span> <span class="keyword">key</span> 从表(外键字段) <span class="keyword">references</span> 主表(主键字段);</span><br><span class="line"></span><br><span class="line"><span class="comment">#删除外键</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 表名 <span class="keyword">drop</span> <span class="keyword">foreign</span> <span class="keyword">key</span> 外键名称</span><br></pre></td></tr></table></figure>
@@ -255,12 +263,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/network/docker-network/" data-toggle="tooltip" data-placement="top" title="Docker网络">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/monitor/influxdb-introduction/" data-toggle="tooltip" data-placement="top" title="Influxdb介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/mysql/curd-commands/" data-toggle="tooltip" data-placement="top" title="Mysql常用命令之表内容操作">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/concepts/pod/pod-lifecycle/" data-toggle="tooltip" data-placement="top" title="Pod生命周期">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -534,7 +542,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

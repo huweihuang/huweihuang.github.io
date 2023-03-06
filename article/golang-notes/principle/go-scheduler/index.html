@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -215,11 +215,12 @@
                 <div id="vip-container"><blockquote>
 <p>本文主要介绍Go的调度模型。</p>
 </blockquote>
-<h1 id="1-线程实现模型"><a href="#1-线程实现模型" class="headerlink" title="1. 线程实现模型"></a>1. 线程实现模型</h1><p>线程模型有三类：<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29#Models" target="_blank" rel="noopener">内核级线程模型、用户级线程模型、混合型线程模型</a>。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。</p>
+<h1 id="1-线程实现模型">1. 线程实现模型</h1>
+<p>线程模型有三类：<a href="https://en.wikipedia.org/wiki/Thread_%28computing%29#Models" target="_blank" rel="noopener">内核级线程模型、用户级线程模型、混合型线程模型</a>。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。</p>
 <blockquote>
 <p>内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。</p>
 </blockquote>
-<h2 id="11-线程模型对比"><a href="#1-1-线程模型对比" class="headerlink" title="1.1. 线程模型对比"></a>1.1. 线程模型对比</h2><div class="table-container">
+<h2 id="11-线程模型对比">1.1. 线程模型对比</h2>
 <table>
 <thead>
 <tr>
@@ -254,29 +255,34 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="12-线程模型示意图"><a href="#1-2-线程模型示意图" class="headerlink" title="1.2. 线程模型示意图"></a>1.2. 线程模型示意图</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557130409/article/golang/scheduler/thread-model.png" width="100%"></p>
-<h1 id="2-g-p-m调度模型"><a href="#2-G-P-M调度模型" class="headerlink" title="2. G-P-M调度模型"></a>2. G-P-M调度模型</h1><p><strong>调度模型:</strong></p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557129220/article/golang/scheduler/go-scheduler.png" width="80%"></p>
+<h2 id="12-线程模型示意图">1.2. 线程模型示意图</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557130409/article/golang/scheduler/thread-model.png" width="100%">
+<h1 id="2-g-p-m调度模型">2. G-P-M调度模型</h1>
+<p><strong>调度模型:</strong></p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557129220/article/golang/scheduler/go-scheduler.png" width="80%">
 <p><strong>G-P-M对应关系：</strong></p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557129219/article/golang/scheduler/gpm.png" width="40%"></p>
-<h2 id="21-基本概念"><a href="#2-1-基本概念" class="headerlink" title="2.1. 基本概念"></a>2.1. 基本概念</h2><ul>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557129219/article/golang/scheduler/gpm.png" width="40%">
+<h2 id="21-基本概念">2.1. 基本概念</h2>
+<ul>
 <li>M：machine，代表系统内核进程，用来执行G。（工人）</li>
 <li>P：processor，代表调度执行的上下文（context），维护了一个本地的goroutine的队列。（小推车）</li>
 <li>G：goroutine，代表goroutine，即执行的goroutine的数据结构及栈等。（砖头）</li>
 </ul>
-<h2 id="22-基本流程"><a href="#2-2-基本流程" class="headerlink" title="2.2. 基本流程"></a>2.2. 基本流程</h2><p>调度的本质是将G尽量均匀合理地安排给M来执行，其中P的作用就是来实现合理安排逻辑。</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/in-motion.jpg" width="50%"></p>
+<h2 id="22-基本流程">2.2. 基本流程</h2>
+<p>调度的本质是将G尽量均匀合理地安排给M来执行，其中P的作用就是来实现合理安排逻辑。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/in-motion.jpg" width="50%">
 <ul>
 <li>P的数量通过 <code>GOMAXPROCS()</code> 来设置，一般等于CPU的核数，对于一次代码执行设置好一般不会变。</li>
 <li>P维护了一个本地的G队列（runqueue），包括正在执行和待执行的G，尽量保证所有的P都匹配一个M同时在执行G。</li>
-<li>当P本地goroutine队列消费完，会从全局的goroutine队列（global runqueue）中拿goroutine到本地队列。P也会定期检查全局的goroutine队列，避免存在全局的goroutine没有被执行而”饿死”的现象。</li>
+<li>当P本地goroutine队列消费完，会从全局的goroutine队列（global runqueue）中拿goroutine到本地队列。P也会定期检查全局的goroutine队列，避免存在全局的goroutine没有被执行而&quot;饿死&quot;的现象。</li>
 <li>P和M是动态形式的一对一的关系，P和G是动态形式的一对多的关系。</li>
 </ul>
-<h2 id="23-抢占式调度阻塞"><a href="#2-3-抢占式调度（阻塞）" class="headerlink" title="2.3. 抢占式调度（阻塞）"></a>2.3. 抢占式调度（阻塞）</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/syscall.jpg"></p>
+<h2 id="23-抢占式调度阻塞">2.3. 抢占式调度（阻塞）</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/syscall.jpg">
 <p>当goroutine发生阻塞的时候，可以通过P将剩余的G切换给新的M来执行，而不会导致剩余的G无法执行，如果没有M则创建M来匹配P。</p>
-<p>当阻塞的goroutine返回后，进程会尝试获取一个上下文（Context）来执行这个goroutine。一般是先从其他进程中”偷取”一个Context，如果”偷取”不成功，则将goroutine放入全局的goroutine中。</p>
-<h2 id="24-偷任务"><a href="#2-4-偷任务" class="headerlink" title="2.4. 偷任务"></a>2.4. 偷任务</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/steal.jpg"></p>
+<p>当阻塞的goroutine返回后，进程会尝试获取一个上下文（Context）来执行这个goroutine。一般是先从其他进程中&quot;偷取&quot;一个Context，如果&quot;偷取&quot;不成功，则将goroutine放入全局的goroutine中。</p>
+<h2 id="24-偷任务">2.4. 偷任务</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1557134526/article/golang/scheduler/steal.jpg">
 <p>P可以偷任务即goroutine，当某个P的本地G执行完，且全局没有G需要执行的时候，P可以去偷别的P还没有执行完的一半的G来给M执行，提高了G的执行效率。</p>
 <p>参考：</p>
 <ul>
@@ -309,12 +315,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/file/linux-introduction/" data-toggle="tooltip" data-placement="top" title="Linux介绍">&larr; Previous Post</a>
+                            <a href="/article/golang-notes/framework/cobra/cobra-command/" data-toggle="tooltip" data-placement="top" title="cobra command">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/golang-notes/framework/cobra/cobra-flags/" data-toggle="tooltip" data-placement="top" title="cobra flags">Next Post &rarr;</a>
+                            <a href="/article/linux-notes/network/iptables/" data-toggle="tooltip" data-placement="top" title="iptables命令">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -588,7 +594,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

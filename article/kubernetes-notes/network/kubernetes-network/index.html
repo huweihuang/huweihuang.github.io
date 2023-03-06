@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,21 +212,25 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-kubernetes网络模型"><a href="#1-kubernetes网络模型" class="headerlink" title="1. kubernetes网络模型"></a>1. kubernetes网络模型</h1><h2 id="11-基础原则"><a href="#1-1-基础原则" class="headerlink" title="1.1. 基础原则"></a>1.1. 基础原则</h2><ol>
+                <div id="vip-container"><h1 id="1-kubernetes网络模型">1. kubernetes网络模型</h1>
+<h2 id="11-基础原则">1.1. 基础原则</h2>
+<ol>
 <li>每个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、扁平的网络空间中，不管是否运行在同一Node上都可以通过Pod的IP来访问。</li>
 <li>k8s中Pod的IP是最小粒度IP。同一个Pod内所有的容器共享一个网络堆栈，该模型称为IP-per-Pod模型。</li>
 <li>Pod由docker0实际分配的IP，Pod内部看到的IP地址和端口与外部保持一致。同一个Pod内的不同容器共享网络，可以通过localhost来访问对方的端口，类似同一个VM内的不同进程。</li>
 <li>IP-per-Pod模型从端口分配、域名解析、服务发现、负载均衡、应用配置等角度看，Pod可以看作是一台独立的VM或物理机。</li>
 </ol>
-<h2 id="12-k8s对集群的网络要求"><a href="#1-2-k8s对集群的网络要求" class="headerlink" title="1.2. k8s对集群的网络要求"></a>1.2. k8s对集群的网络要求</h2><ol>
+<h2 id="12-k8s对集群的网络要求">1.2. k8s对集群的网络要求</h2>
+<ol>
 <li>所有容器都可以不用NAT的方式同别的容器通信。</li>
 <li>所有节点都可以在不同NAT的方式下同所有容器通信，反之亦然。</li>
 <li>容器的地址和别人看到的地址是同一个地址。</li>
 </ol>
 <p>以上的集群网络要求可以通过第三方开源方案实现，例如flannel。</p>
-<h2 id="13-网络架构图"><a href="#1-3-网络架构图" class="headerlink" title="1.3. 网络架构图"></a>1.3. 网络架构图</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578957/article/kubernetes/network/network-arch.png" alt="这里写图片描述"></p>
-<h2 id="14-k8s集群ip概念汇总"><a href="#1-4-k8s集群IP概念汇总" class="headerlink" title="1.4. k8s集群IP概念汇总"></a>1.4. k8s集群IP概念汇总</h2><p>由集群外部到集群内部：</p>
-<div class="table-container">
+<h2 id="13-网络架构图">1.3. 网络架构图</h2>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578957/article/kubernetes/network/network-arch.png" alt="这里写图片描述"></p>
+<h2 id="14-k8s集群ip概念汇总">1.4. k8s集群IP概念汇总</h2>
+<p>由集群外部到集群内部：</p>
 <table>
 <thead>
 <tr>
@@ -261,23 +265,28 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h1 id="2-kubernetes的网络实现"><a href="#2-kubernetes的网络实现" class="headerlink" title="2. kubernetes的网络实现"></a>2. kubernetes的网络实现</h1><p>k8s网络场景</p>
+<h1 id="2-kubernetes的网络实现">2. kubernetes的网络实现</h1>
+<p>k8s网络场景</p>
 <ol>
 <li>容器与容器之间的直接通信。</li>
 <li>Pod与Pod之间的通信。</li>
 <li>Pod到Service之间的通信。</li>
 <li>集群外部与内部组件之间的通信。</li>
 </ol>
-<h2 id="21-pod网络"><a href="#2-1-Pod网络" class="headerlink" title="2.1. Pod网络"></a>2.1. Pod网络</h2><p>Pod作为kubernetes的最小调度单元，Pod是容器的集合，是一个逻辑概念，Pod包含的容器都运行在同一个宿主机上，这些容器将拥有同样的网络空间，容器之间能够互相通信，它们能够在本地访问其它容器的端口。 实际上Pod都包含一个网络容器，它不做任何事情，只是用来接管Pod的网络，业务容器通过加入网络容器的网络从而实现网络共享。Pod网络本质上还是容器网络，所以Pod-IP就是网络容器的Container-IP。</p>
+<h2 id="21-pod网络">2.1. Pod网络</h2>
+<p>Pod作为kubernetes的最小调度单元，Pod是容器的集合，是一个逻辑概念，Pod包含的容器都运行在同一个宿主机上，这些容器将拥有同样的网络空间，容器之间能够互相通信，它们能够在本地访问其它容器的端口。 实际上Pod都包含一个网络容器，它不做任何事情，只是用来接管Pod的网络，业务容器通过加入网络容器的网络从而实现网络共享。Pod网络本质上还是容器网络，所以Pod-IP就是网络容器的Container-IP。</p>
 <p>一般将容器云平台的网络模型打造成一个扁平化网络平面，在这个网络平面内，Pod作为一个网络单元同Kubernetes Node的网络处于同一层级。</p>
-<h2 id="22-pod内部容器之间的通信"><a href="#2-2-Pod内部容器之间的通信" class="headerlink" title="2.2. Pod内部容器之间的通信"></a>2.2. Pod内部容器之间的通信</h2><p>同一个Pod之间的不同容器因为共享同一个网络命名空间，所以可以直接通过localhost直接通信。</p>
-<h2 id="23-pod之间的通信"><a href="#2-3-Pod之间的通信" class="headerlink" title="2.3. Pod之间的通信"></a>2.3. Pod之间的通信</h2><h3 id="231-同node的pod之间的通信"><a href="#2-3-1-同Node的Pod之间的通信" class="headerlink" title="2.3.1. 同Node的Pod之间的通信"></a>2.3.1. 同Node的Pod之间的通信</h3><p>同一个Node内，不同的Pod都有一个全局IP，可以直接通过Pod的IP进行通信。Pod地址和docker0在同一个网段。</p>
+<h2 id="22-pod内部容器之间的通信">2.2. Pod内部容器之间的通信</h2>
+<p>同一个Pod之间的不同容器因为共享同一个网络命名空间，所以可以直接通过localhost直接通信。</p>
+<h2 id="23-pod之间的通信">2.3. Pod之间的通信</h2>
+<h3 id="231-同node的pod之间的通信">2.3.1. 同Node的Pod之间的通信</h3>
+<p>同一个Node内，不同的Pod都有一个全局IP，可以直接通过Pod的IP进行通信。Pod地址和docker0在同一个网段。</p>
 <p>在pause容器启动之前，会创建一个虚拟以太网接口对（veth pair），该接口对一端连着容器内部的eth0 ，一端连着容器外部的vethxxx，vethxxx会绑定到容器运行时配置使用的网桥bridge0上，从该网络的IP段中分配IP给容器的eth0。</p>
 <p>当同节点上的Pod-A发包给Pod-B时，包传送路线如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod-a的eth0—&gt;pod-a的vethxxx—&gt;bridge0—&gt;pod-b的vethxxx—&gt;pod-b的eth0</span><br></pre></td></tr></table></figure>
 <p>因为相同节点的bridge0是相通的，因此可以通过bridge0来完成不同pod直接的通信，但是不同节点的bridge0是不通的，因此不同节点的pod之间的通信需要将不同节点的bridge0给连接起来。</p>
-<h3 id="232-不同node的pod之间的通信"><a href="#2-3-2-不同Node的Pod之间的通信" class="headerlink" title="2.3.2. 不同Node的Pod之间的通信"></a>2.3.2. 不同Node的Pod之间的通信</h3><p>不同的Node之间，Node的IP相当于外网IP，可以直接访问，而Node内的docker0和Pod的IP则是内网IP，无法直接跨Node访问。需要通过Node的网卡进行转发。</p>
+<h3 id="232-不同node的pod之间的通信">2.3.2. 不同Node的Pod之间的通信</h3>
+<p>不同的Node之间，Node的IP相当于外网IP，可以直接访问，而Node内的docker0和Pod的IP则是内网IP，无法直接跨Node访问。需要通过Node的网卡进行转发。</p>
 <p>所以不同Node之间的通信需要达到两个条件：</p>
 <ol>
 <li>对整个集群中的Pod-IP分配进行规划，不能有冲突（可以通过第三方开源工具来管理，例如flannel）。</li>
@@ -288,20 +297,23 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">节点a上的pod-a的eth0—&gt;pod-a的vethxxx—&gt;节点a的bridge0—&gt;节点a的eth0—&gt;</span><br><span class="line"></span><br><span class="line">节点b的eth0—&gt;节点b的bridge0—&gt;pod-b的vethxxx—&gt;pod-b的eth0</span><br></pre></td></tr></table></figure>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578957/article/kubernetes/network/pod-network.png" alt="这里写图片描述"></p>
 <p><strong>1. Pod间实现通信</strong></p>
-<p>   例如：Pod1和Pod2（同主机），Pod1和Pod3(跨主机)能够通信</p>
-<p>   实现：因为Pod的Pod-IP是Docker网桥分配的，Pod-IP是同Node下全局唯一的。所以将不同Kubernetes Node的 Docker网桥配置成不同的IP网段即可。</p>
+<p>例如：Pod1和Pod2（同主机），Pod1和Pod3(跨主机)能够通信</p>
+<p>实现：因为Pod的Pod-IP是Docker网桥分配的，Pod-IP是同Node下全局唯一的。所以将不同Kubernetes Node的 Docker网桥配置成不同的IP网段即可。</p>
 <p><strong>2. Node与Pod间实现通信</strong></p>
-<p>   例如：Node1和Pod1/ Pod2(同主机)，Pod3(跨主机)能够通信</p>
-<p>   实现：在容器集群中创建一个覆盖网络(Overlay Network)，联通各个节点，目前可以通过第三方网络插件来创建覆盖网络，比如Flannel和Open vSwitch等。</p>
+<p>例如：Node1和Pod1/ Pod2(同主机)，Pod3(跨主机)能够通信</p>
+<p>实现：在容器集群中创建一个覆盖网络(Overlay Network)，联通各个节点，目前可以通过第三方网络插件来创建覆盖网络，比如Flannel和Open vSwitch等。</p>
 <p>不同节点间的Pod访问也可以通过calico形成的Pod IP的路由表来解决。</p>
-<h2 id="24-service网络"><a href="#2-4-Service网络" class="headerlink" title="2.4. Service网络"></a>2.4. Service网络</h2><p>Service的就是在Pod之间起到服务代理的作用，对外表现为一个单一访问接口，将请求转发给Pod，Service的网络转发是Kubernetes实现服务编排的关键一环。Service都会生成一个虚拟IP，称为Service-IP， Kuberenetes Porxy组件负责实现Service-IP路由和转发，在容器覆盖网络之上又实现了虚拟转发网络。</p>
+<h2 id="24-service网络">2.4. Service网络</h2>
+<p>Service的就是在Pod之间起到服务代理的作用，对外表现为一个单一访问接口，将请求转发给Pod，Service的网络转发是Kubernetes实现服务编排的关键一环。Service都会生成一个虚拟IP，称为Service-IP， Kuberenetes Porxy组件负责实现Service-IP路由和转发，在容器覆盖网络之上又实现了虚拟转发网络。</p>
 <p>Kubernetes Porxy实现了以下功能：</p>
 <ol>
 <li>转发访问Service的Service-IP的请求到Endpoints(即Pod-IP)。</li>
 <li>监控Service和Endpoints的变化，实时刷新转发规则。</li>
 <li>负载均衡能力。</li>
 </ol>
-<h1 id="3-开源的网络组件"><a href="#3-开源的网络组件" class="headerlink" title="3. 开源的网络组件"></a>3. 开源的网络组件</h1><h2 id="31-flannel"><a href="#3-1-Flannel" class="headerlink" title="3.1. Flannel"></a>3.1. Flannel</h2><p>具体参考<a href="flannel/flannel-introduction.md">Flannel介绍</a></p>
+<h1 id="3-开源的网络组件">3. 开源的网络组件</h1>
+<h2 id="31-flannel">3.1. Flannel</h2>
+<p>具体参考<a href="flannel/flannel-introduction.md">Flannel介绍</a></p>
 <p>参考《Kubernetes权威指南》</p>
 </div>
 
@@ -327,7 +339,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/monitor/cadvisor-introduction/" data-toggle="tooltip" data-placement="top" title="cAdvisor介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/concepts/pod/pod-operation/" data-toggle="tooltip" data-placement="top" title="Pod伸缩与升级">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -606,7 +618,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

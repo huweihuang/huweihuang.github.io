@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,7 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-kubernetes对象概述"><a href="#1-kubernetes对象概述" class="headerlink" title="1. kubernetes对象概述"></a>1. kubernetes对象概述</h1><p>kubernetes中的对象是一些持久化的实体，可以理解为是对<code>集群状态的描述或期望</code>。</p>
+                <div id="vip-container"><h1 id="1-kubernetes对象概述">1. kubernetes对象概述</h1>
+<p>kubernetes中的对象是一些持久化的实体，可以理解为是对<code>集群状态的描述或期望</code>。</p>
 <p>包括：</p>
 <ul>
 <li>集群中哪些node上运行了哪些容器化应用</li>
@@ -225,20 +226,23 @@
 <li><code>kubectl</code>命令工具</li>
 <li><code>Client library</code>的方式，例如 <a href="https://github.com/kubernetes/client-go" target="_blank" rel="noopener">client-go</a></li>
 </ul>
-<h1 id="2-spec-and-status"><a href="#2-Spec-and-Status" class="headerlink" title="2. Spec and Status"></a>2. Spec and Status</h1><p>每个kubernetes对象的结构描述都包含<code>spec</code>和<code>status</code>两个部分。</p>
+<h1 id="2-spec-and-status">2. Spec and Status</h1>
+<p>每个kubernetes对象的结构描述都包含<code>spec</code>和<code>status</code>两个部分。</p>
 <ul>
 <li><code>spec</code>：该内容由用户提供，描述用户期望的对象特征及集群状态。</li>
 <li><code>status</code>：该内容由kubernetes集群提供和更新，描述kubernetes对象的实时状态。</li>
 </ul>
 <p>任何时候，kubernetes都会控制集群的实时状态<code>status</code>与用户的预期状态<code>spec</code>一致。</p>
 <p>例如：当你定义<code>Deployment</code>的描述文件，指定集群中运行3个实例，那么kubernetes会始终保持集群中运行3个实例，如果任何实例挂掉，kubernetes会自动重建新的实例来保持集群中始终运行用户预期的3个实例。</p>
-<h1 id="3-对象描述文件"><a href="#3-对象描述文件" class="headerlink" title="3. 对象描述文件"></a>3. 对象描述文件</h1><p>当你要创建一个kubernetes对象的时候，需要提供该对象的描述信息<code>spec</code>，来描述你的对象在kubernetes中的预期状态。</p>
+<h1 id="3-对象描述文件">3. 对象描述文件</h1>
+<p>当你要创建一个kubernetes对象的时候，需要提供该对象的描述信息<code>spec</code>，来描述你的对象在kubernetes中的预期状态。</p>
 <p>一般使用kubernetes API来创建kubernetes对象，其中<code>spec</code>信息可以以<code>JSON</code>的形式存放在<code>request body</code>中，也可以以<code>.yaml</code>文件的形式通过<code>kubectl</code>工具创建。</p>
 <p>例如，以下为<code>Deployment</code>对象对应的<code>yaml</code>文件：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1beta2</span> <span class="comment"># for versions before 1.8.0 use apps/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
 <p>执行<code>kubectl create</code>的命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#create command</span></span><br><span class="line">kubectl create -f https://k8s.io/docs/user-guide/nginx-deployment.yaml --record</span><br><span class="line"><span class="comment">#output</span></span><br><span class="line">deployment <span class="string">"nginx-deployment"</span> created</span><br></pre></td></tr></table></figure>
-<h1 id="4-必须字段"><a href="#4-必须字段" class="headerlink" title="4. 必须字段"></a>4. 必须字段</h1><p>在对象描述文件<code>.yaml</code>中，必须包含以下字段。</p>
+<h1 id="4-必须字段">4. 必须字段</h1>
+<p>在对象描述文件<code>.yaml</code>中，必须包含以下字段。</p>
 <ul>
 <li>apiVersion：kubernetes API的版本</li>
 <li>kind：kubernetes对象的类型</li>
@@ -550,7 +554,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

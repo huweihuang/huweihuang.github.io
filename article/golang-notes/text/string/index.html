@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,8 +212,9 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h1><p>字符串操作涉及的标准库有<strong>strings</strong>和<strong>strconv</strong>两个包</p>
-<h2 id="1-字符串操作"><a href="#1-字符串操作" class="headerlink" title="1. 字符串操作"></a>1. 字符串操作</h2><div class="table-container">
+                <div id="vip-container"><h1 id="字符串处理">字符串处理</h1>
+<p>字符串操作涉及的标准库有<strong>strings</strong>和<strong>strconv</strong>两个包</p>
+<h2 id="1-字符串操作">1. 字符串操作</h2>
 <table>
 <thead>
 <tr>
@@ -256,8 +257,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="2-字符串转换"><a href="#2-字符串转换" class="headerlink" title="2. 字符串转换"></a>2. 字符串转换</h2><p>1、Append 系列函数将整数等转换为字符串后，添加到现有的字节数组中</p>
+<h2 id="2-字符串转换">2. 字符串转换</h2>
+<p>1、Append 系列函数将整数等转换为字符串后，添加到现有的字节数组中</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    str := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">    str = strconv.AppendInt(str, <span class="number">4567</span>, <span class="number">10</span>)</span><br><span class="line">    str = strconv.AppendBool(str, <span class="literal">false</span>)</span><br><span class="line">    str = strconv.AppendQuote(str, <span class="string">"abcdefg"</span>)</span><br><span class="line">    str = strconv.AppendQuoteRune(str, <span class="string">'单'</span>)</span><br><span class="line">    fmt.Println(<span class="keyword">string</span>(str))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>2、Format 系列函数把其他类型的转换为字符串</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := strconv.FormatBool(<span class="literal">false</span>)</span><br><span class="line">    b := strconv.FormatFloat(<span class="number">123.23</span>, <span class="string">'g'</span>, <span class="number">12</span>, <span class="number">64</span>)</span><br><span class="line">    c := strconv.FormatInt(<span class="number">1234</span>, <span class="number">10</span>)</span><br><span class="line">    d := strconv.FormatUint(<span class="number">12345</span>, <span class="number">10</span>)</span><br><span class="line">    e := strconv.Itoa(<span class="number">1023</span>)</span><br><span class="line">    fmt.Println(a, b, c, d, e)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -287,12 +288,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/golang-notes/text/file/" data-toggle="tooltip" data-placement="top" title="文件操作">&larr; Previous Post</a>
+                            <a href="/article/golang-notes/introduction/package/dep-usage/" data-toggle="tooltip" data-placement="top" title="dep的使用">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/golang-notes/introduction/package/glide-usage/" data-toggle="tooltip" data-placement="top" title="glide的使用">Next Post &rarr;</a>
+                            <a href="/article/golang-notes/summary/skill-tree/" data-toggle="tooltip" data-placement="top" title="后端开发技能树">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -566,7 +567,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

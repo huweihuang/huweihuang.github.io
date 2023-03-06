@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,25 +212,34 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-字符串"><a href="#1-字符串" class="headerlink" title="1. 字符串"></a>1. 字符串</h1><p>字符串是shell编程中最常用最有用的数据类型（除了数字和字符串，也没啥其它类型好用了），字符串可以用单引号，也可以用双引号，也可以不用引号。单双引号的区别跟PHP类似。</p>
-<h2 id="11-单引号"><a href="#1-1-单引号" class="headerlink" title="1.1. 单引号"></a>1.1. 单引号</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str=<span class="string">'this is a string'</span></span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="1-字符串">1. 字符串</h1>
+<p>字符串是shell编程中最常用最有用的数据类型（除了数字和字符串，也没啥其它类型好用了），字符串可以用单引号，也可以用双引号，也可以不用引号。单双引号的区别跟PHP类似。</p>
+<h2 id="11-单引号">1.1. 单引号</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str=<span class="string">'this is a string'</span></span><br></pre></td></tr></table></figure>
 <p>单引号字符串的限制：</p>
 <ul>
 <li>单引号里的任何字符都会原样输出，单引号字符串中的变量是无效的；</li>
 <li>单引号字串中不能出现单引号（对单引号使用转义符后也不行）。</li>
 </ul>
-<h2 id="12-双引号"><a href="#1-2-双引号" class="headerlink" title="1.2. 双引号"></a>1.2. 双引号</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">your_name=<span class="string">'qinjx'</span></span><br><span class="line">str=<span class="string">"Hello, I know your are \"<span class="variable">$your_name</span>\"! \n"</span></span><br></pre></td></tr></table></figure>
+<h2 id="12-双引号">1.2. 双引号</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">your_name=<span class="string">'qinjx'</span></span><br><span class="line">str=<span class="string">"Hello, I know your are \"<span class="variable">$your_name</span>\"! \n"</span></span><br></pre></td></tr></table></figure>
 <p>双引号的优点：</p>
 <ul>
 <li>双引号里可以有变量</li>
 <li>双引号里可以出现转义字符</li>
 </ul>
-<h2 id="13-拼接字符串"><a href="#1-3-拼接字符串" class="headerlink" title="1.3. 拼接字符串"></a>1.3. 拼接字符串</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">your_name=<span class="string">"qinjx"</span></span><br><span class="line">greeting=<span class="string">"hello, "</span><span class="variable">$your_name</span><span class="string">" !"</span></span><br><span class="line">greeting_1=<span class="string">"hello, <span class="variable">$&#123;your_name&#125;</span> !"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$greeting</span> <span class="variable">$greeting_1</span></span><br></pre></td></tr></table></figure>
-<h2 id="14-获取字符串长度"><a href="#1-4-获取字符串长度" class="headerlink" title="1.4. 获取字符串长度"></a>1.4. 获取字符串长度</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string=<span class="string">"abcd"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#string&#125;</span> <span class="comment">#输出 4</span></span><br></pre></td></tr></table></figure>
-<h2 id="15-提取子字符串"><a href="#1-5-提取子字符串" class="headerlink" title="1.5. 提取子字符串"></a>1.5. 提取子字符串</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string=<span class="string">"alibaba is a great company"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;string:1:4&#125;</span> <span class="comment">#输出liba</span></span><br></pre></td></tr></table></figure>
-<h2 id="16-查找子字符串"><a href="#1-6-查找子字符串" class="headerlink" title="1.6. 查找子字符串"></a>1.6. 查找子字符串</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string=<span class="string">"alibaba is a great company"</span></span><br><span class="line"><span class="built_in">echo</span> `expr index <span class="string">"<span class="variable">$string</span>"</span> is`</span><br></pre></td></tr></table></figure>
-<h1 id="2-数组"><a href="#2-数组" class="headerlink" title="2. 数组"></a>2. 数组</h1><p>bash支持一维数组（不支持多维数组），并且没有限定数组的大小。类似与C语言，数组元素的下标由0开始编号。获取数组中的元素要利用下标，下标可以是整数或算术表达式，其值应大于或等于0。</p>
-<h2 id="21-定义数组"><a href="#2-1-定义数组" class="headerlink" title="2.1. 定义数组"></a>2.1. 定义数组</h2><p>在Shell中，用括号来表示数组，数组元素用“空格”符号分割开。</p>
+<h2 id="13-拼接字符串">1.3. 拼接字符串</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">your_name=<span class="string">"qinjx"</span></span><br><span class="line">greeting=<span class="string">"hello, "</span><span class="variable">$your_name</span><span class="string">" !"</span></span><br><span class="line">greeting_1=<span class="string">"hello, <span class="variable">$&#123;your_name&#125;</span> !"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$greeting</span> <span class="variable">$greeting_1</span></span><br></pre></td></tr></table></figure>
+<h2 id="14-获取字符串长度">1.4. 获取字符串长度</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string=<span class="string">"abcd"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#string&#125;</span> <span class="comment">#输出 4</span></span><br></pre></td></tr></table></figure>
+<h2 id="15-提取子字符串">1.5. 提取子字符串</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string=<span class="string">"alibaba is a great company"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;string:1:4&#125;</span> <span class="comment">#输出liba</span></span><br></pre></td></tr></table></figure>
+<h2 id="16-查找子字符串">1.6. 查找子字符串</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string=<span class="string">"alibaba is a great company"</span></span><br><span class="line"><span class="built_in">echo</span> `expr index <span class="string">"<span class="variable">$string</span>"</span> is`</span><br></pre></td></tr></table></figure>
+<h1 id="2-数组">2. 数组</h1>
+<p>bash支持一维数组（不支持多维数组），并且没有限定数组的大小。类似与C语言，数组元素的下标由0开始编号。获取数组中的元素要利用下标，下标可以是整数或算术表达式，其值应大于或等于0。</p>
+<h2 id="21-定义数组">2.1. 定义数组</h2>
+<p>在Shell中，用括号来表示数组，数组元素用“空格”符号分割开。</p>
 <p>定义数组的一般形式为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array_name=(value1 ... valuen)</span><br></pre></td></tr></table></figure>
 <p>例如：</p>
@@ -240,13 +249,15 @@
 <p>还可以单独定义数组的各个分量：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">array_name[0]=value0</span><br><span class="line">array_name[1]=value1</span><br><span class="line">array_name[2]=value2</span><br></pre></td></tr></table></figure>
 <p>可以不使用连续的下标，而且下标的范围没有限制。</p>
-<h2 id="22-读取数组"><a href="#2-2-读取数组" class="headerlink" title="2.2. 读取数组"></a>2.2. 读取数组</h2><p>读取数组元素值的一般格式是：</p>
+<h2 id="22-读取数组">2.2. 读取数组</h2>
+<p>读取数组元素值的一般格式是：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;array_name[index]&#125;</span></span><br></pre></td></tr></table></figure>
 <p>例如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valuen=<span class="variable">$&#123;array_name[2]&#125;</span></span><br></pre></td></tr></table></figure>
 <p>使用@ 或 * 可以获取数组中的所有元素，例如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;array_name[*]&#125;</span></span><br><span class="line"><span class="variable">$&#123;array_name[@]&#125;</span></span><br></pre></td></tr></table></figure>
-<h2 id="23-获取数组的长度"><a href="#2-3-获取数组的长度" class="headerlink" title="2.3. 获取数组的长度"></a>2.3. 获取数组的长度</h2><p>获取数组长度的方法与获取字符串长度的方法相同，例如：</p>
+<h2 id="23-获取数组的长度">2.3. 获取数组的长度</h2>
+<p>获取数组长度的方法与获取字符串长度的方法相同，例如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 取得数组元素的个数</span></span><br><span class="line">length=<span class="variable">$&#123;#array_name[@]&#125;</span></span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">length=<span class="variable">$&#123;#array_name[*]&#125;</span></span><br><span class="line"><span class="comment"># 取得数组单个元素的长度</span></span><br><span class="line">lengthn=<span class="variable">$&#123;#array_name[n]&#125;</span></span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
@@ -276,12 +287,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/" data-toggle="tooltip" data-placement="top" title="csi-cephfs-plugin">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/shell/shell-stdout/" data-toggle="tooltip" data-placement="top" title="Shell 重定向">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/shell/shell-echo/" data-toggle="tooltip" data-placement="top" title="Shell echo命令">Next Post &rarr;</a>
+                            <a href="/article/linux-notes/shell/shell-char/" data-toggle="tooltip" data-placement="top" title="Shell运算符">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -555,7 +566,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

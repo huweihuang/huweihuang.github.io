@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,8 +212,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="pod的配置管理"><a href="#Pod的配置管理" class="headerlink" title="Pod的配置管理"></a>Pod的配置管理</h1><p>Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。</p>
-<h2 id="1-configmap容器应用的配置管理"><a href="#1-ConfigMap：容器应用的配置管理" class="headerlink" title="1. ConfigMap：容器应用的配置管理"></a>1. ConfigMap：容器应用的配置管理</h2><p>使用场景：</p>
+                <div id="vip-container"><h1 id="pod的配置管理">Pod的配置管理</h1>
+<p>Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。</p>
+<h2 id="1-configmap容器应用的配置管理">1. ConfigMap：容器应用的配置管理</h2>
+<p>使用场景：</p>
 <ol>
 <li>生成为容器内的环境变量。</li>
 <li>设置容器启动命令的启动参数（需设置为环境变量）。</li>
@@ -221,34 +223,39 @@
 </ol>
 <p>ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可以表示一个变量的值（例如：apploglevel=info），也可以表示完整配置文件的内容（例如：server.xml=&lt;?xml…&gt;…）。</p>
 <p>可以通过yaml配置文件或者使用kubectl create configmap命令的方式创建ConfigMap。</p>
-<h2 id="2-创建configmap"><a href="#2-创建ConfigMap" class="headerlink" title="2. 创建ConfigMap"></a>2. 创建ConfigMap</h2><h3 id="21-通过yaml文件方式"><a href="#2-1-通过yaml文件方式" class="headerlink" title="2.1. 通过yaml文件方式"></a>2.1. 通过yaml文件方式</h3><p>cm-appvars.yaml</p>
+<h2 id="2-创建configmap">2. 创建ConfigMap</h2>
+<h3 id="21-通过yaml文件方式">2.1. 通过yaml文件方式</h3>
+<p>cm-appvars.yaml</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cm-appvars</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">apploglevel:</span> <span class="string">info</span></span><br><span class="line">  <span class="attr">appdatadir:</span> <span class="string">/var/data</span></span><br></pre></td></tr></table></figure>
 <p>常用命令</p>
 <p>kubectl create -f cm-appvars.yaml</p>
 <p>kubectl get configmap</p>
 <p>kubectl describe configmap cm-appvars</p>
 <p>kubectl get configmap cm-appvars -o yaml</p>
-<h3 id="22-通过kubectl命令行方式"><a href="#2-2-通过kubectl命令行方式" class="headerlink" title="2.2. 通过kubectl命令行方式"></a>2.2. 通过kubectl命令行方式</h3><p>通过kubectl create configmap创建，使用参数—from-file或—from-literal指定内容，可以在一行中指定多个参数。</p>
-<p>1）通过—from-file参数从文件中进行创建，可以指定key的名称，也可以在一个命令行中创建包含多个key的ConfigMap。</p>
-<p>kubectl create configmap NAME —from-file=[key=]source —from-file=[key=]source</p>
-<p>2）通过—from-file参数从目录中进行创建，该目录下的每个配置文件名被设置为key，文件内容被设置为value。</p>
-<p>kubectl create configmap NAME —from-file=config-files-dir</p>
-<p>3）通过—from-literal从文本中进行创建，直接将指定的key=value创建为ConfigMap的内容。</p>
-<p>kubectl create configmap NAME —from-literal=key1=value1 —from-literal=key2=value2</p>
+<h3 id="22-通过kubectl命令行方式">2.2. 通过kubectl命令行方式</h3>
+<p>通过kubectl create configmap创建，使用参数–from-file或–from-literal指定内容，可以在一行中指定多个参数。</p>
+<p>1）通过–from-file参数从文件中进行创建，可以指定key的名称，也可以在一个命令行中创建包含多个key的ConfigMap。</p>
+<p>kubectl create configmap NAME --from-file=[key=]source --from-file=[key=]source</p>
+<p>2）通过–from-file参数从目录中进行创建，该目录下的每个配置文件名被设置为key，文件内容被设置为value。</p>
+<p>kubectl create configmap NAME --from-file=config-files-dir</p>
+<p>3）通过–from-literal从文本中进行创建，直接将指定的key=value创建为ConfigMap的内容。</p>
+<p>kubectl create configmap NAME --from-literal=key1=value1 --from-literal=key2=value2</p>
 <p>容器应用对ConfigMap的使用有两种方法：</p>
 <ol>
 <li>通过环境变量获取ConfigMap中的内容。</li>
 <li>通过Volume挂载的方式将ConfigMap中的内容挂载为容器内部的文件或目录。</li>
 </ol>
-<h3 id="23-通过环境变量的方式"><a href="#2-3-通过环境变量的方式" class="headerlink" title="2.3. 通过环境变量的方式"></a>2.3. 通过环境变量的方式</h3><p>ConfigMap的yaml文件:cm-appvars.yaml</p>
+<h3 id="23-通过环境变量的方式">2.3. 通过环境变量的方式</h3>
+<p>ConfigMap的yaml文件:cm-appvars.yaml</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cm-appvars</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">apploglevel:</span> <span class="string">info</span></span><br><span class="line">  <span class="attr">appdatadir:</span> <span class="string">/var/data</span></span><br></pre></td></tr></table></figure>
 <p>Pod的yaml文件：cm-test-pod.yaml</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cm-test-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cm-test</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">["/bin/sh","-c","env|grep</span> <span class="string">APP"]</span></span><br><span class="line">    <span class="attr">env:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">APPLOGLEVEL</span></span><br><span class="line">      <span class="attr">valueFrom:</span></span><br><span class="line">        <span class="attr">configMapKeyRef:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">cm-appvars</span></span><br><span class="line">          <span class="attr">key:</span> <span class="string">apploglevel</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">APPDATADIR</span></span><br><span class="line">      <span class="attr">valueFrom:</span></span><br><span class="line">        <span class="attr">configMapKeyRef:</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">cm-appvars</span></span><br><span class="line">          <span class="attr">key:</span> <span class="string">appdatadir</span></span><br></pre></td></tr></table></figure>
 <p>创建命令：</p>
 <p>kubectl create -f cm-test-pod.yaml</p>
-<p>kubectl get pods —show-all</p>
+<p>kubectl get pods --show-all</p>
 <p>kubectl logs cm-test-pod</p>
-<h2 id="3-使用configmap的限制条件"><a href="#3-使用ConfigMap的限制条件" class="headerlink" title="3. 使用ConfigMap的限制条件"></a>3. 使用ConfigMap的限制条件</h2><ul>
+<h2 id="3-使用configmap的限制条件">3. 使用ConfigMap的限制条件</h2>
+<ul>
 <li>ConfigMap必须在Pod之前创建</li>
 <li>ConfigMap也可以定义为属于某个Namespace。只有处于相同Namespace中的Pod可以引用它。</li>
 <li>kubelet只支持可以被API Server管理的Pod使用ConfigMap。静态Pod无法引用。</li>
@@ -282,12 +289,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/mysql/system-manage/" data-toggle="tooltip" data-placement="top" title="Mysql常用命令之系统管理">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/monitor/cadvisor-introduction/" data-toggle="tooltip" data-placement="top" title="cAdvisor介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/concepts/object/kubernetes-basic-concepts/" data-toggle="tooltip" data-placement="top" title="Kubernetes基本概念">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/concepts/pod/pod-scheduler/" data-toggle="tooltip" data-placement="top" title="Pod调度">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -561,7 +568,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -211,6 +211,44 @@
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/cloudcore/">
+        <h2 class="post-title">
+                        
+            Kubeedge之cloudcore 源码分析
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            kubeedge源码分析之cloudcore
+
+本文源码分析基于kubeedge v1.1.0
+
+本文主要分析cloudcore中CloudCoreCommand的基本流程，具体的cloudhub、edgecontroller、devicecontroller模块的实现逻辑待后续单独文章分析。
+目录结构：
+
+cloud/cmd/cloudcore
+
+123456cloudcore├── ap......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubeedge" title="Kubeedge">Kubeedge</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/develop/operator/kubebuilder/">
         <h2 class="post-title">
                         
@@ -220,7 +258,9 @@
             
         </h3>
         <div class="post-content-preview">
-            1. kubebuilder1.1. 安装kubebuilder123# download kubebuilder and install locally.curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)chmod +x kubebuilder &amp;&am......
+            1. kubebuilder
+1.1. 安装kubebuilder
+123# download kubebuilder and install locally.curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)chmod +x kubebuilder &amp;&......
         </div>
     </a>
     
@@ -249,11 +289,13 @@
             
         </h3>
         <div class="post-content-preview">
-            1. KubeEdge简介KubeEdge是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持MQTT协议，允许开发者在边缘端自定义接入边缘设备。
+            1. KubeEdge简介
+KubeEdge是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持MQTT协议，允许开发者在边缘端自定义接入边缘设备。
 2. 功能
+
 边缘计算：提供边缘节点自治能力，边缘节点数据处理能力。
 便捷部署：开发者可以开发http或mqtt协议的应用，运行在云端和边缘端。
-k8s原生支......
+k8s原......
         </div>
     </a>
     
@@ -283,48 +325,12 @@ k8s原生支......
         </h3>
         <div class="post-content-preview">
             kubeedge源码分析之edgecore
+
 本文源码分析基于kubeedge v1.1.0
 
 本文主要分析edgecore中EdgeCoreCommand的基本流程，具体的edged、edgehub、metamanager等模块的实现逻辑待后续单独文章分析。
 目录结构：
-123456edgecore├── app│   ├── options│   │   └── options.go│  ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubeedge" title="Kubeedge">Kubeedge</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/cloudcore/">
-        <h2 class="post-title">
-                        
-            Kubeedge之cloudcore 源码分析
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            kubeedge源码分析之cloudcore
-本文源码分析基于kubeedge v1.1.0
-
-本文主要分析cloudcore中CloudCoreCommand的基本流程，具体的cloudhub、edgecontroller、devicecontroller模块的实现逻辑待后续单独文章分析。
-目录结构：
-
-cloud/cmd/cloudcore
-
-123456cloudcore├── app......
+123456edgecore├── app│   ├── options│   │   └── options.go│ ......
         </div>
     </a>
     
@@ -353,7 +359,8 @@ cloud/cmd/cloudcore
             
         </h3>
         <div class="post-content-preview">
-            Kata-container简介kata-container通过轻量型虚拟机技术构建一个安全的容器运行时，表现像容器一样，但通硬件虚拟化技术提供强隔离，作为第二层的安全防护。
+            Kata-container简介
+kata-container通过轻量型虚拟机技术构建一个安全的容器运行时，表现像容器一样，但通硬件虚拟化技术提供强隔离，作为第二层的安全防护。
 特点：
 
 安全：独立的内核，提供网络、I/O、内存的隔离。
@@ -361,8 +368,7 @@ cloud/cmd/cloudcore
 性能：兼容虚拟机的安全和容器的轻量特点。
 简单：使用标准的接口。
 
-1. kata-container架构
-......
+1. kata-container架构......
         </div>
     </a>
     
@@ -393,8 +399,9 @@ cloud/cmd/cloudcore
             
         </h3>
         <div class="post-content-preview">
-            1. 资源视图隔离容器中的执行top、free等命令展示出来的CPU，内存等信息是从/proc目录中的相关文件里读取出来的。而容器并没有对/proc，/sys等文件系统做隔离，因此容器中读取出来的CPU和内存的信息是宿主机的信息，与容器实际分配和限制的资源量不同。
-123456/proc/cpuinfo/proc/diskstats/proc/meminfo/proc/stat/proc/s......
+            1. 资源视图隔离
+容器中的执行top、free等命令展示出来的CPU，内存等信息是从/proc目录中的相关文件里读取出来的。而容器并没有对/proc，/sys等文件系统做隔离，因此容器中读取出来的CPU和内存的信息是宿主机的信息，与容器实际分配和限制的资源量不同。
+123456/proc/cpuinfo/proc/diskstats/proc/meminfo/proc/stat/proc/......
         </div>
     </a>
     
@@ -423,8 +430,10 @@ cloud/cmd/cloudcore
             
         </h3>
         <div class="post-content-preview">
-            k8s多集群的思考1. 为什么需要多集群1、k8s单集群的承载能力有限。
- Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下所有标准的配置：
+            k8s多集群的思考
+1. 为什么需要多集群
+1、k8s单集群的承载能力有限。
+Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下所有标准的配置：
 
 每个节点的 Pod 数量不超过 100
 节点数不超过 5000
@@ -432,7 +441,7 @@ Pod 总数不超过 150000
 容器总数不超过 300000
 
 
-参考：https://kubernetes.io/z......
+参考：https://kubernetes.io/......
         </div>
     </a>
     
@@ -461,8 +470,9 @@ Pod 总数不超过 150000
             
         </h3>
         <div class="post-content-preview">
-            1. CNI（Container Network Interface）CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
-kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认是......
+            1. CNI（Container Network Interface）
+CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
+kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认......
         </div>
     </a>
     
@@ -491,10 +501,11 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         </h3>
         <div class="post-content-preview">
-            1. 简介macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
+            1. 简介
+macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
 示意图：
 
-2. 四种......
+2. 四......
         </div>
     </a>
     
@@ -514,21 +525,18 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
 
 <div class="post-preview">
 
-    <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">
+    <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">
         <h2 class="post-title">
                         
-            controller-manager 源码思维导图
+            使用etcdadm部署Etcd集群
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            controller-manager 源码思维导图源码整体结构图
-
-
-			
-			
-			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|Brows......
+            1. 安装etcdadm
+在Releases · kubernetes-sigs/etcdadm · GitHub中选择需要部署的版本，示例如下：
+123wget https://github.com/kubernetes-sigs/etcdadm/releases/download/v0.1.5/etcdadm-linux-amd64mv etcdadm-linux-amd64 /usr/......
         </div>
     </a>
     
@@ -589,13 +597,13 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -605,19 +613,7 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -629,9 +625,9 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -639,11 +635,11 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -663,9 +659,9 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -673,7 +669,7 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -693,9 +689,21 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -807,15 +815,15 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -918,7 +926,7 @@ kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从--cni-con
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

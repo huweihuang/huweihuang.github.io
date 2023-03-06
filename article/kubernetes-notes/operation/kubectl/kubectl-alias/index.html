@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,8 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-kubectl-aliases"><a href="#1-kubectl-aliases" class="headerlink" title="1. kubectl-aliases"></a>1. kubectl-aliases</h1><p><a href="https://github.com/ahmetb/kubectl-aliases" target="_blank" rel="noopener">kubectl-aliases</a>开源工具是由<a href="https://github.com/ahmetb/kubectl-aliases/blob/master/generate_aliases.py" target="_blank" rel="noopener">脚本</a>通过拼接各种kubectl相关元素组成的<a href="https://github.com/ahmetb/kubectl-aliases/blob/master/.kubectl_aliases" target="_blank" rel="noopener">alias命令别名列表</a>，其中命令别名拼接元素如下：</p>
-<div class="table-container">
+                <div id="vip-container"><h1 id="1-kubectl-aliases">1. kubectl-aliases</h1>
+<p><a href="https://github.com/ahmetb/kubectl-aliases" target="_blank" rel="noopener">kubectl-aliases</a>开源工具是由<a href="https://github.com/ahmetb/kubectl-aliases/blob/master/generate_aliases.py" target="_blank" rel="noopener">脚本</a>通过拼接各种kubectl相关元素组成的<a href="https://github.com/ahmetb/kubectl-aliases/blob/master/.kubectl_aliases" target="_blank" rel="noopener">alias命令别名列表</a>，其中命令别名拼接元素如下：</p>
 <table>
 <thead>
 <tr>
@@ -234,13 +234,14 @@
 </tr>
 </tbody>
 </table>
-</div>
 <ul>
-<li><code>k</code>=kubectl<ul>
+<li><code>k</code>=kubectl
+<ul>
 <li><strong>sys</strong>=<code>--namespace kube-system</code></li>
 </ul>
 </li>
-<li>commands:<ul>
+<li>commands:
+<ul>
 <li><strong>g</strong>=<code>get</code></li>
 <li><strong>d</strong>=<code>describe</code></li>
 <li><strong>rm</strong>=<code>delete</code></li>
@@ -249,7 +250,8 @@
 <li><strong>lo</strong>: <code>logs -f</code></li>
 </ul>
 </li>
-<li>resources:<ul>
+<li>resources:
+<ul>
 <li><strong>po</strong>=<code>pod</code></li>
 <li><strong>dep</strong>=<code>deployment</code></li>
 <li><strong>ing</strong>=<code>ingress</code></li>
@@ -260,23 +262,27 @@
 <li><strong>no</strong>=<code>node</code></li>
 </ul>
 </li>
-<li>flags:<ul>
+<li>flags:
+<ul>
 <li>output format: <strong>oyaml</strong>, <strong>ojson</strong>, <strong>owide</strong></li>
 <li><strong>all</strong>: <code>--all</code> or <code>--all-namespaces</code> depending on the command</li>
 <li><strong>sl</strong>: <code>--show-labels</code></li>
 <li><strong>w</strong>=<code>-w/--watch</code></li>
 </ul>
 </li>
-<li>value flags (should be at the end):<ul>
+<li>value flags (should be at the end):
+<ul>
 <li><strong>f</strong>=<code>-f/--filename</code></li>
 <li><strong>l</strong>=<code>-l/--selector</code></li>
 </ul>
 </li>
 </ul>
-<h1 id="2-示例"><a href="#2-示例" class="headerlink" title="2. 示例"></a>2. 示例</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例1</span></span><br><span class="line">kd → kubectl describe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例2</span></span><br><span class="line">kgdepallw → kubectl get deployment —all-namespaces —watch</span><br></pre></td></tr></table></figure>
+<h1 id="2-示例">2. 示例</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例1</span></span><br><span class="line">kd → kubectl describe</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例2</span></span><br><span class="line">kgdepallw → kubectl get deployment —all-namespaces —watch</span><br></pre></td></tr></table></figure>
 <p><strong>alias get示例：</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> k=<span class="string">'kubectl'</span></span><br><span class="line"><span class="built_in">alias</span> kg=<span class="string">'kubectl get'</span></span><br><span class="line"><span class="built_in">alias</span> kgpo=<span class="string">'kubectl get pods'</span></span><br><span class="line"><span class="built_in">alias</span> kgpoojson=<span class="string">'kubectl get pods -o=json'</span></span><br><span class="line"><span class="built_in">alias</span> kgpon=<span class="string">'kubectl get pods --namespace'</span></span><br><span class="line"><span class="built_in">alias</span> ksysgpooyamll=<span class="string">'kubectl --namespace=kube-system get pods -o=yaml -l'</span></span><br></pre></td></tr></table></figure>
-<h1 id="3-安装"><a href="#3-安装" class="headerlink" title="3. 安装"></a>3. 安装</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 .kubectl_aliases下载到 home 目录</span></span><br><span class="line"><span class="built_in">cd</span> ~ &amp;&amp; wget https://raw.githubusercontent.com/ahmetb/kubectl-aliases/master/.kubectl_aliases</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将以下内容添加到 .bashrc中，并执行 source .bashrc</span></span><br><span class="line">[ -f ~/.kubectl_aliases ] &amp;&amp; <span class="built_in">source</span> ~/.kubectl_aliases</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">kubectl</span></span>() &#123; <span class="built_in">command</span> kubectl <span class="variable">$@</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果需要提示别名的完整命令，则将以下内容添加到 .bashrc中，并执行 source .bashrc</span></span><br><span class="line">[ -f ~/.kubectl_aliases ] &amp;&amp; <span class="built_in">source</span> ~/.kubectl_aliases</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">kubectl</span></span>() &#123; <span class="built_in">echo</span> <span class="string">"+ kubectl <span class="variable">$@</span>"</span>; <span class="built_in">command</span> kubectl <span class="variable">$@</span>; &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-安装">3. 安装</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 .kubectl_aliases下载到 home 目录</span></span><br><span class="line"><span class="built_in">cd</span> ~ &amp;&amp; wget https://raw.githubusercontent.com/ahmetb/kubectl-aliases/master/.kubectl_aliases</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将以下内容添加到 .bashrc中，并执行 source .bashrc</span></span><br><span class="line">[ -f ~/.kubectl_aliases ] &amp;&amp; <span class="built_in">source</span> ~/.kubectl_aliases</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">kubectl</span></span>() &#123; <span class="built_in">command</span> kubectl <span class="variable">$@</span>; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果需要提示别名的完整命令，则将以下内容添加到 .bashrc中，并执行 source .bashrc</span></span><br><span class="line">[ -f ~/.kubectl_aliases ] &amp;&amp; <span class="built_in">source</span> ~/.kubectl_aliases</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">kubectl</span></span>() &#123; <span class="built_in">echo</span> <span class="string">"+ kubectl <span class="variable">$@</span>"</span>; <span class="built_in">command</span> kubectl <span class="variable">$@</span>; &#125;</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
 <li><a href="https://ahmet.im/blog/kubectl-aliases/" target="_blank" rel="noopener">https://ahmet.im/blog/kubectl-aliases/</a></li>
@@ -311,7 +317,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/etcd/etcd-operator-usage/" data-toggle="tooltip" data-placement="top" title="etcd-operator的使用">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/etcd/raft/" data-toggle="tooltip" data-placement="top" title="Raft算法">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -585,7 +591,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

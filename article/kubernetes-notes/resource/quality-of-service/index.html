@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -212,26 +212,35 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="resource-quality-of-service"><a href="#Resource-Quality-of-Service" class="headerlink" title="Resource Quality of Service"></a>Resource Quality of Service</h1><h2 id="1-资源qos简介"><a href="#1-资源QoS简介" class="headerlink" title="1. 资源QoS简介"></a>1. 资源QoS简介</h2><p><code>request</code>值表示容器保证可被分配到资源。<code>limit</code>表示容器可允许使用的最大资源。Pod级别的<code>request</code>和<code>limit</code>是其所有容器的request和limit之和。</p>
-<h2 id="2-requests-and-limits"><a href="#2-Requests-and-Limits" class="headerlink" title="2. Requests and Limits"></a>2. Requests and Limits</h2><p>Pod可以指定<code>request</code>和<code>limit</code>资源。其中<code>0 &lt;= request &lt;=</code><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md" target="_blank" rel="noopener"><code>Node Allocatable</code></a> &amp; <code>request &lt;= limit &lt;= Infinity</code>。调度是基于<code>request</code>而不是<code>limit</code>，即如果Pod被成功调度，那么可以保证Pod分配到指定的 <code>request</code>的资源。Pod使用的资源能否超过指定的<code>limit</code>值取决于该资源是否可被压缩。</p>
-<h3 id="21-可压缩的资源"><a href="#2-1-可压缩的资源" class="headerlink" title="2.1. 可压缩的资源"></a>2.1. 可压缩的资源</h3><ul>
+                <div id="vip-container"><h1 id="resource-quality-of-service">Resource Quality of Service</h1>
+<h2 id="1-资源qos简介">1. 资源QoS简介</h2>
+<p><code>request</code>值表示容器保证可被分配到资源。<code>limit</code>表示容器可允许使用的最大资源。Pod级别的<code>request</code>和<code>limit</code>是其所有容器的request和limit之和。</p>
+<h2 id="2-requests-and-limits">2. Requests and Limits</h2>
+<p>Pod可以指定<code>request</code>和<code>limit</code>资源。其中<code>0 &lt;= request &lt;=</code><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/node-allocatable.md" target="_blank" rel="noopener"><code>Node Allocatable</code></a> &amp; <code>request &lt;= limit &lt;= Infinity</code>。调度是基于<code>request</code>而不是<code>limit</code>，即如果Pod被成功调度，那么可以保证Pod分配到指定的 <code>request</code>的资源。Pod使用的资源能否超过指定的<code>limit</code>值取决于该资源是否可被压缩。</p>
+<h3 id="21-可压缩的资源">2.1. 可压缩的资源</h3>
+<ul>
 <li>目前只支持CPU</li>
 <li>pod可以保证获得它们请求的CPU数量，它们可能会也可能不会获得额外的CPU时间(取决于正在运行的其他作业)。因为目前CPU隔离是在容器级别而不是pod级别。</li>
 </ul>
-<h3 id="22-不可压缩的资源"><a href="#2-2-不可压缩的资源" class="headerlink" title="2.2. 不可压缩的资源"></a>2.2. 不可压缩的资源</h3><ul>
+<h3 id="22-不可压缩的资源">2.2. 不可压缩的资源</h3>
+<ul>
 <li>目前只支持内存</li>
 <li>pod将获得它们请求的内存数量，如果超过了它们的内存请求，它们可能会被杀死(如果其他一些pod需要内存)，但如果pod消耗的内存小于请求的内存，那么它们将不会被杀死(除非在系统任务或守护进程需要更多内存的情况下)。</li>
 </ul>
-<h2 id="3-qos-级别"><a href="#3-QoS-级别" class="headerlink" title="3. QoS 级别"></a>3. QoS 级别</h2><p>在机器资源超卖的情况下（limit的总量大于机器的资源容量），即CPU或内存耗尽，将不得不杀死部分不重要的容器。因此对容器分成了3个<code>QoS</code>的级别：<code>Guaranteed</code>,<code>Burstable</code>,  <code>Best-Effort</code>，三个级别的优先级依次递减。</p>
+<h2 id="3-qos-级别">3. QoS 级别</h2>
+<p>在机器资源超卖的情况下（limit的总量大于机器的资源容量），即CPU或内存耗尽，将不得不杀死部分不重要的容器。因此对容器分成了3个<code>QoS</code>的级别：<code>Guaranteed</code>,<code>Burstable</code>,  <code>Best-Effort</code>，三个级别的优先级依次递减。</p>
 <p>当CPU资源无法满足，pod不会被杀死可能被短暂控制。</p>
 <p>内存是不可压缩的资源，当内存耗尽的情况下，会依次杀死优先级低的容器。Guaranteed的级别最高，不会被杀死，除非容器使用量超过limit限值或者资源耗尽，已经没有更低级别的容器可驱逐。</p>
-<h3 id="31-guaranteed"><a href="#3-1-Guaranteed" class="headerlink" title="3.1. Guaranteed"></a>3.1. Guaranteed</h3><p>所有的容器的<code>limit</code>值和<code>request</code>值被配置且两者相等（如果只配置limit没有request，则request取值于limit）。</p>
+<h3 id="31-guaranteed">3.1. Guaranteed</h3>
+<p>所有的容器的<code>limit</code>值和<code>request</code>值被配置且两者相等（如果只配置limit没有request，则request取值于limit）。</p>
 <p>例如：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例1</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">10m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bar</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">100Mi</span></span><br><span class="line"><span class="comment"># 示例2</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">10m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">10m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bar</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">100Mi</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">100Mi</span></span><br></pre></td></tr></table></figure>
-<h3 id="32-burstable"><a href="#3-2-Burstable" class="headerlink" title="3.2. Burstable"></a>3.2. Burstable</h3><p>如果一个或多个容器的limit和request值被配置且两者不相等。</p>
+<h3 id="32-burstable">3.2. Burstable</h3>
+<p>如果一个或多个容器的limit和request值被配置且两者不相等。</p>
 <p>例如：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 示例1</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">10m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">10m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bar</span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># 示例2</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bar</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">limits:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">100m</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例3</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">      <span class="attr">requests:</span></span><br><span class="line">        <span class="attr">cpu:</span> <span class="string">10m</span></span><br><span class="line">        <span class="attr">memory:</span> <span class="string">1Gi</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bar</span></span><br></pre></td></tr></table></figure>
-<h3 id="33-best-effort"><a href="#3-3-Best-Effort" class="headerlink" title="3.3. Best-Effort"></a>3.3. Best-Effort</h3><p>所有的容器的<code>limit</code>和<code>request</code>值都没有配置。</p>
+<h3 id="33-best-effort">3.3. Best-Effort</h3>
+<p>所有的容器的<code>limit</code>和<code>request</code>值都没有配置。</p>
 <p>例如：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">foo</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">bar</span></span><br><span class="line">    <span class="attr">resources:</span></span><br></pre></td></tr></table></figure>
 <p>参考文章：</p>
@@ -262,7 +271,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/resource/limit-range/" data-toggle="tooltip" data-placement="top" title="资源配额">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/operation/node/safely-drain-node/" data-toggle="tooltip" data-placement="top" title="安全迁移节点">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -541,7 +550,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -220,12 +220,13 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 部署dashboard1kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.0/aio/deploy/recommended.yaml
+            1. 部署dashboard
+1kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.0/aio/deploy/recommended.yaml
 镜像： kubernetesui/dashboard:v2.5.0
 默认端口：8443
 登录页面需要填入token或kubeconfig
 
-2. 登录......
+2. 登......
         </div>
     </a>
     
@@ -255,7 +256,9 @@
         </h3>
         <div class="post-content-preview">
             本文介绍如何通过kubectl进入节点的shell环境。
-1. 安装krew node-shell1.1. 安装krew123456789(  set -x; cd "$(mktemp -d)" &amp;&amp;  OS="$(uname | tr '[:upper:]' '[:lower:]')" &amp;&amp;  ARCH="$(uname -m | sed -e 's/x86......
+1. 安装krew node-shell
+1.1. 安装krew
+123456789(  set -x; cd "$(mktemp -d)" &amp;&amp;  OS="$(uname | tr '[:upper:]' '[:lower:]')" &amp;&amp;  ARCH="$(uname -m | sed -e 's/x......
         </div>
     </a>
     
@@ -275,24 +278,21 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">
+    <a href="/article/kubernetes-notes/network/gateway/apisix-config/">
         <h2 class="post-title">
                         
-            ingress-controller原理
+            APISIX配置
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            ingress-controller架构图
-ingress-controller流程图
-ApisixRoute同步逻辑
-数据结构转换
-参考：
+            
+本文主要记录apisix相关组件默认配置，便于查阅。
 
-https://apisix.apache.org/zh/docs/ingress-controller/getting-started/
-
-https://apisix.apache.org/zh/docs/ingress-controller/d......
+1. apisix配置
+参考：apisix/config-default.yaml at master · apache/apisix · GitHub
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950......
         </div>
     </a>
     
@@ -322,7 +322,51 @@ https://apisix.apache.org/zh/docs/ingress-controller/d......
         </h3>
         <div class="post-content-preview">
             本文主要介绍三种方式来创建apisix的路由规则。需要提前创建好k8s service作为路由的后端标识来关联endpoints。
-0. 创建k8s service12345678910111213apiVersion: v1kind: Servicemetadata:  name: &#123;APP&#125;-service  namespace: &#123;NAMESPACE&#1......
+0. 创建k8s service
+12345678910111213apiVersion: v1kind: Servicemetadata:  name: &#123;APP&#125;-service  namespace: &#123;NAMESPACE&#......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-09-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#ApiSix" title="ApiSix">ApiSix</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">
+        <h2 class="post-title">
+                        
+            ingress-controller原理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            ingress-controller架构图
+
+ingress-controller流程图
+
+ApisixRoute同步逻辑
+
+数据结构转换
+
+参考：
+
+
+https://apisix.apache.org/zh/docs/ingress-controller/getting-started/
+
+
+https://apisix.apache.org/zh/docs/ingress-contro......
         </div>
     </a>
     
@@ -354,43 +398,11 @@ https://apisix.apache.org/zh/docs/ingress-controller/d......
             
 本文主要介绍通过k8s来部署apisix及apisix-ingress-controller，使用apisix作为k8s内Pod互相访问的网关。
 
-1.  环境准备1.1. 安装helm参考：Helm | 安装
+1.  环境准备
+1.1. 安装helm
+参考：Helm | 安装
 1curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-helm添加仓库
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-09-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#ApiSix" title="ApiSix">ApiSix</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/network/gateway/apisix-config/">
-        <h2 class="post-title">
-                        
-            APISIX配置
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-本文主要记录apisix相关组件默认配置，便于查阅。
-
-1. apisix配置参考：apisix/config-default.yaml at master · apache/apisix · GitHub
-12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505......
+helm添加仓......
         </div>
     </a>
     
@@ -422,20 +434,58 @@ helm添加仓库
             
 本文为基于kubeadm搭建生产环境级别高可用的k8s集群。
 
-1. 环境准备1.0. master硬件配置参考：
+1. 环境准备
+1.0. master硬件配置
+参考：
+
 
 Master节点规格
+
 
 高可靠推荐配置 - 容器服务 ACK - 阿里云
 
 
-Kubernetes集群Master节点上运行着etcd、kube-apiserver、kube-controller等核心组件，对于Kubernetes集群的稳定性有着至关重要的影响，对于生产环......
+Kubernetes集群Master节点上运行着etcd、kube-apiserver、kube-controller等核心组件，对于Kubernetes集群的稳定性有着至关重要的影响，对......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
             2022-08-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/access/rbac-auth/">
+        <h2 class="post-title">
+                        
+            使用 RBAC 鉴权
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+本文基于https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/ 整理。
+
+1. RBAC介绍
+基于角色的访问控制【Role-based access control (RBAC)】是一种基于组织中用户的角色来调节控制对 计算机或网络资源的访问的方法。
+RBAC 鉴权机制使用 rbac.authorization......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-08-13
         </p>
         <div class="tags">
             
@@ -461,7 +511,8 @@ Kubernetes集群Master节点上运行着etcd、kube-apiserver、kube-controller�
             
 本文主要介绍部署openyurt组件到k8s集群中。
 
-1. 给云端节点和边缘节点打标签openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 apiserver 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 openyurt.io/is-edge-worker 的标签的方式来区分，false表示云端节点，tru......
+1. 给云端节点和边缘节点打标签
+openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 apiserver 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 openyurt.io/is-edge-worker 的标签的方式来区分，false表示云端节点，tr......
         </div>
     </a>
     
@@ -472,39 +523,6 @@ Kubernetes集群Master节点上运行着etcd、kube-apiserver、kube-controller�
         <div class="tags">
             
               <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/access/rbac-auth/">
-        <h2 class="post-title">
-                        
-            使用 RBAC 鉴权
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-本文基于https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/ 整理。
-
-1. RBAC介绍基于角色的访问控制【Role-based access control (RBAC)】是一种基于组织中用户的角色来调节控制对 计算机或网络资源的访问的方法。
-RBAC 鉴权机制使用 rbac.authorization.......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -526,8 +544,10 @@ RBAC 鉴权机制使用 rbac.authorization.......
             
 本文主要由云原生虚拟化：基于 Kubevirt 构建边缘计算实例文章重新整理而成。
 
-1. kubevirt简介kubevirt是基于k8s之上，提供了一种通过k8s来编排和管理虚拟机的方式。
+1. kubevirt简介
+kubevirt是基于k8s之上，提供了一种通过k8s来编排和管理虚拟机的方式。
 2. 架构图
+
 2.1. 组件说明
 
 
@@ -543,7 +563,7 @@ RBAC 鉴权机制使用 rbac.authorization.......
 控制面
 virt-api
 deployment
-自定义API，开机、关机、重启等，作为apiserver的插件，业务通......
+自定义API，开机、关机、重启等，作为apiserver的插件，业......
         </div>
     </a>
     
@@ -606,13 +626,13 @@ deployment
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
-        
-            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -622,19 +642,7 @@ deployment
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
@@ -646,9 +654,9 @@ deployment
             
         
             
-        
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+        
             
         
             
@@ -656,11 +664,11 @@ deployment
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -680,9 +688,9 @@ deployment
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
         
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -690,7 +698,7 @@ deployment
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
             
         
             
@@ -710,9 +718,21 @@ deployment
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
@@ -824,15 +844,15 @@ deployment
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
         </li>
       
     </ul>
@@ -935,7 +955,7 @@ deployment
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2022 
+                    Copyright &copy; 胡伟煌 2023 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">
