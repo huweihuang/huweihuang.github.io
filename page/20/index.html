@@ -245,89 +245,18 @@ Go语言中自带有一个轻量级的测试框架testing和自带的go test命�
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/web/beego/beego-log/">
+    <a href="/article/golang-notes/introduction/package/govendor-usage/">
         <h2 class="post-title">
                         
-            Beego 日志处理
+            govendor的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 使用入门
-beego 的日志处理是基于 logs 模块搭建的，内置了一个变量 BeeLogger，默认已经是 logs.BeeLogger 类型，初始化了 console，也就是默认输出到 console。
-12345678beego.Emergency("this is emergency")beego.Alert("this is alert")beego.Critical("th......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-09-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/web/beego/beego-project/">
-        <h2 class="post-title">
-                        
-            Beego 项目逻辑
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            beego项目逻辑
-1. 路由设置
-1.1. beego.Router
-入口文件main.go
-12345678910package main import (    _ "quickstart/routers"    "github.com/astaxie/beego") func main() &#123;    beego.Run()&#125;
-go中导入包中init函数的执行逻辑
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-09-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/web/beego/bee/">
-        <h2 class="post-title">
-                        
-            Bee 工具使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. bee工具
-bee工具用来进行beego项目的创建、热编译、开发、测试、和部署。
-安装:
-1go get github.com/beego/bee
-配置：
-安装完之后，bee可执行文件默认存放在$GOPATH/bin里面，所以要把$GOPATH/bin添加到环境变量中。
-2. bee命令
-12345678910111213141516Bee is a tool for managing......
+            1. govendor简介
+golang工程的依赖包经常使用go get 的方式来获取，例如：go get github.com/kardianos/govendor ，会将依赖包下载到GOPATH的路径下。
+常用的依赖包管理工具有godep，govendor等，在Golang1.5之后，Go提供了 GO15VENDOREXPERIMENT 环境变量，用于将go build时的应用路径搜索调......
         </div>
     </a>
     
@@ -383,21 +312,23 @@ bee工具用来进行beego项目的创建、热编译、开发、测试、和部
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/text/json/">
+    <a href="/article/golang-notes/web/beego/bee/">
         <h2 class="post-title">
                         
-            Json处理
+            Bee 工具使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            JSON处理
-JSON是一种轻量级的数据交换语言。
-1. 解析JSON[Unmarshal(data []byte, v interface{})]
-1.1. Unmarshal源码
-/src/encoding/json/decode.go
-1234567891011121314151617181920212223242526272829303132func Unmarshal(data [......
+            1. bee工具
+bee工具用来进行beego项目的创建、热编译、开发、测试、和部署。
+安装:
+1go get github.com/beego/bee
+配置：
+安装完之后，bee可执行文件默认存放在$GOPATH/bin里面，所以要把$GOPATH/bin添加到环境变量中。
+2. bee命令
+12345678910111213141516Bee is a tool for managing......
         </div>
     </a>
     
@@ -417,18 +348,83 @@ JSON是一种轻量级的数据交换语言。
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/introduction/package/govendor-usage/">
+    <a href="/article/golang-notes/web/golang-http-execution-flow/">
         <h2 class="post-title">
                         
-            govendor的使用
+            Http包源码分析
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. govendor简介
-golang工程的依赖包经常使用go get 的方式来获取，例如：go get github.com/kardianos/govendor ，会将依赖包下载到GOPATH的路径下。
-常用的依赖包管理工具有godep，govendor等，在Golang1.5之后，Go提供了 GO15VENDOREXPERIMENT 环境变量，用于将go build时的应用路径搜索调......
+            1. http包建立web服务器
+1234567891011121314151617181920212223242526package mainimport (    "fmt"    "log"    "net/http"    "strings")func sayhelloName(w http.ResponseWriter, r *http.Request) &#123;    r.P......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-09-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/web/beego/beego-project/">
+        <h2 class="post-title">
+                        
+            Beego 项目逻辑
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            beego项目逻辑
+1. 路由设置
+1.1. beego.Router
+入口文件main.go
+12345678910package main import (    _ "quickstart/routers"    "github.com/astaxie/beego") func main() &#123;    beego.Run()&#125;
+go中导入包中init函数的执行逻辑
+......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-09-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/web/beego/beego-log/">
+        <h2 class="post-title">
+                        
+            Beego 日志处理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 使用入门
+beego 的日志处理是基于 logs 模块搭建的，内置了一个变量 BeeLogger，默认已经是 logs.BeeLogger 类型，初始化了 console，也就是默认输出到 console。
+12345678beego.Emergency("this is emergency")beego.Alert("this is alert")beego.Critical("th......
         </div>
     </a>
     
@@ -486,17 +482,21 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/web/golang-http-execution-flow/">
+    <a href="/article/golang-notes/text/json/">
         <h2 class="post-title">
                         
-            Http包源码分析
+            Json处理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. http包建立web服务器
-1234567891011121314151617181920212223242526package mainimport (    "fmt"    "log"    "net/http"    "strings")func sayhelloName(w http.ResponseWriter, r *http.Request) &#123;    r.P......
+            JSON处理
+JSON是一种轻量级的数据交换语言。
+1. 解析JSON[Unmarshal(data []byte, v interface{})]
+1.1. Unmarshal源码
+/src/encoding/json/decode.go
+1234567891011121314151617181920212223242526272829303132func Unmarshal(data [......
         </div>
     </a>
     
@@ -613,11 +613,11 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -627,11 +627,7 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -639,7 +635,15 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -647,17 +651,13 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -665,7 +665,7 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -677,7 +677,7 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -693,11 +693,7 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -709,7 +705,11 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -807,15 +807,15 @@ GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程�
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

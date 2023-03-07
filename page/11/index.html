@@ -211,27 +211,22 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/runtime/gpu/nvidia-device-plugin/">
+    <a href="/article/kubernetes-notes/storage/volume/volume/">
         <h2 class="post-title">
                         
-            nvidia-device-plugin介绍
+            Volume介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了Kubernetes device plugin的接口。
-提供以下功能：
+            1. volume概述
 
-暴露每个节点的GPU数量给集群
-跟踪GPU的健康情况
-使在k8s的节点可以运行GPU容器
+容器上的文件生命周期同容器的生命周期一致，即容器挂掉之后，容器将会以最初镜像中的文件系统内容启动，之前容器运行时产生的文件将会丢失。
+Pod的volume的生命周期同Pod的生命周期一致，当Pod被删除的时候，对应的volume才会被删除。即Pod中的容器重启时，之前的文件仍可以保存。
 
-2. 要求
-
-NVIDIA drivers ~= 384.81
-nvidia-docker ve......
+容器中的进程看到的是由其 Docker 镜像和卷组成的文件系统视图。
+Pod ......
         </div>
     </a>
     
@@ -251,21 +246,52 @@ nvidia-docker ve......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
+    <a href="/article/kubernetes-notes/storage/volume/storage-class/">
         <h2 class="post-title">
                         
-            部署csi-cephfs
+            StorageClass 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            0. 说明
-要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
-涉及镜像
+            1. StorageClass概述
+StorageClass提供了一种描述存储类（class）的方法，不同的class可能会映射到不同的服务质量等级和备份策略或其他策略等。
+StorageClass 对象中包含 provisioner、parameters 和 reclaimPolicy 字段，当需要动态分配 PersistentVolume 时会使用到。当创建 StorageClass 对......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
 
-quay.io/k8scsi/csi-provisioner:v0.3.0
-quay.io/k8scsi/csi......
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
+        <h2 class="post-title">
+                        
+            部署cephfs-provisioner
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 安装cephfs客户端
+所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
+1yum install -y ceph-common
+2. 部署RBAC
+2.1. ClusterRole
+12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/......
         </div>
     </a>
     
@@ -285,19 +311,31 @@ quay.io/k8scsi/csi......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/">
+    <a href="/article/kubernetes-notes/principle/flow/pod-flow/">
         <h2 class="post-title">
                         
-            PersistentVolumeClaim 介绍
+            Pod创建流程
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. PVC概述
-PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
-当需要不同性质的PV来满足存储需求时，可以使用StorageClass来实现。
-每个 PVC 中都包含一个 spec 规格字段和一个 status 声明......
+            Pod创建基本流程图
+
+Pod创建完整流程图
+
+
+图片来源：https://fuckcloudnative.io/posts/what-happens-when-k8s/
+
+参考:
+
+https://fuckcloudnative.io/posts/what-happens-when-k8s/
+
+
+
+			
+			
+			var isMobile = navigator.userAgent.......
         </div>
     </a>
     
@@ -372,76 +410,6 @@ Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义�
         <div class="tags">
             
               <a href="/tags/#CSI" title="CSI">CSI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/">
-        <h2 class="post-title">
-                        
-            kata配置
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 配置文件路径
-默认的配置文件位于/usr/share/defaults/kata-containers/configuration.toml，如果/etc/kata-containers/configuration.toml的配置文件存在，则会替代默认的配置文件。
-查看配置文件的路径命令如下：
-123# kata-runtime --kata-show-default-config-p......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/shell/shell-if/">
-        <h2 class="post-title">
-                        
-            Shell 判断语句
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. if语句
-if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：
-
-if … fi 语句；
-if … else … fi 语句；
-if … elif … else … fi 语句。
-
-1.1. if … else
-if … else 语句的语法：
-1234if [ expression ]then   Statement(s) to ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-04-17
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Shell" title="Shell">Shell</a>
             
         </div>
     
@@ -558,6 +526,46 @@ awk 和 expr，expr 最常用
 </div>
 <hr>
 
+<div class="post-preview">
+
+    <a href="/article/linux-notes/shell/shell-echo/">
+        <h2 class="post-title">
+                        
+            Shell echo命令
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. echo
+echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符串。命令格式：
+1echo arg
+您可以使用echo实现更复杂的输出格式控制。
+1.1. 显示转义字符
+1echo "\"It is a test\""
+结果将是：
+1"It is a test"
+双引号也可以省略。
+1.2. 显示变量
+12name="OK"echo "$name It is a test"
+......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-04-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Shell" title="Shell">Shell</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
 
 
 <!-- Pager -->
@@ -627,11 +635,11 @@ awk 和 expr，expr 最常用
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -641,11 +649,7 @@ awk 和 expr，expr 最常用
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -653,7 +657,15 @@ awk 和 expr，expr 最常用
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -661,17 +673,13 @@ awk 和 expr，expr 最常用
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -679,7 +687,7 @@ awk 和 expr，expr 最常用
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -691,7 +699,7 @@ awk 和 expr，expr 最常用
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -707,11 +715,7 @@ awk 和 expr，expr 最常用
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -723,7 +727,11 @@ awk 和 expr，expr 最常用
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -821,15 +829,15 @@ awk 和 expr，expr 最常用
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

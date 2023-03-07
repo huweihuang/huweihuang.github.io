@@ -280,59 +280,20 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/paas/12-factor/">
+    <a href="/article/kubernetes-notes/resource/quality-of-service/">
         <h2 class="post-title">
                         
-            12 Factor
+            资源服务质量
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-以下主要介绍PaaS平台设计架构中使用到的方法论，统称为12-Factor(要素)
-
-简介
-软件通常会作为一种服务来交付，即软件即服务(SaaS)。12-Factor原则为构建SaaS应用提供了以下的方法论：
-
-使用标准化流程自动配置，减少开发者的学习成本。
-和操作系统解耦，使其可以在各个系统间提供最大的移植性。
-适合部署在现代的云计算平台上，从而在服务器和系统管理方面节省资源。
-将开发环......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/node/nodeselector-and-taint/">
-        <h2 class="post-title">
-                        
-            指定节点调度与隔离
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. NodeSelector
-1.1. 概念
-如果需要限制Pod到指定的Node上运行，则可以给Node打标签并给Pod配置NodeSelector。
-1.2. 使用方式
-1.2.1. 给Node打标签
-12345678910111213# get node的namekubectl get nodes# 设置Labelkubectl label nodes &lt;node-name&gt......
+            Resource Quality of Service
+1. 资源QoS简介
+request值表示容器保证可被分配到资源。limit表示容器可允许使用的最大资源。Pod级别的request和limit是其所有容器的request和limit之和。
+2. Requests and Limits
+Pod可以指定request和limit资源。其中0 &lt;= request &lt;=Node......
         </div>
     </a>
     
@@ -393,20 +354,21 @@ TODO
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/resource/quality-of-service/">
+    <a href="/article/kubernetes-notes/operation/node/nodeselector-and-taint/">
         <h2 class="post-title">
                         
-            资源服务质量
+            指定节点调度与隔离
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Resource Quality of Service
-1. 资源QoS简介
-request值表示容器保证可被分配到资源。limit表示容器可允许使用的最大资源。Pod级别的request和limit是其所有容器的request和limit之和。
-2. Requests and Limits
-Pod可以指定request和limit资源。其中0 &lt;= request &lt;=Node......
+            1. NodeSelector
+1.1. 概念
+如果需要限制Pod到指定的Node上运行，则可以给Node打标签并给Pod配置NodeSelector。
+1.2. 使用方式
+1.2.1. 给Node打标签
+12345678910111213# get node的namekubectl get nodes# 设置Labelkubectl label nodes &lt;node-name&gt......
         </div>
     </a>
     
@@ -441,6 +403,44 @@ Pod可以指定request和limit资源。其中0 &lt;= request &lt;=Node......
 12345678# 查看节点kubectl get nodes# 设置节点为不可调度kubectl cordon &lt;NodeName&gt;# 设置节点为可调度kubectl uncordon &lt;NodeName&gt;
 1.2. 执行kubectl drain命令
 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/paas/12-factor/">
+        <h2 class="post-title">
+                        
+            12 Factor
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+以下主要介绍PaaS平台设计架构中使用到的方法论，统称为12-Factor(要素)
+
+简介
+软件通常会作为一种服务来交付，即软件即服务(SaaS)。12-Factor原则为构建SaaS应用提供了以下的方法论：
+
+使用标准化流程自动配置，减少开发者的学习成本。
+和操作系统解耦，使其可以在各个系统间提供最大的移植性。
+适合部署在现代的云计算平台上，从而在服务器和系统管理方面节省资源。
+将开发环......
         </div>
     </a>
     
@@ -526,23 +526,22 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/vim/vim-keymap/">
+    <a href="/article/linux-notes/tools/nfs-usage/">
         <h2 class="post-title">
                         
-            vim 命令
+            NFS的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. vi的模式
-
-1.1. 普通模式
-由Shell进入vi编辑器时，首先进入普通模式。在普通模式下，从键盘输入任何字符都被当作命令来解释。普通模式下没有任何提示符，输入命令后立即执行，不需要回车，而且输入的字符不会在屏幕上显示出来。
-1.2. 编辑模式
-编辑模式主要用于文本的编辑。该模式下用户输入的任何字符都被作为文件的内容保存起来，并在屏幕上显示出来。
-1.3. 命令模式
-命令模式下，用......
+            1. NFS简介
+NFS，是Network File System的简写，即网络文件系统。网络文件系统是FreeBSD支持的文件系统中的一种，也被称为NFS. NFS允许一个系统在网络上与他人共享目录和文件。
+通过使用NFS，用户和程序可以像访问本地文件一样访问远端系统上的文件。
+2. NFS的安装与配置
+2.1 服务端
+NFS需要安装nfs-utils、rpcbind两个包。
+123456......
         </div>
     </a>
     
@@ -552,7 +551,7 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
         </p>
         <div class="tags">
             
-              <a href="/tags/#VIM" title="VIM">VIM</a>
+              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -629,11 +628,11 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -643,11 +642,7 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -655,7 +650,15 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -663,17 +666,13 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -681,7 +680,7 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -693,7 +692,7 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -709,11 +708,7 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -725,7 +720,11 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -823,15 +822,15 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

@@ -211,38 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-introduction/">
-        <h2 class="post-title">
-                        
-            Linux介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Linux简介
-严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
-Linux内核版本
-Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/linux-notes/file/linux-file-system/">
         <h2 class="post-title">
                         
@@ -277,35 +245,24 @@ ext3 ： ......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/disk/lvm-usage/">
+    <a href="/article/linux-notes/file/linux-file-storage/">
         <h2 class="post-title">
                         
-            LVM的使用
+            Linux文件存储
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文由网络内容整理而成的笔记
+            文件存储结构
+大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
 
-1. LVM简介
-LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。
-优点：
+目录项：包括文件名和inode节点号。
+Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
+数据块：包含文件的具体内容。
 
-
-可以灵活分配和管理磁盘空间
-
-
-可以对分区进行动态的扩容
-
-
-可以增加新的磁盘到lvm中
-
-
-2. LVM核心概念
-LVM概念图：
-......
+1. inode
+理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
         </div>
     </a>
     
@@ -315,7 +272,39 @@ LVM概念图：
         </p>
         <div class="tags">
             
-              <a href="/tags/#disk" title="disk">disk</a>
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/file/linux-introduction/">
+        <h2 class="post-title">
+                        
+            Linux介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Linux简介
+严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
+Linux内核版本
+Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -395,6 +384,37 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
 
 <div class="post-preview">
 
+    <a href="/article/golang-notes/basis/errors/">
+        <h2 class="post-title">
+                        
+            错误处理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            错误处理
+1. error接口
+1234567891011121314//定义error接口type error interface&#123;  Error() string&#125;//调用error接口func Foo(param int) (n int,err error)&#123;  //...&#125;n,err:=Foo(0)if err!=nil&#123;  //错误......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/golang-notes/basis/control-structures/">
         <h2 class="post-title">
                         
@@ -417,43 +437,6 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
         <div class="tags">
             
               <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/file/linux-file-storage/">
-        <h2 class="post-title">
-                        
-            Linux文件存储
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            文件存储结构
-大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
-
-目录项：包括文件名和inode节点号。
-Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
-数据块：包含文件的具体内容。
-
-1. inode
-理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -498,21 +481,21 @@ Linux中的所有数据都被保存在文件中，所有的文件被分配到不
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/framework/cobra/cobra-flags/">
+    <a href="/article/golang-notes/framework/cobra/cobra-command/">
         <h2 class="post-title">
                         
-            cobra flags
+            cobra command
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            添加Flags
-1. Persistent Flags
-Persistent Flags表示该类参数可以被用于当前命令及其子命令。
-例如，以下表示verbose参数可以被用于rootCmd及其子命令。
-1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
-2. Lo......
+            
+本文以cobra-demo为例介绍cobra添加命令的具体使用操作。
+
+0. cobra-demo
+cobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
+12345678910111213141516171819202122 $ ./cobra-demo A longer description tha......
         </div>
     </a>
     
@@ -532,22 +515,31 @@ Persistent Flags表示该类参数可以被用于当前命令及其子命令。
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/framework/cobra/cobra-usage/">
+    <a href="/article/golang-notes/principle/go-scheduler/">
         <h2 class="post-title">
                         
-            cobra 介绍
+            Goroutine调度
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Cobra简介
-Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
-Cobra主要包括以下部分
+            
+本文主要介绍Go的调度模型。
 
-Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
-Args:命令执行相关参数。
-Flags:二进制命令的配置参数，可对应配置文件。参数可分......
+1. 线程实现模型
+线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
+
+内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。
+
+1.1. 线程模型对比
+
+
+
+线程模型
+用户线程与KSE之间的对应关系
+特点
+优......
         </div>
     </a>
     
@@ -634,11 +626,11 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -648,11 +640,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -660,7 +648,15 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -668,17 +664,13 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -686,7 +678,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -698,7 +690,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -714,11 +706,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -730,7 +718,11 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -828,15 +820,15 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

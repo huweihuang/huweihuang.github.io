@@ -278,21 +278,18 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/gateway/apisix-config/">
+    <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">
         <h2 class="post-title">
                         
-            APISIX配置
+            创建路由
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文主要记录apisix相关组件默认配置，便于查阅。
-
-1. apisix配置
-参考：apisix/config-default.yaml at master · apache/apisix · GitHub
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950......
+            本文主要介绍三种方式来创建apisix的路由规则。需要提前创建好k8s service作为路由的后端标识来关联endpoints。
+0. 创建k8s service
+12345678910111213apiVersion: v1kind: Servicemetadata:  name: &#123;APP&#125;-service  namespace: &#123;NAMESPACE&#......
         </div>
     </a>
     
@@ -312,18 +309,23 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">
+    <a href="/article/kubernetes-notes/network/gateway/install/">
         <h2 class="post-title">
                         
-            创建路由
+            安装APISIX
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            本文主要介绍三种方式来创建apisix的路由规则。需要提前创建好k8s service作为路由的后端标识来关联endpoints。
-0. 创建k8s service
-12345678910111213apiVersion: v1kind: Servicemetadata:  name: &#123;APP&#125;-service  namespace: &#123;NAMESPACE&#......
+            
+本文主要介绍通过k8s来部署apisix及apisix-ingress-controller，使用apisix作为k8s内Pod互相访问的网关。
+
+1.  环境准备
+1.1. 安装helm
+参考：Helm | 安装
+1curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+helm添加仓......
         </div>
     </a>
     
@@ -386,23 +388,21 @@ https://apisix.apache.org/zh/docs/ingress-contro......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/gateway/install/">
+    <a href="/article/kubernetes-notes/network/gateway/apisix-config/">
         <h2 class="post-title">
                         
-            安装APISIX
+            APISIX配置
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             
-本文主要介绍通过k8s来部署apisix及apisix-ingress-controller，使用apisix作为k8s内Pod互相访问的网关。
+本文主要记录apisix相关组件默认配置，便于查阅。
 
-1.  环境准备
-1.1. 安装helm
-参考：Helm | 安装
-1curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-helm添加仓......
+1. apisix配置
+参考：apisix/config-default.yaml at master · apache/apisix · GitHub
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950......
         </div>
     </a>
     
@@ -465,6 +465,39 @@ Kubernetes集群Master节点上运行着etcd、kube-apiserver、kube-controller�
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/edge/openyurt/install-openyurt/">
+        <h2 class="post-title">
+                        
+            OpenYurt部署
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+本文主要介绍部署openyurt组件到k8s集群中。
+
+1. 给云端节点和边缘节点打标签
+openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 apiserver 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 openyurt.io/is-edge-worker 的标签的方式来区分，false表示云端节点，tr......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/operation/access/rbac-auth/">
         <h2 class="post-title">
                         
@@ -499,71 +532,22 @@ RBAC 鉴权机制使用 rbac.authorization......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/edge/openyurt/install-openyurt/">
+    <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-installation/">
         <h2 class="post-title">
                         
-            OpenYurt部署
+            KubeVirt的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文主要介绍部署openyurt组件到k8s集群中。
-
-1. 给云端节点和边缘节点打标签
-openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 apiserver 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 openyurt.io/is-edge-worker 的标签的方式来区分，false表示云端节点，tr......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-introduction/">
-        <h2 class="post-title">
-                        
-            KubeVirt的介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-本文主要由云原生虚拟化：基于 Kubevirt 构建边缘计算实例文章重新整理而成。
-
-1. kubevirt简介
-kubevirt是基于k8s之上，提供了一种通过k8s来编排和管理虚拟机的方式。
-2. 架构图
-
-2.1. 组件说明
-
-
-
-分类
-组件
-部署方式
-功能说明
-
-
-
-
-控制面
-virt-api
-deployment
-自定义API，开机、关机、重启等，作为apiserver的插件，业......
+            1. 安装kubevirt
+1.1. 修改镜像仓库
+针对私有环境，需要将所需镜像上传到自己的镜像仓库中。
+涉及的镜像组件有
+1234virt-operatorvirt-apivirt-controllervirt-launcher
+重命名镜像脚本如下:
+123456789101112131415161718192021222324252627282930#!/bin/bash# kubevi......
         </div>
     </a>
     
@@ -650,11 +634,11 @@ deployment
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -664,11 +648,7 @@ deployment
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -676,7 +656,15 @@ deployment
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -684,17 +672,13 @@ deployment
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -702,7 +686,7 @@ deployment
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -714,7 +698,7 @@ deployment
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -730,11 +714,7 @@ deployment
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -746,7 +726,11 @@ deployment
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -844,15 +828,15 @@ deployment
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

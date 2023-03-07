@@ -408,7 +408,7 @@
 <li>Docker Daemon为该job设置了众多的环境变量，如安全传输层协议的环境变量等。最后通过job.Run()运行该serveapi的job。</li>
 </ol>
 <p>由于在eng中key为”serveapi”的handler，value为apiserver.ServeApi，故该job运行时，执行apiserver.ServeApi函数，位于<a href="https://github.com/docker/docker/blob/v1.2.0/api/server/server.go#L1339" target="_blank" rel="noopener">./docker/api/server/server.go</a>。ServeApi函数的作用主要是对于用户定义的所有支持协议，Docker Daemon均创建一个goroutine来启动相应的http.Server，分别为不同的协议服务。具体参考<a href="http://wiki.haplat.net/display/~huwh/Docker+Server" target="_blank" rel="noopener">Docker Server</a>。</p>
-<div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div></div>
+</div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
 			<script>
@@ -424,7 +424,7 @@
 			    });
 			}
 			</script>
-		
+		<div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div>
                 
 
                 <hr>
@@ -432,12 +432,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/runtime/docker/docker-architecture/" data-toggle="tooltip" data-placement="top" title="Docker整体架构图">&larr; Previous Post</a>
+                            <a href="/article/docker/code-analysis/code-analysis-of-docker-server/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（三）之Docker Server">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/runtime/docker/dockerfile-usage/" data-toggle="tooltip" data-placement="top" title="Dockerfile使用说明">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/network/flannel/flannel-introduction/" data-toggle="tooltip" data-placement="top" title="Flannel介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -576,6 +576,10 @@
 
 
 
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
     <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
        (function(d, s) {

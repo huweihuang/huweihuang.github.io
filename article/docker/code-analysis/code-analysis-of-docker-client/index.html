@@ -295,7 +295,7 @@ Docker Client运行流程图如下：<br>
 <p><strong>/api/client/commands.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := pull(authConfig); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> strings.Contains(err.Error(), <span class="string">"Status 401"</span>) &#123;</span><br><span class="line">        fmt.Fprintln(cli.out, <span class="string">"/nPlease login prior to pull:"</span>)</span><br><span class="line">        <span class="keyword">if</span> err := cli.CmdLogin(hostname); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">        authConfig := cli.configFile.ResolveAuthConfig(hostname)</span><br><span class="line">        <span class="keyword">return</span> pull(authConfig)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
 <p>调用pull函数，实现下载请求发送。后续有Docker Server接收到请求后具体实现。</p>
-<div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div></div>
+</div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
 			<script>
@@ -311,7 +311,7 @@ Docker Client运行流程图如下：<br>
 			    });
 			}
 			</script>
-		
+		<div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div>
                 
 
                 <hr>
@@ -463,6 +463,10 @@ Docker Client运行流程图如下：<br>
 
 
 
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
     <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
        (function(d, s) {

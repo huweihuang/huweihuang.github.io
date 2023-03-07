@@ -211,62 +211,21 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-echo/">
+    <a href="/article/linux-notes/shell/shell-function/">
         <h2 class="post-title">
                         
-            Shell echo命令
+            Shell 函数
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. echo
-echo是Shell的一个内部指令，用于在屏幕上打印出指定的字符串。命令格式：
-1echo arg
-您可以使用echo实现更复杂的输出格式控制。
-1.1. 显示转义字符
-1echo "\"It is a test\""
-结果将是：
-1"It is a test"
-双引号也可以省略。
-1.2. 显示变量
-12name="OK"echo "$name It is a test"
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-04-17
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Shell" title="Shell">Shell</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/shell/shell-loop/">
-        <h2 class="post-title">
-                        
-            Shell 循环语句
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. for
-for循环一般格式为：
-1234567for 变量 in 列表do    command1    command2    ...    commandNdone
-列表是一组值（数字、字符串等）组成的序列，每个值通过空格分隔。每循环一次，就将列表中的下一个值赋给变量。
-in 列表是可选的，如果不用它，for 循环使用命令行的位置参数。
-示例：
-12345678910for loo......
+            1. 函数定义
+函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。Shell 也支持函数。Shell 函数必须先定义后使用。
+Shell 函数的定义格式如下：
+1234function_name () &#123;    list of commands    [ return value ]&#125;
+也可以在函数名前加上关键字 function：
+12......
         </div>
     </a>
     
@@ -360,21 +319,60 @@ Shell支持自定义变量。
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/shell/shell-function/">
+    <a href="/article/linux-notes/shell/shell-loop/">
         <h2 class="post-title">
                         
-            Shell 函数
+            Shell 循环语句
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 函数定义
-函数可以让我们将一个复杂功能划分成若干模块，让程序结构更加清晰，代码重复利用率更高。Shell 也支持函数。Shell 函数必须先定义后使用。
-Shell 函数的定义格式如下：
-1234function_name () &#123;    list of commands    [ return value ]&#125;
-也可以在函数名前加上关键字 function：
-12......
+            1. for
+for循环一般格式为：
+1234567for 变量 in 列表do    command1    command2    ...    commandNdone
+列表是一组值（数字、字符串等）组成的序列，每个值通过空格分隔。每循环一次，就将列表中的下一个值赋给变量。
+in 列表是可选的，如果不用它，for 循环使用命令行的位置参数。
+示例：
+12345678910for loo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-04-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Shell" title="Shell">Shell</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/shell/shell-if/">
+        <h2 class="post-title">
+                        
+            Shell 判断语句
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. if语句
+if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：
+
+if … fi 语句；
+if … else … fi 语句；
+if … elif … else … fi 语句。
+
+1.1. if … else
+if … else 语句的语法：
+1234if [ expression ]then   Statement(s) to ......
         </div>
     </a>
     
@@ -630,11 +628,11 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -644,11 +642,7 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -656,7 +650,15 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -664,17 +666,13 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -682,7 +680,7 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -694,7 +692,7 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -710,11 +708,7 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -726,7 +720,11 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -824,15 +822,15 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

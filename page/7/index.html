@@ -211,31 +211,21 @@
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/principle/go-scheduler/">
+    <a href="/article/golang-notes/framework/cobra/cobra-flags/">
         <h2 class="post-title">
                         
-            Goroutine调度
+            cobra flags
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文主要介绍Go的调度模型。
-
-1. 线程实现模型
-线程模型有三类：内核级线程模型、用户级线程模型、混合型线程模型。三者的区别主要在于线程与内核调度实体KSE(Kernel Scheduling Entity)之间的对应关系上。
-
-内核调度实体KSE指操作系统内核调度器调度的对象实体，是内核调度的最小单元。
-
-1.1. 线程模型对比
-
-
-
-线程模型
-用户线程与KSE之间的对应关系
-特点
-优......
+            添加Flags
+1. Persistent Flags
+Persistent Flags表示该类参数可以被用于当前命令及其子命令。
+例如，以下表示verbose参数可以被用于rootCmd及其子命令。
+1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
+2. Lo......
         </div>
     </a>
     
@@ -255,21 +245,22 @@
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/framework/cobra/cobra-command/">
+    <a href="/article/golang-notes/framework/cobra/cobra-usage/">
         <h2 class="post-title">
                         
-            cobra command
+            cobra 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文以cobra-demo为例介绍cobra添加命令的具体使用操作。
+            1. Cobra简介
+Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
+Cobra主要包括以下部分
 
-0. cobra-demo
-cobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
-12345678910111213141516171819202122 $ ./cobra-demo A longer description tha......
+Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
+Args:命令执行相关参数。
+Flags:二进制命令的配置参数，可对应配置文件。参数可分......
         </div>
     </a>
     
@@ -359,18 +350,17 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
         <h2 class="post-title">
                         
-            Virtual Kubelet介绍
+            Virtual Kubelet命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
-一句话概括：Kubernetes API on top, programm......
+            virtual-kubelet --help
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
         </div>
     </a>
     
@@ -390,17 +380,18 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
         <h2 class="post-title">
                         
-            Virtual Kubelet命令
+            Virtual Kubelet介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet --help
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
+            1. 简介
+Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
+一句话概括：Kubernetes API on top, programm......
         </div>
     </a>
     
@@ -442,37 +433,6 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
         <div class="tags">
             
               <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/trouble-shooting/pod-image-error/">
-        <h2 class="post-title">
-                        
-            镜像拉取失败问题
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            常见镜像拉取问题排查
-1. Pod状态为ErrImagePull或ImagePullBackOff
-12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -549,6 +509,37 @@ secret是namespace级别的，创建时候需要指定namespace。
 </div>
 <hr>
 
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/pod-image-error/">
+        <h2 class="post-title">
+                        
+            镜像拉取失败问题
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            常见镜像拉取问题排查
+1. Pod状态为ErrImagePull或ImagePullBackOff
+12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
 
 
 <!-- Pager -->
@@ -618,11 +609,11 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -632,11 +623,7 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -644,7 +631,15 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -652,17 +647,13 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -670,7 +661,7 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -682,7 +673,7 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -698,11 +689,7 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -714,7 +701,11 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -812,15 +803,15 @@ secret是namespace级别的，创建时候需要指定namespace。
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

@@ -211,41 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-installation/">
-        <h2 class="post-title">
-                        
-            KubeVirt的使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 安装kubevirt
-1.1. 修改镜像仓库
-针对私有环境，需要将所需镜像上传到自己的镜像仓库中。
-涉及的镜像组件有
-1234virt-operatorvirt-apivirt-controllervirt-launcher
-重命名镜像脚本如下:
-123456789101112131415161718192021222324252627282930#!/bin/bash# kubevi......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#KubeVirt" title="KubeVirt">KubeVirt</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/kubernetes-notes/multi-cluster/karmada/karmada-introduction/">
         <h2 class="post-title">
                         
@@ -283,61 +248,48 @@ Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/setup/k8s-version-release/">
+    <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-introduction/">
         <h2 class="post-title">
                         
-            k8s版本说明
+            KubeVirt的介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. k8s版本号说明
-k8s维护最新三个版本的发布分支（[2022.7.2]当前最新三个版本为1.24、1.23、1.22），Kubernetes 1.19 和更新的版本获得大约 1 年的补丁支持。
-Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本，z 是补丁版本。遵循语义化版本规范。
-2. 最新发行版本
-1.24
-最新发行版本：1.24.2 (发布日期......
+            
+本文主要由云原生虚拟化：基于 Kubevirt 构建边缘计算实例文章重新整理而成。
+
+1. kubevirt简介
+kubevirt是基于k8s之上，提供了一种通过k8s来编排和管理虚拟机的方式。
+2. 架构图
+
+2.1. 组件说明
+
+
+
+分类
+组件
+部署方式
+功能说明
+
+
+
+
+控制面
+virt-api
+deployment
+自定义API，开机、关机、重启等，作为apiserver的插件，业......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2022-06-23
+            2022-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/containerd/containerd-ctl/">
-        <h2 class="post-title">
-                        
-            Containerd命令工具
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            crictl
-1234567#!/bin/bashCrictlVersion=$1CrictlVersion=$&#123;CrictlVersion:-1.24.2&#125;echo "--------------install crictl--------------"wget https://github.com/kubernetes-sigs/cri-tools/releases/......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Containerd" title="Containerd">Containerd</a>
+              <a href="/tags/#KubeVirt" title="KubeVirt">KubeVirt</a>
             
         </div>
     
@@ -407,6 +359,70 @@ configmap出现多行文本无法正常显示换行格式，而是以\n连接文
         <div class="tags">
             
               <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/setup/k8s-version-release/">
+        <h2 class="post-title">
+                        
+            k8s版本说明
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. k8s版本号说明
+k8s维护最新三个版本的发布分支（[2022.7.2]当前最新三个版本为1.24、1.23、1.22），Kubernetes 1.19 和更新的版本获得大约 1 年的补丁支持。
+Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本，z 是补丁版本。遵循语义化版本规范。
+2. 最新发行版本
+1.24
+最新发行版本：1.24.2 (发布日期......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/runtime/containerd/containerd-ctl/">
+        <h2 class="post-title">
+                        
+            Containerd命令工具
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            crictl
+1234567#!/bin/bashCrictlVersion=$1CrictlVersion=$&#123;CrictlVersion:-1.24.2&#125;echo "--------------install crictl--------------"wget https://github.com/kubernetes-sigs/cri-tools/releases/......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Containerd" title="Containerd">Containerd</a>
             
         </div>
     
@@ -502,21 +518,18 @@ OCI（Open Container Initiativ......
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/introduction/package/go-modules/">
+    <a href="/article/golang-notes/basis/functions/">
         <h2 class="post-title">
                         
-            go modules的使用
+            函数与闭包
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Go modules简介
-Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
-2. go mod的使用
-项目文件如下：
-hello.go
-12345678910package mainimport (    "fmt"    "rsc.io/quote")func main......
+            函数
+1. 函数定义与调用
+12345678910111213141516171819//1、函数组成：关键字func ,函数名，参数列表，返回值，函数体，返回语句//先名称后类型func 函数名(参数列表)(返回值列表)&#123;  //参数列表和返回值列表以变量声明的形式，如果单返回值可以直接加类型  函数体  return    //返回语句&#125;//例子func Add(a,......
         </div>
     </a>
     
@@ -536,18 +549,21 @@ hello.go
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/functions/">
+    <a href="/article/golang-notes/introduction/package/go-modules/">
         <h2 class="post-title">
                         
-            函数与闭包
+            go modules的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            函数
-1. 函数定义与调用
-12345678910111213141516171819//1、函数组成：关键字func ,函数名，参数列表，返回值，函数体，返回语句//先名称后类型func 函数名(参数列表)(返回值列表)&#123;  //参数列表和返回值列表以变量声明的形式，如果单返回值可以直接加类型  函数体  return    //返回语句&#125;//例子func Add(a,......
+            1. Go modules简介
+Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
+2. go mod的使用
+项目文件如下：
+hello.go
+12345678910package mainimport (    "fmt"    "rsc.io/quote")func main......
         </div>
     </a>
     
@@ -634,11 +650,11 @@ hello.go
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -648,11 +664,7 @@ hello.go
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -660,7 +672,15 @@ hello.go
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -668,17 +688,13 @@ hello.go
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -686,7 +702,7 @@ hello.go
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -698,7 +714,7 @@ hello.go
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -714,11 +730,7 @@ hello.go
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -730,7 +742,11 @@ hello.go
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -828,15 +844,15 @@ hello.go
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

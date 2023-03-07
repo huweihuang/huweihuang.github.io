@@ -211,25 +211,22 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/cloudcore/">
+    <a href="/article/kubernetes-notes/edge/kubeedge/kubeedge-arch/">
         <h2 class="post-title">
                         
-            Kubeedge之cloudcore 源码分析
+            KubeEdge介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            kubeedge源码分析之cloudcore
+            1. KubeEdge简介
+KubeEdge是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持MQTT协议，允许开发者在边缘端自定义接入边缘设备。
+2. 功能
 
-本文源码分析基于kubeedge v1.1.0
-
-本文主要分析cloudcore中CloudCoreCommand的基本流程，具体的cloudhub、edgecontroller、devicecontroller模块的实现逻辑待后续单独文章分析。
-目录结构：
-
-cloud/cmd/cloudcore
-
-123456cloudcore├── ap......
+边缘计算：提供边缘节点自治能力，边缘节点数据处理能力。
+便捷部署：开发者可以开发http或mqtt协议的应用，运行在云端和边缘端。
+k8s原......
         </div>
     </a>
     
@@ -249,53 +246,25 @@ cloud/cmd/cloudcore
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/develop/operator/kubebuilder/">
+    <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/cloudcore/">
         <h2 class="post-title">
                         
-            kubebuilder的使用
+            Kubeedge之cloudcore 源码分析
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. kubebuilder
-1.1. 安装kubebuilder
-123# download kubebuilder and install locally.curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)chmod +x kubebuilder &amp;&......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
+            kubeedge源码分析之cloudcore
 
-</div>
-<hr>
+本文源码分析基于kubeedge v1.1.0
 
-<div class="post-preview">
+本文主要分析cloudcore中CloudCoreCommand的基本流程，具体的cloudhub、edgecontroller、devicecontroller模块的实现逻辑待后续单独文章分析。
+目录结构：
 
-    <a href="/article/kubernetes-notes/edge/kubeedge/kubeedge-arch/">
-        <h2 class="post-title">
-                        
-            KubeEdge介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. KubeEdge简介
-KubeEdge是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持MQTT协议，允许开发者在边缘端自定义接入边缘设备。
-2. 功能
+cloud/cmd/cloudcore
 
-边缘计算：提供边缘节点自治能力，边缘节点数据处理能力。
-便捷部署：开发者可以开发http或mqtt协议的应用，运行在云端和边缘端。
-k8s原......
+123456cloudcore├── ap......
         </div>
     </a>
     
@@ -341,6 +310,37 @@ k8s原......
         <div class="tags">
             
               <a href="/tags/#Kubeedge" title="Kubeedge">Kubeedge</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/develop/operator/kubebuilder/">
+        <h2 class="post-title">
+                        
+            kubebuilder的使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. kubebuilder
+1.1. 安装kubebuilder
+123# download kubebuilder and install locally.curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)chmod +x kubebuilder &amp;&......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -421,6 +421,39 @@ kata-container通过轻量型虚拟机技术构建一个安全的容器运行时
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/network/cni/macvlan/">
+        <h2 class="post-title">
+                        
+            Macvlan介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 简介
+macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
+示意图：
+
+2. 四......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CNI" title="CNI">CNI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/">
         <h2 class="post-title">
                         
@@ -492,51 +525,18 @@ kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-con
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/cni/macvlan/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/">
         <h2 class="post-title">
                         
-            Macvlan介绍
+            Cgroup不支持pid资源
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
-示意图：
-
-2. 四......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CNI" title="CNI">CNI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">
-        <h2 class="post-title">
-                        
-            使用etcdadm部署Etcd集群
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 安装etcdadm
-在Releases · kubernetes-sigs/etcdadm · GitHub中选择需要部署的版本，示例如下：
-123wget https://github.com/kubernetes-sigs/etcdadm/releases/download/v0.1.5/etcdadm-linux-amd64mv etcdadm-linux-amd64 /usr/......
+            问题描述
+机器内核版本较低，kubelet启动异常，报错如下：
+1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup sub......
         </div>
     </a>
     
@@ -545,6 +545,8 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             2021-06-23
         </p>
         <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -621,11 +623,11 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -635,11 +637,7 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -647,7 +645,15 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -655,17 +661,13 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -673,7 +675,7 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -685,7 +687,7 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -701,11 +703,7 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -717,7 +715,11 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -815,15 +817,15 @@ macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>

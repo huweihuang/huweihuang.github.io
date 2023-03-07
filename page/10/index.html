@@ -211,18 +211,24 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/volume/storage-class/">
+    <a href="/article/kubernetes-notes/storage/volume/persistent-volume/">
         <h2 class="post-title">
                         
-            StorageClass 介绍
+            PersistentVolume 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. StorageClass概述
-StorageClass提供了一种描述存储类（class）的方法，不同的class可能会映射到不同的服务质量等级和备份策略或其他策略等。
-StorageClass 对象中包含 provisioner、parameters 和 reclaimPolicy 字段，当需要动态分配 PersistentVolume 时会使用到。当创建 StorageClass 对......
+            1. PV概述
+PersistentVolume（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。
+2. PV和PVC的生命周期
+2.1. 配置（Provision）
+有两种方式来配置 PV：静态或动态。
+1、静态
+手动创建PV，可供k8s集群中的对象消费。
+2、动态
+可以通过Storage......
         </div>
     </a>
     
@@ -242,22 +248,27 @@ StorageClass 对象中包含 provisioner、parameters 和 reclaimPolicy 字
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/principle/flow/pvc-flow/">
+    <a href="/article/kubernetes-notes/runtime/gpu/nvidia-device-plugin/">
         <h2 class="post-title">
                         
-            PVC创建流程
+            nvidia-device-plugin介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            pvc流程
+            1. 简介
+NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了Kubernetes device plugin的接口。
+提供以下功能：
 
-流程如下：
+暴露每个节点的GPU数量给集群
+跟踪GPU的健康情况
+使在k8s的节点可以运行GPU容器
 
-用户创建了一个包含 PVC 的 Pod，该 PVC 要求使用动态存储卷；
-Scheduler 根据 Pod 配置、节点状态、PV 配置等信息，把 Pod 调度到一个合适的 Worker 节点上；
-PV 控制器 watch 到该 Pod 使用的 PVC 处于 Pending 状态，于是调用 Volume Plugin（in-tree）创建存储卷，并创建 PV 对象（......
+2. 要求
+
+NVIDIA drivers ~= 384.81
+nvidia-docker ve......
         </div>
     </a>
     
@@ -277,20 +288,93 @@ PV 控制器 watch 到该 Pod 使用的 PVC 处于 Pending 状态，于是调用
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/">
+    <a href="/article/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
         <h2 class="post-title">
                         
-            使用kind安装kubernetes
+            部署csi-cephfs
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 安装kind
-On mac or linux
-123curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-$(uname)-amd64"chmod +x ./kindmv ./kind /some-dir-in-your-PATH/kind
-2. 创建k8s集群
-12......
+            0. 说明
+要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
+涉及镜像
+
+quay.io/k8scsi/csi-provisioner:v0.3.0
+quay.io/k8scsi/csi......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CSI" title="CSI">CSI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
+        <h2 class="post-title">
+                        
+            csi-cephfs-plugin
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 编译CSI CephFS plugin
+CSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
+1.1. 编译二进制
+1$ make cephfsplugin
+1.2. 编译Docker镜像
+1$ make image-cephfsplugin
+2. 配置项
+2.1. 命令行参数
+
+
+
+O......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CSI" title="CSI">CSI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/">
+        <h2 class="post-title">
+                        
+            kata配置
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 配置文件路径
+默认的配置文件位于/usr/share/defaults/kata-containers/configuration.toml，如果/etc/kata-containers/configuration.toml的配置文件存在，则会替代默认的配置文件。
+查看配置文件的路径命令如下：
+123# kata-runtime --kata-show-default-config-p......
         </div>
     </a>
     
@@ -353,21 +437,21 @@ etcd节点：需要标识自己服务的server cert，也需要cli......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
+    <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/">
         <h2 class="post-title">
                         
-            部署cephfs-provisioner
+            Pod驱逐
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 安装cephfs客户端
-所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
-1yum install -y ceph-common
-2. 部署RBAC
-2.1. ClusterRole
-12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/......
+            问题描述
+节点Pod被驱逐
+原因
+1. 查看节点和该节点pod状态
+查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
+123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b......
         </div>
     </a>
     
@@ -377,7 +461,72 @@ etcd节点：需要标识自己服务的server cert，也需要cli......
         </p>
         <div class="tags">
             
-              <a href="/tags/#CSI" title="CSI">CSI</a>
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/">
+        <h2 class="post-title">
+                        
+            PersistentVolumeClaim 介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. PVC概述
+PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
+当需要不同性质的PV来满足存储需求时，可以使用StorageClass来实现。
+每个 PVC 中都包含一个 spec 规格字段和一个 status 声明......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/">
+        <h2 class="post-title">
+                        
+            使用kind安装kubernetes
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 安装kind
+On mac or linux
+123curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-$(uname)-amd64"chmod +x ./kindmv ./kind /some-dir-in-your-PATH/kind
+2. 创建k8s集群
+12......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -416,159 +565,6 @@ pvc在删除时，卡在terminating中。
         <div class="tags">
             
               <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/storage/volume/volume/">
-        <h2 class="post-title">
-                        
-            Volume介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. volume概述
-
-容器上的文件生命周期同容器的生命周期一致，即容器挂掉之后，容器将会以最初镜像中的文件系统内容启动，之前容器运行时产生的文件将会丢失。
-Pod的volume的生命周期同Pod的生命周期一致，当Pod被删除的时候，对应的volume才会被删除。即Pod中的容器重启时，之前的文件仍可以保存。
-
-容器中的进程看到的是由其 Docker 镜像和卷组成的文件系统视图。
-Pod ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/principle/flow/pod-flow/">
-        <h2 class="post-title">
-                        
-            Pod创建流程
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Pod创建基本流程图
-
-Pod创建完整流程图
-
-
-图片来源：https://fuckcloudnative.io/posts/what-happens-when-k8s/
-
-参考:
-
-https://fuckcloudnative.io/posts/what-happens-when-k8s/
-
-
-
-			
-			
-			var isMobile = navigator.userAgent.......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/">
-        <h2 class="post-title">
-                        
-            Pod驱逐
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题描述
-节点Pod被驱逐
-原因
-1. 查看节点和该节点pod状态
-查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
-123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
-        <h2 class="post-title">
-                        
-            csi-cephfs-plugin
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 编译CSI CephFS plugin
-CSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
-1.1. 编译二进制
-1$ make cephfsplugin
-1.2. 编译Docker镜像
-1$ make image-cephfsplugin
-2. 配置项
-2.1. 命令行参数
-
-
-
-O......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CSI" title="CSI">CSI</a>
             
         </div>
     
@@ -645,11 +641,11 @@ O......
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
@@ -659,11 +655,7 @@ O......
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -671,7 +663,15 @@ O......
             
         
             
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -679,17 +679,13 @@ O......
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
         
             
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
@@ -697,7 +693,7 @@ O......
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -709,7 +705,7 @@ O......
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -725,11 +721,7 @@ O......
             
         
             
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
-            
-        
             
         
             
@@ -741,7 +733,11 @@ O......
             
         
             
+        
+            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
+        
             
         
             
@@ -839,15 +835,15 @@ O......
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
-        </li>
-      
-        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
           <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
         </li>
       
     </ul>
