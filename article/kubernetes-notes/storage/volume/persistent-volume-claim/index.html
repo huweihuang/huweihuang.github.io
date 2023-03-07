@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,32 +212,24 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="1-pvc概述">1. PVC概述</h2>
-<p><code>PersistentVolumeClaim</code>（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。</p>
+                <div id="vip-container"><h2 id="1-pvc概述"><a href="#1-PVC概述" class="headerlink" title="1. PVC概述"></a>1. PVC概述</h2><p><code>PersistentVolumeClaim</code>（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。</p>
 <p>当需要不同性质的PV来满足存储需求时，可以使用<code>StorageClass</code>来实现。</p>
 <p>每个 PVC 中都包含一个 spec 规格字段和一个 status 声明状态字段。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myclaim</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">volumeMode:</span> <span class="string">Filesystem</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">8Gi</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">slow</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">release:</span> <span class="string">"stable"</span></span><br><span class="line">    <span class="attr">matchExpressions:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#123;key:</span> <span class="string">environment,</span> <span class="attr">operator:</span> <span class="string">In,</span> <span class="attr">values:</span> <span class="string">[dev]&#125;</span></span><br></pre></td></tr></table></figure>
-<h2 id="2-pvc的属性">2. PVC的属性</h2>
-<h3 id="21-accessmodes">2.1. accessModes</h3>
-<p>对应存储的访问模式，例如：<code>ReadWriteOnce</code>。</p>
-<h3 id="22-volumemode">2.2. volumeMode</h3>
-<p>对应存储的数据卷模式，例如：<code>Filesystem</code>。</p>
-<h3 id="23-resources">2.3. resources</h3>
-<p>声明可以请求特定数量的资源。相同的<a href="https://git.k8s.io/community/contributors/design-proposals/scheduling/resources.md" target="_blank" rel="noopener">资源模型</a>适用于Volume和PVC。</p>
-<h3 id="24-selector">2.4. selector</h3>
-<p>声明<code>label selector</code>，只有标签与选择器匹配的卷可以绑定到声明。</p>
+<h2 id="2-pvc的属性"><a href="#2-PVC的属性" class="headerlink" title="2. PVC的属性"></a>2. PVC的属性</h2><h3 id="21-accessmodes"><a href="#2-1-accessModes" class="headerlink" title="2.1. accessModes"></a>2.1. accessModes</h3><p>对应存储的访问模式，例如：<code>ReadWriteOnce</code>。</p>
+<h3 id="22-volumemode"><a href="#2-2-volumeMode" class="headerlink" title="2.2. volumeMode"></a>2.2. volumeMode</h3><p>对应存储的数据卷模式，例如：<code>Filesystem</code>。</p>
+<h3 id="23-resources"><a href="#2-3-resources" class="headerlink" title="2.3. resources"></a>2.3. resources</h3><p>声明可以请求特定数量的资源。相同的<a href="https://git.k8s.io/community/contributors/design-proposals/scheduling/resources.md" target="_blank" rel="noopener">资源模型</a>适用于Volume和PVC。</p>
+<h3 id="24-selector"><a href="#2-4-selector" class="headerlink" title="2.4. selector"></a>2.4. selector</h3><p>声明<code>label selector</code>，只有标签与选择器匹配的卷可以绑定到声明。</p>
 <ul>
 <li>matchLabels：volume 必须有具有该值的标签</li>
 <li>matchExpressions：条件列表，通过条件表达式筛选匹配的卷。有效的运算符包括 In、NotIn、Exists 和 DoesNotExist。</li>
 </ul>
-<h3 id="25-storageclassname">2.5. storageClassName</h3>
-<p>通过<code>storageClassName</code>参数来指定使用对应名字的<code>StorageClass</code>，只有所请求的类与 PVC 具有相同 <code>storageClassName</code> 的 PV 才能绑定到 PVC。</p>
-<p>PVC可以不指定storageClassName，或者将该值设置为空，如果打开了准入控制插件，并且指定一个默认的 <code>StorageClass</code>，则PVC会使用默认的<code>StorageClass</code>，否则就绑定到没有<code>StorageClass</code>的 PV上。</p>
+<h3 id="25-storageclassname"><a href="#2-5-storageClassName" class="headerlink" title="2.5. storageClassName"></a>2.5. storageClassName</h3><p>通过<code>storageClassName</code>参数来指定使用对应名字的<code>StorageClass</code>，只有所请求的类与 PVC 具有相同 <code>storageClassName</code> 的 PV 才能绑定到 PVC。</p>
+<p>PVC可以不指定storageClassName，或者将该值设置为空，如果打开了准入控制插件，并且指定一个默认的 <code>StorageClass</code>，则PVC会使用默认的<code>StorageClass</code>，否则就绑定到没有<code>StorageClass</code>的 PV上。</p>
 <blockquote>
 <p>之前使用注解 <code>volume.beta.kubernetes.io/storage-class</code> 而不是 <code>storageClassName</code> 属性。这个注解仍然有效，但是在未来的 Kubernetes 版本中不会支持。</p>
 </blockquote>
-<h2 id="3-将pvc作为volume">3. 将PVC作为Volume</h2>
-<p>将PVC作为Pod的Volume，PVC与Pod需要在同一个命名空间下，其实Pod的声明如下：</p>
+<h2 id="3-将pvc作为volume"><a href="#3-将PVC作为Volume" class="headerlink" title="3. 将PVC作为Volume"></a>3. 将PVC作为Volume</h2><p>将PVC作为Pod的Volume，PVC与Pod需要在同一个命名空间下，其实Pod的声明如下：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">mypod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myfrontend</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">dockerfile/nginx</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">"/var/www/html"</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">mypd</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">mypd</span></span><br><span class="line">      <span class="attr">persistentVolumeClaim:</span>    <span class="comment"># 使用PVC</span></span><br><span class="line">        <span class="attr">claimName:</span> <span class="string">myclaim</span></span><br></pre></td></tr></table></figure>
 <p><code>PersistentVolumes</code> 绑定是唯一的，并且由于 <code>PersistentVolumeClaims</code> 是命名空间对象，因此只能在一个命名空间内挂载具有“多个”模式（<code>ROX</code>、<code>RWX</code>）的PVC。</p>
 <p>参考文章：</p>
@@ -268,12 +260,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/principle/flow/pvc-flow/" data-toggle="tooltip" data-placement="top" title="PVC创建流程">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/setup/k8s-cert/" data-toggle="tooltip" data-placement="top" title="k8s证书及秘钥">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/" data-toggle="tooltip" data-placement="top" title="PVC Terminating">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/principle/flow/pod-flow/" data-toggle="tooltip" data-placement="top" title="Pod创建流程">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

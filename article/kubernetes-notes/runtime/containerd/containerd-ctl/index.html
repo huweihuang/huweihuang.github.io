@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,17 +212,14 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="crictl">crictl</h1>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">CrictlVersion=<span class="variable">$1</span></span><br><span class="line">CrictlVersion=<span class="variable">$&#123;CrictlVersion:-1.24.2&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"--------------install crictl--------------"</span></span><br><span class="line">wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v<span class="variable">$&#123;CrictlVersion&#125;</span>/crictl-v<span class="variable">$&#123;CrictlVersion&#125;</span>-linux-amd64.tar.gz</span><br><span class="line">tar Cxzvf /usr/<span class="built_in">local</span>/bin nerdctl-<span class="variable">$&#123;NerdctlVersion&#125;</span>-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="crictl"><a href="#crictl" class="headerlink" title="crictl"></a>crictl</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">CrictlVersion=<span class="variable">$1</span></span><br><span class="line">CrictlVersion=<span class="variable">$&#123;CrictlVersion:-1.24.2&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"--------------install crictl--------------"</span></span><br><span class="line">wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v<span class="variable">$&#123;CrictlVersion&#125;</span>/crictl-v<span class="variable">$&#123;CrictlVersion&#125;</span>-linux-amd64.tar.gz</span><br><span class="line">tar Cxzvf /usr/<span class="built_in">local</span>/bin nerdctl-<span class="variable">$&#123;NerdctlVersion&#125;</span>-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
 <p>设置配置文件</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; /etc/crictl.yaml &lt;&lt; \EOF</span><br><span class="line">runtime-endpoint: unix:///run/containerd/containerd.sock</span><br><span class="line">image-endpoint: unix:///run/containerd/containerd.sock</span><br><span class="line">timeout: 2</span><br><span class="line">debug: <span class="literal">false</span></span><br><span class="line">pull-image-on-create: <span class="literal">false</span></span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
-<li>
-<p><a href="https://kubernetes.io/zh-cn/docs/tasks/debug/debug-cluster/crictl/" target="_blank" rel="noopener">使用 crictl 对 Kubernetes 节点进行调试 | Kubernetes</a></p>
+<li><p><a href="https://kubernetes.io/zh-cn/docs/tasks/debug/debug-cluster/crictl/" target="_blank" rel="noopener">使用 crictl 对 Kubernetes 节点进行调试 | Kubernetes</a></p>
 </li>
-<li>
-<p><a href="https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.mdCrictlVersion=$%7BCrictlVersion:-1.24.2%7D" target="_blank" rel="noopener">https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.mdCrictlVersion=${CrictlVersion:-1.24.2}</a></p>
+<li><p><a href="https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.mdCrictlVersion=${CrictlVersion:-1.24.2}" target="_blank" rel="noopener">https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.mdCrictlVersion=${CrictlVersion:-1.24.2}</a></p>
 </li>
 </ul>
 </div>
@@ -249,12 +246,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-installation/" data-toggle="tooltip" data-placement="top" title="KubeVirt的使用">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/containerd/remove-dockershim/" data-toggle="tooltip" data-placement="top" title="移除Dockershim">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/runtime/containerd/remove-dockershim/" data-toggle="tooltip" data-placement="top" title="移除Dockershim">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/configmap-yaml-format/" data-toggle="tooltip" data-placement="top" title="ConfigMap多行格式">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

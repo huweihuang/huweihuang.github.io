@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -279,9 +279,8 @@
 
 
 
-2. 内存地址说明
-2.1. 内存定义
-计算机的内存 RAM 可以把它想象成一些有序的......
+
+2. 内存地址说明2.1. 内存定义计算机的内存 RAM 可以把它想象成一些有序的盒......
         </div>
     </a>
     
@@ -310,11 +309,10 @@
             
         </h3>
         <div class="post-content-preview">
-            （一）并发基础
-1.概念
-并发意味着程序在运行时有多个执行上下文，对应多个调用栈。
+            （一）并发基础1.概念并发意味着程序在运行时有多个执行上下文，对应多个调用栈。
 并发与并行的区别：
 并发的主流实现模型：
+
 
 
 
@@ -341,7 +339,7 @@
 
 
 协程
-用户态线程，不需要......
+用户态线程，不需要操......
         </div>
     </a>
     
@@ -370,14 +368,53 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 部署
-1.1. 使用安装包的方式
-rpm -ivh nginx-xxx.rpm
-1.2. 使用源代码安装
-1.2.1. 下载源码包
-1wget http://blob.wae.haplat.net/nginx/nginx-1.9.13.tar.gz
-1.2.2. 创建临时目录并解压源码包
-12mkdir $HOME/buildcd $HOME/build &amp;&amp; tar ......
+            1. 部署1.1. 使用安装包的方式rpm -ivh nginx-xxx.rpm
+1.2. 使用源代码安装1.2.1. 下载源码包1wget http://blob.wae.haplat.net/nginx/nginx-1.9.13.tar.gz
+1.2.2. 创建临时目录并解压源码包12mkdir $HOME/buildcd $HOME/build &amp;&amp; tar zxvf ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-09-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Nginx" title="Nginx">Nginx</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/nginx/nginx-proxy/">
+        <h2 class="post-title">
+                        
+            Nginx作为反向代理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 反向代理简介Nginx可以作为反向代理，接收客户端的请求，并向上游服务器发起新的请求。该请求可以根据客户端请求的URI，客户机参数或其他逻辑进行拆分，原始URL中的任何部分可以以这种方式进行转换。
+1.1. 代理模块指令
+
+
+
+指令
+说明
+
+
+
+
+proxy_connect_timeout
+Nginx从接受到请求到连接至上游服务器的最长等待时间
+
+
+proxy_cookie_domai......
         </div>
     </a>
     
@@ -407,55 +444,9 @@ rpm -ivh nginx-xxx.rpm
         </h3>
         <div class="post-content-preview">
             1. Nginx的系统架构
-
 Nginx包含一个单一的master进程和多个worker进程，每个进程都是单进程，并且设计为同时处理成千上万个连接。
 worker进程是处理连接的地方，Nginx使用了操作系统事件机制来快速响应这些请求。
-master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-09-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Nginx" title="Nginx">Nginx</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/nginx/nginx-proxy/">
-        <h2 class="post-title">
-                        
-            Nginx作为反向代理
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 反向代理简介
-Nginx可以作为反向代理，接收客户端的请求，并向上游服务器发起新的请求。该请求可以根据客户端请求的URI，客户机参数或其他逻辑进行拆分，原始URL中的任何部分可以以这种方式进行转换。
-1.1. 代理模块指令
-
-
-
-指令
-说明
-
-
-
-
-proxy_connect_timeout
-Nginx从接受到请求到连接至上游服务器的最长等待时间
-
-
-proxy_cookie_doma......
+master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请求......
         </div>
     </a>
     
@@ -484,11 +475,10 @@ proxy_cookie_doma......
             
         </h3>
         <div class="post-content-preview">
-            1. 类和实例
-在Python中所有的数据类型都可以视为对象，也可以自定义对象。自定义的对象数据类型即面向对象中的类（Class）概念。类是抽象的模板，实例是具体的对象。
+            1. 类和实例在Python中所有的数据类型都可以视为对象，也可以自定义对象。自定义的对象数据类型即面向对象中的类（Class）概念。类是抽象的模板，实例是具体的对象。
 类的定义
 Python使用class关键字定义类：
-12345678class Student(object):    def __init__(self, name, score):        self.name =......
+12345678class Student(object):    def __init__(self, name, score):        self.name = ......
         </div>
     </a>
     
@@ -517,15 +507,14 @@ Python使用class关键字定义类：
             
         </h3>
         <div class="post-content-preview">
-            1. 切片
-切片操作（slice），即从list（tuple是一种特殊的list）中获取部分元素。
+            1. 切片切片操作（slice），即从list（tuple是一种特殊的list）中获取部分元素。
 
 L[m,n]表示从L[m]~L[n-1]的list。
 L[:n]表示从L[0]~L[n-1]的list。
 L[m:]表示从L[m]~L[len(L)-1]。
 L[-m:]表示倒数m个数的list。
 L[m:n:k]表示从L[m:n]list中每k个取一个数组成一个新的list。
-L[::k]......
+L[::k]表......
         </div>
     </a>
     
@@ -554,9 +543,9 @@ L[::k]......
             
         </h3>
         <div class="post-content-preview">
-            1. 内置函数
-python的内置参数详见以下链接，也可以通过help(function_name)来查看具体函数的使用帮助。
+            1. 内置函数python的内置参数详见以下链接，也可以通过help(function_name)来查看具体函数的使用帮助。
 http://docs.python.org/3/library/functions.html#abs
+
 
 
 
@@ -607,11 +596,9 @@ h......
             
         </h3>
         <div class="post-content-preview">
-            1. 数据类型和变量
-​	Python使用缩进来组织代码块，一般使用4个空格的缩进。使用#来注释一行，其他每一行都是一个语句，当语句以冒号:结尾时，缩进的语句视为代码块。Python对大小写敏感。
-1.1 整数
-​	Python可以处理任意大小的整数，包括负整数，写法与数学上写法一致，例如：-100。如果用十六进制表示，则用前缀为0x和0-9，a-f表示，例如：0xff00。
-1.2 浮点数......
+            1. 数据类型和变量​    Python使用缩进来组织代码块，一般使用4个空格的缩进。使用#来注释一行，其他每一行都是一个语句，当语句以冒号:结尾时，缩进的语句视为代码块。Python对大小写敏感。
+1.1 整数​    Python可以处理任意大小的整数，包括负整数，写法与数学上写法一致，例如：-100。如果用十六进制表示，则用前缀为0x和0-9，a-f表示，例如：0xff00。
+1.2......
         </div>
     </a>
     
@@ -690,29 +677,7 @@ h......
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
-            
-        
-            
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
-            
-        
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -728,13 +693,21 @@ h......
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -746,14 +719,6 @@ h......
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
             <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
             
         
@@ -762,7 +727,29 @@ h......
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            
+        
+            
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
@@ -782,6 +769,10 @@ h......
             
         
             
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
@@ -790,11 +781,7 @@ h......
             
         
             
-        
-            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
             
         
             
@@ -892,15 +879,15 @@ h......
         </li>
       
         <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
     </ul>

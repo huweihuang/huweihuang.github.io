@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,18 +212,16 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-nginx的系统架构">1. Nginx的系统架构</h1>
-<ol>
+                <div id="vip-container"><h1 id="1-nginx的系统架构"><a href="#1-Nginx的系统架构" class="headerlink" title="1. Nginx的系统架构"></a>1. Nginx的系统架构</h1><ol>
 <li>Nginx包含一个单一的master进程和多个worker进程，每个进程都是单进程，并且设计为同时处理成千上万个连接。</li>
 <li>worker进程是处理连接的地方，Nginx使用了操作系统事件机制来快速响应这些请求。</li>
 <li>master进程负责读取配置文件、处理套接字、派生worker进程、打开日志文件和编译嵌入式的perl脚本。master进程是一个可以通过处理信号量来管理请求的进程。</li>
 <li>worker进程运行在一个忙碌的事件循环处理中，用于处理进入的连接。每一个nginx模块被构筑在worker中。任何请求处理、过滤、处理代理的连接和更多操作都在worker中完成。</li>
 <li>如果没有阻塞worker进程的进程（例如磁盘I/O），那么需要配置的worker进程要多于CPU内核数，以便处理负载。</li>
 </ol>
-<h1 id="2-http核心模块">2. Http核心模块</h1>
-<h2 id="211-server">2.1.1. server</h2>
-<p>指令server开始一个新的上下文（context）。</p>
+<h1 id="2-http核心模块"><a href="#2-Http核心模块" class="headerlink" title="2. Http核心模块"></a>2. Http核心模块</h1><h2 id="211-server"><a href="#2-1-1-server" class="headerlink" title="2.1.1. server"></a>2.1.1. server</h2><p>指令server开始一个新的上下文（context）。</p>
 <p>http server指令</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -254,7 +252,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="212-日志格式">2.1.2. 日志格式</h2>
+</div>
+<h2 id="212-日志格式"><a href="#2-1-2-日志格式" class="headerlink" title="2.1.2. 日志格式"></a>2.1.2. 日志格式</h2><div class="table-container">
 <table>
 <thead>
 <tr>
@@ -272,7 +271,7 @@
 <tr>
 <td>$remote_user</td>
 <td>客户端用户名称</td>
-<td>–</td>
+<td>—</td>
 </tr>
 <tr>
 <td>$time_local</td>
@@ -312,7 +311,7 @@
 <tr>
 <td>$http_user_agent</td>
 <td>用户终端浏览器等信息</td>
-<td>&quot;Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C;</td>
+<td>“Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C;</td>
 </tr>
 <tr>
 <td>$ssl_protocol</td>
@@ -341,6 +340,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p><strong>日志切割</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vim /etc/logrotate.d/nginx</span></span><br><span class="line">/usr/local/nginx/logs/*.log&#123;</span><br><span class="line">        #指定转储周期为每天</span><br><span class="line">        daily</span><br><span class="line">        #保留30个备份</span><br><span class="line">        rotate 30</span><br><span class="line">        #需要压缩</span><br><span class="line">        delaycompress</span><br><span class="line">        #YYYYMMDD日期格式</span><br><span class="line">        dateext</span><br><span class="line">        #忽略错误</span><br><span class="line">        missingok</span><br><span class="line">        #如果日志为空则不做轮询</span><br><span class="line">        notifempty</span><br><span class="line">        #只为整个日志组运行一次的脚本</span><br><span class="line">        sharedscripts</span><br><span class="line">        #日志轮询后执行的脚本</span><br><span class="line">        postrotate</span><br><span class="line">                service nginx reload</span><br><span class="line">        endscript</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </div>
@@ -367,12 +367,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/nginx/install-nginx/" data-toggle="tooltip" data-placement="top" title="Nginx的部署与配置">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/nginx/nginx-proxy/" data-toggle="tooltip" data-placement="top" title="Nginx作为反向代理">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/nginx/nginx-proxy/" data-toggle="tooltip" data-placement="top" title="Nginx作为反向代理">Next Post &rarr;</a>
+                            <a href="/article/python/basics/python-object-oriented-programming/" data-toggle="tooltip" data-placement="top" title="[Python] Python系列（四）之面向对象编程">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

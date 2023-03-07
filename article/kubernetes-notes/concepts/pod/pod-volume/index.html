@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,9 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="pod-volume">Pod Volume</h1>
-<p>同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。</p>
-<p>例如：Pod级别的Volume:“app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。</p>
+                <div id="vip-container"><h1 id="pod-volume"><a href="#Pod-Volume" class="headerlink" title="Pod Volume"></a>Pod Volume</h1><p>同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。</p>
+<p>例如：Pod级别的Volume:”app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。</p>
 <p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1512804287/article/kubernetes/pod/pod_volume.png" alt="这里写图片描述"></p>
 <p><strong>pod-volumes-applogs.yaml</strong></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">volume-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">tomcat</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">tomcat</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">app-logs</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/usr/local/tomcat/logs</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">["sh","-c","tailf</span> <span class="string">/logs/catalina*.log"]</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">app-logs</span></span><br><span class="line">      <span class="attr">mountPath:</span> <span class="string">/logs</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">app-logs</span></span><br><span class="line">    <span class="attr">emptuDir:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure>
@@ -256,7 +255,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/mysql/system-manage/" data-toggle="tooltip" data-placement="top" title="Mysql常用命令之系统管理">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/monitor/kubernetes-cluster-monitoring/" data-toggle="tooltip" data-placement="top" title="Kubernetes集群监控">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

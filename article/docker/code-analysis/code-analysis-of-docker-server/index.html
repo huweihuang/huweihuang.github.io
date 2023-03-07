@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,28 +212,24 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="一-docker-server创建流程">一、Docker Server创建流程</h2>
-<p>Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。<br>
-Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供API访问服务。<br>
-Docker Server的整个生命周期</p>
+                <div id="vip-container"><h2 id="一-docker-server创建流程"><a href="#一、Docker-Server创建流程" class="headerlink" title="一、Docker Server创建流程"></a>一、Docker Server创建流程</h2><p>Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。<br>Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供API访问服务。<br>Docker Server的整个生命周期</p>
 <ol>
 <li>创建Docker Server的Job</li>
 <li>配置Job的环境变量</li>
 <li>触发执行Job</li>
 </ol>
 <p>说明：本文分析的代码为Docker 1.2.0版本。</p>
-<h3 id="一创建serverapi的job">（一）创建“serverapi”的Job</h3>
-<p><strong>/docker/daemon.go</strong></p>
+<h3 id="一创建serverapi的job"><a href="#（一）创建“serverapi”的Job" class="headerlink" title="（一）创建“serverapi”的Job"></a>（一）创建“serverapi”的Job</h3><p><strong>/docker/daemon.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mainDaemon</span><span class="params">()</span></span> &#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// Serve api</span></span><br><span class="line">      job := eng.Job(<span class="string">"serveapi"</span>, flHosts...)</span><br><span class="line">      ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 <p>运行serverapi的Job时，会执行该Job的处理方法api.ServeApi。</p>
-<h3 id="二配置job环境变量">（二）配置Job环境变量</h3>
-<p><strong>/docker/daemon.go</strong></p>
+<h3 id="二配置job环境变量"><a href="#（二）配置Job环境变量" class="headerlink" title="（二）配置Job环境变量"></a>（二）配置Job环境变量</h3><p><strong>/docker/daemon.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">job.SetenvBool(<span class="string">"Logging"</span>, <span class="literal">true</span>)</span><br><span class="line">job.SetenvBool(<span class="string">"EnableCors"</span>, *flEnableCors)</span><br><span class="line">job.Setenv(<span class="string">"Version"</span>, dockerversion.VERSION)</span><br><span class="line">job.Setenv(<span class="string">"SocketGroup"</span>, *flSocketGroup)</span><br><span class="line"> </span><br><span class="line">job.SetenvBool(<span class="string">"Tls"</span>, *flTls)</span><br><span class="line">job.SetenvBool(<span class="string">"TlsVerify"</span>, *flTlsVerify)</span><br><span class="line">job.Setenv(<span class="string">"TlsCa"</span>, *flCa)</span><br><span class="line">job.Setenv(<span class="string">"TlsCert"</span>, *flCert)</span><br><span class="line">job.Setenv(<span class="string">"TlsKey"</span>, *flKey)</span><br><span class="line">job.SetenvBool(<span class="string">"BufferRequests"</span>, <span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
 <p>参数分为两种</p>
 <ul>
 <li>创建Job实例时，用指定参数直接初始化Job的Args属性</li>
 <li>创建Job后，给Job添加指定的环境变量</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -306,12 +302,11 @@ Docker Server的整个生命周期</p>
 </tr>
 </tbody>
 </table>
-<h3 id="三运行job">（三）运行Job</h3>
-<p><strong>/api/server/server.go</strong></p>
+</div>
+<h3 id="三运行job"><a href="#（三）运行Job" class="headerlink" title="（三）运行Job"></a>（三）运行Job</h3><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := job.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Docker在eng对象中注册过键位serverapi的处理方法，在运行Job的时候执行这个处理方法的值函数，相应的处理方法的值为api.ServeApi。</p>
-<h2 id="二-serveapi运行流程">二、ServeApi运行流程</h2>
-<p>​     ServeApi属于Docker Server提供API服务的部分，作为一个监听请求、处理请求、响应请求的服务端，支持三种协议：TCP协议、UNIX Socket形式以及fd的形式。功能是：循环检查Docker Daemon支持的所有协议，并为每一种协议创建一个协程goroutine，并在协程内部配置一个服务于HTTP请求的服务端。</p>
+<h2 id="二-serveapi运行流程"><a href="#二、ServeApi运行流程" class="headerlink" title="二、ServeApi运行流程"></a>二、ServeApi运行流程</h2><p>​     ServeApi属于Docker Server提供API服务的部分，作为一个监听请求、处理请求、响应请求的服务端，支持三种协议：TCP协议、UNIX Socket形式以及fd的形式。功能是：循环检查Docker Daemon支持的所有协议，并为每一种协议创建一个协程goroutine，并在协程内部配置一个服务于HTTP请求的服务端。</p>
 <p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServeApi loops through all of the protocols sent in to docker and spawns</span></span><br><span class="line"><span class="comment">// off a go routine to setup a serving http.Server for each.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeApi</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(job.Args) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        protoAddrs = job.Args</span><br><span class="line">        chErrors   = <span class="built_in">make</span>(<span class="keyword">chan</span> error, <span class="built_in">len</span>(protoAddrs))</span><br><span class="line">    )</span><br><span class="line">    activationLock = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> _, protoAddr := <span class="keyword">range</span> protoAddrs &#123;</span><br><span class="line">        protoAddrParts := strings.SplitN(protoAddr, <span class="string">"://"</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(protoAddrParts) != <span class="number">2</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            log.Infof(<span class="string">"Listening for HTTP on %s (%s)"</span>, protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>])</span><br><span class="line">            chErrors &lt;- ListenAndServe(protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>], job)</span><br><span class="line">        &#125;()</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(protoAddrs); i += <span class="number">1</span> &#123;</span><br><span class="line">        err := &lt;-chErrors</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> engine.StatusOK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>ServeApi执行流程：</p>
@@ -321,44 +316,34 @@ Docker Server的整个生命周期</p>
 <li>遍历协议地址，针对协议创建相应的服务端</li>
 <li>通过chErrors建立goroutine与主进程之间的协调关系</li>
 </ol>
-<h3 id="一判断job参数">（一）判断Job参数</h3>
-<p>判断Job参数，job.Args，即数组flHost，若flHost的长度为0，则说明没有监听的协议与地址，参数有误。</p>
+<h3 id="一判断job参数"><a href="#（一）判断Job参数" class="headerlink" title="（一）判断Job参数"></a>（一）判断Job参数</h3><p>判断Job参数，job.Args，即数组flHost，若flHost的长度为0，则说明没有监听的协议与地址，参数有误。</p>
 <p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeApi</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(job.Args) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="二定义监听协议与地址及错误信息">（二）定义监听协议与地址及错误信息</h3>
-<p><strong>/api/server/server.go</strong></p>
+<h3 id="二定义监听协议与地址及错误信息"><a href="#（二）定义监听协议与地址及错误信息" class="headerlink" title="（二）定义监听协议与地址及错误信息"></a>（二）定义监听协议与地址及错误信息</h3><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">       protoAddrs = job.Args</span><br><span class="line">       chErrors   = <span class="built_in">make</span>(<span class="keyword">chan</span> error, <span class="built_in">len</span>(protoAddrs))</span><br><span class="line">   )</span><br><span class="line">   activationLock = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
 <p>定义protoAddrs[flHosts的内容]、chErrors[错误类型管道]与activationLock[同步serveapi和acceptconnections两个job执行的管道]三个变量，</p>
-<h3 id="三遍历协议地址">（三）遍历协议地址</h3>
-<p><strong>/api/server/server.go</strong></p>
+<h3 id="三遍历协议地址"><a href="#（三）遍历协议地址" class="headerlink" title="（三）遍历协议地址"></a>（三）遍历协议地址</h3><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> _, protoAddr := <span class="keyword">range</span> protoAddrs &#123;</span><br><span class="line">    protoAddrParts := strings.SplitN(protoAddr, <span class="string">"://"</span>, <span class="number">2</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(protoAddrParts) != <span class="number">2</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        log.Infof(<span class="string">"Listening for HTTP on %s (%s)"</span>, protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>])</span><br><span class="line">        chErrors &lt;- ListenAndServe(protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>], job)</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>遍历协议地址，针对协议创建相应的服务端。协议地址</p>
-<h3 id="四协调cherrors与主进程关系">（四）协调chErrors与主进程关系</h3>
-<p>根据chErrors的值运行，如果chErrors这个管道中有错误内容，则ServerApi一次循环结束，若无错误内容，循环被阻塞。即chErrors确保ListenAndServe所对应的协程能和主函数ServeApi进行协调，如果协程出错，主函数ServeApi仍然可以捕获这样的错误，从而导致程序退出。</p>
+<h3 id="四协调cherrors与主进程关系"><a href="#（四）协调chErrors与主进程关系" class="headerlink" title="（四）协调chErrors与主进程关系"></a>（四）协调chErrors与主进程关系</h3><p>根据chErrors的值运行，如果chErrors这个管道中有错误内容，则ServerApi一次循环结束，若无错误内容，循环被阻塞。即chErrors确保ListenAndServe所对应的协程能和主函数ServeApi进行协调，如果协程出错，主函数ServeApi仍然可以捕获这样的错误，从而导致程序退出。</p>
 <p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(protoAddrs); i += <span class="number">1</span> &#123;</span><br><span class="line">    err := &lt;-chErrors</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Error(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> engine.StatusOK</span><br></pre></td></tr></table></figure>
-<h2 id="三-listenandserve实现">三、ListenAndServe实现</h2>
-<p>ListenAndServe的功能：使Docker Server监听某一指定地址，并接收该地址的请求，并对以上请求路由转发至相应的处理方法处。<br>
-ListenAndServe执行流程：</p>
+<h2 id="三-listenandserve实现"><a href="#三、ListenAndServe实现" class="headerlink" title="三、ListenAndServe实现"></a>三、ListenAndServe实现</h2><p>ListenAndServe的功能：使Docker Server监听某一指定地址，并接收该地址的请求，并对以上请求路由转发至相应的处理方法处。<br>ListenAndServe执行流程：</p>
 <ol>
 <li>创建route路由实例</li>
 <li>创建listener监听实例</li>
 <li>创建http.Server</li>
 <li>启动API服务</li>
 </ol>
-<p>流程图：<br>
-<img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578158/article/docker/dockerServer/DockerServerFlow.jpg" width="50%"></p>
-<h3 id="一创建route路由实例">（一）创建route路由实例</h3>
-<p><strong>/api/server/server.go</strong></p>
+<p>流程图：<br><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578158/article/docker/dockerServer/DockerServerFlow.jpg" width="50%"></p>
+<h3 id="一创建route路由实例"><a href="#（一）创建route路由实例" class="headerlink" title="（一）创建route路由实例"></a>（一）创建route路由实例</h3><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ListenAndServe sets up the required http.Server and gets it listening for</span></span><br><span class="line"><span class="comment">// each addr passed in and does protocol specific checking.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ListenAndServe</span><span class="params">(proto, addr <span class="keyword">string</span>, job *engine.Job)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> l net.Listener</span><br><span class="line">    r, err := createRouter(job.Eng, job.GetenvBool(<span class="string">"Logging"</span>), job.GetenvBool(<span class="string">"EnableCors"</span>), job.Getenv(<span class="string">"Version"</span>))</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>路由实例的作用：负责Docker Server对外部请求的路由及转发。<br>
-实现过程：</p>
+<p>路由实例的作用：负责Docker Server对外部请求的路由及转发。<br>实现过程：</p>
 <ol>
 <li>创建全新的route路由实例</li>
 <li>为route实例添加路由记录</li>
 </ol>
-<h4 id="1-创建空路由实例">1、创建空路由实例</h4>
-<p><strong>/api/server/server.go</strong></p>
+<h4 id="1-创建空路由实例"><a href="#1、创建空路由实例" class="headerlink" title="1、创建空路由实例"></a>1、创建空路由实例</h4><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createRouter</span><span class="params">(eng *engine.Engine, logging, enableCors <span class="keyword">bool</span>, dockerVersion <span class="keyword">string</span>)</span> <span class="params">(*mux.Router, error)</span></span> &#123;</span><br><span class="line">     r := mux.NewRouter()</span><br><span class="line">     ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 <p><strong>/vendor/src/github.com/gorilla/mux/mux.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewRouter returns a new router instance.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRouter</span><span class="params">()</span> *<span class="title">Router</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Router&#123;namedRoutes: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Route), KeepContext: <span class="literal">false</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// This will send all incoming requests to the router.</span></span><br><span class="line"><span class="keyword">type</span> Router <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// Configurable Handler to be used when no route matches.</span></span><br><span class="line">    NotFoundHandler http.Handler</span><br><span class="line">    <span class="comment">// Parent route, if this is a subrouter.</span></span><br><span class="line">    parent parentRoute</span><br><span class="line">    <span class="comment">// Routes to be matched, in order.</span></span><br><span class="line">    routes []*Route</span><br><span class="line">    <span class="comment">// Routes by name for URL building.</span></span><br><span class="line">    namedRoutes <span class="keyword">map</span>[<span class="keyword">string</span>]*Route</span><br><span class="line">    <span class="comment">// See Router.StrictSlash(). This defines the flag for new routes.</span></span><br><span class="line">    strictSlash <span class="keyword">bool</span></span><br><span class="line">    <span class="comment">// If true, do not clear the request context after handling the request</span></span><br><span class="line">    KeepContext <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -367,22 +352,19 @@ ListenAndServe执行流程：</p>
 <li>nameRoutes：map类型，key为string类型，value为Route路由记录类型</li>
 <li>KeepContext：属性为false，则处理完请求后清除请求内容，不对请求做存储操作</li>
 </ul>
-<p>mux.Router会通过一系列已经注册过的路由记录，来匹配接收的请求。先通过请求的URL或者其他条件找到相应的路由记录，并调用这条记录中的执行处理方法。<br>
-mux.Router特性</p>
+<p>mux.Router会通过一系列已经注册过的路由记录，来匹配接收的请求。先通过请求的URL或者其他条件找到相应的路由记录，并调用这条记录中的执行处理方法。<br>mux.Router特性</p>
 <ul>
 <li>请求可以基于URL的主机名、路径、路径前缀、shemes、请求头和请求值、HTTP请求方法类型或者使用自定义的匹配规则</li>
 <li>URL主机名和路径可以通过一个正则表达式来表示</li>
 <li>注册的URL可以直接被运用，也可以保留从而保证维护资源的使用</li>
 <li>路由记录同样看可以作用于子路由记录</li>
 </ul>
-<h4 id="2-添加路由记录">2、添加路由记录</h4>
-<p><strong>/api/server/server.go</strong></p>
+<h4 id="2-添加路由记录"><a href="#2、添加路由记录" class="headerlink" title="2、添加路由记录"></a>2、添加路由记录</h4><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> os.Getenv(<span class="string">"DEBUG"</span>) != <span class="string">""</span> &#123;</span><br><span class="line">       AttachProfiler(r)</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">map</span>[<span class="keyword">string</span>]HttpApiFunc&#123;</span><br><span class="line">       <span class="string">"GET"</span>: &#123;</span><br><span class="line">           <span class="string">"/_ping"</span>:                          ping,</span><br><span class="line">           <span class="string">"/events"</span>:                         getEvents,</span><br><span class="line">           <span class="string">"/info"</span>:                           getInfo,</span><br><span class="line">           <span class="string">"/version"</span>:                        getVersion,</span><br><span class="line">           <span class="string">"/images/json"</span>:                    getImagesJSON,</span><br><span class="line">           <span class="string">"/images/viz"</span>:                     getImagesViz,</span><br><span class="line">           <span class="string">"/images/search"</span>:                  getImagesSearch,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/get"</span>:           getImagesGet,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/history"</span>:       getImagesHistory,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/json"</span>:          getImagesByName,</span><br><span class="line">           <span class="string">"/containers/ps"</span>:                  getContainersJSON,</span><br><span class="line">           <span class="string">"/containers/json"</span>:                getContainersJSON,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/export"</span>:    getContainersExport,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/changes"</span>:   getContainersChanges,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/json"</span>:      getContainersByName,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/top"</span>:       getContainersTop,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/logs"</span>:      getContainersLogs,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/attach/ws"</span>: wsContainersAttach,</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="string">"POST"</span>: &#123;</span><br><span class="line">           <span class="string">"/auth"</span>:                         postAuth,</span><br><span class="line">           <span class="string">"/commit"</span>:                       postCommit,</span><br><span class="line">           <span class="string">"/build"</span>:                        postBuild,</span><br><span class="line">           <span class="string">"/images/create"</span>:                postImagesCreate,</span><br><span class="line">           <span class="string">"/images/load"</span>:                  postImagesLoad,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/push"</span>:        postImagesPush,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/tag"</span>:         postImagesTag,</span><br><span class="line">           <span class="string">"/containers/create"</span>:            postContainersCreate,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/kill"</span>:    postContainersKill,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/pause"</span>:   postContainersPause,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/unpause"</span>: postContainersUnpause,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/restart"</span>: postContainersRestart,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/start"</span>:   postContainersStart,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/stop"</span>:    postContainersStop,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/wait"</span>:    postContainersWait,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/resize"</span>:  postContainersResize,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/attach"</span>:  postContainersAttach,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/copy"</span>:    postContainersCopy,</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="string">"DELETE"</span>: &#123;</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;"</span>: deleteContainers,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;"</span>:     deleteImages,</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="string">"OPTIONS"</span>: &#123;</span><br><span class="line">           <span class="string">""</span>: optionsHandler,</span><br><span class="line">       &#125;,</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
 <p>m的类型为映射，key表示HTTP的请求类型，如GET、POST、DELETE等，value为映射类型，代表URL与执行处理方法的映射。</p>
 <p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> HttpApiFunc <span class="function"><span class="keyword">func</span><span class="params">(eng *engine.Engine, version version.Version, w http.ResponseWriter, r *http.Request, vars <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="二创建listener监听实例">（二）创建listener监听实例</h3>
-<p>路由模块完成请求的路由与分发，监听模块完成请求的监听功能。Listener是一种面向流协议的通用网络监听模块。</p>
+<h3 id="二创建listener监听实例"><a href="#（二）创建listener监听实例" class="headerlink" title="（二）创建listener监听实例"></a>（二）创建listener监听实例</h3><p>路由模块完成请求的路由与分发，监听模块完成请求的监听功能。Listener是一种面向流协议的通用网络监听模块。</p>
 <p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> l net.Listener</span><br><span class="line"> ...</span><br><span class="line"> <span class="keyword">if</span> job.GetenvBool(<span class="string">"BufferRequests"</span>) &#123;</span><br><span class="line">     l, err = listenbuffer.NewListenBuffer(proto, addr, activationLock)</span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     l, err = net.Listen(proto, addr)</span><br></pre></td></tr></table></figure>
 <p>Listenbuffer的作用：让Docker Server立即监听指定协议地址上的请求，但将这些请求暂时先缓存下来，等Docker Daemon全部启动完毕之后才让Docker Server开始接受这些请求。</p>
@@ -391,14 +373,12 @@ mux.Router特性</p>
 <p>若协议类型为TCP，Job环境变量中Tls或TlsVerity有一个为true，则说明Docker Server需要支持HTTPS服务。需要建立一个tls.Config类型实例tlsConfig，在tlsConfig中加载证书、认证信息，通过tls包中的NewListener函数创建HTTPS协议请求的Listener实例。</p>
 <p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l = tls.NewListener(l, tlsConfig)</span><br></pre></td></tr></table></figure>
-<h3 id="三创建httpserver">（三）创建http.Server</h3>
-<p><strong>/api/server/server.go</strong></p>
+<h3 id="三创建httpserver"><a href="#（三）创建http-Server" class="headerlink" title="（三）创建http.Server"></a>（三）创建http.Server</h3><p><strong>/api/server/server.go</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpSrv := http.Server&#123;Addr: addr, Handler: r&#125;</span><br></pre></td></tr></table></figure>
 <p>Docker Server需要创建一个Server对象来运行HTTP/HTTPS服务端，创建http.Server，addr为需要监听的地址，r为mux.Router。</p>
-<h3 id="四启动api服务">（四）启动API服务</h3>
-<p>创建http.Server实例后，即启动API服务，监听请求，并对每一个请求生成一个新的协程来做专属服务。对于每个请求，协程会读取请求，查询路由表中的路由记录项，找到匹配的路由记录，最终调用路由记录中的处理方法，执行完毕返回响应信息。</p>
+<h3 id="四启动api服务"><a href="#（四）启动API服务" class="headerlink" title="（四）启动API服务"></a>（四）启动API服务</h3><p>创建http.Server实例后，即启动API服务，监听请求，并对每一个请求生成一个新的协程来做专属服务。对于每个请求，协程会读取请求，查询路由表中的路由记录项，找到匹配的路由记录，最终调用路由记录中的处理方法，执行完毕返回响应信息。</p>
 <p><strong>/api/server/server.go</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> httpSrv.Serve(l)</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> httpSrv.Serve(l)</span><br></pre></td></tr></table></figure><div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div></div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
 			<script>
@@ -414,7 +394,7 @@ mux.Router特性</p>
 			    });
 			}
 			</script>
-		<div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div>
+		
                 
 
                 <hr>
@@ -422,12 +402,12 @@ mux.Router特性</p>
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/docker/code-analysis/code-analysis-of-docker-client/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（一）之Docker Client">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/docker/docker-architecture/" data-toggle="tooltip" data-placement="top" title="Docker整体架构图">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（二）之Docker Daemon">Next Post &rarr;</a>
+                            <a href="/article/docker/code-analysis/code-analysis-of-docker-client/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（一）之Docker Client">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

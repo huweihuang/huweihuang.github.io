@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,10 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="dynamic-volume-provisioning">Dynamic Volume Provisioning</h2>
-<p>Dynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。</p>
-<h2 id="1-开启dynamic-provisioning">1. 开启Dynamic Provisioning</h2>
-<p>需要先提前创建<code>StorageClass</code>对象，<code>StorageClass</code>中定义了使用哪个<code>provisioner</code>，并且在<code>provisioner</code>被调用时传入哪些参数，具体可参考<code>StorageClass</code>介绍。</p>
+                <div id="vip-container"><h2 id="dynamic-volume-provisioning"><a href="#Dynamic-Volume-Provisioning" class="headerlink" title="Dynamic Volume Provisioning"></a>Dynamic Volume Provisioning</h2><p>Dynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。</p>
+<h2 id="1-开启dynamic-provisioning"><a href="#1-开启Dynamic-Provisioning" class="headerlink" title="1. 开启Dynamic Provisioning"></a>1. 开启Dynamic Provisioning</h2><p>需要先提前创建<code>StorageClass</code>对象，<code>StorageClass</code>中定义了使用哪个<code>provisioner</code>，并且在<code>provisioner</code>被调用时传入哪些参数，具体可参考<code>StorageClass</code>介绍。</p>
 <p>例如：</p>
 <ul>
 <li>磁盘类存储</li>
@@ -225,14 +223,12 @@
 <li>SSD类存储</li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fast</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">kubernetes.io/gce-pd</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">pd-ssd</span></span><br></pre></td></tr></table></figure>
-<h2 id="2-使用dynamic-provisioning">2. 使用Dynamic Provisioning</h2>
-<p>创建一个PVC对象，并且在其中<code>storageClassName</code>字段指明需要用到的<code>StorageClass</code>的名称，例如：</p>
+<h2 id="2-使用dynamic-provisioning"><a href="#2-使用Dynamic-Provisioning" class="headerlink" title="2. 使用Dynamic Provisioning"></a>2. 使用Dynamic Provisioning</h2><p>创建一个PVC对象，并且在其中<code>storageClassName</code>字段指明需要用到的<code>StorageClass</code>的名称，例如：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">claim1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">fast</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">30Gi</span></span><br></pre></td></tr></table></figure>
 <p>当使用到PVC的时候会自动创建对应的外部存储，当PVC被删除的时候，会自动销毁（或备份）外部存储。</p>
-<h2 id="3-默认的storageclass">3. 默认的StorageClass</h2>
-<p>当没有对应的<code>StorageClass</code>配置时，可以设定默认的<code>StorageClass</code>，需要执行以下操作：</p>
+<h2 id="3-默认的storageclass"><a href="#3-默认的StorageClass" class="headerlink" title="3. 默认的StorageClass"></a>3. 默认的StorageClass</h2><p>当没有对应的<code>StorageClass</code>配置时，可以设定默认的<code>StorageClass</code>，需要执行以下操作：</p>
 <ul>
-<li>在API Server开启<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass" target="_blank" rel="noopener"><code>DefaultStorageClass</code> admission controller</a> 。</li>
+<li>在API Server开启<a href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#defaultstorageclass" target="_blank" rel="noopener"><code>DefaultStorageClass</code> admission controller</a> 。</li>
 <li>设置默认的<code>StorageClass</code>对象。</li>
 </ul>
 <p>可以通过添加<code>storageclass.kubernetes.io/is-default-class</code>注解的方式设置某个<code>StorageClass</code>为默认的<code>StorageClass</code>。当用户创建了一个<code>PersistentVolumeClaim</code>，但没有指定<code>storageClassName</code>的时候，会自动将该PVC的<code>storageClassName</code>指向默认的<code>StorageClass</code>。</p>
@@ -264,12 +260,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/storage/csi/flexvolume/" data-toggle="tooltip" data-placement="top" title="FlexVolume介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/storage/volume/storage-class/" data-toggle="tooltip" data-placement="top" title="StorageClass 介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/" data-toggle="tooltip" data-placement="top" title="使用kind安装kubernetes">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/storage/csi/flexvolume/" data-toggle="tooltip" data-placement="top" title="FlexVolume介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

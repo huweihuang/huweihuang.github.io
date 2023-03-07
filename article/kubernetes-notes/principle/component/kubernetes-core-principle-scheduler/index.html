@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,48 +212,34 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-scheduler简介">1. Scheduler简介</h1>
-<p>Scheduler负责Pod调度。在整个系统中起&quot;承上启下&quot;作用，承上：负责接收Controller Manager创建的新的Pod，为其选择一个合适的Node；启下：Node上的kubelet接管Pod的生命周期。</p>
+                <div id="vip-container"><h1 id="1-scheduler简介"><a href="#1-Scheduler简介" class="headerlink" title="1. Scheduler简介"></a>1. Scheduler简介</h1><p>Scheduler负责Pod调度。在整个系统中起”承上启下”作用，承上：负责接收Controller Manager创建的新的Pod，为其选择一个合适的Node；启下：Node上的kubelet接管Pod的生命周期。</p>
 <p>Scheduler：</p>
 <p>1）通过调度算法为待调度Pod列表的每个Pod从Node列表中选择一个最适合的Node，并将信息写入etcd中</p>
 <p>2）kubelet通过API Server监听到kubernetes Scheduler产生的Pod绑定信息，然后获取对应的Pod清单，下载Image，并启动容器。</p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579017/article/kubernetes/core/scheduler.png" alt="scheduler"></p>
-<h1 id="2-调度流程">2. 调度流程</h1>
-<p>1、预选调度过程，即遍历所有目标Node,筛选出符合要求的候选节点，kubernetes内置了多种预选策略（xxx Predicates）供用户选择</p>
+<h1 id="2-调度流程"><a href="#2-调度流程" class="headerlink" title="2. 调度流程"></a>2. 调度流程</h1><p>1、预选调度过程，即遍历所有目标Node,筛选出符合要求的候选节点，kubernetes内置了多种预选策略（xxx Predicates）供用户选择</p>
 <p>2、确定最优节点，在第一步的基础上采用优选策略（xxx Priority）计算出每个候选节点的积分，取最高积分。</p>
 <p>调度流程通过插件式加载的“调度算法提供者”（AlgorithmProvider）具体实现，一个调度算法提供者就是包括一组预选策略与一组优选策略的结构体。</p>
-<h1 id="3-预选策略">3. 预选策略</h1>
-<p>说明：返回true表示该节点满足该Pod的调度条件；返回false表示该节点不满足该Pod的调度条件。</p>
-<h2 id="31-nodiskconflict">3.1. NoDiskConflict</h2>
-<p>判断备选Pod的数据卷是否与该Node上已存在Pod挂载的数据卷冲突，如果是则返回false，否则返回true。</p>
-<h2 id="32-podfitsresources">3.2. PodFitsResources</h2>
-<p>判断备选节点的资源是否满足备选Pod的需求，即节点的剩余资源满不满足该Pod的资源使用。</p>
+<h1 id="3-预选策略"><a href="#3-预选策略" class="headerlink" title="3. 预选策略"></a>3. 预选策略</h1><p>说明：返回true表示该节点满足该Pod的调度条件；返回false表示该节点不满足该Pod的调度条件。</p>
+<h2 id="31-nodiskconflict"><a href="#3-1-NoDiskConflict" class="headerlink" title="3.1. NoDiskConflict"></a>3.1. NoDiskConflict</h2><p>判断备选Pod的数据卷是否与该Node上已存在Pod挂载的数据卷冲突，如果是则返回false，否则返回true。</p>
+<h2 id="32-podfitsresources"><a href="#3-2-PodFitsResources" class="headerlink" title="3.2. PodFitsResources"></a>3.2. PodFitsResources</h2><p>判断备选节点的资源是否满足备选Pod的需求，即节点的剩余资源满不满足该Pod的资源使用。</p>
 <ol>
 <li>计算备选Pod和节点中已用资源（该节点所有Pod的使用资源）的总和。</li>
 <li>获取备选节点的状态信息，包括节点资源信息。</li>
 <li>如果（备选Pod+节点已用资源&gt;该节点总资源）则返回false，即剩余资源不满足该Pod使用；否则返回true。</li>
 </ol>
-<h2 id="33-podselectormatches">3.3. PodSelectorMatches</h2>
-<p>判断节点是否包含备选Pod的标签选择器指定的标签，即通过标签来选择Node。</p>
+<h2 id="33-podselectormatches"><a href="#3-3-PodSelectorMatches" class="headerlink" title="3.3. PodSelectorMatches"></a>3.3. PodSelectorMatches</h2><p>判断节点是否包含备选Pod的标签选择器指定的标签，即通过标签来选择Node。</p>
 <ol>
 <li>如果Pod中没有指定spec.nodeSelector，则返回true。</li>
 <li>否则获得备选节点的标签信息，判断该节点的标签信息中是否包含该Pod的spec.nodeSelector中指定的标签，如果包含返回true，否则返回false。</li>
 </ol>
-<h2 id="34-podfitshost">3.4. PodFitsHost</h2>
-<p>判断备选Pod的spec.nodeName所指定的节点名称与备选节点名称是否一致，如果一致返回true，否则返回false。</p>
-<h2 id="35-checknodelabelpresence">3.5. CheckNodeLabelPresence</h2>
-<p>检查备选节点中是否有Scheduler配置的标签，如果有返回true，否则返回false。</p>
-<h2 id="36-checkserviceaffinity">3.6. CheckServiceAffinity</h2>
-<p>判断备选节点是否包含Scheduler配置的标签，如果有返回true，否则返回false。</p>
-<h2 id="37-podfitsports">3.7. PodFitsPorts</h2>
-<p>判断备选Pod所用的端口列表中的端口是否在备选节点中已被占用，如果被占用返回false，否则返回true。</p>
-<h1 id="4-优选策略">4. 优选策略</h1>
-<h2 id="41-leastrequestedpriority">4.1. LeastRequestedPriority</h2>
-<p>优先从备选节点列表中选择资源消耗最小的节点（CPU+内存）。</p>
-<h2 id="42-calculatenodelabelpriority">4.2. CalculateNodeLabelPriority</h2>
-<p>优先选择含有指定Label的节点。</p>
-<h2 id="43-balancedresourceallocation">4.3. BalancedResourceAllocation</h2>
-<p>优先从备选节点列表中选择各项资源使用率最均衡的节点。</p>
+<h2 id="34-podfitshost"><a href="#3-4-PodFitsHost" class="headerlink" title="3.4. PodFitsHost"></a>3.4. PodFitsHost</h2><p>判断备选Pod的spec.nodeName所指定的节点名称与备选节点名称是否一致，如果一致返回true，否则返回false。</p>
+<h2 id="35-checknodelabelpresence"><a href="#3-5-CheckNodeLabelPresence" class="headerlink" title="3.5. CheckNodeLabelPresence"></a>3.5. CheckNodeLabelPresence</h2><p>检查备选节点中是否有Scheduler配置的标签，如果有返回true，否则返回false。</p>
+<h2 id="36-checkserviceaffinity"><a href="#3-6-CheckServiceAffinity" class="headerlink" title="3.6. CheckServiceAffinity"></a>3.6. CheckServiceAffinity</h2><p>判断备选节点是否包含Scheduler配置的标签，如果有返回true，否则返回false。</p>
+<h2 id="37-podfitsports"><a href="#3-7-PodFitsPorts" class="headerlink" title="3.7. PodFitsPorts"></a>3.7. PodFitsPorts</h2><p>判断备选Pod所用的端口列表中的端口是否在备选节点中已被占用，如果被占用返回false，否则返回true。</p>
+<h1 id="4-优选策略"><a href="#4-优选策略" class="headerlink" title="4. 优选策略"></a>4. 优选策略</h1><h2 id="41-leastrequestedpriority"><a href="#4-1-LeastRequestedPriority" class="headerlink" title="4.1. LeastRequestedPriority"></a>4.1. LeastRequestedPriority</h2><p>优先从备选节点列表中选择资源消耗最小的节点（CPU+内存）。</p>
+<h2 id="42-calculatenodelabelpriority"><a href="#4-2-CalculateNodeLabelPriority" class="headerlink" title="4.2. CalculateNodeLabelPriority"></a>4.2. CalculateNodeLabelPriority</h2><p>优先选择含有指定Label的节点。</p>
+<h2 id="43-balancedresourceallocation"><a href="#4-3-BalancedResourceAllocation" class="headerlink" title="4.3. BalancedResourceAllocation"></a>4.3. BalancedResourceAllocation</h2><p>优先从备选节点列表中选择各项资源使用率最均衡的节点。</p>
 <p>参考《Kubernetes权威指南》</p>
 </div>
 
@@ -284,7 +270,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/monitor/heapster-introduction/" data-toggle="tooltip" data-placement="top" title="Heapster介绍">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/monitor/influxdb-introduction/" data-toggle="tooltip" data-placement="top" title="Influxdb介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

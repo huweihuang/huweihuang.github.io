@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,30 +212,22 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-kubeedge简介">1. KubeEdge简介</h1>
-<p><code>KubeEdge</code>是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持<strong>MQTT</strong>协议，允许开发者在边缘端自定义接入边缘设备。</p>
-<h1 id="2-功能">2. 功能</h1>
-<ul>
+                <div id="vip-container"><h1 id="1-kubeedge简介"><a href="#1-KubeEdge简介" class="headerlink" title="1. KubeEdge简介"></a>1. KubeEdge简介</h1><p><code>KubeEdge</code>是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持<strong>MQTT</strong>协议，允许开发者在边缘端自定义接入边缘设备。</p>
+<h1 id="2-功能"><a href="#2-功能" class="headerlink" title="2. 功能"></a>2. 功能</h1><ul>
 <li>边缘计算：提供边缘节点自治能力，边缘节点数据处理能力。</li>
 <li>便捷部署：开发者可以开发http或mqtt协议的应用，运行在云端和边缘端。</li>
 <li>k8s原生支持：可以通过k8s管理和监控边缘设备和边缘节点。</li>
 <li>丰富的应用类型：可以在边缘端部署机器学习、图片识别、事件处理等应用。</li>
 </ul>
-<h1 id="3-组件">3. 组件</h1>
-<h2 id="31-云端">3.1. 云端</h2>
-<ul>
-<li>
-<p><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/cloud/cloudhub.md" target="_blank" rel="noopener">CloudHub</a>：一个web socket服务器，负责监听云端的更新、缓存及向<code>EdgeHub</code>发送消息。</p>
+<h1 id="3-组件"><a href="#3-组件" class="headerlink" title="3. 组件"></a>3. 组件</h1><h2 id="31-云端"><a href="#3-1-云端" class="headerlink" title="3.1. 云端"></a>3.1. 云端</h2><ul>
+<li><p><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/cloud/cloudhub.md" target="_blank" rel="noopener">CloudHub</a>：一个web socket服务器，负责监听云端的更新、缓存及向<code>EdgeHub</code>发送消息。</p>
 </li>
-<li>
-<p><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/cloud/controller.md" target="_blank" rel="noopener">EdgeController</a>：一个扩展的k8s控制器，负责管理边缘节点和pod元数据，同步边缘节点的数据，是<code>k8s-apiserver</code> 与<code>EdgeCore</code>的通信桥梁。</p>
+<li><p><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/cloud/controller.md" target="_blank" rel="noopener">EdgeController</a>：一个扩展的k8s控制器，负责管理边缘节点和pod元数据，同步边缘节点的数据，是<code>k8s-apiserver</code> 与<code>EdgeCore</code>的通信桥梁。</p>
 </li>
-<li>
-<p><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/cloud/device_controller.md" target="_blank" rel="noopener">DeviceController</a>：一个扩展的k8s控制器，负责管理节点设备，同步云端和边缘端的设备元数据和状态。</p>
+<li><p><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/cloud/device_controller.md" target="_blank" rel="noopener">DeviceController</a>：一个扩展的k8s控制器，负责管理节点设备，同步云端和边缘端的设备元数据和状态。</p>
 </li>
 </ul>
-<h2 id="32-边缘端">3.2. 边缘端</h2>
-<ul>
+<h2 id="32-边缘端"><a href="#3-2-边缘端" class="headerlink" title="3.2. 边缘端"></a>3.2. 边缘端</h2><ul>
 <li><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/edge/edgehub.md" target="_blank" rel="noopener">EdgeHub</a>：一个web socket客户端，负责云端与边缘端的信息交互，其中包括将云端的资源变更同步到边缘端及边缘端的状态变化同步到云端。</li>
 <li><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/edge/edged.md" target="_blank" rel="noopener">Edged</a>：运行在边缘节点，管理容器化应用的agent，负责pod生命周期的管理，类似kubelet。</li>
 <li><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/edge/eventbus.md" target="_blank" rel="noopener">EventBus</a>：一个MQTT客户端，与MQTT服务端交互，提供发布/订阅的能力。</li>
@@ -243,15 +235,12 @@
 <li><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/edge/devicetwin.md" target="_blank" rel="noopener">DeviceTwin</a>：负责存储设备状态并同步设备状态到云端，同时提供应用的接口查询。</li>
 <li><a href="https://github.com/kubeedge/kubeedge/blob/master/docs/modules/edge/metamanager.md" target="_blank" rel="noopener">MetaManager</a>：<code>edged</code>和<code>edgehub</code>之间的消息处理器，负责向轻量数据库（SQLite）存储或查询元数据。</li>
 </ul>
-<h1 id="4-架构图">4. 架构图</h1>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1580806242/article/kubernetes/kubeedge/kubeedge_arch.png" alt="kubeedge-arch"></p>
+<h1 id="4-架构图"><a href="#4-架构图" class="headerlink" title="4. 架构图"></a>4. 架构图</h1><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1580806242/article/kubernetes/kubeedge/kubeedge_arch.png" alt="kubeedge-arch"></p>
 <p>参考：</p>
 <ul>
-<li>
-<p><a href="https://github.com/kubeedge/kubeedge" target="_blank" rel="noopener">https://github.com/kubeedge/kubeedge</a></p>
+<li><p><a href="https://github.com/kubeedge/kubeedge" target="_blank" rel="noopener">https://github.com/kubeedge/kubeedge</a></p>
 </li>
-<li>
-<p><a href="https://kubeedge.readthedocs.io/en/latest/modules/kubeedge.html" target="_blank" rel="noopener">https://kubeedge.readthedocs.io/en/latest/modules/kubeedge.html</a></p>
+<li><p><a href="https://kubeedge.readthedocs.io/en/latest/modules/kubeedge.html" target="_blank" rel="noopener">https://kubeedge.readthedocs.io/en/latest/modules/kubeedge.html</a></p>
 </li>
 </ul>
 </div>
@@ -278,7 +267,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/golang-notes/basis/functions/" data-toggle="tooltip" data-placement="top" title="函数与闭包">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/edgecore/" data-toggle="tooltip" data-placement="top" title="Kubeedge之edgecore 源码分析">&larr; Previous Post</a>
                         </li>
                     
                     

@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,8 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="kubeedge源码分析之cloudcore">kubeedge源码分析之cloudcore</h1>
-<blockquote>
+                <div id="vip-container"><h1 id="kubeedge源码分析之cloudcore"><a href="#kubeedge源码分析之cloudcore" class="headerlink" title="kubeedge源码分析之cloudcore"></a>kubeedge源码分析之cloudcore</h1><blockquote>
 <p>本文源码分析基于<a href="https://github.com/kubeedge/kubeedge/releases/tag/v1.1.0" target="_blank" rel="noopener">kubeedge v1.1.0</a></p>
 </blockquote>
 <p>本文主要分析cloudcore中CloudCoreCommand的基本流程，具体的<code>cloudhub</code>、<code>edgecontroller</code>、<code>devicecontroller</code>模块的实现逻辑待后续单独文章分析。</p>
@@ -228,14 +227,12 @@
 <li>edgecontroller</li>
 <li>devicecontroller</li>
 </ul>
-<h1 id="1-main函数">1. main函数</h1>
-<p>kubeedge的代码采用cobra命令框架，代码风格与k8s源码风格类似。cmd目录主要为cobra command的基本内容及参数解析，pkg目录包含具体的实现逻辑。</p>
+<h1 id="1-main函数"><a href="#1-main函数" class="headerlink" title="1. main函数"></a>1. main函数</h1><p>kubeedge的代码采用cobra命令框架，代码风格与k8s源码风格类似。cmd目录主要为cobra command的基本内容及参数解析，pkg目录包含具体的实现逻辑。</p>
 <blockquote>
 <p>cloud/cmd/cloudcore/cloudcore.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	command := app.NewCloudCoreCommand()</span><br><span class="line">	logs.InitLogs()</span><br><span class="line">	<span class="keyword">defer</span> logs.FlushLogs()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := command.Execute(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="2-newcloudcorecommand">2. NewCloudCoreCommand</h1>
-<p><code>NewCloudCoreCommand</code>为cobra command的构造函数，该类函数一般包含以下部分：</p>
+<h1 id="2-newcloudcorecommand"><a href="#2-NewCloudCoreCommand" class="headerlink" title="2. NewCloudCoreCommand"></a>2. NewCloudCoreCommand</h1><p><code>NewCloudCoreCommand</code>为cobra command的构造函数，该类函数一般包含以下部分：</p>
 <ul>
 <li>构造option</li>
 <li>添加Flags</li>
@@ -247,8 +244,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewCloudCoreCommand</span><span class="params">()</span> *<span class="title">cobra</span>.<span class="title">Command</span></span> &#123;</span><br><span class="line">	opts := options.NewCloudCoreOptions()</span><br><span class="line">	cmd := &amp;cobra.Command&#123;</span><br><span class="line">		Use: <span class="string">"cloudcore"</span>,</span><br><span class="line">		Long: <span class="string">`CloudCore is the core cloud part of KubeEdge, which contains three modules: cloudhub,</span></span><br><span class="line"><span class="string">edgecontroller, and devicecontroller. Cloudhub is a web server responsible for watching changes at the cloud side,</span></span><br><span class="line"><span class="string">caching and sending messages to EdgeHub. EdgeController is an extended kubernetes controller which manages </span></span><br><span class="line"><span class="string">edge nodes and pods metadata so that the data can be targeted to a specific edge node. DeviceController is an extended </span></span><br><span class="line"><span class="string">kubernetes controller which manages devices so that the device metadata/status date can be synced between edge and cloud.`</span>,</span><br><span class="line">		Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">			verflag.PrintAndExitIfRequested()</span><br><span class="line">			flag.PrintFlags(cmd.Flags())</span><br><span class="line"></span><br><span class="line">			<span class="comment">// To help debugging, immediately log version</span></span><br><span class="line">			klog.Infof(<span class="string">"Version: %+v"</span>, version.Get())</span><br><span class="line">			registerModules()</span><br><span class="line">			<span class="comment">// start all modules</span></span><br><span class="line">			core.Run()</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	fs := cmd.Flags()</span><br><span class="line">	namedFs := opts.Flags()</span><br><span class="line">	verflag.AddFlags(namedFs.FlagSet(<span class="string">"global"</span>))</span><br><span class="line">	globalflag.AddGlobalFlags(namedFs.FlagSet(<span class="string">"global"</span>), cmd.Name())</span><br><span class="line">	<span class="keyword">for</span> _, f := <span class="keyword">range</span> namedFs.FlagSets &#123;</span><br><span class="line">		fs.AddFlagSet(f)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	usageFmt := <span class="string">"Usage:\n  %s\n"</span></span><br><span class="line">	cols, _, _ := term.TerminalSize(cmd.OutOrStdout())</span><br><span class="line">	cmd.SetUsageFunc(<span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">		fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine())</span><br><span class="line">		cliflag.PrintSections(cmd.OutOrStderr(), namedFs, cols)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;)</span><br><span class="line">	cmd.SetHelpFunc(<span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">		fmt.Fprintf(cmd.OutOrStdout(), <span class="string">"%s\n\n"</span>+usageFmt, cmd.Long, cmd.UseLine())</span><br><span class="line">		cliflag.PrintSections(cmd.OutOrStdout(), namedFs, cols)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>核心代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 构造option</span></span><br><span class="line">opts := options.NewCloudCoreOptions()</span><br><span class="line"><span class="comment">// 执行run函数</span></span><br><span class="line">registerModules()</span><br><span class="line">core.Run()</span><br><span class="line"><span class="comment">// 添加flags</span></span><br><span class="line">fs.AddFlagSet(f)</span><br></pre></td></tr></table></figure>
-<h1 id="3-registermodules">3. registerModules</h1>
-<p>由于kubeedge的代码的大部分模块都采用了基于go-channel的消息通信框架<a href="https://kubeedge.readthedocs.io/en/latest/modules/beehive.html" target="_blank" rel="noopener">Beehive</a>（待后续单独文章分析），因此在各模块启动之前，需要将该模块注册到beehive的框架中。</p>
+<h1 id="3-registermodules"><a href="#3-registerModules" class="headerlink" title="3. registerModules"></a>3. registerModules</h1><p>由于kubeedge的代码的大部分模块都采用了基于go-channel的消息通信框架<a href="https://kubeedge.readthedocs.io/en/latest/modules/beehive.html" target="_blank" rel="noopener">Beehive</a>（待后续单独文章分析），因此在各模块启动之前，需要将该模块注册到beehive的框架中。</p>
 <p>其中cloudcore部分涉及的模块有：</p>
 <ul>
 <li>cloudhub</li>
@@ -280,8 +276,7 @@
 <p>vendor/github.com/kubeedge/beehive/pkg/core/module.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Register register module</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Register</span><span class="params">(m Module)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> isModuleEnabled(m.Name()) &#123;</span><br><span class="line">		modules[m.Name()] = m  <span class="comment">//将具体的模块结构体放入一个以模块名为key的map映射中</span></span><br><span class="line">		log.LOGGER.Info(<span class="string">"module "</span> + m.Name() + <span class="string">" registered"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		disabledModules[m.Name()] = m</span><br><span class="line">		log.LOGGER.Info(<span class="string">"module "</span> + m.Name() +</span><br><span class="line">			<span class="string">" is not register, please check modules.yaml"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="4-corerun">4. core.Run</h1>
-<p>CloudCoreCommand命令的Run函数实际上是运行beehive框架中注册的所有模块。</p>
+<h1 id="4-corerun"><a href="#4-core-Run" class="headerlink" title="4. core.Run"></a>4. core.Run</h1><p>CloudCoreCommand命令的Run函数实际上是运行beehive框架中注册的所有模块。</p>
 <p>其中包括两部分逻辑：</p>
 <ul>
 <li>启动运行所有注册模块</li>
@@ -291,16 +286,14 @@
 <p>vendor/github.com/kubeedge/beehive/pkg/core/core.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Run starts the modules and in the end does module cleanup</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//Address the module registration and start the core</span></span><br><span class="line">	StartModules()</span><br><span class="line">	<span class="comment">// monitor system signal and shutdown gracefully</span></span><br><span class="line">	GracefulShutdown()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="5-startmodules">5. StartModules</h1>
-<p><code>StartModules</code>获取context上下文，并以goroutine的方式运行所有已注册的模块。其中Start函数即每个模块的具体实现<code>Module</code>接口中的Start方法。不同模块各自定义自己的具体Start方法实现。</p>
+<h1 id="5-startmodules"><a href="#5-StartModules" class="headerlink" title="5. StartModules"></a>5. StartModules</h1><p><code>StartModules</code>获取context上下文，并以goroutine的方式运行所有已注册的模块。其中Start函数即每个模块的具体实现<code>Module</code>接口中的Start方法。不同模块各自定义自己的具体Start方法实现。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">coreContext := context.GetContext(context.MsgCtxTypeChannel)</span><br><span class="line"><span class="keyword">go</span> module.Start(coreContext)</span><br></pre></td></tr></table></figure>
 <p>具体实现如下：</p>
 <blockquote>
 <p>vendor/github.com/kubeedge/beehive/pkg/core/core.go</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// StartModules starts modules that are registered</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">StartModules</span><span class="params">()</span></span> &#123;</span><br><span class="line">	coreContext := context.GetContext(context.MsgCtxTypeChannel)</span><br><span class="line"></span><br><span class="line">	modules := GetModules()</span><br><span class="line">	<span class="keyword">for</span> name, module := <span class="keyword">range</span> modules &#123;</span><br><span class="line">		<span class="comment">//Init the module</span></span><br><span class="line">		coreContext.AddModule(name)</span><br><span class="line">		<span class="comment">//Assemble typeChannels for send2Group</span></span><br><span class="line">		coreContext.AddModuleGroup(name, module.Group())</span><br><span class="line">		<span class="keyword">go</span> module.Start(coreContext)</span><br><span class="line">		log.LOGGER.Info(<span class="string">"starting module "</span> + name)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="6-gracefulshutdown">6. GracefulShutdown</h1>
-<p>当收到相关信号，则执行各个模块实现的Cleanup方法。</p>
+<h1 id="6-gracefulshutdown"><a href="#6-GracefulShutdown" class="headerlink" title="6. GracefulShutdown"></a>6. GracefulShutdown</h1><p>当收到相关信号，则执行各个模块实现的Cleanup方法。</p>
 <blockquote>
 <p>vendor/github.com/kubeedge/beehive/pkg/core/core.go</p>
 </blockquote>
@@ -339,7 +332,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/edgecore/" data-toggle="tooltip" data-placement="top" title="Kubeedge之edgecore 源码分析">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/runtime/kata/kata-container/" data-toggle="tooltip" data-placement="top" title="Kata容器简介">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

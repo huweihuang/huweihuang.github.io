@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,24 +212,19 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-etcd是什么what">1. Etcd是什么（what）</h1>
-<p>etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:</p>
+                <div id="vip-container"><h1 id="1-etcd是什么what"><a href="#1-Etcd是什么（what）" class="headerlink" title="1. Etcd是什么（what）"></a>1. Etcd是什么（what）</h1><p>etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:</p>
 <ul>
 <li>Secure: automatic TLS with optional client cert authentication[可选的SSL客户端证书认证：支持https访问 ]</li>
 <li>Fast: benchmarked 10,000 writes/sec[单实例每秒 1000 次写操作]</li>
 <li>Reliable: properly distributed using Raft[使用Raft保证一致性]</li>
 </ul>
 <p>etcd是一个分布式、一致性的键值存储系统，主要用于配置共享和服务发现。[以上内容来自etcd官网]</p>
-<h1 id="2-为什么使用etcdwhy">2. 为什么使用Etcd（why）</h1>
-<h2 id="21-etcd的优势">2.1. Etcd的优势</h2>
-<ol>
+<h1 id="2-为什么使用etcdwhy"><a href="#2-为什么使用Etcd（why）" class="headerlink" title="2. 为什么使用Etcd（why）"></a>2. 为什么使用Etcd（why）</h1><h2 id="21-etcd的优势"><a href="#2-1-Etcd的优势" class="headerlink" title="2.1. Etcd的优势"></a>2.1. Etcd的优势</h2><ol>
 <li>简单。使用Go语言编写部署简单；使用HTTP作为接口使用简单；使用Raft算法保证强一致性让用户易于理解。</li>
 <li>数据持久化。etcd默认数据一更新就进行持久化。</li>
 <li>安全。etcd支持SSL客户端安全认证。</li>
 </ol>
-<h1 id="3-如何实现etcd架构how">3. 如何实现Etcd架构（how）</h1>
-<h2 id="31-etcd的相关名词解释">3.1. Etcd的相关名词解释</h2>
-<ul>
+<h1 id="3-如何实现etcd架构how"><a href="#3-如何实现Etcd架构（how）" class="headerlink" title="3. 如何实现Etcd架构（how）"></a>3. 如何实现Etcd架构（how）</h1><h2 id="31-etcd的相关名词解释"><a href="#3-1-Etcd的相关名词解释" class="headerlink" title="3.1. Etcd的相关名词解释"></a>3.1. Etcd的相关名词解释</h2><ul>
 <li>Raft：etcd所采用的保证分布式系统强一致性的算法。</li>
 <li>Node：一个Raft状态机实例。</li>
 <li>Member： 一个etcd实例。它管理着一个Node，并且可以为客户端请求提供服务。</li>
@@ -245,27 +240,20 @@
 <li>Term：某个节点成为Leader到下一次竞选时间，称为一个Term。【任期】</li>
 <li>Index：数据项编号。Raft中通过Term和Index来定位数据。</li>
 </ul>
-<h2 id="32-etcd的架构图">3.2. Etcd的架构图</h2>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578532/article/etcd/etcd-architecture.jpg" alt="etcd的架构图"></p>
+<h2 id="32-etcd的架构图"><a href="#3-2-Etcd的架构图" class="headerlink" title="3.2. Etcd的架构图"></a>3.2. Etcd的架构图</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578532/article/etcd/etcd-architecture.jpg" alt="etcd的架构图"></p>
 <p>一个用户的请求发送过来，会经由HTTP Server转发给Store进行具体的事务处理，如果涉及到节点的修改，则交给Raft模块进行状态的变更、日志的记录，然后再同步给别的etcd节点以确认数据提交，最后进行数据的提交，再次同步。</p>
-<h2 id="1-http-server">1、HTTP Server:</h2>
-<p>用于处理用户发送的API请求以及其它etcd节点的同步与心跳信息请求。</p>
-<h2 id="2-raft">2、Raft:</h2>
-<p>Raft强一致性算法的具体实现，是etcd的核心。</p>
-<h2 id="3-wal">3、WAL:</h2>
-<p>Write Ahead Log（预写式日志），是etcd的数据存储方式，用于系统提供原子性和持久性的一系列技术。除了在内存中存有所有数据的状态以及节点的索引以外，etcd就通过WAL进行持久化存储。WAL中，所有的数据提交前都会事先记录日志。</p>
+<h2 id="1-http-server"><a href="#1、HTTP-Server" class="headerlink" title="1、HTTP Server:"></a>1、HTTP Server:</h2><p>用于处理用户发送的API请求以及其它etcd节点的同步与心跳信息请求。</p>
+<h2 id="2-raft"><a href="#2、Raft" class="headerlink" title="2、Raft:"></a>2、Raft:</h2><p>Raft强一致性算法的具体实现，是etcd的核心。</p>
+<h2 id="3-wal"><a href="#3、WAL" class="headerlink" title="3、WAL:"></a>3、WAL:</h2><p>Write Ahead Log（预写式日志），是etcd的数据存储方式，用于系统提供原子性和持久性的一系列技术。除了在内存中存有所有数据的状态以及节点的索引以外，etcd就通过WAL进行持久化存储。WAL中，所有的数据提交前都会事先记录日志。</p>
 <ol>
-<li>
-<p>Entry[日志内容]:</p>
+<li><p>Entry[日志内容]:</p>
 <p>负责存储具体日志的内容。</p>
 </li>
-<li>
-<p>Snapshot[快照内容]:</p>
+<li><p>Snapshot[快照内容]:</p>
 <p>Snapshot是为了防止数据过多而进行的状态快照，日志内容发生变化时保存Raft的状态。</p>
 </li>
 </ol>
-<h2 id="4-store">4、Store:</h2>
-<p>用于处理etcd支持的各类功能的事务，包括数据索引、节点状态变更、监控与反馈、事件处理与执行等等，是etcd对用户提供的大多数API功能的具体实现。</p>
+<h2 id="4-store"><a href="#4、Store" class="headerlink" title="4、Store:"></a>4、Store:</h2><p>用于处理etcd支持的各类功能的事务，包括数据索引、节点状态变更、监控与反馈、事件处理与执行等等，是etcd对用户提供的大多数API功能的具体实现。</p>
 </div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
@@ -290,7 +278,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/etcd/etcd-setup-flags/" data-toggle="tooltip" data-placement="top" title="Etcd启动配置参数">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/redis/redis-introduction/" data-toggle="tooltip" data-placement="top" title="Redis介绍">&larr; Previous Post</a>
                         </li>
                     
                     

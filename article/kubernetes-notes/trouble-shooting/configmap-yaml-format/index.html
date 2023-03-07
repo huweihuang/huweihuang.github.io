@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,11 +212,9 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="问题">问题</h2>
-<p>configmap出现多行文本无法正常显示换行格式，而是以<code>\n</code>连接文本，查看和编辑时可读性很差。</p>
+                <div id="vip-container"><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>configmap出现多行文本无法正常显示换行格式，而是以<code>\n</code>连接文本，查看和编辑时可读性很差。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">config.yaml:</span> <span class="string">"# log options\nlog_level: \"info\"\nlog_output: \"stderr\"\ncert_file:</span></span><br><span class="line"><span class="string">    \"/etc/webhook/certs/cert.pem\"\nkey_file: \"/etc/webhook/certs/key.pem\"\nhttp_listen:</span></span><br><span class="line"><span class="string">    \":8080\"\nhttps_listen: \":8443\"\ningress_publish_service: \nenable_profiling:</span></span><br><span class="line"><span class="string">    true\nkubernetes:\n  kubeconfig: \"\"\n  resync_interval: \"6h\"\n  app_namespaces:\n</span></span><br><span class="line"><span class="string">    \ - \"*\"\n  namespace_selector:\n  - \"\"\n  election_id: \"ingress-apisix-leader\"\n</span></span><br><span class="line"><span class="string">    \ ingress_class: \"ph-apisix\"\n  ingress_version: \"networking/v1\"\n  watch_endpointslices:</span></span><br><span class="line"><span class="string">    false\n  apisix_route_version: \"apisix.apache.org/v2beta3\"\n  enable_gateway_api:</span></span><br><span class="line"><span class="string">    false\napisix:\n  default_cluster_base_url: http://apisix-admin.apisix.svc.cluster.local:9180/apisix/admin\n</span></span><br><span class="line"><span class="string">    \ default_cluster_admin_key: \"edd1c9f034335f136f87ad84b625c8f1\"\n  default_cluster_name:</span></span><br><span class="line"><span class="string">    \"default\""</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br></pre></td></tr></table></figure>
-<h2 id="解决方案">解决方案</h2>
-<p>如果要保持多行输入和输出的格式，则需要符合以下情况：</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>如果要保持多行输入和输出的格式，则需要符合以下情况：</p>
 <ul>
 <li>文本不要以空格结尾</li>
 <li>不要换行前再带个空格</li>
@@ -253,12 +251,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/runtime/containerd/install-containerd/" data-toggle="tooltip" data-placement="top" title="安装Containerd">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/containerd/containerd-ctl/" data-toggle="tooltip" data-placement="top" title="Containerd命令工具">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/setup/k8s-version-release/" data-toggle="tooltip" data-placement="top" title="k8s版本说明">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/runtime/runtime/" data-toggle="tooltip" data-placement="top" title="Runc和Containerd概述">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,12 +212,9 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-kubernetes的总架构图">1. Kubernetes的总架构图</h1>
-<img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1512807164/article/kubernetes/arch/k8s-arch.jpg" width="100%">
-<h1 id="2-kubernetes各个组件介绍">2. Kubernetes各个组件介绍</h1>
-<h2 id="21-kube-master控制节点">2.1 kube-master[控制节点]</h2>
-<p><strong>master的工作流程图</strong></p>
-<img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578888/article/kubernetes/arch/master.png" width="100%">
+                <div id="vip-container"><h1 id="1-kubernetes的总架构图"><a href="#1-Kubernetes的总架构图" class="headerlink" title="1. Kubernetes的总架构图"></a>1. Kubernetes的总架构图</h1><p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1512807164/article/kubernetes/arch/k8s-arch.jpg" width="100%"></p>
+<h1 id="2-kubernetes各个组件介绍"><a href="#2-Kubernetes各个组件介绍" class="headerlink" title="2. Kubernetes各个组件介绍"></a>2. Kubernetes各个组件介绍</h1><h2 id="21-kube-master控制节点"><a href="#2-1-kube-master-控制节点" class="headerlink" title="2.1 kube-master[控制节点]"></a>2.1 kube-master[控制节点]</h2><p><strong>master的工作流程图</strong></p>
+<p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578888/article/kubernetes/arch/master.png" width="100%"></p>
 <ol>
 <li>Kubecfg将特定的请求，比如创建Pod，发送给Kubernetes Client。</li>
 <li>Kubernetes Client将请求发送给API server。</li>
@@ -227,73 +224,47 @@
 <li>在API Server响应Kubecfg的请求后，Scheduler会根据Kubernetes Client获取集群中运行Pod及Minion/Node信息。</li>
 <li>依据从Kubernetes Client获取的信息，Scheduler将未分发的Pod分发到可用的Minion/Node节点上。</li>
 </ol>
-<h2 id="211-api-server资源操作入口">2.1.1 API Server[资源操作入口]</h2>
-<ol>
-<li>
-<p>提供了资源对象的唯一操作入口，其他所有组件都必须通过它提供的API来操作资源数据，只有API Server与存储通信，其他模块通过API Server访问集群状态。</p>
+<h2 id="211-api-server资源操作入口"><a href="#2-1-1-API-Server-资源操作入口" class="headerlink" title="2.1.1 API Server[资源操作入口]"></a>2.1.1 API Server[资源操作入口]</h2><ol>
+<li><p>提供了资源对象的唯一操作入口，其他所有组件都必须通过它提供的API来操作资源数据，只有API Server与存储通信，其他模块通过API Server访问集群状态。</p>
 <p>第一，是为了保证集群状态访问的安全。</p>
 <p>第二，是为了隔离集群状态访问的方式和后端存储实现的方式：API Server是状态访问的方式，不会因为后端存储技术etcd的改变而改变。</p>
 </li>
-<li>
-<p>作为kubernetes系统的入口，封装了核心对象的增删改查操作，以RESTFul接口方式提供给外部客户和内部组件调用。对相关的资源数据“全量查询”+“变化监听”，实时完成相关的业务功能。</p>
-</li>
+<li>作为kubernetes系统的入口，封装了核心对象的增删改查操作，以RESTFul接口方式提供给外部客户和内部组件调用。对相关的资源数据“全量查询”+“变化监听”，实时完成相关的业务功能。</li>
 </ol>
 <p>更多API Server信息请参考：<a href="http://www.huweihuang.com/article/kubernetes/core-principle/kubernetes-core-principle-api-server/">Kubernetes核心原理（一）之API Server</a></p>
-<h2 id="212-controller-manager内部管理控制中心">2.1.2 Controller Manager[内部管理控制中心]</h2>
-<ol>
-<li>实现集群故障检测和恢复的自动化工作，负责执行各种控制器，主要有：
-<ul>
+<h2 id="212-controller-manager内部管理控制中心"><a href="#2-1-2-Controller-Manager-内部管理控制中心" class="headerlink" title="2.1.2 Controller Manager[内部管理控制中心]"></a>2.1.2 Controller Manager[内部管理控制中心]</h2><ol>
+<li>实现集群故障检测和恢复的自动化工作，负责执行各种控制器，主要有：<ul>
 <li>endpoint-controller：定期关联service和pod(关联信息由endpoint对象维护)，保证service到pod的映射总是最新的。</li>
 <li>replication-controller：定期关联replicationController和pod，保证replicationController定义的复制数量与实际运行pod的数量总是一致的。</li>
 </ul>
 </li>
 </ol>
 <p>更多Controller Manager信息请参考：<a href="http://www.huweihuang.com/article/kubernetes/core-principle/kubernetes-core-principle-controller-manager/">Kubernetes核心原理（二）之Controller Manager</a></p>
-<h2 id="213-scheduler集群分发调度器">2.1.3 Scheduler[集群分发调度器]</h2>
-<ol>
+<h2 id="213-scheduler集群分发调度器"><a href="#2-1-3-Scheduler-集群分发调度器" class="headerlink" title="2.1.3 Scheduler[集群分发调度器]"></a>2.1.3 Scheduler[集群分发调度器]</h2><ol>
 <li>Scheduler收集和分析当前Kubernetes集群中所有Minion/Node节点的资源(内存、CPU)负载情况，然后依此分发新建的Pod到Kubernetes集群中可用的节点。</li>
 <li>实时监测Kubernetes集群中未分发和已分发的所有运行的Pod。</li>
 <li>Scheduler也监测Minion/Node节点信息，由于会频繁查找Minion/Node节点，Scheduler会缓存一份最新的信息在本地。</li>
 <li>最后，Scheduler在分发Pod到指定的Minion/Node节点后，会把Pod相关的信息Binding写回API Server。</li>
 </ol>
 <p>更多Scheduler信息请参考：<a href="http://www.huweihuang.com/article/kubernetes/core-principle/kubernetes-core-principle-scheduler/">Kubernetes核心原理（三）之Scheduler</a></p>
-<h2 id="22-kube-node服务节点">2.2 kube-node[服务节点]</h2>
-<p><strong>kubelet结构图</strong></p>
-<img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578888/article/kubernetes/arch/kubelet.png" width="60%">
-<h2 id="221-kubelet节点上的pod管家">2.2.1 Kubelet[节点上的Pod管家]</h2>
-<ol>
-<li>
-<p>负责Node节点上pod的创建、修改、监控、删除等全生命周期的管理</p>
-</li>
-<li>
-<p>定时上报本Node的状态信息给API Server。</p>
-</li>
-<li>
-<p>kubelet是Master API Server和Minion/Node之间的桥梁，接收Master API Server分配给它的commands和work，通过kube-apiserver间接与Etcd集群交互，读取配置信息。</p>
-</li>
-<li>
-<p>具体的工作如下：</p>
-<ol>
-<li>
-<p>设置容器的环境变量、给容器绑定Volume、给容器绑定Port、根据指定的Pod运行一个单一容器、给指定的Pod创建network 容器。</p>
-</li>
-<li>
-<p>同步Pod的状态、同步Pod的状态、从cAdvisor获取container info、 pod info、 root info、 machine info。</p>
-</li>
-<li>
-<p>在容器中运行命令、杀死容器、删除Pod的所有容器。</p>
-</li>
-</ol>
+<h2 id="22-kube-node服务节点"><a href="#2-2-kube-node-服务节点" class="headerlink" title="2.2 kube-node[服务节点]"></a>2.2 kube-node[服务节点]</h2><p><strong>kubelet结构图</strong></p>
+<p><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578888/article/kubernetes/arch/kubelet.png" width="60%"></p>
+<h2 id="221-kubelet节点上的pod管家"><a href="#2-2-1-Kubelet-节点上的Pod管家" class="headerlink" title="2.2.1 Kubelet[节点上的Pod管家]"></a>2.2.1 Kubelet[节点上的Pod管家]</h2><ol>
+<li>负责Node节点上pod的创建、修改、监控、删除等全生命周期的管理</li>
+<li>定时上报本Node的状态信息给API Server。</li>
+<li>kubelet是Master API Server和Minion/Node之间的桥梁，接收Master API Server分配给它的commands和work，通过kube-apiserver间接与Etcd集群交互，读取配置信息。</li>
+<li><p>具体的工作如下：</p>
+<p>1) 设置容器的环境变量、给容器绑定Volume、给容器绑定Port、根据指定的Pod运行一个单一容器、给指定的Pod创建network 容器。</p>
+<p>2) 同步Pod的状态、同步Pod的状态、从cAdvisor获取container info、 pod info、 root info、 machine info。</p>
+<p>3) 在容器中运行命令、杀死容器、删除Pod的所有容器。</p>
 </li>
 </ol>
 <p>更多Kubelet信息请参考：<a href="http://www.huweihuang.com/article/kubernetes/core-principle/kubernetes-core-principle-kubelet/">Kubernetes核心原理（四）之Kubelet</a></p>
-<h2 id="222-proxy负载均衡-路由转发">2.2.2 Proxy[负载均衡、路由转发]</h2>
-<ol>
+<h2 id="222-proxy负载均衡-路由转发"><a href="#2-2-2-Proxy-负载均衡、路由转发" class="headerlink" title="2.2.2 Proxy[负载均衡、路由转发]"></a>2.2.2 Proxy[负载均衡、路由转发]</h2><ol>
 <li>Proxy是为了解决外部网络能够访问跨机器集群中容器提供的应用服务而设计的，运行在每个Minion/Node上。Proxy提供TCP/UDP sockets的proxy，每创建一种Service，Proxy主要从etcd获取Services和Endpoints的配置信息（也可以从file获取），然后根据配置信息在Minion/Node上启动一个Proxy的进程并监听相应的服务端口，当外部请求发生时，Proxy会根据Load Balancer将请求分发到后端正确的容器处理。</li>
 <li>Proxy不但解决了同一主宿机相同服务端口冲突的问题，还提供了Service转发服务端口对外提供服务的能力，Proxy后端使用了随机、轮循负载均衡算法。</li>
 </ol>
-<h2 id="223-kubectl集群管理命令行工具集">2.2.3 kubectl[集群管理命令行工具集]</h2>
-<ol>
+<h2 id="223-kubectl集群管理命令行工具集"><a href="#2-2-3-kubectl-集群管理命令行工具集" class="headerlink" title="2.2.3 kubectl[集群管理命令行工具集]"></a>2.2.3 kubectl[集群管理命令行工具集]</h2><ol>
 <li>通过客户端的kubectl命令集操作，API Server响应对应的命令结果，从而达到对kubernetes集群的管理。</li>
 </ol>
 <p>参考文章：</p>

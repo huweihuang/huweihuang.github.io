@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,12 +212,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="问题描述">问题描述</h1>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write /proc/self/attr/keycreate: permission denied</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write /proc/self/attr/keycreate: permission denied</span><br></pre></td></tr></table></figure>
 <p>具体报错：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kuberuntime_manager.go:758] createPodSandbox <span class="keyword">for</span> pod <span class="string">"ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b)"</span> failed: rpc error: code = Unknown desc = failed to start sandbox container <span class="keyword">for</span> pod <span class="string">"ecc-hostpath-provisioner-8jbhf"</span>: Error response from daemon: OCI runtime create failed: container_linux.go:349: starting container process caused <span class="string">"process_linux.go:449: container init caused \"write /proc/self/attr/keycreate: permission denied\""</span>: unknown</span><br></pre></td></tr></table></figure>
-<h1 id="解决办法">解决办法</h1>
-<p>SELINUX未设置成disabled</p>
+<h1 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h1><p>SELINUX未设置成disabled</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将SELINUX设置成disabled</span></span><br><span class="line">setenforce 0 <span class="comment"># 临时生效</span></span><br><span class="line"><span class="comment"># 永久生效，但需重启，配合上述命令可以不用立即重启</span></span><br><span class="line">sed -i <span class="string">"s/SELINUX=enforcing/SELINUX=disabled/g"</span> /etc/selinux/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看SELinux状态</span></span><br><span class="line">$ /usr/sbin/sestatus -v </span><br><span class="line">SELinux status:                 disabled</span><br><span class="line"></span><br><span class="line">$ getenforce</span><br><span class="line">Disabled</span><br></pre></td></tr></table></figure>
 </div>
 
@@ -243,12 +241,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/network/cni/macvlan/" data-toggle="tooltip" data-placement="top" title="Macvlan介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/" data-toggle="tooltip" data-placement="top" title="Cgroup不支持pid资源">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/runtime/docker/docker-notes/" data-toggle="tooltip" data-placement="top" title="Docker学习笔记">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/" data-toggle="tooltip" data-placement="top" title="runc-v1.1.3-exec-failed">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

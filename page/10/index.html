@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,24 +211,156 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/volume/persistent-volume/">
+    <a href="/article/kubernetes-notes/storage/csi/flexvolume/">
         <h2 class="post-title">
                         
-            PersistentVolume 介绍
+            FlexVolume介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. PV概述
-PersistentVolume（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。
-2. PV和PVC的生命周期
-2.1. 配置（Provision）
-有两种方式来配置 PV：静态或动态。
-1、静态
-手动创建PV，可供k8s集群中的对象消费。
-2、动态
-可以通过Storage......
+            1. FlexVolume介绍Flexvolume提供了一种扩展k8s存储插件的方式，用户可以自定义自己的存储插件。类似的功能的实现还有CSI的方式。Flexvolume在k8s 1.8+以上版本提供GA功能版本。
+2. 使用方式在每个node节点安装存储插件二进制，该二进制实现flexvolume的相关接口，默认存储插件的存放路径为/usr/libexec/kubernetes/kubel......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CSI" title="CSI">CSI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
+        <h2 class="post-title">
+                        
+            部署csi-cephfs
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            0. 说明要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
+涉及镜像
+quay.io/k8scsi/csi-provisioner:v0.3.0
+quay.io/k8scsi/csi-a......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#CSI" title="CSI">CSI</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/principle/flow/pod-flow/">
+        <h2 class="post-title">
+                        
+            Pod创建流程
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod创建基本流程图
+Pod创建完整流程图
+
+图片来源：https://fuckcloudnative.io/posts/what-happens-when-k8s/
+
+参考:
+
+https://fuckcloudnative.io/posts/what-happens-when-k8s/
+
+
+
+			
+			
+			var isMobile = navigator.userAgent.ma......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/">
+        <h2 class="post-title">
+                        
+            kata配置
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 配置文件路径默认的配置文件位于/usr/share/defaults/kata-containers/configuration.toml，如果/etc/kata-containers/configuration.toml的配置文件存在，则会替代默认的配置文件。
+查看配置文件的路径命令如下：
+123# kata-runtime --kata-show-default-config-pa......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/principle/flow/pvc-flow/">
+        <h2 class="post-title">
+                        
+            PVC创建流程
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            pvc流程
+流程如下：
+
+用户创建了一个包含 PVC 的 Pod，该 PVC 要求使用动态存储卷；
+Scheduler 根据 Pod 配置、节点状态、PV 配置等信息，把 Pod 调度到一个合适的 Worker 节点上；
+PV 控制器 watch 到该 Pod 使用的 PVC 处于 Pending 状态，于是调用 Volume Plugin（in-tree）创建存储卷，并创建 PV 对象（o......
         </div>
     </a>
     
@@ -257,8 +389,7 @@ PersistentVolume（简称PV） 是 Volume 之类的卷插件，也是集群中�
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了Kubernetes device plugin的接口。
+            1. 简介NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了Kubernetes device plugin的接口。
 提供以下功能：
 
 暴露每个节点的GPU数量给集群
@@ -266,9 +397,8 @@ NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点
 使在k8s的节点可以运行GPU容器
 
 2. 要求
-
 NVIDIA drivers ~= 384.81
-nvidia-docker ve......
+nvidia-docker vers......
         </div>
     </a>
     
@@ -288,21 +418,21 @@ nvidia-docker ve......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
+    <a href="/article/kubernetes-notes/storage/volume/volume/">
         <h2 class="post-title">
                         
-            部署csi-cephfs
+            Volume介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            0. 说明
-要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
-涉及镜像
+            1. volume概述
+容器上的文件生命周期同容器的生命周期一致，即容器挂掉之后，容器将会以最初镜像中的文件系统内容启动，之前容器运行时产生的文件将会丢失。
+Pod的volume的生命周期同Pod的生命周期一致，当Pod被删除的时候，对应的volume才会被删除。即Pod中的容器重启时，之前的文件仍可以保存。
 
-quay.io/k8scsi/csi-provisioner:v0.3.0
-quay.io/k8scsi/csi......
+容器中的进程看到的是由其 Docker 镜像和卷组成的文件系统视图。
+Pod v......
         </div>
     </a>
     
@@ -312,7 +442,7 @@ quay.io/k8scsi/csi......
         </p>
         <div class="tags">
             
-              <a href="/tags/#CSI" title="CSI">CSI</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -322,59 +452,21 @@ quay.io/k8scsi/csi......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
+    <a href="/article/kubernetes-notes/storage/volume/persistent-volume/">
         <h2 class="post-title">
                         
-            csi-cephfs-plugin
+            PersistentVolume 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 编译CSI CephFS plugin
-CSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
-1.1. 编译二进制
-1$ make cephfsplugin
-1.2. 编译Docker镜像
-1$ make image-cephfsplugin
-2. 配置项
-2.1. 命令行参数
-
-
-
-O......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CSI" title="CSI">CSI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/">
-        <h2 class="post-title">
-                        
-            kata配置
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 配置文件路径
-默认的配置文件位于/usr/share/defaults/kata-containers/configuration.toml，如果/etc/kata-containers/configuration.toml的配置文件存在，则会替代默认的配置文件。
-查看配置文件的路径命令如下：
-123# kata-runtime --kata-show-default-config-p......
+            1. PV概述PersistentVolume（简称PV） 是 Volume 之类的卷插件，也是集群中的资源，但独立于Pod的生命周期（即不会因Pod删除而被删除），不归属于某个Namespace。
+2. PV和PVC的生命周期2.1. 配置（Provision）有两种方式来配置 PV：静态或动态。
+1、静态
+手动创建PV，可供k8s集群中的对象消费。
+2、动态
+可以通过StorageCla......
         </div>
     </a>
     
@@ -404,20 +496,15 @@ O......
         </h3>
         <div class="post-content-preview">
             1. 证书分类
-
-
 服务器证书：server cert，用于客户端验证服务端的身份。
 
-
 客户端证书：client cert，用于服务端验证客户端的身份。
-
 
 对等证书：peer cert（既是server cert又是client cert），用户成员之间的身份验证，例如 etcd。
 
 
 1.1. k8s集群的证书分类
-
-etcd节点：需要标识自己服务的server cert，也需要cli......
+etcd节点：需要标识自己服务的server cert，也需要client c......
         </div>
     </a>
     
@@ -428,40 +515,6 @@ etcd节点：需要标识自己服务的server cert，也需要cli......
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/">
-        <h2 class="post-title">
-                        
-            Pod驱逐
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题描述
-节点Pod被驱逐
-原因
-1. 查看节点和该节点pod状态
-查看节点状态为Ready，查看该节点的所有pod，发现存在被驱逐的pod和nvidia-device-plugin为pending
-123root@host:~$ kgpoallowide |grep 192.168.1.1department-56   173e397c-ea35-4aac-85d8-07106e55d7b......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -480,10 +533,9 @@ etcd节点：需要标识自己服务的server cert，也需要cli......
             
         </h3>
         <div class="post-content-preview">
-            1. PVC概述
-PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
+            1. PVC概述PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
 当需要不同性质的PV来满足存储需求时，可以使用StorageClass来实现。
-每个 PVC 中都包含一个 spec 规格字段和一个 status 声明......
+每个 PVC 中都包含一个 spec 规格字段和一个 status 声明状......
         </div>
     </a>
     
@@ -494,77 +546,6 @@ PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/">
-        <h2 class="post-title">
-                        
-            使用kind安装kubernetes
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 安装kind
-On mac or linux
-123curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-$(uname)-amd64"chmod +x ./kindmv ./kind /some-dir-in-your-PATH/kind
-2. 创建k8s集群
-12......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/trouble-shooting/pvc-terminating/">
-        <h2 class="post-title">
-                        
-            PVC Terminating
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            问题描述
-1pvc terminating
-pvc在删除时，卡在terminating中。
-解决方法
-1kubectl patch pvc &#123;PVC_NAME&#125; -p '&#123;"metadata":&#123;"finalizers":null&#125;&#125;'
-
-
-			
-			
-			var isMobile = navigator.userAgent.......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -633,29 +614,7 @@ pvc在删除时，卡在terminating中。
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
-            
-        
-            
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
-            
-        
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -671,13 +630,21 @@ pvc在删除时，卡在terminating中。
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -689,14 +656,6 @@ pvc在删除时，卡在terminating中。
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
             <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
             
         
@@ -705,7 +664,29 @@ pvc在删除时，卡在terminating中。
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            
+        
+            
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
@@ -725,6 +706,10 @@ pvc在删除时，卡在terminating中。
             
         
             
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
@@ -733,11 +718,7 @@ pvc在删除时，卡在terminating中。
             
         
             
-        
-            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
             
         
             
@@ -835,15 +816,15 @@ pvc在删除时，卡在terminating中。
         </li>
       
         <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
     </ul>

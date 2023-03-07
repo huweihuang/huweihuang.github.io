@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,10 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-shell变量">1. shell变量</h1>
-<p>Shell支持自定义变量。</p>
-<h2 id="11-定义变量">1.1. 定义变量</h2>
-<p>定义变量时，变量名不加美元符号<code>（$）</code>，如：</p>
+                <div id="vip-container"><h1 id="1-shell变量"><a href="#1-shell变量" class="headerlink" title="1. shell变量"></a>1. shell变量</h1><p>Shell支持自定义变量。</p>
+<h2 id="11-定义变量"><a href="#1-1-定义变量" class="headerlink" title="1.1. 定义变量"></a>1.1. 定义变量</h2><p>定义变量时，变量名不加美元符号<code>（$）</code>，如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">variableName=&quot;value&quot;</span><br></pre></td></tr></table></figure>
 <p>注意，<strong>变量名和等号之间不能有空格</strong>，这可能和你熟悉的所有编程语言都不一样。同时，变量名的命名须遵循如下规则：</p>
 <ul>
@@ -224,40 +222,32 @@
 <li>不能使用标点符号。</li>
 <li>不能使用bash里的关键字（可用help命令查看保留关键字）。</li>
 </ul>
-<h2 id="12-使用变量">1.2. 使用变量</h2>
-<p>使用一个定义过的变量，只要在变量名前面加美元符号（$）即可，如：</p>
+<h2 id="12-使用变量"><a href="#1-2-使用变量" class="headerlink" title="1.2. 使用变量"></a>1.2. 使用变量</h2><p>使用一个定义过的变量，只要在变量名前面加美元符号（$）即可，如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">your_name=<span class="string">"mozhiyan"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$your_name</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;your_name&#125;</span></span><br></pre></td></tr></table></figure>
 <p>变量名外面的花括号是可选的，加不加都行，，比如下面这种情况：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> skill <span class="keyword">in</span> Ada Coffe Action Java </span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"I am good at <span class="variable">$&#123;skill&#125;</span>Script"</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 <p>如果不给skill变量加花括号，写成echo “I am good at $skillScript”，解释器就会把$skillScript当成一个变量（其值为空），代码执行结果就不是我们期望的样子了。推荐给所有变量加上花括号，这是个好的编程习惯。</p>
-<h2 id="13-重新定义变量">1.3. 重新定义变量</h2>
-<p>已定义的变量，可以被重新定义，如：</p>
+<h2 id="13-重新定义变量"><a href="#1-3-重新定义变量" class="headerlink" title="1.3. 重新定义变量"></a>1.3. 重新定义变量</h2><p>已定义的变量，可以被重新定义，如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">myUrl=<span class="string">"http://see.xidian.edu.cn/cpp/linux/"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;myUrl&#125;</span></span><br><span class="line"></span><br><span class="line">myUrl=<span class="string">"http://see.xidian.edu.cn/cpp/shell/"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;myUrl&#125;</span></span><br></pre></td></tr></table></figure>
-<p>这样写是合法的，但注意，第二次赋值的时候不能写 $myUrl=“<a href="http://see.xidian.edu.cn/cpp/shell/" target="_blank" rel="noopener">http://see.xidian.edu.cn/cpp/shell/</a>”， 使用变量的时候才加美元符（$）。</p>
-<h2 id="14-只读变量">1.4. 只读变量</h2>
-<p>使用 <strong>readonly</strong> 命令可以将变量定义为只读变量，只读变量的值不能被改变。</p>
+<p>这样写是合法的，但注意，第二次赋值的时候不能写 $myUrl=”<a href="http://see.xidian.edu.cn/cpp/shell/&quot;，" target="_blank" rel="noopener">http://see.xidian.edu.cn/cpp/shell/&quot;，</a> 使用变量的时候才加美元符（$）。</p>
+<h2 id="14-只读变量"><a href="#1-4-只读变量" class="headerlink" title="1.4. 只读变量"></a>1.4. 只读变量</h2><p>使用 <strong>readonly</strong> 命令可以将变量定义为只读变量，只读变量的值不能被改变。</p>
 <p>下面的例子尝试更改只读变量，结果报错：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">myUrl=<span class="string">"http://see.xidian.edu.cn/cpp/shell/"</span></span><br><span class="line"><span class="built_in">readonly</span> myUrl</span><br><span class="line">myUrl=<span class="string">"http://see.xidian.edu.cn/cpp/danpianji/"</span></span><br></pre></td></tr></table></figure>
 <p>运行脚本，结果如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/bin/sh: NAME: This variable is <span class="built_in">read</span> only.</span><br></pre></td></tr></table></figure>
-<h2 id="15-删除变量">1.5. 删除变量</h2>
-<p>使用 <strong>unset</strong> 命令可以删除变量。语法：</p>
+<h2 id="15-删除变量"><a href="#1-5-删除变量" class="headerlink" title="1.5. 删除变量"></a>1.5. 删除变量</h2><p>使用 <strong>unset</strong> 命令可以删除变量。语法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unset</span> variable_name</span><br></pre></td></tr></table></figure>
 <p>变量被删除后不能再次使用；unset 命令不能删除只读变量。</p>
 <p>举个例子：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">myUrl=<span class="string">"http://see.xidian.edu.cn/cpp/u/xitong/"</span></span><br><span class="line"><span class="built_in">unset</span> myUrl</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$myUrl</span></span><br></pre></td></tr></table></figure>
 <p>上面的脚本没有任何输出。</p>
-<h2 id="16-变量类型">1.6. 变量类型</h2>
-<p>运行shell时，会同时存在三种变量：</p>
-<h3 id="1-局部变量">1) 局部变量</h3>
-<p>局部变量在脚本或命令中定义，仅在当前shell实例中有效，其他shell启动的程序不能访问局部变量。</p>
-<h3 id="2-环境变量">2) 环境变量</h3>
-<p>所有的程序，包括shell启动的程序，都能访问环境变量，有些程序需要环境变量来保证其正常运行。必要的时候shell脚本也可以定义环境变量。</p>
-<h3 id="3-shell变量">3) shell变量</h3>
-<p>shell变量是由shell程序设置的特殊变量。shell变量中有一部分是环境变量，有一部分是局部变量，这些变量保证了shell的正常运行。</p>
+<h2 id="16-变量类型"><a href="#1-6-变量类型" class="headerlink" title="1.6. 变量类型"></a>1.6. 变量类型</h2><p>运行shell时，会同时存在三种变量：</p>
+<h3 id="1-局部变量"><a href="#1-局部变量" class="headerlink" title="1) 局部变量"></a>1) 局部变量</h3><p>局部变量在脚本或命令中定义，仅在当前shell实例中有效，其他shell启动的程序不能访问局部变量。</p>
+<h3 id="2-环境变量"><a href="#2-环境变量" class="headerlink" title="2) 环境变量"></a>2) 环境变量</h3><p>所有的程序，包括shell启动的程序，都能访问环境变量，有些程序需要环境变量来保证其正常运行。必要的时候shell脚本也可以定义环境变量。</p>
+<h3 id="3-shell变量"><a href="#3-shell变量" class="headerlink" title="3) shell变量"></a>3) shell变量</h3><p>shell变量是由shell程序设置的特殊变量。shell变量中有一部分是环境变量，有一部分是局部变量，这些变量保证了shell的正常运行。</p>
 <hr>
-<h1 id="2-shell的特殊变量">2. shell的特殊变量</h1>
-<p>特殊变量列表</p>
+<h1 id="2-shell的特殊变量"><a href="#2-shell的特殊变量" class="headerlink" title="2. shell的特殊变量"></a>2. shell的特殊变量</h1><p>特殊变量列表</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -284,7 +274,7 @@
 </tr>
 <tr>
 <td>$@</td>
-<td>传递给脚本或函数的所有参数。被双引号(&quot; &quot;)包含时，与 $* 稍有不同，下面将会讲到。</td>
+<td>传递给脚本或函数的所有参数。被双引号(“ “)包含时，与 $* 稍有不同，下面将会讲到。</td>
 </tr>
 <tr>
 <td>$?</td>
@@ -296,29 +286,22 @@
 </tr>
 </tbody>
 </table>
-<h2 id="21-命令行参数">2.1. 命令行参数</h2>
-<p>运行脚本时传递给脚本的参数称为命令行参数。命令行参数用\ $n 表示，例如，$1 表示第一个参数，$2 表示第二个参数，依次类推。</p>
-<h2 id="22-和-的区别">2.2. $* 和$@ 的区别</h2>
-<p>$* 和 $@ 都表示传递给函数或脚本的所有参数，不被双引号(&quot; “)包含时，都以”$1&quot; “$2” … “$n” 的形式输出所有参数。<br>
-但是当它们被双引号(&quot; &quot;)包含时，</p>
+</div>
+<h2 id="21-命令行参数"><a href="#2-1-命令行参数" class="headerlink" title="2.1. 命令行参数"></a>2.1. 命令行参数</h2><p>运行脚本时传递给脚本的参数称为命令行参数。命令行参数用\ $n 表示，例如，$1 表示第一个参数，$2 表示第二个参数，依次类推。</p>
+<h2 id="22-和-的区别"><a href="#2-2-和-的区别" class="headerlink" title="2.2. $* 和$@ 的区别"></a>2.2. $* 和$@ 的区别</h2><p>$* 和 $@ 都表示传递给函数或脚本的所有参数，不被双引号(“ “)包含时，都以”$1” “$2” … “$n” 的形式输出所有参数。<br>但是当它们被双引号(“ “)包含时，</p>
 <ul>
-<li>
-<p>“$*” 会将所有的参数作为一个整体，以&quot;$1 $2 … $n&quot;的形式输出所有参数；</p>
+<li><p>“$*” 会将所有的参数作为一个整体，以”$1 $2 … $n”的形式输出所有参数；</p>
 </li>
-<li>
-<p>“$@” 会将各个参数分开，以&quot;$1&quot; “$2” … “$n” 的形式输出所有参数。</p>
+<li><p>“$@” 会将各个参数分开，以”$1” “$2” … “$n” 的形式输出所有参数。</p>
 </li>
 </ul>
-<h2 id="23-退出状态">2.3. 退出状态</h2>
-<p>$? 可以获取上一个命令的退出状态。所谓退出状态，就是上一个命令执行后的返回结果。<br>
-退出状态是一个数字，一般情况下，大部分命令执行成功会返回 0，失败返回 1。<br>
-不过，也有一些命令返回其他值，表示不同类型的错误。$? 也可以表示函数的返回值。</p>
+<h2 id="23-退出状态"><a href="#2-3-退出状态" class="headerlink" title="2.3. 退出状态"></a>2.3. 退出状态</h2><p>$? 可以获取上一个命令的退出状态。所谓退出状态，就是上一个命令执行后的返回结果。<br>退出状态是一个数字，一般情况下，大部分命令执行成功会返回 0，失败返回 1。<br>不过，也有一些命令返回其他值，表示不同类型的错误。$? 也可以表示函数的返回值。</p>
 <hr>
-<h1 id="3-转义字符">3. 转义字符</h1>
-<p>如果表达式中包含特殊字符，Shell 将会进行替换。例如，在双引号中使用变量就是一种替换，转义字符也是一种替换。</p>
+<h1 id="3-转义字符"><a href="#3-转义字符" class="headerlink" title="3. 转义字符"></a>3. 转义字符</h1><p>如果表达式中包含特殊字符，Shell 将会进行替换。例如，在双引号中使用变量就是一种替换，转义字符也是一种替换。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> -e <span class="string">"Value of a is <span class="variable">$a</span> \n"</span></span><br></pre></td></tr></table></figure>
-<p>-e 表示对转义字符进行替换</p>
+<p>  -e 表示对转义字符进行替换</p>
 <p>下面的转义字符都可以用在 echo 中：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -361,17 +344,14 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>可以使用 echo 命令的 -E 选项禁止转义，默认也是不转义的；使用 -n 选项可以禁止插入换行符。</p>
-<h1 id="4-变量替换">4. 变量替换</h1>
-<h2 id="41-命令替换">4.1. 命令替换</h2>
-<p>命令替换是指Shell可以先执行命令，将输出结果暂时保存，在适当的地方输出。<br>
-命令替换的语法：</p>
+<h1 id="4-变量替换"><a href="#4-变量替换" class="headerlink" title="4. 变量替换"></a>4. 变量替换</h1><h2 id="41-命令替换"><a href="#4-1-命令替换" class="headerlink" title="4.1. 命令替换"></a>4.1. 命令替换</h2><p>命令替换是指Shell可以先执行命令，将输出结果暂时保存，在适当的地方输出。<br>命令替换的语法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`<span class="built_in">command</span>`</span><br></pre></td></tr></table></figure>
 <p>注意是反引号，不是单引号，这个键位于 Esc 键下方。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DATE=`date`</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Date is <span class="variable">$DATE</span>"</span></span><br></pre></td></tr></table></figure>
-<h2 id="42-变量替换">4.2. 变量替换</h2>
-<p>变量替换可以根据变量的状态（是否为空、是否定义等）来改变它的值<br>
-可以使用的变量替换形式：</p>
+<h2 id="42-变量替换"><a href="#4-2-变量替换" class="headerlink" title="4.2. 变量替换"></a>4.2. 变量替换</h2><p>变量替换可以根据变量的状态（是否为空、是否定义等）来改变它的值<br>可以使用的变量替换形式：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -402,6 +382,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>作用：用来检测变量是否为空，并提示相关信息。</p>
 <p>参考：</p>
 <ul>
@@ -431,7 +412,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/shell/shell-array/" data-toggle="tooltip" data-placement="top" title="Shell数组">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/shell/shell-function/" data-toggle="tooltip" data-placement="top" title="Shell 函数">&larr; Previous Post</a>
                         </li>
                     
                     

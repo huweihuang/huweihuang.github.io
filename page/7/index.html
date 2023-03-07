@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,40 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/framework/cobra/cobra-flags/">
-        <h2 class="post-title">
-                        
-            cobra flags
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            添加Flags
-1. Persistent Flags
-Persistent Flags表示该类参数可以被用于当前命令及其子命令。
-例如，以下表示verbose参数可以被用于rootCmd及其子命令。
-1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
-2. Lo......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-16
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/golang-notes/framework/cobra/cobra-usage/">
         <h2 class="post-title">
                         
@@ -254,13 +220,12 @@ Persistent Flags表示该类参数可以被用于当前命令及其子命令。
             
         </h3>
         <div class="post-content-preview">
-            1. Cobra简介
-Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
+            1. Cobra简介Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
 Cobra主要包括以下部分
 
 Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
 Args:命令执行相关参数。
-Flags:二进制命令的配置参数，可对应配置文件。参数可分......
+Flags:二进制命令的配置参数，可对应配置文件。参数可分为......
         </div>
     </a>
     
@@ -280,35 +245,30 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
+    <a href="/article/golang-notes/framework/cobra/cobra-command/">
         <h2 class="post-title">
                         
-            kubectl命令说明
+            cobra command
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. kubectl命令介绍
-kubectl的命令语法
-1kubectl [command] [TYPE] [NAME] [flags]
-其中command，TYPE，NAME，和flags分别是：
+            
+本文以cobra-demo为例介绍cobra添加命令的具体使用操作。
 
-
-command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
-
-
-TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。......
+0. cobra-democobra-demo编译二进制执行的结果如下。具体代码参考：https://github.com/huweihuang/cobra-demo
+12345678910111213141516171819202122 $ ./cobra-demo A longer description that......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-08-13
+            2020-09-16
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -327,10 +287,8 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            添加iptables规则
-12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
-删除iptables规则
-12345# 显示iptables规则行号iptab......
+            添加iptables规则12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
+删除iptables规则12345# 显示iptables规则行号iptable......
         </div>
     </a>
     
@@ -350,6 +308,71 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
+        <h2 class="post-title">
+                        
+            kubectl命令说明
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. kubectl命令介绍kubectl的命令语法
+1kubectl [command] [TYPE] [NAME] [flags]
+其中command，TYPE，NAME，和flags分别是：
+
+command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
+
+TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。例如，......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
+        <h2 class="post-title">
+                        
+            Etcd中的k8s数据
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 读取数据key使用以下命令列出所有的key。
+1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pki......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
         <h2 class="post-title">
                         
@@ -359,8 +382,7 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet --help
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
+            virtual-kubelet —help1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggableb......
         </div>
     </a>
     
@@ -389,9 +411,8 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
-一句话概括：Kubernetes API on top, programm......
+            1. 简介Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
+一句话概括：Kubernetes API on top, programma......
         </div>
     </a>
     
@@ -402,37 +423,6 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
         <div class="tags">
             
               <a href="/tags/#VirtualKubelet" title="VirtualKubelet">VirtualKubelet</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
-        <h2 class="post-title">
-                        
-            Etcd中的k8s数据
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 读取数据key
-使用以下命令列出所有的key。
-1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pk......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
             
         </div>
     
@@ -454,44 +444,8 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
 本文介绍通过pod指定 ImagePullSecrets来拉取私有镜像仓库的镜像
 
-1. 创建secret
-secret是namespace级别的，创建时候需要指定namespace。
-1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-use......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/registry/config-private-registry/">
-        <h2 class="post-title">
-                        
-            配置私有镜像仓库
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 镜像仓库的基本操作
-1.1. 登录镜像仓库
-1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
-1.2. 拉取镜像
-1docker pull https://registry.xxx.com/dev/nginx:latest
-1.3. 推送镜像
-1docker push https://......
+1. 创建secretsecret是namespace级别的，创建时候需要指定namespace。
+1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-user......
         </div>
     </a>
     
@@ -521,8 +475,7 @@ secret是namespace级别的，创建时候需要指定namespace。
         </h3>
         <div class="post-content-preview">
             常见镜像拉取问题排查
-1. Pod状态为ErrImagePull或ImagePullBackOff
-12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b ......
+1. Pod状态为ErrImagePull或ImagePullBackOff12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b  ......
         </div>
     </a>
     
@@ -533,6 +486,37 @@ secret是namespace级别的，创建时候需要指定namespace。
         <div class="tags">
             
               <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/registry/config-private-registry/">
+        <h2 class="post-title">
+                        
+            配置私有镜像仓库
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 镜像仓库的基本操作1.1. 登录镜像仓库1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
+1.2. 拉取镜像1docker pull https://registry.xxx.com/dev/nginx:latest
+1.3. 推送镜像1docker push https://regi......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -601,29 +585,7 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
-            
-        
-            
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
-            
-        
-            
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
-            
-        
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -639,13 +601,21 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -657,14 +627,6 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
             <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
             
         
@@ -673,7 +635,29 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            
+        
+            
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="59">Kubernetes</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
@@ -693,6 +677,10 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
@@ -701,11 +689,7 @@ secret是namespace级别的，创建时候需要指定namespace。
             
         
             
-        
-            
             <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
-            
-        
             
         
             
@@ -803,15 +787,15 @@ secret是namespace级别的，创建时候需要指定namespace。
         </li>
       
         <li>
+          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/network/gateway/install/">安装APISIX</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-config/">APISIX配置</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/">创建路由</a>
+          <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/">ingress-controller原理</a>
         </li>
       
     </ul>

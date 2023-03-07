@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -215,8 +215,7 @@
                 <div id="vip-container"><blockquote>
 <p>以下主要介绍<code>PaaS</code>平台设计架构中使用到的方法论，统称为<code>12-Factor(要素)</code></p>
 </blockquote>
-<h1 id="简介">简介</h1>
-<p>软件通常会作为一种服务来交付，即软件即服务(SaaS)。<code>12-Factor</code>原则为构建SaaS应用提供了以下的<code>方法论</code>：</p>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>软件通常会作为一种服务来交付，即软件即服务(SaaS)。<code>12-Factor</code>原则为构建SaaS应用提供了以下的<code>方法论</code>：</p>
 <ul>
 <li>使用标准化流程自动配置，减少开发者的学习成本。</li>
 <li>和操作系统解耦，使其可以在各个系统间提供最大的移植性。</li>
@@ -225,33 +224,28 @@
 <li>可以在工具、架构和开发流程不发生明显变化的前提下实现拓展</li>
 </ul>
 <p>该理论适应于任何语言和后端服务(数据库、消息队列、缓存等)开发的应用程序。</p>
-<h1 id="1-基准代码">1. 基准代码</h1>
-<blockquote>
+<h1 id="1-基准代码"><a href="#1-基准代码" class="headerlink" title="1. 基准代码"></a>1. 基准代码</h1><blockquote>
 <p>一份基准代码，多份部署</p>
 </blockquote>
 <p>应用代码使用<code>版本控制系统</code>来管理，常用的有<code>Git</code>、<code>SVN</code>等。一份用来跟踪代码所有修订版本的数据库称为<code>代码库</code>。</p>
-<h2 id="11-一份基准代码">1.1. 一份基准代码</h2>
-<p>基准代码和应用之间总是保持一一对应的关系：</p>
+<h2 id="11-一份基准代码"><a href="#1-1-一份基准代码" class="headerlink" title="1.1. 一份基准代码"></a>1.1. 一份基准代码</h2><p>基准代码和应用之间总是保持一一对应的关系：</p>
 <ul>
 <li>一旦有多个基准代码，则不能称之为一个应用，而是一个分布式系统。分布式系统中的每个组件都是一个应用，每个应用都可以使用<code>12-Factor</code>原则进行开发。</li>
 <li>多个应用共享一份基准代码有悖于<code>12-Factor</code>原则。解决方法是将共享的代码拆成独立的类库，通过依赖管理去使用它们。</li>
 </ul>
-<h2 id="12-多份部署">1.2. 多份部署</h2>
-<p>每个应用只对应一份基准代码，但可以同时存在多份的部署，每份部署相当于运行了一个应用的实例。</p>
+<h2 id="12-多份部署"><a href="#1-2-多份部署" class="headerlink" title="1.2. 多份部署"></a>1.2. 多份部署</h2><p>每个应用只对应一份基准代码，但可以同时存在多份的部署，每份部署相当于运行了一个应用的实例。</p>
 <p>多份部署的区别在于：</p>
 <ul>
 <li>可以存在不同的配置文件对应不同的环境。例如开发环境、预发布环境、生产环境等。</li>
 <li>可以使用不同的版本。例如开发环境的版本可能高于预发布环境版本，还没同步到预发布环境版本，同理，预发布环境版本可能高于生产环境版本。</li>
 </ul>
-<h1 id="2-依赖">2. 依赖</h1>
-<blockquote>
+<h1 id="2-依赖"><a href="#2-依赖" class="headerlink" title="2. 依赖"></a>2. 依赖</h1><blockquote>
 <p>显式声明依赖关系</p>
 </blockquote>
 <p>大多数的编程语言都会提供一个<code>包管理系统</code>或工具，其中包含所有的<code>依赖库</code>，例如Golang的vendor目录存放了该应用的所有依赖包。</p>
 <p>12-Factor原则下的应用会通过<code>依赖清单</code>来显式确切地声明所有的依赖项。在运行工程中通过<code>依赖隔离工具</code>来保证应用不会去调用系统中存在但依赖清单中未声明的依赖项。</p>
 <p>显式声明依赖项的优点在于可以简化环境配置流程，开发者关注应用的基准代码，而依赖库则由依赖库管理工具来管理和配置。例如，Golang中的包管理工具dep等。</p>
-<h1 id="3-配置">3. 配置</h1>
-<blockquote>
+<h1 id="3-配置"><a href="#3-配置" class="headerlink" title="3. 配置"></a>3. 配置</h1><blockquote>
 <p>在环境中存储配置</p>
 </blockquote>
 <p>通常，应用的配置在不同的发布环境中(例如：开发、预发布、生产环境)会有很大的差异，其中包括：</p>
@@ -264,14 +258,12 @@
 <p>判断一个应用是否正确地将配置排除在代码外，可以看应用的基准代码是否可以立即开源而不担心暴露敏感信息。</p>
 <p>12-Factor原则建议将应用的配置存储在环境变量中，环境变量可以方便在不同的部署环境中修改，而不侵入原有的代码。(例如，k8s的大部分代码配置是通过环境变量的方式来传入的)。</p>
 <p>12-Factor应用中，环境变量的粒度要足够小且相对独立。当应用需要拓展时，可以平滑过渡。</p>
-<h1 id="4-后端服务">4. 后端服务</h1>
-<blockquote>
+<h1 id="4-后端服务"><a href="#4-后端服务" class="headerlink" title="4. 后端服务"></a>4. 后端服务</h1><blockquote>
 <p>把后端服务当作附加资源</p>
 </blockquote>
 <p>后端服务指程序运行时所需要通过网络调用的各种服务，例如：数据库（<a href="http://dev.mysql.com/" target="_blank" rel="noopener">MySQL</a>，<a href="http://couchdb.apache.org/" target="_blank" rel="noopener">CouchDB</a>），消息/队列系统（<a href="http://www.rabbitmq.com/" target="_blank" rel="noopener">RabbitMQ</a>，<a href="https://beanstalkd.github.io/" target="_blank" rel="noopener">Beanstalkd</a>），SMTP 邮件发送服务（<a href="http://www.postfix.org/" target="_blank" rel="noopener">Postfix</a>），以及缓存系统（<a href="http://memcached.org/" target="_blank" rel="noopener">Memcached</a>）。</p>
 <p>其中可以根据管理对象分为<code>本地服务</code>(例如本地数据库)和<code>第三方服务</code>(例如Amason S3)。对于12-Factor应用来说都是附加资源，没有区别对待，当其中一份后端服务失效后，可以通过切换到原先备份的后端服务中，而不需要修改代码(但可能需要修改配置)。12-Factor应用与后端服务保持松耦合的关系。</p>
-<h1 id="5-构建发布运行">5. 构建，发布，运行</h1>
-<blockquote>
+<h1 id="5-构建发布运行"><a href="#5-构建，发布，运行" class="headerlink" title="5. 构建，发布，运行"></a>5. 构建，发布，运行</h1><blockquote>
 <p>严格分离构建和运行</p>
 </blockquote>
 <p>基准代码转化成一份部署需要经过三个阶段：</p>
@@ -283,36 +275,31 @@
 <p>12-Factor应用严格区分构建、发布、运行三个步骤，每一个发布版本对应一个唯一的发布ID，可以使用时间戳或递增的版本序列号。</p>
 <p>如果需要修改则需要产生一个新的发布版本，如果需要回退，则回退到之前指定的发布版本。</p>
 <p>新代码部署之前，由开发人员触发构建操作，构建阶段可以相对复杂一些，方便错误信息可以展示出来得到妥善处理。运行阶段可以人为触发或自动运行，运行阶段应该保持尽可能少的模块。</p>
-<h1 id="6-进程">6. 进程</h1>
-<blockquote>
+<h1 id="6-进程"><a href="#6-进程" class="headerlink" title="6. 进程"></a>6. 进程</h1><blockquote>
 <p>以一个或多个无状态进程运行应用</p>
 </blockquote>
 <p>12-Factor应有的进程必须是无状态且无共享的，任何需要持久化的数据存储在后端服务中，例如数据库。</p>
 <p>内存区域和磁盘空间可以作为进程的缓存，12-Factor应用不需要关注这些缓存的持久化，而是允许其丢失，例如重启的时候。</p>
 <p>进程的二进制文件应该在构建阶段执行编译而不是运行阶段。</p>
 <p>当应用使用到<code>粘性Session</code>，即将用户的session数据缓存到进程的内存中，将同一用户的后续请求路由到同一个进程。12-Factor应用反对这种处理方式，而是建议将session的数据保存在redis/memcached带有过期时间的缓存中。</p>
-<h1 id="7-端口绑定">7. 端口绑定</h1>
-<blockquote>
+<h1 id="7-端口绑定"><a href="#7-端口绑定" class="headerlink" title="7. 端口绑定"></a>7. 端口绑定</h1><blockquote>
 <p>通过端口绑定提供服务</p>
 </blockquote>
 <p>应用通过端口绑定来提供服务，并监听发送至该端口的请求。端口绑定的方式意味着一个应用也可以成为另一个应用的后端服务，例如提供某些API请求。</p>
-<h1 id="8-并发">8. 并发</h1>
-<blockquote>
+<h1 id="8-并发"><a href="#8-并发" class="headerlink" title="8. 并发"></a>8. 并发</h1><blockquote>
 <p>通过进程模型进行扩展</p>
 </blockquote>
 <p>12-Factor应用中，开发人员可以将不同的工作分配给不同类型进程，例如HTTP请求由web进程来处理，常驻的后台工作由worker进程来处理（k8s的设计中就经常用不同类型的manager来处理不同的任务）。</p>
 <p>12-Factor应用的进程具备无共享、水平分区的特性，使得水平扩展较为容易。</p>
 <p>12-Factor应用的进程不需要守护进程或是写入PID文件，而是通过进程管理器（例如 systemd）来管理输出流，响应崩溃的进程，以及处理用户触发的重启或关闭超级进程的操作。</p>
-<h1 id="9-易处理">9. 易处理</h1>
-<blockquote>
+<h1 id="9-易处理"><a href="#9-易处理" class="headerlink" title="9. 易处理"></a>9. 易处理</h1><blockquote>
 <p>快速启动和优雅终止可最大化健壮性</p>
 </blockquote>
 <p>12-Factor应用的进程是<code>易处理</code>的，即它们可以快速的开启或停止，这样有利于快速部署迭代和弹性伸缩实例。</p>
 <p>进程应该追求最小的启动时间，这样可以敏捷发布，增加健壮性，当出现问题可以快速在别的机器部署一个实例。</p>
 <p>进程一旦接收到<code>终止信号(SIGTERM)</code>就会<code>优雅终止</code>。优雅终止指停止监听服务的端口，拒绝所有新的请求，并继续执行当前已接收的请求，然后退出。</p>
 <p>进程还需在面对突然挂掉的情况下保持健壮性，例如通过<code>任务队列</code>的方式来解决进程突然挂掉而没有完成处理的事情，所以应该设计为任务执行是<code>幂等</code>的，可以被重复执行，重复执行的结果是一致的。</p>
-<h1 id="10-开发环境与线上环境等价">10. 开发环境与线上环境等价</h1>
-<blockquote>
+<h1 id="10-开发环境与线上环境等价"><a href="#10-开发环境与线上环境等价" class="headerlink" title="10. 开发环境与线上环境等价"></a>10. 开发环境与线上环境等价</h1><blockquote>
 <p>尽可能的保持开发，预发布，线上环境相同</p>
 </blockquote>
 <p>不同的发布环境可能存在以下差异：</p>
@@ -322,8 +309,7 @@
 <li>工具差异：不同环境的配置和运行环境，使用的后端类型可能存在不同。</li>
 </ul>
 <p>应尽量缩小本地与线上的差异，缩短上线周期，开发运维一体化，保证开发环境与线上运行的环境一致（例如，可以通过Docker容器的方式）。</p>
-<h1 id="11-日志">11. 日志</h1>
-<blockquote>
+<h1 id="11-日志"><a href="#11-日志" class="headerlink" title="11. 日志"></a>11. 日志</h1><blockquote>
 <p>把日志当作事件流</p>
 </blockquote>
 <p>日志应该是<code>事件流</code>的汇总。12-Factor应用本身不考虑存储自己的日志输出流，不去写或管理日志文件，而是通过标准输出（stdout）的方式。</p>
@@ -334,8 +320,7 @@
 <li>图形化一个大规模的趋势，如每分钟的请求量。</li>
 <li>根据用户定义的条件触发告警，如每分钟报错数超过某个警戒线。</li>
 </ul>
-<h1 id="12-管理进程">12. 管理进程</h1>
-<blockquote>
+<h1 id="12-管理进程"><a href="#12-管理进程" class="headerlink" title="12. 管理进程"></a>12. 管理进程</h1><blockquote>
 <p>后台管理任务当作一次性进程运行</p>
 </blockquote>
 <p>开发人员经常需要执行一些管理或维护应用的一次性任务，一次性管理进程应该和常驻进程使用相同的运行环境，开发人员可以通过ssh方式来执行一次性脚本或任务。</p>
@@ -367,12 +352,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/operation/node/safely-drain-node/" data-toggle="tooltip" data-placement="top" title="安全迁移节点">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/docker/install-docker/" data-toggle="tooltip" data-placement="top" title="安装Docker">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/resource/limit-range/" data-toggle="tooltip" data-placement="top" title="资源配额">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/resource/quality-of-service/" data-toggle="tooltip" data-placement="top" title="资源服务质量">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

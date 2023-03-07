@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,43 +212,33 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-简介">1. 简介</h1>
-<p>NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">Kubernetes device plugin</a>的接口。</p>
+                <div id="vip-container"><h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h1><p>NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">Kubernetes device plugin</a>的接口。</p>
 <p>提供以下功能：</p>
 <ul>
 <li>暴露每个节点的GPU数量给集群</li>
 <li>跟踪GPU的健康情况</li>
 <li>使在k8s的节点可以运行GPU容器</li>
 </ul>
-<h1 id="2-要求">2. 要求</h1>
-<ul>
+<h1 id="2-要求"><a href="#2-要求" class="headerlink" title="2. 要求"></a>2. 要求</h1><ul>
 <li>NVIDIA drivers ~= 384.81</li>
-<li>nvidia-docker version &gt; 2.0 (see how to <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">install</a> and it’s <a href="https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites" target="_blank" rel="noopener">prerequisites</a>)</li>
+<li>nvidia-docker version &gt; 2.0 (see how to <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">install</a> and it’s <a href="https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0" target="_blank" rel="noopener">prerequisites</a>#prerequisites))</li>
 <li>docker configured with nvidia as the <a href="https://github.com/NVIDIA/nvidia-docker/wiki/Advanced-topics#default-runtime" target="_blank" rel="noopener">default runtime</a>.</li>
 <li>Kubernetes version &gt;= 1.10</li>
 </ul>
-<h1 id="3-使用">3. 使用</h1>
-<h2 id="31-安装nvidia-drivers和nvidia-docker">3.1. 安装NVIDIA drivers和nvidia-docker</h2>
-<p>提供GPU节点的机器，准备工作如下</p>
+<h1 id="3-使用"><a href="#3-使用" class="headerlink" title="3. 使用"></a>3. 使用</h1><h2 id="31-安装nvidia-drivers和nvidia-docker"><a href="#3-1-安装NVIDIA-drivers和nvidia-docker" class="headerlink" title="3.1. 安装NVIDIA drivers和nvidia-docker"></a>3.1. 安装NVIDIA drivers和nvidia-docker</h2><p>提供GPU节点的机器，准备工作如下</p>
 <ol>
 <li>安装NVIDIA drivers ~= 384.81</li>
 <li>安装nvidia-docker version &gt; 2.0</li>
 </ol>
-<h2 id="32-配置docker-runtime">3.2. 配置docker runtime</h2>
-<p>配置nvidia runtime作为GPU节点的默认runtime。</p>
+<h2 id="32-配置docker-runtime"><a href="#3-2-配置docker-runtime" class="headerlink" title="3.2. 配置docker runtime"></a>3.2. 配置docker runtime</h2><p>配置nvidia runtime作为GPU节点的默认runtime。</p>
 <p>修改文件/etc/docker/daemon.json，增加以下runtime内容。</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"default-runtime"</span>: <span class="string">"nvidia"</span>,</span><br><span class="line">    <span class="attr">"runtimes"</span>: &#123;</span><br><span class="line">        <span class="attr">"nvidia"</span>: &#123;</span><br><span class="line">            <span class="attr">"path"</span>: <span class="string">"/usr/bin/nvidia-container-runtime"</span>,</span><br><span class="line">            <span class="attr">"runtimeArgs"</span>: []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="33-部署nvidia-device-plugin">3.3. 部署nvidia-device-plugin</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta4/nvidia-device-plugin.yml</span><br></pre></td></tr></table></figure>
+<h2 id="33-部署nvidia-device-plugin"><a href="#3-3-部署nvidia-device-plugin" class="headerlink" title="3.3. 部署nvidia-device-plugin"></a>3.3. 部署nvidia-device-plugin</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta4/nvidia-device-plugin.yml</span><br></pre></td></tr></table></figure>
 <p>nvidia-device-plugin的daemonset yaml文件如下：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Licensed under the Apache License, Version 2.0 (the "License");</span></span><br><span class="line"><span class="comment"># you may not use this file except in compliance with the License.</span></span><br><span class="line"><span class="comment"># You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#     http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment"># distributed under the License is distributed on an "AS IS" BASIS,</span></span><br><span class="line"><span class="comment"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment"># See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment"># limitations under the License.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nvidia-device-plugin-daemonset</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">nvidia-device-plugin-ds</span></span><br><span class="line">  <span class="attr">updateStrategy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="comment"># This annotation is deprecated. Kept here for backward compatibility</span></span><br><span class="line">      <span class="comment"># See https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/</span></span><br><span class="line">      <span class="attr">annotations:</span></span><br><span class="line">        <span class="attr">scheduler.alpha.kubernetes.io/critical-pod:</span> <span class="string">""</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nvidia-device-plugin-ds</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">tolerations:</span></span><br><span class="line">      <span class="comment"># This toleration is deprecated. Kept here for backward compatibility</span></span><br><span class="line">      <span class="comment"># See https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">CriticalAddonsOnly</span></span><br><span class="line">        <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">nvidia.com/gpu</span></span><br><span class="line">        <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">        <span class="attr">effect:</span> <span class="string">NoSchedule</span></span><br><span class="line">      <span class="comment"># Mark this pod as a critical add-on; when enabled, the critical add-on</span></span><br><span class="line">      <span class="comment"># scheduler reserves resources for critical add-on pods so that they can</span></span><br><span class="line">      <span class="comment"># be rescheduled after a failure.</span></span><br><span class="line">      <span class="comment"># See https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/</span></span><br><span class="line">      <span class="attr">priorityClassName:</span> <span class="string">"system-node-critical"</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">nvidia/k8s-device-plugin:1.0.0-beta4</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nvidia-device-plugin-ctr</span></span><br><span class="line">        <span class="attr">securityContext:</span></span><br><span class="line">          <span class="attr">allowPrivilegeEscalation:</span> <span class="literal">false</span></span><br><span class="line">          <span class="attr">capabilities:</span></span><br><span class="line">            <span class="attr">drop:</span> <span class="string">["ALL"]</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">device-plugin</span></span><br><span class="line">            <span class="attr">mountPath:</span> <span class="string">/var/lib/kubelet/device-plugins</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">device-plugin</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/lib/kubelet/device-plugins</span></span><br></pre></td></tr></table></figure>
-<h2 id="34-运行gpu任务">3.4. 运行GPU任务</h2>
-<p>创建一个GPU的pod，pod的资源类型指定为<code>nvidia.com/gpu</code>。</p>
+<h2 id="34-运行gpu任务"><a href="#3-4-运行GPU任务" class="headerlink" title="3.4. 运行GPU任务"></a>3.4. 运行GPU任务</h2><p>创建一个GPU的pod，pod的资源类型指定为<code>nvidia.com/gpu</code>。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">gpu-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cuda-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nvidia/cuda:9.0-devel</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">limits:</span></span><br><span class="line">          <span class="attr">nvidia.com/gpu:</span> <span class="number">2</span> <span class="comment"># requesting 2 GPUs</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">digits-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nvidia/digits:6.0</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">limits:</span></span><br><span class="line">          <span class="attr">nvidia.com/gpu:</span> <span class="number">2</span> <span class="comment"># requesting 2 GPUs</span></span><br></pre></td></tr></table></figure>
-<h1 id="4-构建和运行nvidia-device-plugin">4. 构建和运行nvidia-device-plugin</h1>
-<h2 id="41-docker方式">4.1. docker方式</h2>
-<h3 id="411-编译">4.1.1. 编译</h3>
-<ul>
+<h1 id="4-构建和运行nvidia-device-plugin"><a href="#4-构建和运行nvidia-device-plugin" class="headerlink" title="4. 构建和运行nvidia-device-plugin"></a>4. 构建和运行nvidia-device-plugin</h1><h2 id="41-docker方式"><a href="#4-1-docker方式" class="headerlink" title="4.1. docker方式"></a>4.1. docker方式</h2><h3 id="411-编译"><a href="#4-1-1-编译" class="headerlink" title="4.1.1. 编译"></a>4.1.1. 编译</h3><ul>
 <li>直接拉取dockerhub的镜像</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull nvidia/k8s-device-plugin:1.0.0-beta4</span><br></pre></td></tr></table></figure>
@@ -260,8 +250,7 @@
 <li>修改nvidia-device-plugin后构建镜像</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/NVIDIA/k8s-device-plugin.git &amp;&amp; <span class="built_in">cd</span> k8s-device-plugin</span><br><span class="line">$ git checkout 1.0.0-beta4</span><br><span class="line">$ docker build -t nvidia/k8s-device-plugin:1.0.0-beta4 .</span><br></pre></td></tr></table></figure>
-<h3 id="412-运行">4.1.2. 运行</h3>
-<ul>
+<h3 id="412-运行"><a href="#4-1-2-运行" class="headerlink" title="4.1.2. 运行"></a>4.1.2. 运行</h3><ul>
 <li>docker本地运行</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run --security-opt=no-new-privileges --<span class="built_in">cap</span>-drop=ALL --network=none -it -v /var/lib/kubelet/device-plugins:/var/lib/kubelet/device-plugins nvidia/k8s-device-plugin:1.0.0-beta4</span><br></pre></td></tr></table></figure>
@@ -269,11 +258,8 @@
 <li>daemonset运行</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create -f nvidia-device-plugin.yml</span><br></pre></td></tr></table></figure>
-<h2 id="42-非docker方式">4.2. 非docker方式</h2>
-<h3 id="421-编译">4.2.1. 编译</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ C_INCLUDE_PATH=/usr/<span class="built_in">local</span>/cuda/include LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda/lib64 go build</span><br></pre></td></tr></table></figure>
-<h3 id="422-本地运行">4.2.2. 本地运行</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./k8s-device-plugin</span><br></pre></td></tr></table></figure>
+<h2 id="42-非docker方式"><a href="#4-2-非docker方式" class="headerlink" title="4.2. 非docker方式"></a>4.2. 非docker方式</h2><h3 id="421-编译"><a href="#4-2-1-编译" class="headerlink" title="4.2.1. 编译"></a>4.2.1. 编译</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ C_INCLUDE_PATH=/usr/<span class="built_in">local</span>/cuda/include LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda/lib64 go build</span><br></pre></td></tr></table></figure>
+<h3 id="422-本地运行"><a href="#4-2-2-本地运行" class="headerlink" title="4.2.2. 本地运行"></a>4.2.2. 本地运行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./k8s-device-plugin</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
 <li><a href="https://github.com/NVIDIA/k8s-device-plugin" target="_blank" rel="noopener">https://github.com/NVIDIA/k8s-device-plugin</a></li>
@@ -304,12 +290,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/" data-toggle="tooltip" data-placement="top" title="Pod驱逐">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/" data-toggle="tooltip" data-placement="top" title="使用kind安装kubernetes">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/" data-toggle="tooltip" data-placement="top" title="部署cephfs-provisioner">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/pod-evicted/" data-toggle="tooltip" data-placement="top" title="Pod驱逐">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

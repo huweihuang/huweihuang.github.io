@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -215,93 +215,66 @@
                 <div id="vip-container"><blockquote>
 <p>本文主要介绍通过k8s来部署apisix及apisix-ingress-controller，使用apisix作为k8s内Pod互相访问的网关。</p>
 </blockquote>
-<h2 id="1-环境准备">1.  环境准备</h2>
-<h3 id="11-安装helm">1.1. 安装helm</h3>
-<p>参考：<a href="https://helm.sh/zh/docs/intro/install/" target="_blank" rel="noopener">Helm | 安装</a></p>
+<h2 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1.  环境准备"></a>1.  环境准备</h2><h3 id="11-安装helm"><a href="#1-1-安装helm" class="headerlink" title="1.1. 安装helm"></a>1.1. 安装helm</h3><p>参考：<a href="https://helm.sh/zh/docs/intro/install/" target="_blank" rel="noopener">Helm | 安装</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash</span><br></pre></td></tr></table></figure>
 <p>helm添加仓库</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">helm repo add apisix https://charts.apiseven.com</span><br><span class="line">helm repo update</span><br></pre></td></tr></table></figure>
-<h3 id="12-安装etcd">1.2. 安装ETCD</h3>
-<p>可以提前准备好etcd环境，也可以使用apisix官方的helm命令安装，但是需要存在默认是storageclass来提供pv挂载。</p>
-<h2 id="2-一键安装全部">2. 一键安装全部</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install apisix apisix/apisix --<span class="built_in">set</span> gateway.type=NodePort --<span class="built_in">set</span> ingress-controller.enabled=<span class="literal">true</span> --namespace=apisix --create-namespace</span><br></pre></td></tr></table></figure>
+<h3 id="12-安装etcd"><a href="#1-2-安装ETCD" class="headerlink" title="1.2. 安装ETCD"></a>1.2. 安装ETCD</h3><p>可以提前准备好etcd环境，也可以使用apisix官方的helm命令安装，但是需要存在默认是storageclass来提供pv挂载。</p>
+<h2 id="2-一键安装全部"><a href="#2-一键安装全部" class="headerlink" title="2. 一键安装全部"></a>2. 一键安装全部</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install apisix apisix/apisix --<span class="built_in">set</span> gateway.type=NodePort --<span class="built_in">set</span> ingress-controller.enabled=<span class="literal">true</span> --namespace=apisix --create-namespace</span><br></pre></td></tr></table></figure>
 <p>或通过以下方式分别安装各组件。</p>
-<h2 id="3-安装apisix">3. 安装apisix</h2>
-<p>参考：<a href="https://github.com/apache/apisix-helm-chart/blob/master/docs/en/latest/apisix.md" target="_blank" rel="noopener">apisix-helm-chart/apisix.md at master · apache/apisix-helm-chart · GitHub</a></p>
-<h3 id="31-安装">3.1. 安装</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install apisix apisix/apisix --namespace apisix --create-namespace</span><br></pre></td></tr></table></figure>
+<h2 id="3-安装apisix"><a href="#3-安装apisix" class="headerlink" title="3. 安装apisix"></a>3. 安装apisix</h2><p>参考：<a href="https://github.com/apache/apisix-helm-chart/blob/master/docs/en/latest/apisix.md" target="_blank" rel="noopener">apisix-helm-chart/apisix.md at master · apache/apisix-helm-chart · GitHub</a></p>
+<h3 id="31-安装"><a href="#3-1-安装" class="headerlink" title="3.1. 安装"></a>3.1. 安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install apisix apisix/apisix --namespace apisix --create-namespace</span><br></pre></td></tr></table></figure>
 <p>卸载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm uninstall apisix --namespace apisix</span><br></pre></td></tr></table></figure>
-<h3 id="32-修改配置">3.2. 修改配置</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm apisix-napisix</span><br></pre></td></tr></table></figure>
+<h3 id="32-修改配置"><a href="#3-2-修改配置" class="headerlink" title="3.2. 修改配置"></a>3.2. 修改配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm apisix-napisix</span><br></pre></td></tr></table></figure>
 <p>可选：</p>
 <ul>
-<li>
-<p>修改apisix端口。</p>
+<li><p>修改apisix端口。</p>
 </li>
-<li>
-<p>修改etcd地址。</p>
+<li><p>修改etcd地址。</p>
 </li>
-<li>
-<p>修改admin key值。</p>
+<li><p>修改admin key值。</p>
 </li>
-<li>
-<p>修改日志路径。</p>
+<li><p>修改日志路径。</p>
 </li>
-<li>
-<p>使用etcd存储stream配置或者静态文件存储stream配置</p>
+<li><p>使用etcd存储stream配置或者静态文件存储stream配置</p>
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">apisix:</span><br><span class="line">  node_listen: 8000 <span class="comment"># APISIX listening port</span></span><br><span class="line">  config_center: etcd     <span class="comment"># etcd: use etcd to store the config value</span></span><br><span class="line">                          <span class="comment"># yaml: fetch the config value from local yaml file `/your_path/conf/apisix.yaml`</span></span><br><span class="line"></span><br><span class="line">etcd:</span><br><span class="line">  host: <span class="string">"http://foo:2379"</span> <span class="comment"># etcd address</span></span><br><span class="line"></span><br><span class="line">admin_key</span><br><span class="line">  -</span><br><span class="line">    name: <span class="string">"admin"</span></span><br><span class="line">    key: newsupersecurekey  <span class="comment"># 请修改 key 的值</span></span><br><span class="line">    role: admin</span><br><span class="line"></span><br><span class="line">nginx_config:</span><br><span class="line">  error_log: /var/<span class="built_in">log</span>/apisix_error.log</span><br><span class="line">  http:</span><br><span class="line">    access_log: /var/<span class="built_in">log</span>/apisix_access.log</span><br><span class="line">    access_log_format: <span class="string">"<span class="variable">$time_iso8601</span>|<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span>|<span class="variable">$http_host</span>|\"<span class="variable">$request</span>\"|<span class="variable">$status</span>|<span class="variable">$body_bytes_sent</span>|<span class="variable">$request_time</span>|\"<span class="variable">$http_referer</span>\"|\"<span class="variable">$http_user_agent</span>\"|<span class="variable">$upstream_addr</span>|<span class="variable">$upstream_status</span>|<span class="variable">$upstream_response_time</span>|\"<span class="variable">$upstream_scheme</span>://<span class="variable">$upstream_host</span><span class="variable">$upstream_uri</span>\""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">plugin_attr:</span><br><span class="line">  <span class="built_in">log</span>-rotate:</span><br><span class="line">    interval: 3600    <span class="comment"># rotate interval (unit: second)</span></span><br><span class="line">    max_kept: 48     <span class="comment"># max number of log files will be kept</span></span><br><span class="line">    enable_compression: <span class="literal">false</span></span><br></pre></td></tr></table></figure>
-<h2 id="4-安装apisix-ingress-controller">4. 安装apisix-ingress-controller</h2>
-<p>参考：<a href="https://github.com/apache/apisix-helm-chart/blob/master/docs/en/latest/apisix-ingress-controller.md" target="_blank" rel="noopener">apisix-helm-chart/apisix-ingress-controller.md at master · apache/apisix-helm-chart · GitHub</a></p>
-<h3 id="41-安装">4.1. 安装</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install apisix-ingress-controller apisix/apisix-ingress-controller --namespace apisix --create-namespace</span><br></pre></td></tr></table></figure>
+<h2 id="4-安装apisix-ingress-controller"><a href="#4-安装apisix-ingress-controller" class="headerlink" title="4. 安装apisix-ingress-controller"></a>4. 安装apisix-ingress-controller</h2><p>参考：<a href="https://github.com/apache/apisix-helm-chart/blob/master/docs/en/latest/apisix-ingress-controller.md" target="_blank" rel="noopener">apisix-helm-chart/apisix-ingress-controller.md at master · apache/apisix-helm-chart · GitHub</a></p>
+<h3 id="41-安装"><a href="#4-1-安装" class="headerlink" title="4.1. 安装"></a>4.1. 安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm install apisix-ingress-controller apisix/apisix-ingress-controller --namespace apisix --create-namespace</span><br></pre></td></tr></table></figure>
 <p>卸载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm uninstall apisix-ingress-controller --namespace apisix</span><br></pre></td></tr></table></figure>
-<h3 id="42-修改配置">4.2. 修改配置</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm apisix-configmap -napisix</span><br></pre></td></tr></table></figure>
+<h3 id="42-修改配置"><a href="#4-2-修改配置" class="headerlink" title="4.2. 修改配置"></a>4.2. 修改配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm apisix-configmap -napisix</span><br></pre></td></tr></table></figure>
 <p>配置</p>
 <ul>
-<li>
-<p>apisix地址</p>
+<li><p>apisix地址</p>
 </li>
-<li>
-<p>apisix admin key</p>
+<li><p>apisix admin key</p>
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">default_cluster_base_url: http://apisix-admin.apisix.svc.cluster.local:9180/apisix/admin</span><br><span class="line">default_cluster_admin_key: <span class="string">"edd1c9f034335f136f87ad84b625c8f1"</span></span><br></pre></td></tr></table></figure>
-<h2 id="5-安装dashboard">5. 安装dashboard</h2>
-<h3 id="51-安装">5.1. 安装</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">helm repo add apisix https://charts.apiseven.com</span><br><span class="line">helm repo update</span><br><span class="line">helm install apisix-dashboard apisix/apisix-dashboard --namespace apisix --create-namespace</span><br></pre></td></tr></table></figure>
+<h2 id="5-安装dashboard"><a href="#5-安装dashboard" class="headerlink" title="5. 安装dashboard"></a>5. 安装dashboard</h2><h3 id="51-安装"><a href="#5-1-安装" class="headerlink" title="5.1. 安装"></a>5.1. 安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">helm repo add apisix https://charts.apiseven.com</span><br><span class="line">helm repo update</span><br><span class="line">helm install apisix-dashboard apisix/apisix-dashboard --namespace apisix --create-namespace</span><br></pre></td></tr></table></figure>
 <p>卸载</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm uninstall apisix-dashboard --namespace apisix</span><br></pre></td></tr></table></figure>
-<h3 id="52-修改配置">5.2. 修改配置</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm apisix-dashboard -napisix</span><br></pre></td></tr></table></figure>
+<h3 id="52-修改配置"><a href="#5-2-修改配置" class="headerlink" title="5.2. 修改配置"></a>5.2. 修改配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm apisix-dashboard -napisix</span><br></pre></td></tr></table></figure>
 <ul>
-<li>
-<p>端口</p>
+<li><p>端口</p>
 </li>
-<li>
-<p>etcd地址</p>
+<li><p>etcd地址</p>
 </li>
-<li>
-<p>登录账号密码</p>
+<li><p>登录账号密码</p>
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">data:</span><br><span class="line">  conf.yaml: |-</span><br><span class="line">    conf:</span><br><span class="line">      listen:</span><br><span class="line">        host: 0.0.0.0</span><br><span class="line">        port: 9000</span><br><span class="line">      etcd:</span><br><span class="line">        prefix: <span class="string">"/apisix"</span></span><br><span class="line">        endpoints:</span><br><span class="line">          - 10.65.240.210:2379</span><br><span class="line">      <span class="built_in">log</span>:</span><br><span class="line">        error_log:</span><br><span class="line">          level: warn</span><br><span class="line">          file_path: /dev/stderr</span><br><span class="line">        access_log:</span><br><span class="line">          file_path: /dev/stdout</span><br><span class="line">    authentication:</span><br><span class="line">      secert: secert</span><br><span class="line">      expire_time: 3600</span><br><span class="line">      users:</span><br><span class="line">        - username: admin</span><br><span class="line">          password: admin</span><br></pre></td></tr></table></figure>
-<h2 id="6-查看helm安装列表">6. 查看helm安装列表</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># helm list -n apisix</span></span><br><span class="line">NAME                NAMESPACE    REVISION    UPDATED                                    STATUS      CHART                     APP VERSION</span><br><span class="line">apisix              apisix       1           2022-08-23 16:19:47.678174579 +0800 +08    deployed    apisix-0.11.0             2.15.0</span><br><span class="line">apisix-dashboard    apisix       1           2022-08-23 20:36:37.55042356 +0800 +08     deployed    apisix-dashboard-0.6.0    2.13.0</span><br></pre></td></tr></table></figure>
+<h2 id="6-查看helm安装列表"><a href="#6-查看helm安装列表" class="headerlink" title="6. 查看helm安装列表"></a>6. 查看helm安装列表</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># helm list -n apisix</span></span><br><span class="line">NAME                NAMESPACE    REVISION    UPDATED                                    STATUS      CHART                     APP VERSION</span><br><span class="line">apisix              apisix       1           2022-08-23 16:19:47.678174579 +0800 +08    deployed    apisix-0.11.0             2.15.0</span><br><span class="line">apisix-dashboard    apisix       1           2022-08-23 20:36:37.55042356 +0800 +08     deployed    apisix-dashboard-0.6.0    2.13.0</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
-<li>
-<p><a href="https://github.com/apache/apisix-helm-chart" target="_blank" rel="noopener">https://github.com/apache/apisix-helm-chart</a></p>
+<li><p><a href="https://github.com/apache/apisix-helm-chart" target="_blank" rel="noopener">https://github.com/apache/apisix-helm-chart</a></p>
 </li>
-<li>
-<p><a href="https://apisix.apache.org/zh/docs/apisix/installation-guide/" target="_blank" rel="noopener">https://apisix.apache.org/zh/docs/apisix/installation-guide/</a></p>
+<li><p><a href="https://apisix.apache.org/zh/docs/apisix/installation-guide/" target="_blank" rel="noopener">https://apisix.apache.org/zh/docs/apisix/installation-guide/</a></p>
 </li>
-<li>
-<p><a href="https://github.com/apache/apisix-ingress-controller/blob/master/install.md" target="_blank" rel="noopener">https://github.com/apache/apisix-ingress-controller/blob/master/install.md</a></p>
+<li><p><a href="https://github.com/apache/apisix-ingress-controller/blob/master/install.md" target="_blank" rel="noopener">https://github.com/apache/apisix-ingress-controller/blob/master/install.md</a></p>
 </li>
 </ul>
 </div>
@@ -328,12 +301,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/" data-toggle="tooltip" data-placement="top" title="ingress-controller原理">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/" data-toggle="tooltip" data-placement="top" title="创建路由">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/network/gateway/apisix-ingress-controller-usage/" data-toggle="tooltip" data-placement="top" title="创建路由">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/network/gateway/ingress-controller-design/" data-toggle="tooltip" data-placement="top" title="ingress-controller原理">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

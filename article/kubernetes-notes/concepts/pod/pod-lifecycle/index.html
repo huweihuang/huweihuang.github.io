@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,9 +212,9 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-pod-phase">1. Pod phase</h1>
-<p>Pod的<code>phase</code>是Pod生命周期中的简单宏观描述，定义在Pod的<code>PodStatus</code>对象的<code>phase</code> 字段中。</p>
+                <div id="vip-container"><h1 id="1-pod-phase"><a href="#1-Pod-phase" class="headerlink" title="1. Pod phase"></a>1. Pod phase</h1><p>Pod的<code>phase</code>是Pod生命周期中的简单宏观描述，定义在Pod的<code>PodStatus</code>对象的<code>phase</code> 字段中。</p>
 <p><code>phase</code>有以下几种值：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -245,8 +245,8 @@
 </tr>
 </tbody>
 </table>
-<h1 id="2-pod-状态">2. Pod 状态</h1>
-<p>Pod 有一个 <code>PodStatus</code> 对象，其中包含一个 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#podcondition-v1-core" target="_blank" rel="noopener">PodCondition</a> 数组。 <code>PodCondition</code>包含以下以下字段：</p>
+</div>
+<h1 id="2-pod-状态"><a href="#2-Pod-状态" class="headerlink" title="2. Pod 状态"></a>2. Pod 状态</h1><p>Pod 有一个 <code>PodStatus</code> 对象，其中包含一个 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#podcondition-v1-core" target="_blank" rel="noopener">PodCondition</a> 数组。 <code>PodCondition</code>包含以下以下字段：</p>
 <ul>
 <li><code>lastProbeTime</code>：Pod condition最后一次被探测到的时间戳。</li>
 <li><code>lastTransitionTime</code>：Pod最后一次状态转变的时间戳。</li>
@@ -263,9 +263,9 @@
 <li><code>Unschedulable</code>：无法调度该Pod，例如节点资源不够。</li>
 <li><code>ContainersReady</code>：Pod中的所有容器已准备就绪。</li>
 </ul>
-<h1 id="3-重启策略">3. 重启策略</h1>
-<p>Pod通过<code>restartPolicy</code>字段指定重启策略，重启策略类型为：Always、OnFailure 和 Never，默认为 Always。</p>
+<h1 id="3-重启策略"><a href="#3-重启策略" class="headerlink" title="3. 重启策略"></a>3. 重启策略</h1><p>Pod通过<code>restartPolicy</code>字段指定重启策略，重启策略类型为：Always、OnFailure 和 Never，默认为 Always。</p>
 <p><code>restartPolicy</code> 仅指通过同一节点上的 kubelet 重新启动容器。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -288,6 +288,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p><strong>说明</strong>：</p>
 <p>可以管理Pod的控制器有Replication Controller，Job，DaemonSet，及kubelet（静态Pod）。</p>
 <ol>
@@ -295,8 +296,7 @@
 <li>Job：OnFailure或Never，确保容器执行完后不再重启。</li>
 <li>kubelet：在Pod失效的时候重启它，不论RestartPolicy设置为什么值，并且不会对Pod进行健康检查。</li>
 </ol>
-<h1 id="4-pod的生命">4. Pod的生命</h1>
-<p>Pod的生命周期一般通过<code>Controler</code>	的方式管理，每种<code>Controller</code>都会包含<code>PodTemplate</code>来指明Pod的相关属性，Controller可以自动对pod的异常状态进行重新调度和恢复，除非通过Controller的方式删除其管理的Pod，不然kubernetes始终运行用户预期状态的Pod。</p>
+<h1 id="4-pod的生命"><a href="#4-Pod的生命" class="headerlink" title="4. Pod的生命"></a>4. Pod的生命</h1><p>Pod的生命周期一般通过<code>Controler</code>    的方式管理，每种<code>Controller</code>都会包含<code>PodTemplate</code>来指明Pod的相关属性，Controller可以自动对pod的异常状态进行重新调度和恢复，除非通过Controller的方式删除其管理的Pod，不然kubernetes始终运行用户预期状态的Pod。</p>
 <p><strong>控制器的分类</strong></p>
 <ul>
 <li>使用 <code>Job</code>运行预期会终止的 Pod，例如批量计算。Job 仅适用于重启策略为 <code>OnFailure</code> 或 <code>Never</code> 的 Pod。</li>
@@ -304,8 +304,8 @@
 <li>提供特定于机器的系统服务，使用 <code>DaemonSet</code>为每台机器运行一个 Pod 。</li>
 </ul>
 <p>如果节点死亡或与集群的其余部分断开连接，则 Kubernetes 将应用一个策略将丢失节点上的所有 Pod 的 <code>phase</code> 设置为 <code>Failed</code>。</p>
-<h1 id="5-pod状态转换">5. Pod状态转换</h1>
-<p><strong>常见的状态转换</strong></p>
+<h1 id="5-pod状态转换"><a href="#5-Pod状态转换" class="headerlink" title="5. Pod状态转换"></a>5. Pod状态转换</h1><p><strong>常见的状态转换</strong></p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -360,27 +360,24 @@
 </tr>
 </tbody>
 </table>
-<h2 id="51-容器运行时内存超出限制">5.1. 容器运行时内存超出限制</h2>
-<ul>
+</div>
+<h2 id="51-容器运行时内存超出限制"><a href="#5-1-容器运行时内存超出限制" class="headerlink" title="5.1. 容器运行时内存超出限制"></a>5.1. 容器运行时内存超出限制</h2><ul>
 <li>容器以失败状态终止。</li>
 <li>记录 OOM 事件。</li>
-<li>如果<code>restartPolicy</code>为：
-<ul>
+<li>如果<code>restartPolicy</code>为：<ul>
 <li>Always：重启容器；Pod <code>phase</code> 仍为 Running。</li>
 <li>OnFailure：重启容器；Pod <code>phase</code> 仍为 Running。</li>
 <li>Never: 记录失败事件；Pod <code>phase</code> 仍为 Failed。</li>
 </ul>
 </li>
 </ul>
-<h2 id="52-磁盘故障">5.2. 磁盘故障</h2>
-<ul>
+<h2 id="52-磁盘故障"><a href="#5-2-磁盘故障" class="headerlink" title="5.2. 磁盘故障"></a>5.2. 磁盘故障</h2><ul>
 <li>杀掉所有容器。</li>
 <li>记录适当事件。</li>
 <li>Pod <code>phase</code> 变成 Failed。</li>
 <li>如果使用控制器来运行，Pod 将在别处重建。</li>
 </ul>
-<h2 id="53-运行节点挂掉">5.3. 运行节点挂掉</h2>
-<ul>
+<h2 id="53-运行节点挂掉"><a href="#5-3-运行节点挂掉" class="headerlink" title="5.3. 运行节点挂掉"></a>5.3. 运行节点挂掉</h2><ul>
 <li>节点控制器等待直到超时。</li>
 <li>节点控制器将 Pod <code>phase</code> 设置为 Failed。</li>
 <li>如果是用控制器来运行，Pod 将在别处重建。</li>
@@ -413,12 +410,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/mysql/table-operation/" data-toggle="tooltip" data-placement="top" title="Mysql常用命令之数据表操作">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/monitor/heapster-introduction/" data-toggle="tooltip" data-placement="top" title="Heapster介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/concepts/pod/pod-definition/" data-toggle="tooltip" data-placement="top" title="Pod定义文件">Next Post &rarr;</a>
+                            <a href="/article/linux-notes/redis/redis-introduction/" data-toggle="tooltip" data-placement="top" title="Redis介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>

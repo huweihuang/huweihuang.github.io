@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,32 +212,25 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-if语句">1. if语句</h1>
-<p>if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：</p>
+                <div id="vip-container"><h1 id="1-if语句"><a href="#1-if语句" class="headerlink" title="1. if语句"></a>1. if语句</h1><p>if 语句通过关系运算符判断表达式的真假来决定执行哪个分支。Shell 有三种 if … else 语句：</p>
 <ul>
 <li>if … fi 语句；</li>
 <li>if … else … fi 语句；</li>
 <li>if … elif … else … fi 语句。</li>
 </ul>
-<h2 id="11-if-else">1.1. if … else</h2>
-<p>if … else 语句的语法：</p>
+<h2 id="11-if-else"><a href="#1-1-if-…-else" class="headerlink" title="1.1. if … else"></a>1.1. if … else</h2><p>if … else 语句的语法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ expression ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> expression is <span class="literal">true</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-<p>如果 expression 返回 true，then 后边的语句将会被执行；如果返回 false，不会执行任何语句。<br>
-<strong>最后必须以 fi 来结尾闭合 if</strong>，fi 就是 if 倒过来拼写。<br>
-注意：<strong>expression 和方括号([ ])之间必须有空格</strong>，否则会有语法错误。</p>
-<h2 id="12-if-else-fi">1.2. if … else … fi</h2>
-<p>if … else … fi 语句的语法：</p>
+<p>如果 expression 返回 true，then 后边的语句将会被执行；如果返回 false，不会执行任何语句。<br><strong>最后必须以 fi 来结尾闭合 if</strong>，fi 就是 if 倒过来拼写。<br>注意：<strong>expression 和方括号([ ])之间必须有空格</strong>，否则会有语法错误。</p>
+<h2 id="12-if-else-fi"><a href="#1-2-if-…-else-…-fi" class="headerlink" title="1.2. if … else … fi"></a>1.2. if … else … fi</h2><p>if … else … fi 语句的语法：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ expression ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> expression is <span class="literal">true</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> expression is not <span class="literal">true</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
 <p>如果 expression 返回 true，那么 then 后边的语句将会被执行；否则，执行 else 后边的语句。</p>
-<h2 id="13-if-elif-fi-多分枝选择">1.3. if … elif … fi 多分枝选择</h2>
-<p>if … elif … fi 语句可以对多个条件进行判断，语法为：</p>
+<h2 id="13-if-elif-fi-多分枝选择"><a href="#1-3-if-…-elif-…-fi-多分枝选择" class="headerlink" title="1.3. if … elif … fi 多分枝选择"></a>1.3. if … elif … fi 多分枝选择</h2><p>if … elif … fi 语句可以对多个条件进行判断，语法为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ expression 1 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> expression 1 is <span class="literal">true</span></span><br><span class="line"><span class="keyword">elif</span> [ expression 2 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> expression 2 is <span class="literal">true</span></span><br><span class="line"><span class="keyword">elif</span> [ expression 3 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> expression 3 is <span class="literal">true</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">   Statement(s) to be executed <span class="keyword">if</span> no expression is <span class="literal">true</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
 <p>哪一个 expression 的值为 true，就执行哪个 expression 后面的语句；如果都为 false，那么不执行任何语句。</p>
 <p>if … else 语句也可以写成一行，用分号隔开，以命令的方式来运行</p>
-<p>if … else 语句也经常与 test 命令结合使用，test 命令用于检查某个条件是否成立，与方括号([ ])类似。</p>
+<p>if … else 语句也经常与 test 命令结合使用，test 命令用于检查某个条件是否成立，与方括号([ ])类似。  </p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">test</span> $[num1] -eq $[num2]</span><br></pre></td></tr></table></figure>
-<h1 id="2-case语句">2. case语句</h1>
-<p>case … esac 与其他语言中的 switch … case 语句类似，是一种多分枝选择结构。</p>
+<h1 id="2-case语句"><a href="#2-case语句" class="headerlink" title="2. case语句"></a>2. case语句</h1><p>case … esac 与其他语言中的 switch … case 语句类似，是一种多分枝选择结构。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> 值 <span class="keyword">in</span>模式1)  <span class="comment">#-------&gt;匹配值</span></span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    command3</span><br><span class="line">    ;;  <span class="comment">#------&gt;break</span></span><br><span class="line">模式2）</span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    command3</span><br><span class="line">    ;;</span><br><span class="line">*) <span class="comment"># -------&gt;相当于default</span></span><br><span class="line">    command1</span><br><span class="line">    command2</span><br><span class="line">    command3</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span>  <span class="comment">#-----&gt;结束标志</span></span><br></pre></td></tr></table></figure>
 <p>case工作方式如上所示。</p>
 <ul>
@@ -277,12 +270,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/shell/shell-function/" data-toggle="tooltip" data-placement="top" title="Shell 函数">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/shell/shell-stdout/" data-toggle="tooltip" data-placement="top" title="Shell 重定向">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/essay/random-thinking/" data-toggle="tooltip" data-placement="top" title="[随笔] 胡思乱想">Next Post &rarr;</a>
+                            <a href="/article/linux-notes/shell/shell-echo/" data-toggle="tooltip" data-placement="top" title="Shell echo命令">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
