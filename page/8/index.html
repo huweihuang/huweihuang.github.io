@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/tags/">Tags</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/about/">About</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,18 +211,24 @@
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/control-structures/">
+    <a href="/article/linux-notes/file/linux-file-storage/">
         <h2 class="post-title">
                         
-            流程语句
+            Linux文件存储
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            流程语句
-1. 条件语句
-12345678910111213141516//在if之后条件语句之前可以添加变量初始化语句，用;号隔离if &lt;条件语句&gt; &#123;    //条件语句不需要用括号括起来，花括号必须存在  //语句体&#125;else&#123;  //语句体&#125;//在有返回值的函数中，不允许将最后的return语句放在if...else...的结构中，......
+            文件存储结构
+大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
+
+目录项：包括文件名和inode节点号。
+Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
+数据块：包含文件的具体内容。
+
+1. inode
+理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
         </div>
     </a>
     
@@ -232,41 +238,7 @@
         </p>
         <div class="tags">
             
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/framework/cobra/cobra-flags/">
-        <h2 class="post-title">
-                        
-            cobra flags
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            添加Flags
-1. Persistent Flags
-Persistent Flags表示该类参数可以被用于当前命令及其子命令。
-例如，以下表示verbose参数可以被用于rootCmd及其子命令。
-1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
-2. Lo......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-16
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
+              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -389,6 +361,40 @@ cobra-demo编译二进制执行的结果如下。具体代码参考：https://gi
 
 <div class="post-preview">
 
+    <a href="/article/golang-notes/framework/cobra/cobra-flags/">
+        <h2 class="post-title">
+                        
+            cobra flags
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            添加Flags
+1. Persistent Flags
+Persistent Flags表示该类参数可以被用于当前命令及其子命令。
+例如，以下表示verbose参数可以被用于rootCmd及其子命令。
+1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
+2. Lo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-16
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
         <h2 class="post-title">
                         
@@ -459,6 +465,36 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
+        <h2 class="post-title">
+                        
+            Virtual Kubelet命令
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            virtual-kubelet --help
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#VirtualKubelet" title="VirtualKubelet">VirtualKubelet</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
         <h2 class="post-title">
                         
@@ -481,36 +517,6 @@ TYPE：指定资源类型。资源类型区分大小写，您可以指定单数�
         <div class="tags">
             
               <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
-        <h2 class="post-title">
-                        
-            Virtual Kubelet命令
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            virtual-kubelet --help
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#VirtualKubelet" title="VirtualKubelet">VirtualKubelet</a>
             
         </div>
     
@@ -614,11 +620,15 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
             
         
             
@@ -640,10 +650,6 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -652,9 +658,25 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -670,23 +692,7 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
             <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
-            
-        
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -700,9 +706,9 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
-            
         
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
             
@@ -718,9 +724,9 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
-        
-            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
+            
+        
             
         
             
@@ -836,7 +842,7 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/monitor/grafana-usage/">Grafana部署</a>
+          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>

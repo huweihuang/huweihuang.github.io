@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/tags/">Tags</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/about/">About</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,23 +211,18 @@
 
 <div class="post-preview">
 
-    <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">
+    <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">
         <h2 class="post-title">
                         
-            kube-scheduler 源码思维导图
+            使用etcdadm部署Etcd集群
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            kube-scheduler 源码思维导图
-源码整体结构图
-
-
-
-			
-			
-			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|Browser......
+            1. 安装etcdadm
+在Releases · kubernetes-sigs/etcdadm · GitHub中选择需要部署的版本，示例如下：
+123wget https://github.com/kubernetes-sigs/etcdadm/releases/download/v0.1.5/etcdadm-linux-amd64mv etcdadm-linux-amd64 /usr/......
         </div>
     </a>
     
@@ -245,18 +240,19 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/keycreate-permission-denied/">
         <h2 class="post-title">
                         
-            runc-v1.1.3-exec-failed
+            keycreate permission denied
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             问题描述
-当使用runc 1.1.3的版本时，如果执行systemctl daemon-reload后，通过exec进入容器则会触发以下错误，无法进入容器。
-1FATA[0000] execing command in container: Internal error occurred: error executing command in container: failed to exe......
+1write /proc/self/attr/keycreate: permission denied
+具体报错：
+1kuberuntime_manager.go:758] createPodSandbox for pod "ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b......
         </div>
     </a>
     
@@ -267,6 +263,102 @@
         <div class="tags">
             
               <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/file/linux-file-system/">
+        <h2 class="post-title">
+                        
+            Linux文件系统
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 文件系统
+文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
+不同Linux发行版本之间的文件系统差别很少，主要表现在系统管理的特色工具以及软件包管理方式的不同，文件目录结构基本上都是一样的。
+
+ext2 ： 早期linux中常用的文件系统；
+ext3 ： ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/basis/errors/">
+        <h2 class="post-title">
+                        
+            错误处理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            错误处理
+1. error接口
+1234567891011121314//定义error接口type error interface&#123;  Error() string&#125;//调用error接口func Foo(param int) (n int,err error)&#123;  //...&#125;n,err:=Foo(0)if err!=nil&#123;  //错误......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/basis/control-structures/">
+        <h2 class="post-title">
+                        
+            流程语句
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            流程语句
+1. 条件语句
+12345678910111213141516//在if之后条件语句之前可以添加变量初始化语句，用;号隔离if &lt;条件语句&gt; &#123;    //条件语句不需要用括号括起来，花括号必须存在  //语句体&#125;else&#123;  //语句体&#125;//在有返回值的函数中，不允许将最后的return语句放在if...else...的结构中，......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -391,41 +483,6 @@ LVM概念图：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/disk/disk-command/">
-        <h2 class="post-title">
-                        
-            磁盘命令
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 判断磁盘是SSD或HDD盘
-1、没有使用raid方案
-lsblk -d -o name,rota命令，0表示SSD，1表示HDD
-12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
-2、使用raid方案
-下载工具
-1wget https://raw.githubusercontent.com/eLvErDe/......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#disk" title="disk">disk</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/golang-notes/basis/data-types/">
         <h2 class="post-title">
                         
@@ -461,18 +518,22 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/errors/">
+    <a href="/article/linux-notes/disk/disk-command/">
         <h2 class="post-title">
                         
-            错误处理
+            磁盘命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            错误处理
-1. error接口
-1234567891011121314//定义error接口type error interface&#123;  Error() string&#125;//调用error接口func Foo(param int) (n int,err error)&#123;  //...&#125;n,err:=Foo(0)if err!=nil&#123;  //错误......
+            1. 判断磁盘是SSD或HDD盘
+1、没有使用raid方案
+lsblk -d -o name,rota命令，0表示SSD，1表示HDD
+12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
+2、使用raid方案
+下载工具
+1wget https://raw.githubusercontent.com/eLvErDe/......
         </div>
     </a>
     
@@ -482,78 +543,7 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
         </p>
         <div class="tags">
             
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/file/linux-file-system/">
-        <h2 class="post-title">
-                        
-            Linux文件系统
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 文件系统
-文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
-不同Linux发行版本之间的文件系统差别很少，主要表现在系统管理的特色工具以及软件包管理方式的不同，文件目录结构基本上都是一样的。
-
-ext2 ： 早期linux中常用的文件系统；
-ext3 ： ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/file/linux-file-storage/">
-        <h2 class="post-title">
-                        
-            Linux文件存储
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            文件存储结构
-大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
-
-目录项：包括文件名和inode节点号。
-Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
-数据块：包含文件的具体内容。
-
-1. inode
-理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#disk" title="disk">disk</a>
             
         </div>
     
@@ -626,11 +616,15 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
             
         
             
@@ -652,10 +646,6 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -664,9 +654,25 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -682,23 +688,7 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
             <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
-            
-        
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -712,9 +702,9 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
-            
         
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
             
@@ -730,9 +720,9 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
             
         
             
-        
-            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
+            
+        
             
         
             
@@ -848,7 +838,7 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/monitor/grafana-usage/">Grafana部署</a>
+          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>

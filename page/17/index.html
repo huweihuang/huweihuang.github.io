@@ -134,6 +134,13 @@
 
                         
                         <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
                             <a href="/tags/">Tags</a>
                         </li>
                         
@@ -142,13 +149,6 @@
                         
                         <li>
                             <a href="/about/">About</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
-                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,21 +211,25 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/node/nodeselector-and-taint/">
+    <a href="/article/kubernetes-notes/paas/12-factor/">
         <h2 class="post-title">
                         
-            指定节点调度与隔离
+            12 Factor
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. NodeSelector
-1.1. 概念
-如果需要限制Pod到指定的Node上运行，则可以给Node打标签并给Pod配置NodeSelector。
-1.2. 使用方式
-1.2.1. 给Node打标签
-12345678910111213# get node的namekubectl get nodes# 设置Labelkubectl label nodes &lt;node-name&gt......
+            
+以下主要介绍PaaS平台设计架构中使用到的方法论，统称为12-Factor(要素)
+
+简介
+软件通常会作为一种服务来交付，即软件即服务(SaaS)。12-Factor原则为构建SaaS应用提供了以下的方法论：
+
+使用标准化流程自动配置，减少开发者的学习成本。
+和操作系统解耦，使其可以在各个系统间提供最大的移植性。
+适合部署在现代的云计算平台上，从而在服务器和系统管理方面节省资源。
+将开发环......
         </div>
     </a>
     
@@ -245,28 +249,21 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/paas/k8s/">
+    <a href="/article/kubernetes-notes/operation/node/nodeselector-and-taint/">
         <h2 class="post-title">
                         
-            k8s知识体系
+            指定节点调度与隔离
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. k8s知识体系
-以下整理了k8s涉及的相关知识体系。
-
-思维导图：https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2
-2. k8s重点开源项目
-
-TODO
-
-
-
-			
-			
-			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPo......
+            1. NodeSelector
+1.1. 概念
+如果需要限制Pod到指定的Node上运行，则可以给Node打标签并给Pod配置NodeSelector。
+1.2. 使用方式
+1.2.1. 给Node打标签
+12345678910111213# get node的namekubectl get nodes# 设置Labelkubectl label nodes &lt;node-name&gt......
         </div>
     </a>
     
@@ -304,74 +301,6 @@ Supervisord 是用 Python 实现的一款的进程管理工具，supervisord 要
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
             2018-06-06
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/tools/ceph-fuse/">
-        <h2 class="post-title">
-                        
-            ceph-fuse的使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 安装ceph-fuse
-1yum install -y ceph-fuse
-如果安装失败，先执行以下命令，再执行上述安装命令
-1234yum -y install epel-releaserpm -Uhv http://download.ceph.com/rpm-jewel/el7/noarch/ceph-release-1-1.el7.noarch.rpm
-2. 配置客户端访问的ke......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-05-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Linux" title="Linux">Linux</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/tools/ssh-tips/">
-        <h2 class="post-title">
-                        
-            ssh tips
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. ssh/scp免密码
-A服务器地址：10.8.216.25，下面简称A
-B服务器地址：10.8.216.26，下面简称B
-实现A登录B免密码。
-1.1. 在A生成密钥对
-1ssh-keygen -C &lt;comment&gt; -f &lt;keyfile&gt; -t rsa -P "&lt;passphrase&gt;"
-执行上述命令，一路回车，会在当前登录用户的home目录下......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-05-01
         </p>
         <div class="tags">
             
@@ -529,20 +458,20 @@ hosts：配置ansible所连接的机器IP信息
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/vim/vimrc-cn/">
+    <a href="/article/linux-notes/tools/ceph-fuse/">
         <h2 class="post-title">
                         
-            vim 配置
+            ceph-fuse的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            vimrc 中文版
-
-由 https://blog.51cto.com/zpf666/2335640 转载
-
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071727374757......
+            1. 安装ceph-fuse
+1yum install -y ceph-fuse
+如果安装失败，先执行以下命令，再执行上述安装命令
+1234yum -y install epel-releaserpm -Uhv http://download.ceph.com/rpm-jewel/el7/noarch/ceph-release-1-1.el7.noarch.rpm
+2. 配置客户端访问的ke......
         </div>
     </a>
     
@@ -552,7 +481,77 @@ hosts：配置ansible所连接的机器IP信息
         </p>
         <div class="tags">
             
-              <a href="/tags/#VIM" title="VIM">VIM</a>
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/tools/ssh-tips/">
+        <h2 class="post-title">
+                        
+            ssh tips
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. ssh/scp免密码
+A服务器地址：10.8.216.25，下面简称A
+B服务器地址：10.8.216.26，下面简称B
+实现A登录B免密码。
+1.1. 在A生成密钥对
+1ssh-keygen -C &lt;comment&gt; -f &lt;keyfile&gt; -t rsa -P "&lt;passphrase&gt;"
+执行上述命令，一路回车，会在当前登录用户的home目录下......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-05-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/tools/nfs-usage/">
+        <h2 class="post-title">
+                        
+            NFS的使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. NFS简介
+NFS，是Network File System的简写，即网络文件系统。网络文件系统是FreeBSD支持的文件系统中的一种，也被称为NFS. NFS允许一个系统在网络上与他人共享目录和文件。
+通过使用NFS，用户和程序可以像访问本地文件一样访问远端系统上的文件。
+2. NFS的安装与配置
+2.1 服务端
+NFS需要安装nfs-utils、rpcbind两个包。
+123456......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-05-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
             
         </div>
     
@@ -625,11 +624,15 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
             
         
             
@@ -651,10 +654,6 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -663,9 +662,25 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -681,23 +696,7 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
             <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
-            
-        
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -711,9 +710,9 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
-            
         
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
             
@@ -729,9 +728,9 @@ hosts：配置ansible所连接的机器IP信息
             
         
             
-        
-            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
+            
+        
             
         
             
@@ -847,7 +846,7 @@ hosts：配置ansible所连接的机器IP信息
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/monitor/grafana-usage/">Grafana部署</a>
+          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>
