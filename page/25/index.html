@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -280,18 +280,20 @@ Engine执行Docker内部的一系列工作，每一项工作都......
 
 <div class="post-preview">
 
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-server/">
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
         <h2 class="post-title">
                         
-            [Docker] Docker源码分析（三）之Docker Server
+            [Docker] Docker源码分析（二）之Docker Daemon
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            一、Docker Server创建流程
-Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。
-Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供A......
+            一、Docker Daemon架构示意图
+
+Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
+Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
+运行过程的作用有以下几种可能：......
         </div>
     </a>
     
@@ -311,20 +313,22 @@ Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的J
 
 <div class="post-preview">
 
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
+    <a href="/article/docker/code-analysis/code-analysis-of-docker-client/">
         <h2 class="post-title">
                         
-            [Docker] Docker源码分析（二）之Docker Daemon
+            [Docker] Docker源码分析（一）之Docker Client
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            一、Docker Daemon架构示意图
+            一、创建Docker Client
+​    Docker是一个client/server的架构，通过二进制文件docker创建Docker客户端将请求类型与参数发送给Docker Server，Docker Server具体执行命令调用。
+Docker Client运行流程图如下：
 
-Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
-Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
-运行过程的作用有以下几种可能：......
+说明：本文分析的代码为Docker 1.2.0版本。
+（一）Docker命令flag参数解析
+Docker......
         </div>
     </a>
     
@@ -457,15 +461,15 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
+            <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
             <a href="/tags/#Ethereum" title="Ethereum" rel="2">Ethereum</a>
-            
-        
-            
-            <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
             
         
             
@@ -483,21 +487,17 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
-            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
             
         
             
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -509,6 +509,10 @@ Flannel官网：https://github.com/coreos/flannel
             
         
             
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
@@ -516,18 +520,6 @@ Flannel官网：https://github.com/coreos/flannel
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -540,6 +532,18 @@ Flannel官网：https://github.com/coreos/flannel
         
             
             <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             

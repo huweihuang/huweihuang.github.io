@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -452,55 +452,22 @@ kube-apiserver的cmd部分目录代码结构如下：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/memcached/memcached-cmd/">
+    <a href="/article/linux-notes/tcpip/tcp-udp/">
         <h2 class="post-title">
                         
-            Memcached命令
+            TCP与UDP协议
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Memcached 命令
-1.1. 存储命令
-1.1.1. 常用命令
+            1. 传输层的作用
+1.1. 传输层的定义
+IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的内容还是UDP的内容。同样，传输层，为了识别数据应该发给哪个应用也设定了这样的编号，即端口。
 
-
-
-命令
-说明
-
-
-
-
-set
-新增或更新
-
-
-add
-新增
-
-
-replace
-替换
-
-
-append
-在后面追加
-
-
-prepend
-在前面追加
-
-
-cas
-检查并设置
-
-
-
-以上几个命令语法格式相似，以set为例：
-12set key flags exptime bytes [noreply] value
-参......
+1.2. 通信处理
+应用协议大多以C/S形式运行，即服务端需提前启动服务，监听某个端口，当客户端往该端口发送数据时，可以及时处理请求。
+服务端程序在UNIX系统中称为守护进程，例如HTTP的服务......
         </div>
     </a>
     
@@ -510,7 +477,7 @@ cas
         </p>
         <div class="tags">
             
-              <a href="/tags/#Memcached" title="Memcached">Memcached</a>
+              <a href="/tags/#TCPIP" title="TCPIP">TCPIP</a>
             
         </div>
     
@@ -567,22 +534,35 @@ cas
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/tcpip/tcp-udp/">
+    <a href="/article/linux-notes/tcpip/http-basics/">
         <h2 class="post-title">
                         
-            TCP与UDP协议
+            HTTP基础
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 传输层的作用
-1.1. 传输层的定义
-IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的内容还是UDP的内容。同样，传输层，为了识别数据应该发给哪个应用也设定了这样的编号，即端口。
+            1. web及网络基础
+1.1. 通过HTTP访问web[C/S]
 
-1.2. 通信处理
-应用协议大多以C/S形式运行，即服务端需提前启动服务，监听某个端口，当客户端往该端口发送数据时，可以及时处理请求。
-服务端程序在UNIX系统中称为守护进程，例如HTTP的服务......
+1.2. TCP/IP四层模型
+
+1.2.1. 数据包的封装
+
+1.3. TCP/IP协议族
+1.3.1. 负责传输的IP协议
+使用ARP协议凭借MAC地址通信
+
+1.3.2. 确保可靠的TCP协议
+
+1.3.3. 负责域名解析的DNS服务
+
+1.3.4. 各协议与HTTP的关系
+
+1.4. URI与URL
+
+URI(Un......
         </div>
     </a>
     
@@ -647,15 +627,15 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
+            <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
             <a href="/tags/#Ethereum" title="Ethereum" rel="2">Ethereum</a>
-            
-        
-            
-            <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
             
         
             
@@ -673,21 +653,17 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
-            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
             
         
             
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -699,6 +675,10 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
@@ -706,18 +686,6 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -730,6 +698,18 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
         
             
             <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             

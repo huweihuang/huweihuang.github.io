@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/archive/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archive/">Archives</a>
                         </li>
                         
                     
@@ -211,19 +211,18 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-introduction/">
+    <a href="/article/golang-notes/basis/control-structures/">
         <h2 class="post-title">
                         
-            Linux介绍
+            流程语句
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Linux简介
-严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
-Linux内核版本
-Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
+            流程语句
+1. 条件语句
+12345678910111213141516//在if之后条件语句之前可以添加变量初始化语句，用;号隔离if &lt;条件语句&gt; &#123;    //条件语句不需要用括号括起来，花括号必须存在  //语句体&#125;else&#123;  //语句体&#125;//在有返回值的函数中，不允许将最后的return语句放在if...else...的结构中，......
         </div>
     </a>
     
@@ -233,7 +232,7 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -390,6 +389,44 @@ cobra-demo编译二进制执行的结果如下。具体代码参考：https://gi
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
+        <h2 class="post-title">
+                        
+            kubectl命令使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. kubectl命令介绍
+kubectl的命令语法
+1kubectl [command] [TYPE] [NAME] [flags]
+其中command，TYPE，NAME，和flags分别是：
+
+
+command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
+
+
+TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/linux-notes/network/iptables/">
         <h2 class="post-title">
                         
@@ -422,35 +459,28 @@ cobra-demo编译二进制执行的结果如下。具体代码参考：https://gi
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
+    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
         <h2 class="post-title">
                         
-            kubectl命令使用
+            Etcd中的k8s数据
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. kubectl命令介绍
-kubectl的命令语法
-1kubectl [command] [TYPE] [NAME] [flags]
-其中command，TYPE，NAME，和flags分别是：
-
-
-command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
-
-
-TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。......
+            1. 读取数据key
+使用以下命令列出所有的key。
+1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pk......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-08-13
+            2020-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
             
         </div>
     
@@ -519,37 +549,6 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
-        <h2 class="post-title">
-                        
-            Etcd中的k8s数据
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 读取数据key
-使用以下命令列出所有的key。
-1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pk......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -597,15 +596,15 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
+            <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
+            
+        
+            
             <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
             <a href="/tags/#Ethereum" title="Ethereum" rel="2">Ethereum</a>
-            
-        
-            
-            <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
             
         
             
@@ -623,21 +622,17 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
-            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
             
         
             
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
             
@@ -649,6 +644,10 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             
         
             
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
@@ -656,18 +655,6 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
             <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
             
         
             
@@ -680,6 +667,18 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
         
             
             <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
