@@ -141,14 +141,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -208,6 +208,39 @@
             
                 <!-- Main Content -->
 
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/redis/redis-cluster/">
+        <h2 class="post-title">
+                        
+            Redis集群模式部署
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Redis部署
+以下以Linux系统为例
+
+1.1 下载和编译1234$ wget http://download.redis.io/releases/redis-4.0.7.tar.gz$ tar xzf redis-4.0.7.tar.gz$ cd redis-4.0.7$ make
+编译完成后会在src目录下生成Redis服务端程序redis-server和客户端程序redis-......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-04-17
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Redis" title="Redis">Redis</a>
+            
+        </div>
+    
+
+</div>
+<hr>
 
 <div class="post-preview">
 
@@ -284,15 +317,13 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 部署Redis集群
-redis的安装及配置参考[redis部署]
+            1. 部署Redis集群redis的安装及配置参考[redis部署]
 
 本文以创建一主二从的集群为例。
 
-1.1 部署与配置
-先创建sentinel目录，在该目录下创建8000，8001，8002三个以端口号命名的目录。
+1.1 部署与配置先创建sentinel目录，在该目录下创建8000，8001，8002三个以端口号命名的目录。
 123mkdir sentinelcd sentinelmkdir 8000 8001 8002
-在对应端口号目录中创建redis.conf的文件，配置文件中的端口号po......
+在对应端口号目录中创建redis.conf的文件，配置文件中的端口号port......
         </div>
     </a>
     
@@ -321,8 +352,7 @@ redis的安装及配置参考[redis部署]
             
         </h3>
         <div class="post-content-preview">
-            1. kubernetes对象概述
-kubernetes中的对象是一些持久化的实体，可以理解为是对集群状态的描述或期望。
+            1. kubernetes对象概述kubernetes中的对象是一些持久化的实体，可以理解为是对集群状态的描述或期望。
 包括：
 
 集群中哪些node上运行了哪些容器化应用
@@ -330,7 +360,7 @@ kubernetes中的对象是一些持久化的实体，可以理解为是对集群�
 应用的执行策略，例如重启策略、更新策略、容错策略等。
 
 kubernetes的对象是一种意图（期望）的记录，kubernetes会始终保持预期创建的对象存在和集群运行在预期的状态下。
-操作kube......
+操作kuber......
         </div>
     </a>
     
@@ -359,13 +389,9 @@ kubernetes的对象是一种意图（期望）的记录，kubernetes会始终保
             
         </h3>
         <div class="post-content-preview">
-            1. 机器学习的概念
-1.1 Arthur Samuel的定义
-​	机器学习是在特定的编程环境下，给予机器学习能力的领域。
-1.2 Tom Mitchell的定义
-​	机器学习是指一个程序被认为能从经验 E 中学习，解决任务 T，达到性能度量值P，当且仅当，有了经验 E 后，经过 P 评判，程序在处理 T 时的性能有所提升。
-1.3 例子
-​	例如下棋程序经过自己与自己的下棋练习，最后棋力大......
+            1. 机器学习的概念1.1 Arthur Samuel的定义​    机器学习是在特定的编程环境下，给予机器学习能力的领域。
+1.2 Tom Mitchell的定义​    机器学习是指一个程序被认为能从经验 E 中学习，解决任务 T，达到性能度量值P，当且仅当，有了经验 E 后，经过 P 评判，程序在处理 T 时的性能有所提升。
+1.3 例子​    例如下棋程序经过自己与自己的下棋练习，......
         </div>
     </a>
     
@@ -394,9 +420,7 @@ kubernetes的对象是一种意图（期望）的记录，kubernetes会始终保
             
         </h3>
         <div class="post-content-preview">
-            1. client-go简介
-1.1 client-go说明
-​	client-go是一个调用kubernetes集群资源对象API的客户端，即通过client-go实现对kubernetes集群中资源对象（包括deployment、service、ingress、replicaSet、pod、namespace、node等）的增删改查等操作。大部分对kubernetes进行前置API封装的......
+            1. client-go简介1.1 client-go说明​    client-go是一个调用kubernetes集群资源对象API的客户端，即通过client-go实现对kubernetes集群中资源对象（包括deployment、service、ingress、replicaSet、pod、namespace、node等）的增删改查等操作。大部分对kubernetes进行前置API封装......
         </div>
     </a>
     
@@ -428,15 +452,12 @@ kubernetes的对象是一种意图（期望）的记录，kubernetes会始终保
         </h3>
         <div class="post-content-preview">
             1. Kubernetes的总架构图
-
-2. Kubernetes各个组件介绍
-2.1 kube-master[控制节点]
-master的工作流程图
+2. Kubernetes各个组件介绍2.1 kube-master[控制节点]master的工作流程图
 
 
 Kubecfg将特定的请求，比如创建Pod，发送给Kubernetes Client。
 Kubernetes Client将请求发送给API server。
-API Server根据请求的类型，比如创建Pod时storage类型是pods，......
+API Server根据请求的类型，比如创建Pod时storage类型是pods，然后依......
         </div>
     </a>
     
@@ -465,12 +486,11 @@ API Server根据请求的类型，比如创建Pod时storage类型是pods，.....
             
         </h3>
         <div class="post-content-preview">
-            1. 查看系统Event事件
- 1kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;
+            1. 查看系统Event事件 1kubectl describe pod &lt;PodName&gt; --namespace=&lt;NAMESPACE&gt;
 该命令可以显示Pod创建时的配置定义、状态等信息和最近的Event事件，事件信息可用于排错。例如当Pod状态为Pending，可通过查看Event事件确认原因，一般原因有几种：
 
 没有可用的Node可调度
-开启了资源配额管理并......
+开启了资源配额管理并且......
         </div>
     </a>
     
@@ -509,40 +529,6 @@ API Server根据请求的类型，比如创建Pod时storage类型是pods，.....
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
             2017-09-19
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/principle/component/kubernetes-core-principle-api-server/">
-        <h2 class="post-title">
-                        
-            Kubernetes核心原理（一）之API Server
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. API Server简介
-k8s API Server提供了k8s各类资源对象（pod,RC,Service等）的增删改查及watch等HTTP Rest接口，是整个系统的数据总线和数据中心。
-kubernetes API Server的功能：
-
-提供了集群管理的REST API接口(包括认证授权、数据校验以及集群状态变更)；
-提供其他模块之间的数据交互和通信的枢纽（其他模块通过API......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-09-18
         </p>
         <div class="tags">
             
@@ -615,19 +601,17 @@ kubernetes API Server的功能：
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
             
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -649,6 +633,10 @@ kubernetes API Server的功能：
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -657,17 +645,13 @@ kubernetes API Server的功能：
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
         
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
             <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
@@ -695,11 +679,11 @@ kubernetes API Server的功能：
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
             
         
             
@@ -711,11 +695,11 @@ kubernetes API Server的功能：
             
         
             
-            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
             
         
             
@@ -723,17 +707,21 @@ kubernetes API Server的功能：
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
         
             
             <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
-            
-        
-            
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -825,6 +813,10 @@ kubernetes API Server的功能：
     <ul>
       
         <li>
+          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
         </li>
       
@@ -838,10 +830,6 @@ kubernetes API Server的功能：
       
         <li>
           <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>
@@ -870,7 +858,7 @@ kubernetes API Server的功能：
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>

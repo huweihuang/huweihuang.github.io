@@ -141,14 +141,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,27 +211,32 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/access/rbac-auth/">
+    <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kubeadm/">
         <h2 class="post-title">
                         
-            使用 RBAC 鉴权
+            使用kubeadm部署生产环境kubernetes集群
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             
-本文基于https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/ 整理。
+本文为基于kubeadm搭建生产环境级别高可用的k8s集群。
 
-1. RBAC介绍
-基于角色的访问控制【Role-based access control (RBAC)】是一种基于组织中用户的角色来调节控制对 计算机或网络资源的访问的方法。
-RBAC 鉴权机制使用 rbac.authorization......
+1. 环境准备1.0. master硬件配置参考：
+
+Master节点规格
+
+高可靠推荐配置 - 容器服务 ACK - 阿里云
+
+
+Kubernetes集群Master节点上运行着etcd、kube-apiserver、kube-controller等核心组件，对于Kubernetes集群的稳定性有着至关重要的影响，对于生产环......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2022-08-13
+            2022-08-23
         </p>
         <div class="tags">
             
@@ -257,8 +262,7 @@ RBAC 鉴权机制使用 rbac.authorization......
             
 本文主要介绍部署openyurt组件到k8s集群中。
 
-1. 给云端节点和边缘节点打标签
-openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 apiserver 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 openyurt.io/is-edge-worker 的标签的方式来区分，false表示云端节点，tr......
+1. 给云端节点和边缘节点打标签openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 apiserver 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 openyurt.io/is-edge-worker 的标签的方式来区分，false表示云端节点，tru......
         </div>
     </a>
     
@@ -278,48 +282,30 @@ openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-introduction/">
+    <a href="/article/kubernetes-notes/operation/access/rbac-auth/">
         <h2 class="post-title">
                         
-            KubeVirt的介绍
+            使用 RBAC 鉴权
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             
-本文主要由云原生虚拟化：基于 Kubevirt 构建边缘计算实例文章重新整理而成。
+本文基于https://kubernetes.io/zh-cn/docs/reference/access-authn-authz/rbac/ 整理。
 
-1. kubevirt简介
-kubevirt是基于k8s之上，提供了一种通过k8s来编排和管理虚拟机的方式。
-2. 架构图
-
-2.1. 组件说明
-
-
-
-分类
-组件
-部署方式
-功能说明
-
-
-
-
-控制面
-virt-api
-deployment
-自定义API，开机、关机、重启等，作为apiserver的插件，业......
+1. RBAC介绍基于角色的访问控制【Role-based access control (RBAC)】是一种基于组织中用户的角色来调节控制对 计算机或网络资源的访问的方法。
+RBAC 鉴权机制使用 rbac.authorization.......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2022-07-10
+            2022-08-13
         </p>
         <div class="tags">
             
-              <a href="/tags/#KubeVirt" title="KubeVirt">KubeVirt</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -341,12 +327,10 @@ deployment
             
 本文由网络资源整理以作记录
 
-简介
-Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系统。在多云和混合云场景下，Karmada提供可插拔，全自动化管理多集群应用，实现多云集中管理、高可用性、故障恢复和流量调度。
+简介Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系统。在多云和混合云场景下，Karmada提供可插拔，全自动化管理多集群应用，实现多云集中管理、高可用性、故障恢复和流量调度。
 特性
-
 基于K8s原生API的跨集群应用管理，用户可以方便快捷地将应用从单集群迁移到多集群。
-中心式操作和管理Kubernete......
+中心式操作和管理Kubernetes集......
         </div>
     </a>
     
@@ -375,13 +359,11 @@ Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系�
             
         </h3>
         <div class="post-content-preview">
-            1. 安装kubevirt
-1.1. 修改镜像仓库
-针对私有环境，需要将所需镜像上传到自己的镜像仓库中。
+            1. 安装kubevirt1.1. 修改镜像仓库针对私有环境，需要将所需镜像上传到自己的镜像仓库中。
 涉及的镜像组件有
 1234virt-operatorvirt-apivirt-controllervirt-launcher
 重命名镜像脚本如下:
-123456789101112131415161718192021222324252627282930#!/bin/bash# kubevi......
+123456789101112131415161718192021222324252627282930#!/bin/bash# kubevirt......
         </div>
     </a>
     
@@ -401,28 +383,46 @@ Karmada（Kubernetes Armada）是基于Kubernetes原生API的多集群管理系�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/trouble-shooting/configmap-yaml-format/">
+    <a href="/article/kubernetes-notes/kvm/kubevirt/kubevirt-introduction/">
         <h2 class="post-title">
                         
-            ConfigMap多行格式
+            KubeVirt的介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            问题
-configmap出现多行文本无法正常显示换行格式，而是以\n连接文本，查看和编辑时可读性很差。
-12345678910111213apiVersion: v1data:  config.yaml: "# log options\nlog_level: \"info\"\nlog_output: \"stderr\"\ncert_file:    \"/etc/webhook/cert......
+            
+本文主要由云原生虚拟化：基于 Kubevirt 构建边缘计算实例文章重新整理而成。
+
+1. kubevirt简介kubevirt是基于k8s之上，提供了一种通过k8s来编排和管理虚拟机的方式。
+2. 架构图
+2.1. 组件说明
+
+
+
+分类
+组件
+部署方式
+功能说明
+
+
+
+
+控制面
+virt-api
+deployment
+自定义API，开机、关机、重启等，作为apiserver的插件，业务通......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2022-06-23
+            2022-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
+              <a href="/tags/#KubeVirt" title="KubeVirt">KubeVirt</a>
             
         </div>
     
@@ -432,54 +432,24 @@ configmap出现多行文本无法正常显示换行格式，而是以\n连接文
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/setup/k8s-version-release/">
+    <a href="/article/kubernetes-notes/runtime/containerd/install-containerd/">
         <h2 class="post-title">
                         
-            k8s版本说明
+            安装Containerd
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. k8s版本号说明
-k8s维护最新三个版本的发布分支（[2022.7.2]当前最新三个版本为1.24、1.23、1.22），Kubernetes 1.19 和更新的版本获得大约 1 年的补丁支持。
-Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本，z 是补丁版本。遵循语义化版本规范。
-2. 版本偏差策略
-2.1. 支持的版本偏差
-总结：
+            1. Ubuntu安装containerd以下以Ubuntu为例
+
+说明：安装containerd与安装docker流程基本一致，差别在于不需要安装docker-ce
+
+containerd: apt-get install -y containerd.io
+docker: apt-get install docker-ce docker-ce-cli containerd.io
 
 
-kubel......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2022-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/containerd/containerd-ctl/">
-        <h2 class="post-title">
-                        
-            Containerd命令工具
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            crictl
-1234567#!/bin/bashCrictlVersion=$1CrictlVersion=$&#123;CrictlVersion:-1.24.2&#125;echo "--------------install crictl--------------"wget https://github.com/kubernetes-sigs/cri-tools/releases/......
+1. ......
         </div>
     </a>
     
@@ -499,25 +469,16 @@ kubel......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/runtime/containerd/install-containerd/">
+    <a href="/article/kubernetes-notes/runtime/containerd/containerd-ctl/">
         <h2 class="post-title">
                         
-            安装Containerd
+            Containerd命令工具
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Ubuntu安装containerd
-以下以Ubuntu为例
-
-说明：安装containerd与安装docker流程基本一致，差别在于不需要安装docker-ce
-
-containerd: apt-get install -y containerd.io
-docker: apt-get install docker-ce docker-ce-cli containerd.io
-
-
-1.......
+            crictl1234567#!/bin/bashCrictlVersion=$1CrictlVersion=$&#123;CrictlVersion:-1.24.2&#125;echo "--------------install crictl--------------"wget https://github.com/kubernetes-sigs/cri-tools/releases/d......
         </div>
     </a>
     
@@ -551,20 +512,15 @@ TODO
 
 参考：
 
-
 更新：移除 Dockershim 的常见问题 | Kubernetes
-
 
 别慌: Kubernetes 和 Docker | Kubernetes
 
-
 关于 dockershim 移除和使用兼容 CRI 运行时的文章 | Kubernetes
-
 
 KEP-2221: Removing dockershim from kubelete-dockershim
 
-
-Do......
+Dockers......
         </div>
     </a>
     
@@ -573,6 +529,36 @@ Do......
             2022-06-23
         </p>
         <div class="tags">
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/trouble-shooting/configmap-yaml-format/">
+        <h2 class="post-title">
+                        
+            ConfigMap多行格式
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            问题configmap出现多行文本无法正常显示换行格式，而是以\n连接文本，查看和编辑时可读性很差。
+12345678910111213apiVersion: v1data:  config.yaml: "# log options\nlog_level: \"info\"\nlog_output: \"stderr\"\ncert_file:    \"/etc/webhook/certs......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -641,19 +627,17 @@ Do......
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
             
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -675,6 +659,10 @@ Do......
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -683,17 +671,13 @@ Do......
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
         
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
             <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
@@ -721,11 +705,11 @@ Do......
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
             
         
             
@@ -737,11 +721,11 @@ Do......
             
         
             
-            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
             
         
             
@@ -749,17 +733,21 @@ Do......
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
         
             
             <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
-            
-        
-            
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -851,6 +839,10 @@ Do......
     <ul>
       
         <li>
+          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
         </li>
       
@@ -864,10 +856,6 @@ Do......
       
         <li>
           <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>
@@ -896,7 +884,7 @@ Do......
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>

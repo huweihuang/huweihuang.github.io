@@ -141,14 +141,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,6 +211,46 @@
 
 <div class="post-preview">
 
+    <a href="/article/k8s-source-code-analysis/kubelet/syncPod/">
+        <h2 class="post-title">
+            
+                <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
+                <!-- <i class="fa fa-thumb-tack" style="color:#F89E8C" ></i> -->
+                <!-- <i class="fa fa-thumb-tack" style="color:#1CB7ED" ></i> -->
+                <font color=#F4711F>置顶</font>
+                <!-- <font color=#F89E8C>置顶</font>  -->
+                <!-- <font color=#1CB7ED>置顶</font>  -->
+                        
+            kubelet源码分析（五）之 syncPod
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            kubelet源码分析（五）之 syncPod
+以下代码分析基于 kubernetes v1.12.0 版本。
+
+本文主要分析kubelet中syncPod的部分。
+1. managePodLoopmanagePodLoop通过读取podUpdateschannel的信息，执行syncPodFn函数，而syncPodFn函数在newPodWorkers的时候赋值了，即kubelet.sync......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-10-03
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#源码分析" title="源码分析">源码分析</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/setup/k8s-changelog/">
         <h2 class="post-title">
                         
@@ -220,20 +260,16 @@
             
         </h3>
         <div class="post-content-preview">
-            1.27
-参考：
-
+            1.27参考：
 
 Kubernetes 在 v1.27 中移除的特性和主要变更
 
-
 https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md#changelog-since-v1260
-
 
 202304 | K8s 1.27 正式发布 - DaoCloud Enterprise
 
 
-（......
+（一）重要......
         </div>
     </a>
     
@@ -264,16 +300,13 @@ https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md
         <div class="post-content-preview">
             开发一个k8s operator组件主要会用到以下几个仓库或工具：
 
-
 kubebuilder/operator-sdk：主要用于创建CRD对象。
-
 
 controller-manager：主要用于实现operator的controller逻辑。
 
 
 本文以kubebuilder的工具和controller-manager example为例。
-1. 准备工具环境及创建项目
-安装kubebu......
+1. 准备工具环境及创建项目安装kubebuild......
         </div>
     </a>
     
@@ -302,13 +335,11 @@ controller-manager：主要用于实现operator的controller逻辑。
             
         </h3>
         <div class="post-content-preview">
-            Deployment配置金丝雀发布
-金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。
-1. 设置发版节奏
-主要是两个字段的设置：
+            Deployment配置金丝雀发布金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。
+1. 设置发版节奏主要是两个字段的设置：
 
 maxSurge：最大发版实例数，可以创建的超出期望 Pod 个数的 Pod 数量。可以是百分比或者是数字。
-maxUn......
+maxUnav......
         </div>
     </a>
     
@@ -338,12 +369,11 @@ maxUn......
         </h3>
         <div class="post-content-preview">
             
-本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析tunnel-server的实现逻辑。
+本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析tunnel-server的实现逻辑。
 
-1. Tunnel-server简介
-云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:
+1. Tunnel-server简介云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:
 
-K8s 原生运维能......
+K8s 原生运维能力......
         </div>
     </a>
     
@@ -372,8 +402,7 @@ K8s 原生运维能......
             
         </h3>
         <div class="post-content-preview">
-            1. kube-prometheus-stack简介
-kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。
+            1. kube-prometheus-stack简介kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。
 各组件包括
 
 grafana
@@ -382,8 +411,7 @@ prometheus
 alertmanager
 node-exporter
 
-2. 安装kube-prometheus-stack
-执行以......
+2. 安装kube-prometheus-stack执行以下命......
         </div>
     </a>
     
@@ -412,15 +440,12 @@ node-exporter
             
         </h3>
         <div class="post-content-preview">
-            Docker部署
-1docker run -d -p 3000:3000 grafana/grafana:latest
-K8S部署
-helm部署
+            Docker部署1docker run -d -p 3000:3000 grafana/grafana:latest
+K8S部署helm部署
 123helm repo add grafana https://grafana.github.io/helm-chartshelm search repo grafana
 参考：
 
-
-Install Grafana | Grafana docum......
+Install Grafana | Grafana document......
         </div>
     </a>
     
@@ -449,10 +474,9 @@ Install Grafana | Grafana docum......
             
         </h3>
         <div class="post-content-preview">
-            1. Tunnel-Agent简介
-tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与云端的tunnel-server建立连接。以下分析tunnel-agent的源码逻辑。
+            1. Tunnel-Agent简介tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与云端的tunnel-server建立连接。以下分析tunnel-agent的源码逻辑。
 常用的启动参数：
-1234567- args:  - --node-name=$(NODE_NAME)  - --node-ip=$(POD_IP)  - --tunnelse......
+1234567- args:  - --node-name=$(NODE_NAME)  - --node-ip=$(POD_IP)  - --tunnelser......
         </div>
     </a>
     
@@ -481,11 +505,10 @@ tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与�
             
         </h3>
         <div class="post-content-preview">
-            1. kubeconfig说明
-默认情况下，kubectl 在 $HOME/.kube 目录下查找名为 config 的文件。 你可以通过设置 KUBECONFIG 环境变量或者设置 --kubeconfig参数来指定其他 kubeconfig 文件。
+            1. kubeconfig说明默认情况下，kubectl 在 $HOME/.kube 目录下查找名为 config 的文件。 你可以通过设置 KUBECONFIG 环境变量或者设置 --kubeconfig参数来指定其他 kubeconfig 文件。
 kubeconfig内容示例：
 以下证书以文件的形式读取。
-12345678910111213141516171819apiVersion:......
+12345678910111213141516171819apiVersion: ......
         </div>
     </a>
     
@@ -529,51 +552,6 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
         <div class="tags">
             
               <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/develop/develop-k8s/">
-        <h2 class="post-title">
-                        
-            k8s社区开发指南
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 社区说明
-1.1. Community membership
-
-
-
-Role
-Responsibilities
-Requirements
-Defined by
-
-
-
-
-Member
-Active contributor in the community
-Sponsored by 2 reviewers and multiple contributions to the project
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-03-02
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -642,19 +620,17 @@ Sponsored by 2 reviewers and multiple contributions to the project
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
             
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -676,6 +652,10 @@ Sponsored by 2 reviewers and multiple contributions to the project
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -684,17 +664,13 @@ Sponsored by 2 reviewers and multiple contributions to the project
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
         
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
             <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
@@ -722,11 +698,11 @@ Sponsored by 2 reviewers and multiple contributions to the project
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
             
         
             
@@ -738,11 +714,11 @@ Sponsored by 2 reviewers and multiple contributions to the project
             
         
             
-            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
             
         
             
@@ -750,17 +726,21 @@ Sponsored by 2 reviewers and multiple contributions to the project
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
         
             
             <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
-            
-        
-            
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -852,6 +832,10 @@ Sponsored by 2 reviewers and multiple contributions to the project
     <ul>
       
         <li>
+          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
         </li>
       
@@ -865,10 +849,6 @@ Sponsored by 2 reviewers and multiple contributions to the project
       
         <li>
           <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>
@@ -897,7 +877,7 @@ Sponsored by 2 reviewers and multiple contributions to the project
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>

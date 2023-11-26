@@ -141,14 +141,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,6 +211,39 @@
 
 <div class="post-preview">
 
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/NewSchedulerCommand/">
+        <h2 class="post-title">
+                        
+            kube-scheduler源码分析（一）之 NewSchedulerCommand
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+以下代码分析基于 kubernetes v1.12.0 版本。
+
+scheduler的cmd代码目录结构如下：
+12345678910111213141516171819kube-scheduler├── BUILD├── OWNERS├── app            # app的目录下主要为运行scheduler相关的对象│   ├── BUILD│   ├── config    ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-10-03
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#源码分析" title="源码分析">源码分析</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/k8s-source-code-analysis/kube-controller-manager/deployment-controller/">
         <h2 class="post-title">
                         
@@ -221,10 +254,9 @@
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（二）之 DeploymentController
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
-本文主要以deployment controller为例，分析该类controller的运行逻辑。此部分代码主要为位于pkg/controller/deployment。pkg/controller部分的代码包括了各种类......
+本文主要以deployment controller为例，分析该类controller的运行逻辑。此部分代码主要为位于pkg/controller/deployment。pkg/controller部分的代码包括了各种类型......
         </div>
     </a>
     
@@ -254,11 +286,10 @@
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（一）之 NewControllerManagerCommand
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 本文主要分析https://github.com/kubernetes/kubernetes/tree/v1.12.0/cmd/kube-controller-manager 部分的代码。
 
-本文主要分析 k......
+本文主要分析 ku......
         </div>
     </a>
     
@@ -288,12 +319,10 @@
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（四）之 syncLoopIteration
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析kubelet中syncLoopIteration部分。syncLoopIteration通过几种channel来对不同类型的事件进行监听并做增删改查的处理。
-1. syncLoop
-syncLoop是处理变更的循环。 它监听来自三种channe......
+1. syncLoopsyncLoop是处理变更的循环。 它监听来自三种channel（......
         </div>
     </a>
     
@@ -323,11 +352,10 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（三）之 startKubelet
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析startKubelet，其中主要是kubelet.Run部分，该部分的内容主要是初始化并运行一些manager。对于kubelet所包含的各种manager的执行逻辑和pod的生命周期管理逻辑待后续文章分析。
-后续的文章主要会分类分析pkg/kubele......
+后续的文章主要会分类分析pkg/kubelet......
         </div>
     </a>
     
@@ -357,13 +385,11 @@ syncLoop是处理变更的循环。 它监听来自三种channe......
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（二）之 NewMainKubelet
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 本文主要分析 https://github.com/kubernetes/kubernetes/tree/v1.12.0/pkg/kubelet 部分的代码。
 
 本文主要分析kubelet中的NewMainKubelet部分。
-1. NewMainKubelet
-N......
+1. NewMainKubeletNew......
         </div>
     </a>
     
@@ -393,11 +419,10 @@ N......
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（一）之 NewKubeletCommand
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 本文主要分析 https://github.com/kubernetes/kubernetes/tree/v1.12.0/cmd/kubelet 部分的代码。
 
-本文主要分析 kubernetes/cmd/kubelet部分，该部分主要涉及kubelet的参数......
+本文主要分析 kubernetes/cmd/kubelet部分，该部分主要涉及kubelet的参数解......
         </div>
     </a>
     
@@ -427,12 +452,11 @@ N......
         </h3>
         <div class="post-content-preview">
             kube-apiserver源码分析（一）之 NewAPIServerCommand
-
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析kube-apiserver中cmd部分的代码，即NewAPIServerCommand相关的代码。更多具体的逻辑待后续文章分析。
 kube-apiserver的cmd部分目录代码结构如下：
-12345678910kube-ap......
+12345678910kube-api......
         </div>
     </a>
     
@@ -452,53 +476,6 @@ kube-apiserver的cmd部分目录代码结构如下：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/tcpip/tcpip-basics/">
-        <h2 class="post-title">
-                        
-            TCPIP基础
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 基础知识
-1.1. 协议
-计算机与网络设备要相互通信，必须基于相同的方法。比如，如何探测到通信目标，使用哪种语言通信，如何结束通信等规则要事先确定。
-不同硬件，操作系统之间的通信都需要一种规则，我们将这种事先约定好的规则称之为协议。
-1.2. 地址
-地址：在某一范围内确认的唯一标识符，即数据包传到某一个范围，需要有一个明确唯一的目标地址。
-
-
-
-类型
-层
-地址
-说明
-
-
-
-
-端口号
-传......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#TCPIP" title="TCPIP">TCPIP</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/linux-notes/tcpip/http-message/">
         <h2 class="post-title">
                         
@@ -508,9 +485,7 @@ kube-apiserver的cmd部分目录代码结构如下：
             
         </h3>
         <div class="post-content-preview">
-            3. HTTP报文
-3.1. HTTP报文
-用于HTTP协议交互的信息被称为HTTP报文，客户端的HTTP报文叫做请求报文，服务端的叫做响应报文。报文大致分为报文首部和报文主体，但并不一定要有报文主体。
+            3. HTTP报文3.1. HTTP报文用于HTTP协议交互的信息被称为HTTP报文，客户端的HTTP报文叫做请求报文，服务端的叫做响应报文。报文大致分为报文首部和报文主体，但并不一定要有报文主体。
 
 3.2. 报文结构
 
@@ -533,7 +508,7 @@ kube-apiserver的cmd部分目录代码结构如下：
 
 
 首部字段
-请求和响应的各种条件和属性......
+请求和响应的各种条件和属性的各......
         </div>
     </a>
     
@@ -553,22 +528,49 @@ kube-apiserver的cmd部分目录代码结构如下：
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/tcpip/tcp-udp/">
+    <a href="/article/linux-notes/tcpip/http-code/">
         <h2 class="post-title">
                         
-            TCP与UDP协议
+            HTTP状态码
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 传输层的作用
-1.1. 传输层的定义
-IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的内容还是UDP的内容。同样，传输层，为了识别数据应该发给哪个应用也设定了这样的编号，即端口。
+            4. HTTP状态码状态码即服务器返回的请求结果。
 
-1.2. 通信处理
-应用协议大多以C/S形式运行，即服务端需提前启动服务，监听某个端口，当客户端往该端口发送数据时，可以及时处理请求。
-服务端程序在UNIX系统中称为守护进程，例如HTTP的服务......
+
+
+
+状态码
+类型
+说明
+
+
+
+
+1xx
+Informational(信息性状态码)
+接收的请求正在处理
+
+
+2xx
+Success(成功)
+请求正常处理完毕
+
+
+3xx
+Redirection(重定向)
+需要进行附加操作以完成请求
+
+
+4xx
+Client Error(客户端错误)
+服务器无法处理请求
+
+
+5xx
+Server Erro......
         </div>
     </a>
     
@@ -647,19 +649,17 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
-            
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
             
             <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
+            
+            <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
@@ -681,6 +681,10 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
             <a href="/tags/#disk" title="disk" rel="2">disk</a>
             
         
@@ -689,17 +693,13 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
         
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
             <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
             
         
             
@@ -727,11 +727,11 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
             
         
             
@@ -743,11 +743,11 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
-            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#Operator" title="Operator" rel="2">Operator</a>
             
         
             
@@ -755,17 +755,21 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
             
         
             
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            
+        
+            
+        
+            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            
         
             
             <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
-            
-        
-            
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -857,6 +861,10 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
     <ul>
       
         <li>
+          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+        </li>
+      
+        <li>
           <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
         </li>
       
@@ -870,10 +878,6 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
       
         <li>
           <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">kube-prometheus-stack的使用</a>
         </li>
       
     </ul>
@@ -902,7 +906,7 @@ IP首部有个协议字段，用来标识传输层协议，识别数据是TCP的
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
     </div>
 
         <hr>
