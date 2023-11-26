@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          kubelet源码分析（三）之 RunKubelet - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/k8s-source-code-analysis/kubelet/startKubelet/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>kubelet源码分析（三）之 RunKubelet</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-10-03
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="kubelet源码分析三之-startkubelet"><a href="#kubelet源码分析（三）之-startKubelet" class="headerlink" title="kubelet源码分析（三）之 startKubelet"></a>kubelet源码分析（三）之 startKubelet</h1><blockquote>
+<p>以下代码分析基于 <code>kubernetes v1.12.0</code> 版本。</p>
+</blockquote>
+<p>本文主要分析<code>startKubelet</code>，其中主要是<code>kubelet.Run</code>部分，该部分的内容主要是初始化并运行一些manager。对于kubelet所包含的各种manager的执行逻辑和pod的生命周期管理逻辑待后续文章分析。</p>
+<p>后续的文章主要会分类分析<code>pkg/kubelet</code>部分的代码实现。</p>
+<p><code>kubelet</code>的<code>pkg</code>代码目录结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">kubelet</span><br><span class="line">├── apis  <span class="comment"># 定义一些相关接口</span></span><br><span class="line">├── cadvisor <span class="comment"># cadvisor</span></span><br><span class="line">├── cm <span class="comment"># ContainerManager、cpu manger、cgroup manager </span></span><br><span class="line">├── config</span><br><span class="line">├── configmap <span class="comment"># configmap manager</span></span><br><span class="line">├── container  <span class="comment"># Runtime、ImageService</span></span><br><span class="line">├── dockershim  <span class="comment"># docker的相关调用</span></span><br><span class="line">├── eviction <span class="comment"># eviction manager</span></span><br><span class="line">├── images  <span class="comment"># image manager</span></span><br><span class="line">├── kubeletconfig  </span><br><span class="line">├── kuberuntime <span class="comment"># 核心：kubeGenericRuntimeManager、runtime容器的相关操作</span></span><br><span class="line">├── lifecycle</span><br><span class="line">├── mountpod</span><br><span class="line">├── network  <span class="comment"># pod dns</span></span><br><span class="line">├── nodelease</span><br><span class="line">├── nodestatus  <span class="comment"># MachineInfo、节点相关信息</span></span><br><span class="line">├── pleg  <span class="comment"># PodLifecycleEventGenerator</span></span><br><span class="line">├── pod  <span class="comment"># 核心：pod manager、mirror pod</span></span><br><span class="line">├── preemption</span><br><span class="line">├── qos  <span class="comment"># 资源服务质量，不过暂时内容很少</span></span><br><span class="line">├── remote <span class="comment"># RemoteRuntimeService</span></span><br><span class="line">├── server</span><br><span class="line">├── stats <span class="comment"># StatsProvider</span></span><br><span class="line">├── status <span class="comment"># status manager</span></span><br><span class="line">├── types  <span class="comment"># PodUpdate、PodOperation</span></span><br><span class="line">├── volumemanager <span class="comment"># VolumeManager</span></span><br><span class="line">├── kubelet.go  <span class="comment"># 核心: SyncHandler、kubelet的大部分操作</span></span><br><span class="line">├── kubelet_getters.go <span class="comment"># 各种get操作，例如获取相关目录：getRootDir、getPodsDir、getPluginsDir</span></span><br><span class="line">├── kubelet_network.go <span class="comment"># </span></span><br><span class="line">├── kubelet_network_linux.go</span><br><span class="line">├── kubelet_node_status.go <span class="comment"># registerWithAPIServer、initialNode、syncNodeStatus</span></span><br><span class="line">├── kubelet_pods.go <span class="comment"># 核心：pod的增删改查等相关操作、podKiller、</span></span><br><span class="line">├── kubelet_resources.go</span><br><span class="line">├── kubelet_volumes.go <span class="comment"># ListVolumesForPod、cleanupOrphanedPodDirs</span></span><br><span class="line">├── oom_watcher.go  <span class="comment"># OOMWatcher</span></span><br><span class="line">├── pod_container_deletor.go</span><br><span class="line">├── pod_workers.go <span class="comment"># 核心：PodWorkers、UpdatePodOptions、syncPodOptions、managePodLoop</span></span><br><span class="line">├── runonce.go  <span class="comment"># RunOnce</span></span><br><span class="line">├── runtime.go</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h1 id="1-startkubelet"><a href="#1-startKubelet" class="headerlink" title="1. startKubelet"></a>1. <a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kubelet/app/server.go#L1018" target="_blank" rel="noopener">startKubelet</a></h1><p><code>startKubelet</code>的函数位于<code>cmd/kubelet/app/server.go</code>，启动并运行一个kubelet，运行kubelet的逻辑代码位于<code>pkg/kubelet/kubelet.go</code>。</p>
+<p><strong>主要内容如下：</strong></p>
+<ol>
+<li>运行一个kubelet，执行kubelet中各种manager的相关逻辑。</li>
+<li>运行kubelet server启动监听服务。</li>
+</ol>
+<blockquote>
+<p>此部分代码位于cmd/kubelet/app/server.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">startKubelet</span><span class="params">(k kubelet.Bootstrap, podCfg *config.PodConfig, kubeCfg *kubeletconfiginternal.KubeletConfiguration, kubeDeps *kubelet.Dependencies, enableServer <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// start the kubelet</span></span><br><span class="line">	<span class="keyword">go</span> wait.Until(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		k.Run(podCfg.Updates())</span><br><span class="line">	&#125;, <span class="number">0</span>, wait.NeverStop)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// start the kubelet server</span></span><br><span class="line">	<span class="keyword">if</span> enableServer &#123;</span><br><span class="line">		<span class="keyword">go</span> k.ListenAndServe(net.ParseIP(kubeCfg.Address), <span class="keyword">uint</span>(kubeCfg.Port), kubeDeps.TLSOptions, kubeDeps.Auth, kubeCfg.EnableDebuggingHandlers, kubeCfg.EnableContentionProfiling)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> kubeCfg.ReadOnlyPort &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">go</span> k.ListenAndServeReadOnly(net.ParseIP(kubeCfg.Address), <span class="keyword">uint</span>(kubeCfg.ReadOnlyPort))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="2-kubeletrun"><a href="#2-Kubelet-Run" class="headerlink" title="2. Kubelet.Run"></a>2. <a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/kubelet/kubelet.go#L1382" target="_blank" rel="noopener">Kubelet.Run</a></h1><p><code>Kubelet.Run</code>方法主要将<code>NewMainKubelet</code>构造的各种manager运行起来，让各种manager执行相应的功能，大部分manager为常驻进程的方式运行。</p>
+<p>Kubelet.Run完整代码如下：</p>
+<blockquote>
+<p>此部分代码位于pkg/kubelet/kubelet.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run starts the kubelet reacting to config updates</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span> <span class="title">Run</span><span class="params">(updates &lt;-<span class="keyword">chan</span> kubetypes.PodUpdate)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> kl.logServer == <span class="literal">nil</span> &#123;</span><br><span class="line">		kl.logServer = http.StripPrefix(<span class="string">"/logs/"</span>, http.FileServer(http.Dir(<span class="string">"/var/log/"</span>)))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> kl.kubeClient == <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Warning(<span class="string">"No api server defined - no node status update will be sent."</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start the cloud provider sync manager</span></span><br><span class="line">	<span class="keyword">if</span> kl.cloudResourceSyncManager != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">go</span> kl.cloudResourceSyncManager.Run(wait.NeverStop)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := kl.initializeModules(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		kl.recorder.Eventf(kl.nodeRef, v1.EventTypeWarning, events.KubeletSetupFailed, err.Error())</span><br><span class="line">		glog.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start volume manager</span></span><br><span class="line">	<span class="keyword">go</span> kl.volumeManager.Run(kl.sourcesReady, wait.NeverStop)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> kl.kubeClient != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// Start syncing node status immediately, this may set up things the runtime needs to run.</span></span><br><span class="line">		<span class="keyword">go</span> wait.Until(kl.syncNodeStatus, kl.nodeStatusUpdateFrequency, wait.NeverStop)</span><br><span class="line">		<span class="keyword">go</span> kl.fastStatusUpdateOnce()</span><br><span class="line"></span><br><span class="line">		<span class="comment">// start syncing lease</span></span><br><span class="line">		<span class="keyword">if</span> utilfeature.DefaultFeatureGate.Enabled(features.NodeLease) &#123;</span><br><span class="line">			<span class="keyword">go</span> kl.nodeLeaseController.Run(wait.NeverStop)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">go</span> wait.Until(kl.updateRuntimeUp, <span class="number">5</span>*time.Second, wait.NeverStop)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start loop to sync iptables util rules</span></span><br><span class="line">	<span class="keyword">if</span> kl.makeIPTablesUtilChains &#123;</span><br><span class="line">		<span class="keyword">go</span> wait.Until(kl.syncNetworkUtil, <span class="number">1</span>*time.Minute, wait.NeverStop)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start a goroutine responsible for killing pods (that are not properly</span></span><br><span class="line">	<span class="comment">// handled by pod workers).</span></span><br><span class="line">	<span class="keyword">go</span> wait.Until(kl.podKiller, <span class="number">1</span>*time.Second, wait.NeverStop)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start component sync loops.</span></span><br><span class="line">	kl.statusManager.Start()</span><br><span class="line">	kl.probeManager.Start()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start syncing RuntimeClasses if enabled.</span></span><br><span class="line">	<span class="keyword">if</span> kl.runtimeClassManager != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">go</span> kl.runtimeClassManager.Run(wait.NeverStop)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start the pod lifecycle event generator.</span></span><br><span class="line">	kl.pleg.Start()</span><br><span class="line">	kl.syncLoop(updates, kl)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>以下对<code>Kubelet.Run</code>分段进行分析。</p>
+<h1 id="3-initializemodules"><a href="#3-initializeModules" class="headerlink" title="3. initializeModules"></a>3. initializeModules</h1><p><code>initializeModules</code>包含了<code>imageManager</code>、<code>serverCertificateManager</code>、<code>oomWatcher</code>和<code>resourceAnalyzer</code>。</p>
+<p><strong>主要流程如下：</strong></p>
+<ol>
+<li>创建文件系统目录，包括kubelet的root目录、pods的目录、plugins的目录和容器日志目录。</li>
+<li>启动imageManager、serverCertificateManager、oomWatcher、resourceAnalyzer。</li>
+</ol>
+<p><strong>各种manager的说明如下：</strong></p>
+<ul>
+<li><code>imageManager</code>：负责镜像垃圾回收。</li>
+<li><code>serverCertificateManager</code>：负责处理证书。</li>
+<li><code>oomWatcher</code>：监控内存使用，是否发生内存耗尽。</li>
+<li><code>resourceAnalyzer</code>：监控资源使用情况。</li>
+</ul>
+<p>完整代码如下：</p>
+<blockquote>
+<p>此部分代码位于pkg/kubelet/kubelet.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// initializeModules will initialize internal modules that do not require the container runtime to be up.</span></span><br><span class="line"><span class="comment">// Note that the modules here must not depend on modules that are not initialized here.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span> <span class="title">initializeModules</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="comment">// Prometheus metrics.</span></span><br><span class="line">	metrics.Register(kl.runtimeCache, collectors.NewVolumeStatsCollector(kl))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Setup filesystem directories.</span></span><br><span class="line">	<span class="keyword">if</span> err := kl.setupDataDirs(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// If the container logs directory does not exist, create it.</span></span><br><span class="line">	<span class="keyword">if</span> _, err := os.Stat(ContainerLogsDir); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := kl.os.MkdirAll(ContainerLogsDir, <span class="number">0755</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			glog.Errorf(<span class="string">"Failed to create directory %q: %v"</span>, ContainerLogsDir, err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start the image manager.</span></span><br><span class="line">	kl.imageManager.Start()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start the certificate manager if it was enabled.</span></span><br><span class="line">	<span class="keyword">if</span> kl.serverCertificateManager != <span class="literal">nil</span> &#123;</span><br><span class="line">		kl.serverCertificateManager.Start()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start out of memory watcher.</span></span><br><span class="line">	<span class="keyword">if</span> err := kl.oomWatcher.Start(kl.nodeRef); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"Failed to start OOM watcher %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start resource analyzer</span></span><br><span class="line">	kl.resourceAnalyzer.Start()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="31-setupdatadirs"><a href="#3-1-setupDataDirs" class="headerlink" title="3.1. setupDataDirs"></a>3.1. setupDataDirs</h2><p><code>initializeModules</code>先创建相关目录。</p>
+<p>具体目录如下：</p>
+<ul>
+<li><code>ContainerLogsDir</code>：目录为/var/log/containers。</li>
+<li><code>rootDirectory</code>：由参数传入，一般为<code>/var/lib/kubelet</code>。</li>
+<li><code>PodsDir</code>：目录为{rootDirectory}/pods。</li>
+<li><code>PluginsDir</code>：目录为{rootDirectory}/plugins。</li>
+</ul>
+<p><strong>initializeModules中setupDataDirs的相关代码如下：</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Setup filesystem directories.</span></span><br><span class="line"><span class="keyword">if</span> err := kl.setupDataDirs(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// If the container logs directory does not exist, create it.</span></span><br><span class="line"><span class="keyword">if</span> _, err := os.Stat(ContainerLogsDir); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := kl.os.MkdirAll(ContainerLogsDir, <span class="number">0755</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Errorf(<span class="string">"Failed to create directory %q: %v"</span>, ContainerLogsDir, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>setupDataDirs代码如下</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setupDataDirs creates:</span></span><br><span class="line"><span class="comment">// 1.  the root directory</span></span><br><span class="line"><span class="comment">// 2.  the pods directory</span></span><br><span class="line"><span class="comment">// 3.  the plugins directory</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span> <span class="title">setupDataDirs</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	kl.rootDirectory = path.Clean(kl.rootDirectory)</span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(kl.getRootDir(), <span class="number">0750</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"error creating root directory: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := kl.mounter.MakeRShared(kl.getRootDir()); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"error configuring root directory: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(kl.getPodsDir(), <span class="number">0750</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"error creating pods directory: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(kl.getPluginsDir(), <span class="number">0750</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"error creating plugins directory: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="32-manager"><a href="#3-2-manager" class="headerlink" title="3.2. manager"></a>3.2. manager</h2><p><strong>initializeModules中的manager如下：</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start the image manager.</span></span><br><span class="line">kl.imageManager.Start()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Start the certificate manager if it was enabled.</span></span><br><span class="line"><span class="keyword">if</span> kl.serverCertificateManager != <span class="literal">nil</span> &#123;</span><br><span class="line">	kl.serverCertificateManager.Start()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Start out of memory watcher.</span></span><br><span class="line"><span class="keyword">if</span> err := kl.oomWatcher.Start(kl.nodeRef); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Errorf(<span class="string">"Failed to start OOM watcher %v"</span>, err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Start resource analyzer</span></span><br><span class="line">kl.resourceAnalyzer.Start()</span><br></pre></td></tr></table></figure>
+<h1 id="4-运行各种manager"><a href="#4-运行各种manager" class="headerlink" title="4. 运行各种manager"></a>4. 运行各种manager</h1><h2 id="41-volumemanager"><a href="#4-1-volumeManager" class="headerlink" title="4.1. volumeManager"></a>4.1. volumeManager</h2><p><code>volumeManager</code>主要运行一组异步循环，根据在此节点上安排的pod调整哪些volume需要<code>attached/detached/mounted/unmounted</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start volume manager</span></span><br><span class="line"><span class="keyword">go</span> kl.volumeManager.Run(kl.sourcesReady, wait.NeverStop)</span><br></pre></td></tr></table></figure>
+<p><code>volumeManager.Run</code>实现代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(vm *volumeManager)</span> <span class="title">Run</span><span class="params">(sourcesReady config.SourcesReady, stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> runtime.HandleCrash()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> vm.desiredStateOfWorldPopulator.Run(sourcesReady, stopCh)</span><br><span class="line">	glog.V(<span class="number">2</span>).Infof(<span class="string">"The desired_state_of_world populator starts"</span>)</span><br><span class="line"></span><br><span class="line">	glog.Infof(<span class="string">"Starting Kubelet Volume Manager"</span>)</span><br><span class="line">	<span class="keyword">go</span> vm.reconciler.Run(stopCh)</span><br><span class="line"></span><br><span class="line">	metrics.Register(vm.actualStateOfWorld, vm.desiredStateOfWorld, vm.volumePluginMgr)</span><br><span class="line"></span><br><span class="line">	&lt;-stopCh</span><br><span class="line">	glog.Infof(<span class="string">"Shutting down Kubelet Volume Manager"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="42-syncnodestatus"><a href="#4-2-syncNodeStatus" class="headerlink" title="4.2. syncNodeStatus"></a>4.2. syncNodeStatus</h2><p><code>syncNodeStatus</code>通过goroutine的方式定期执行，它将节点的状态同步给master，必要的时候注册kubelet。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> kl.kubeClient != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="comment">// Start syncing node status immediately, this may set up things the runtime needs to run.</span></span><br><span class="line">	<span class="keyword">go</span> wait.Until(kl.syncNodeStatus, kl.nodeStatusUpdateFrequency, wait.NeverStop)</span><br><span class="line">	<span class="keyword">go</span> kl.fastStatusUpdateOnce()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// start syncing lease</span></span><br><span class="line">	<span class="keyword">if</span> utilfeature.DefaultFeatureGate.Enabled(features.NodeLease) &#123;</span><br><span class="line">		<span class="keyword">go</span> kl.nodeLeaseController.Run(wait.NeverStop)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="43-updateruntimeup"><a href="#4-3-updateRuntimeUp" class="headerlink" title="4.3. updateRuntimeUp"></a>4.3. updateRuntimeUp</h2><p><code>updateRuntimeUp</code>调用容器运行时状态回调，在容器运行时首次启动时初始化运行时相关模块，如果状态检查失败则返回错误。 如果状态检查正常，在kubelet runtimeState中更新容器运行时的正常运行时间。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> wait.Until(kl.updateRuntimeUp, <span class="number">5</span>*time.Second, wait.NeverStop)</span><br></pre></td></tr></table></figure>
+<h2 id="44-syncnetworkutil"><a href="#4-4-syncNetworkUtil" class="headerlink" title="4.4. syncNetworkUtil"></a>4.4. syncNetworkUtil</h2><p>通过循环的方式同步iptables的规则，不过当前代码并没有执行任何操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start loop to sync iptables util rules</span></span><br><span class="line"><span class="keyword">if</span> kl.makeIPTablesUtilChains &#123;</span><br><span class="line">	<span class="keyword">go</span> wait.Until(kl.syncNetworkUtil, <span class="number">1</span>*time.Minute, wait.NeverStop)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="45-podkiller"><a href="#4-5-podKiller" class="headerlink" title="4.5. podKiller"></a>4.5. podKiller</h2><p>但pod没有被podworker正确处理的时候，启动一个goroutine负责杀死pod。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start a goroutine responsible for killing pods (that are not properly</span></span><br><span class="line"><span class="comment">// handled by pod workers).</span></span><br><span class="line"><span class="keyword">go</span> wait.Until(kl.podKiller, <span class="number">1</span>*time.Second, wait.NeverStop)</span><br></pre></td></tr></table></figure>
+<p><code>podKiller</code>代码如下：</p>
+<blockquote>
+<p>此部分代码位于pkg/kubelet/kubelet_pods.go</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// podKiller launches a goroutine to kill a pod received from the channel if</span></span><br><span class="line"><span class="comment">// another goroutine isn't already in action.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span> <span class="title">podKiller</span><span class="params">()</span></span> &#123;</span><br><span class="line">	killing := sets.NewString()</span><br><span class="line">	<span class="comment">// guard for the killing set</span></span><br><span class="line">	lock := sync.Mutex&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> podPair := <span class="keyword">range</span> kl.podKillingCh &#123;</span><br><span class="line">		runningPod := podPair.RunningPod</span><br><span class="line">		apiPod := podPair.APIPod</span><br><span class="line"></span><br><span class="line">		lock.Lock()</span><br><span class="line">		exists := killing.Has(<span class="keyword">string</span>(runningPod.ID))</span><br><span class="line">		<span class="keyword">if</span> !exists &#123;</span><br><span class="line">			killing.Insert(<span class="keyword">string</span>(runningPod.ID))</span><br><span class="line">		&#125;</span><br><span class="line">		lock.Unlock()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> !exists &#123;</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(apiPod *v1.Pod, runningPod *kubecontainer.Pod)</span></span> &#123;</span><br><span class="line">				glog.V(<span class="number">2</span>).Infof(<span class="string">"Killing unwanted pod %q"</span>, runningPod.Name)</span><br><span class="line">				err := kl.killPod(apiPod, runningPod, <span class="literal">nil</span>, <span class="literal">nil</span>)</span><br><span class="line">				<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">					glog.Errorf(<span class="string">"Failed killing the pod %q: %v"</span>, runningPod.Name, err)</span><br><span class="line">				&#125;</span><br><span class="line">				lock.Lock()</span><br><span class="line">				killing.Delete(<span class="keyword">string</span>(runningPod.ID))</span><br><span class="line">				lock.Unlock()</span><br><span class="line">			&#125;(apiPod, runningPod)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="46-statusmanager"><a href="#4-6-statusManager" class="headerlink" title="4.6. statusManager"></a>4.6. statusManager</h2><p>使用apiserver同步pods状态; 也用作状态缓存。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start component sync loops.</span></span><br><span class="line">kl.statusManager.Start()</span><br></pre></td></tr></table></figure>
+<p><code>statusManager.Start</code>的实现代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *manager)</span> <span class="title">Start</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// Don't start the status manager if we don't have a client. This will happen</span></span><br><span class="line">	<span class="comment">// on the master, where the kubelet is responsible for bootstrapping the pods</span></span><br><span class="line">	<span class="comment">// of the master components.</span></span><br><span class="line">	<span class="keyword">if</span> m.kubeClient == <span class="literal">nil</span> &#123;</span><br><span class="line">		glog.Infof(<span class="string">"Kubernetes client is nil, not starting status manager."</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	glog.Info(<span class="string">"Starting to sync pod status with apiserver"</span>)</span><br><span class="line">	syncTicker := time.Tick(syncPeriod)</span><br><span class="line">	<span class="comment">// syncPod and syncBatch share the same go routine to avoid sync races.</span></span><br><span class="line">	<span class="keyword">go</span> wait.Forever(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> syncRequest := &lt;-m.podStatusChannel:</span><br><span class="line">			glog.V(<span class="number">5</span>).Infof(<span class="string">"Status Manager: syncing pod: %q, with status: (%d, %v) from podStatusChannel"</span>,</span><br><span class="line">				syncRequest.podUID, syncRequest.status.version, syncRequest.status.status)</span><br><span class="line">			m.syncPod(syncRequest.podUID, syncRequest.status)</span><br><span class="line">		<span class="keyword">case</span> &lt;-syncTicker:</span><br><span class="line">			m.syncBatch()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;, <span class="number">0</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="47-probemanager"><a href="#4-7-probeManager" class="headerlink" title="4.7. probeManager"></a>4.7. probeManager</h2><p>处理容器探针</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kl.probeManager.Start()</span><br></pre></td></tr></table></figure>
+<h2 id="48-runtimeclassmanager"><a href="#4-8-runtimeClassManager" class="headerlink" title="4.8. runtimeClassManager"></a>4.8. runtimeClassManager</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start syncing RuntimeClasses if enabled.</span></span><br><span class="line"><span class="keyword">if</span> kl.runtimeClassManager != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">go</span> kl.runtimeClassManager.Run(wait.NeverStop)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="49-podlifecycleeventgenerator"><a href="#4-9-PodLifecycleEventGenerator" class="headerlink" title="4.9. PodLifecycleEventGenerator"></a>4.9. PodLifecycleEventGenerator</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start the pod lifecycle event generator.</span></span><br><span class="line">kl.pleg.Start()</span><br></pre></td></tr></table></figure>
+<p><code>PodLifecycleEventGenerator</code>是一个pod生命周期时间生成器接口，具体如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PodLifecycleEventGenerator contains functions for generating pod life cycle events.</span></span><br><span class="line"><span class="keyword">type</span> PodLifecycleEventGenerator <span class="keyword">interface</span> &#123;</span><br><span class="line">	Start()</span><br><span class="line">	Watch() <span class="keyword">chan</span> *PodLifecycleEvent</span><br><span class="line">	Healthy() (<span class="keyword">bool</span>, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>start方法具体实现如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start spawns a goroutine to relist periodically.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *GenericPLEG)</span> <span class="title">Start</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> wait.Until(g.relist, g.relistPeriod, wait.NeverStop)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="410-syncloop"><a href="#4-10-syncLoop" class="headerlink" title="4.10. syncLoop"></a>4.10. syncLoop</h2><p>最后调用<code>syncLoop</code>来执行同步变化变更的循环。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kl.syncLoop(updates, kl)</span><br></pre></td></tr></table></figure>
+<h1 id="5-syncloop"><a href="#5-syncLoop" class="headerlink" title="5. syncLoop"></a>5. syncLoop</h1><p><code>syncLoop</code>是处理变化的循环。 它监听来自三种channel（file，apiserver和http）的更改。 对于看到的任何新更改，将针对所需状态和运行状态运行同步。 如果没有看到配置的变化，将在每个同步频率秒同步最后已知的所需状态。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// syncLoop is the main loop for processing changes. It watches for changes from</span></span><br><span class="line"><span class="comment">// three channels (file, apiserver, and http) and creates a union of them. For</span></span><br><span class="line"><span class="comment">// any new change seen, will run a sync against desired state and running state. If</span></span><br><span class="line"><span class="comment">// no changes are seen to the configuration, will synchronize the last known desired</span></span><br><span class="line"><span class="comment">// state every sync-frequency seconds. Never returns.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(kl *Kubelet)</span> <span class="title">syncLoop</span><span class="params">(updates &lt;-<span class="keyword">chan</span> kubetypes.PodUpdate, handler SyncHandler)</span></span> &#123;</span><br><span class="line">	glog.Info(<span class="string">"Starting kubelet main sync loop."</span>)</span><br><span class="line">	<span class="comment">// The resyncTicker wakes up kubelet to checks if there are any pod workers</span></span><br><span class="line">	<span class="comment">// that need to be sync'd. A one-second period is sufficient because the</span></span><br><span class="line">	<span class="comment">// sync interval is defaulted to 10s.</span></span><br><span class="line">	syncTicker := time.NewTicker(time.Second)</span><br><span class="line">	<span class="keyword">defer</span> syncTicker.Stop()</span><br><span class="line">	housekeepingTicker := time.NewTicker(housekeepingPeriod)</span><br><span class="line">	<span class="keyword">defer</span> housekeepingTicker.Stop()</span><br><span class="line">	plegCh := kl.pleg.Watch()</span><br><span class="line">	<span class="keyword">const</span> (</span><br><span class="line">		base   = <span class="number">100</span> * time.Millisecond</span><br><span class="line">		max    = <span class="number">5</span> * time.Second</span><br><span class="line">		factor = <span class="number">2</span></span><br><span class="line">	)</span><br><span class="line">	duration := base</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> rs := kl.runtimeState.runtimeErrors(); <span class="built_in">len</span>(rs) != <span class="number">0</span> &#123;</span><br><span class="line">			glog.Infof(<span class="string">"skipping pod synchronization - %v"</span>, rs)</span><br><span class="line">			<span class="comment">// exponential backoff</span></span><br><span class="line">			time.Sleep(duration)</span><br><span class="line">			duration = time.Duration(math.Min(<span class="keyword">float64</span>(max), factor*<span class="keyword">float64</span>(duration)))</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// reset backoff if we have a success</span></span><br><span class="line">		duration = base</span><br><span class="line"></span><br><span class="line">		kl.syncLoopMonitor.Store(kl.clock.Now())</span><br><span class="line">		<span class="keyword">if</span> !kl.syncLoopIteration(updates, handler, syncTicker.C, housekeepingTicker.C, plegCh) &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">		kl.syncLoopMonitor.Store(kl.clock.Now())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中调用了<code>syncLoopIteration</code>的函数来执行更具体的监控pod变化的循环。<code>syncLoopIteration</code>代码逻辑待后续单独分析。</p>
+<h1 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h1><h2 id="61-基本流程"><a href="#6-1-基本流程" class="headerlink" title="6.1. 基本流程"></a>6.1. 基本流程</h2><p><code>Kubelet.Run</code>主要流程如下：</p>
+<ol>
+<li>初始化模块，其实就是运行<code>imageManager</code>、<code>serverCertificateManager</code>、<code>oomWatcher</code>、<code>resourceAnalyzer</code>。</li>
+<li>运行各种manager，大部分以常驻goroutine的方式运行，其中包括<code>volumeManager</code>、<code>statusManager</code>等。</li>
+<li>执行处理变更的循环函数<code>syncLoop</code>，对pod的生命周期进行管理。</li>
+</ol>
+<p><strong>syncLoop：</strong></p>
+<p><code>syncLoop</code>函数，对pod的生命周期进行管理，其中<code>syncLoop</code>调用了<code>syncLoopIteration</code>函数，该函数根据<code>podUpdate</code>的信息，针对不同的操作，由<code>SyncHandler</code>来执行pod的增删改查等生命周期的管理，其中的<code>syncHandler</code>包括<code>HandlePodSyncs</code>和<code>HandlePodCleanups</code>等。该部分逻辑待后续文章具体分析。</p>
+<h2 id="62-manager"><a href="#6-2-Manager" class="headerlink" title="6.2. Manager"></a>6.2. Manager</h2><p>以下介绍kubelet运行时涉及到的manager的内容。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>manager</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>imageManager</td>
+<td>负责镜像垃圾回收</td>
+</tr>
+<tr>
+<td>serverCertificateManager</td>
+<td>负责处理证书</td>
+</tr>
+<tr>
+<td>oomWatcher</td>
+<td>监控内存使用，是否发生内存耗尽即OOM</td>
+</tr>
+<tr>
+<td>resourceAnalyzer</td>
+<td>监控资源使用情况</td>
+</tr>
+<tr>
+<td>volumeManager</td>
+<td>对pod执行<code>attached/detached/mounted/unmounted</code>操作</td>
+</tr>
+<tr>
+<td>statusManager</td>
+<td>使用apiserver同步pods状态; 也用作状态缓存</td>
+</tr>
+<tr>
+<td>probeManager</td>
+<td>处理容器探针</td>
+</tr>
+<tr>
+<td>runtimeClassManager</td>
+<td>同步RuntimeClasses</td>
+</tr>
+<tr>
+<td>podKiller</td>
+<td>负责杀死pod</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>参考文章：</p>
+<ul>
+<li><p><a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kubelet/app/server.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/v1.12.0/cmd/kubelet/app/server.go</a></p>
+</li>
+<li><p><a href="https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/kubelet/kubelet.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/v1.12.0/pkg/kubelet/kubelet.go</a></p>
+</li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/k8s-source-code-analysis/kubelet/syncLoopIteration/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（四）之 syncLoopIteration">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/k8s-source-code-analysis/kubelet/NewMainKubelet/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（二）之 NewMainKubelet">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#kubelet源码分析三之-startkubelet"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">kubelet源码分析（三）之 startKubelet</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-startkubelet"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. startKubelet</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-kubeletrun"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. Kubelet.Run</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-initializemodules"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. initializeModules</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-setupdatadirs"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">3.1. setupDataDirs</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-manager"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">3.2. manager</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-运行各种manager"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">4. 运行各种manager</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-volumemanager"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">4.1. volumeManager</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-syncnodestatus"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">4.2. syncNodeStatus</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-updateruntimeup"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">4.3. updateRuntimeUp</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-syncnetworkutil"><span class="toc-nav-number">5.4.</span> <span class="toc-nav-text">4.4. syncNetworkUtil</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#45-podkiller"><span class="toc-nav-number">5.5.</span> <span class="toc-nav-text">4.5. podKiller</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#46-statusmanager"><span class="toc-nav-number">5.6.</span> <span class="toc-nav-text">4.6. statusManager</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#47-probemanager"><span class="toc-nav-number">5.7.</span> <span class="toc-nav-text">4.7. probeManager</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#48-runtimeclassmanager"><span class="toc-nav-number">5.8.</span> <span class="toc-nav-text">4.8. runtimeClassManager</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#49-podlifecycleeventgenerator"><span class="toc-nav-number">5.9.</span> <span class="toc-nav-text">4.9. PodLifecycleEventGenerator</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#410-syncloop"><span class="toc-nav-number">5.10.</span> <span class="toc-nav-text">4.10. syncLoop</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-syncloop"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">5. syncLoop</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-总结"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">6. 总结</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#61-基本流程"><span class="toc-nav-number">7.1.</span> <span class="toc-nav-text">6.1. 基本流程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#62-manager"><span class="toc-nav-number">7.2.</span> <span class="toc-nav-text">6.2. Manager</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2023 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

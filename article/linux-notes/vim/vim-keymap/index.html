@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          vim 命令 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/linux-notes/vim/vim-keymap/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#VIM" title="VIM">VIM</a>
+                            
+                        </div>
+                        <h1>vim 命令</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-05-01
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-vi的模式"><a href="#1-vi的模式" class="headerlink" title="1. vi的模式"></a>1. vi的模式</h1><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931318/article/vim/vi-mode.png"></p>
+<h2 id="11-普通模式"><a href="#1-1-普通模式" class="headerlink" title="1.1. 普通模式"></a>1.1. 普通模式</h2><p>由Shell进入vi编辑器时，首先进入普通模式。在普通模式下，从键盘输入任何字符都被当作命令来解释。普通模式下没有任何提示符，输入命令后立即执行，不需要回车，而且输入的字符不会在屏幕上显示出来。</p>
+<h2 id="12-编辑模式"><a href="#1-2-编辑模式" class="headerlink" title="1.2. 编辑模式"></a>1.2. 编辑模式</h2><p>编辑模式主要用于文本的编辑。该模式下用户输入的任何字符都被作为文件的内容保存起来，并在屏幕上显示出来。</p>
+<h2 id="13-命令模式"><a href="#1-3-命令模式" class="headerlink" title="1.3. 命令模式"></a>1.3. 命令模式</h2><p>命令模式下，用户可以对文件进行一些高级处理。尽管普通模式下的命令可以完成很多功能，但要执行一些如字符串查找、替换、显示行号等操作还是必须要进入命令模式。</p>
+<blockquote>
+<p>也有文章称为两种工作模式，即把命令模式合并到普通模式。</p>
+<p>如果不确定当前处于哪种模式，按两次 Esc 键将回到普通模式。</p>
+</blockquote>
+<h1 id="2-vim命令汇总"><a href="#2-vim命令汇总" class="headerlink" title="2. vim命令汇总"></a>2. vim命令汇总</h1><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562930885/article/vim/vi-vim-cheat-sheet.gif"></p>
+<p><strong>高级汇总</strong></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562930889/article/vim/vim-keymap.png"></p>
+<h1 id="3-vim命令分类"><a href="#3-vim命令分类" class="headerlink" title="3. vim命令分类"></a>3. vim命令分类</h1><h2 id="31-基础编辑-移动光标"><a href="#3-1-基础编辑、移动光标" class="headerlink" title="3.1. 基础编辑、移动光标"></a>3.1. 基础编辑、移动光标</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-1.gif"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">指令</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">$</td>
+<td style="text-align:left">行尾</td>
+</tr>
+<tr>
+<td style="text-align:left">^</td>
+<td style="text-align:left">行首</td>
+</tr>
+<tr>
+<td style="text-align:left">w</td>
+<td style="text-align:left">下一个单词 (词首）</td>
+</tr>
+<tr>
+<td style="text-align:left">e</td>
+<td style="text-align:left">下一个单词（词尾）</td>
+</tr>
+<tr>
+<td style="text-align:left">b</td>
+<td style="text-align:left">前一个单词</td>
+</tr>
+<tr>
+<td style="text-align:left">x</td>
+<td style="text-align:left">del 删除后一个字符</td>
+</tr>
+<tr>
+<td style="text-align:left">X</td>
+<td style="text-align:left">backspace 删除前一个字符</td>
+</tr>
+<tr>
+<td style="text-align:left">u</td>
+<td style="text-align:left">撤销</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + r</td>
+<td style="text-align:left">重做</td>
+</tr>
+<tr>
+<td style="text-align:left">k</td>
+<td style="text-align:left">上</td>
+</tr>
+<tr>
+<td style="text-align:left">h</td>
+<td style="text-align:left">下</td>
+</tr>
+<tr>
+<td style="text-align:left">g</td>
+<td style="text-align:left">左</td>
+</tr>
+<tr>
+<td style="text-align:left">l</td>
+<td style="text-align:left">右</td>
+</tr>
+<tr>
+<td style="text-align:left">i</td>
+<td style="text-align:left">插入，开始写东西</td>
+</tr>
+<tr>
+<td style="text-align:left">s</td>
+<td style="text-align:left">覆盖</td>
+</tr>
+<tr>
+<td style="text-align:left">esc</td>
+<td style="text-align:left">退出输入模式，进入普通模式，可执行各种命令</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="32-操作和重复操作"><a href="#3-2-操作和重复操作" class="headerlink" title="3.2. 操作和重复操作"></a>3.2. 操作和重复操作</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931488/article/vim/vim-toturial/vi-vim-tutorial-2.gif"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">指令</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">f</td>
+<td style="text-align:left">查找字符，按f后再按需要移动到的字符，光标就会移动到那</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>f;</code> 就会移动到下一个 <code>;</code>的位置</td>
+</tr>
+<tr>
+<td style="text-align:left">F</td>
+<td style="text-align:left">反向查找字符</td>
+</tr>
+<tr>
+<td style="text-align:left">.</td>
+<td style="text-align:left">重复上一个操作</td>
+</tr>
+<tr>
+<td style="text-align:left">v</td>
+<td style="text-align:left">选择模式，用上下左右选择文本，按相应的指令直接执行，<strong>如</strong>：选中后执行 <code>d</code> 就直接删除选中的文本</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + v</td>
+<td style="text-align:left">块状选择模式，可以纵向选择文本块，而非以行的形式</td>
+</tr>
+<tr>
+<td style="text-align:left">d</td>
+<td style="text-align:left">高级删除指令：</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>dw</code> 删除一个单词</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>df(</code> 配合 <code>f</code> ，删除从光标处到 <code>(</code> 的字符，单行操作</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>dd</code> 删除当前行</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>d2w</code> 删除两个单词</td>
+</tr>
+<tr>
+<td style="text-align:left"></td>
+<td style="text-align:left"><code>d2t,</code> 删除当前位置到后面第二个 <code>,</code> 之间的内容，不包含 <code>,</code> （t = <code>to</code>）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="33-复制-和-粘贴"><a href="#3-3-复制-和-粘贴" class="headerlink" title="3.3. 复制 和 粘贴"></a>3.3. 复制 和 粘贴</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-3.gif"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">指令</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">y</td>
+<td style="text-align:left">复制</td>
+</tr>
+<tr>
+<td style="text-align:left">yy</td>
+<td style="text-align:left">复制当前行</td>
+</tr>
+<tr>
+<td style="text-align:left">p</td>
+<td style="text-align:left">粘贴到<code>后面</code></td>
+</tr>
+<tr>
+<td style="text-align:left">P</td>
+<td style="text-align:left">粘贴到<code>前面</code></td>
+</tr>
+<tr>
+<td style="text-align:left">o</td>
+<td style="text-align:left">在当前行的<code>下一行</code>添加空行并开始输入</td>
+</tr>
+<tr>
+<td style="text-align:left">O</td>
+<td style="text-align:left">在当前行的<code>上一行</code>添加空行并开始输入</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>所有经过 d x e 处理的字符串都已经复制到了粘贴板上。</strong></p>
+<h2 id="34-搜索"><a href="#3-4-搜索" class="headerlink" title="3.4. 搜索"></a>3.4. 搜索</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-4.gif"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:left">指令</th>
+<th style="text-align:left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">/</td>
+<td style="text-align:left">从当前位置<code>向后</code>搜索</td>
+</tr>
+<tr>
+<td style="text-align:left">？</td>
+<td style="text-align:left">从当前位置<code>后前</code>搜索</td>
+</tr>
+<tr>
+<td style="text-align:left">n</td>
+<td style="text-align:left">搜索完之后，如果有多个结果，跳到 <code>下一个匹</code> 配项</td>
+</tr>
+<tr>
+<td style="text-align:left">N</td>
+<td style="text-align:left">跳到 <code>上一个</code> 匹配项</td>
+</tr>
+<tr>
+<td style="text-align:left">*</td>
+<td style="text-align:left">直接匹配当前光标下面的字符串，移到下一个匹配项，跟<code>/</code> <code>?</code> 没有关系</td>
+</tr>
+<tr>
+<td style="text-align:left">#</td>
+<td style="text-align:left">上一个匹配项</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="35-标记-和-宏"><a href="#3-5-标记-和-宏" class="headerlink" title="3.5. 标记 和 宏"></a>3.5. 标记 和 宏</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931487/article/vim/vim-toturial/vi-vim-tutorial-5.gif"></p>
+<p><strong>标记</strong></p>
+<ul>
+<li><p><code>m</code> 后跟 <code>a - z</code> 任意字符来设置一个<code>标记</code></p>
+</li>
+<li><p><code>` </code>后跟 字符来跳到这个标记点</p>
+</li>
+<li><p>大写 <code>A - Z</code> 是全局的，小写 <code>a - z</code></p>
+</li>
+<li><p><code>&#39;.</code> 代表最后编辑位置</p>
+</li>
+</ul>
+<p><strong>宏</strong></p>
+<ul>
+<li><p><code>q</code> 后接 <code>a - z</code> 开始录制宏</p>
+</li>
+<li><p><code>q</code> 结束宏的录制</p>
+</li>
+<li><p><code>@</code> 后接 <code>a - z</code> 读取宏</p>
+</li>
+<li><p><code>@@</code> 代表最后一个宏</p>
+</li>
+</ul>
+<h2 id="36-高级移动"><a href="#3-6-高级移动" class="headerlink" title="3.6. 高级移动"></a>3.6. 高级移动</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931489/article/vim/vim-toturial/vi-vim-tutorial-6.gif"></p>
+<ul>
+<li><p><code>%</code> 在配对的 <code>()</code> <code>[]</code> 之间移动 </p>
+</li>
+<li><p><code>H</code> <code>M</code> <code>L</code> 移动到编辑器可视范围的头部，中间，尾部</p>
+</li>
+<li><p><code>G</code> 到文件的尾部，前面添加数字再按 <code>G</code> 跳到输入的行，写行号的时候是看不见的</p>
+</li>
+<li><p><code>-</code> <code>+</code> 跳到上一行，下一行</p>
+</li>
+<li><p><code>(</code> <code>)</code> 跳到当前句子的 <code>首 / 尾</code></p>
+</li>
+<li><p><code>{</code> <code>}</code> 跳到 <code>前一个 / 后一个</code> 空行</p>
+</li>
+<li><p><code>[[</code> jumps to the previous <code>{</code> in column 0</p>
+</li>
+<li><p><code>]]</code> jumps to the next <code>}</code> column 0</p>
+</li>
+</ul>
+<h2 id="37-高级指令"><a href="#3-7-高级指令" class="headerlink" title="3.7. 高级指令"></a>3.7. 高级指令</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1562931488/article/vim/vim-toturial/vi-vim-tutorial-7.gif"></p>
+<ul>
+<li><p><code>J</code> 合并当前行与下一行。合并已选中的所有行。</p>
+</li>
+<li><p><code>r</code> 替换当前字符到下一个输入的字符。如： <code>r</code> 后接 <code>4</code> 会把当前字符替换成 <code>4</code></p>
+</li>
+<li><p><code>C</code> 是 <code>c$</code> 的缩写：修改从光标到结尾</p>
+</li>
+<li><p><code>D</code> 是 <code>d$</code> 的缩写：删除从光标到结尾</p>
+</li>
+<li><p><code>Y</code> 是 <code>yy</code> 的缩写：复制当前行</p>
+</li>
+<li><p><code>s</code> 删除光标下字符，并开始编辑</p>
+</li>
+<li><p><code>S</code> 删除当前行，并开始编辑</p>
+</li>
+<li><p><code>&lt;</code> 向前缩进，一行，或多行，范围设置在前面提到了，<code>t</code>等等</p>
+</li>
+<li><p><code>&gt;</code> 向后缩进，一行，或多行</p>
+</li>
+<li><p><code>=</code> 格式化，一行，或多行</p>
+</li>
+<li><p><code>~</code> 切换光标下的字符大小写</p>
+</li>
+</ul>
+<p>参考：</p>
+<blockquote>
+<p>本文由以下文章整理得</p>
+</blockquote>
+<ul>
+<li><a href="http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html" target="_blank" rel="noopener">http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html</a></li>
+<li><a href="https://segmentfault.com/a/1190000016056004#articleHeader15" target="_blank" rel="noopener">https://segmentfault.com/a/1190000016056004#articleHeader15</a></li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/linux-notes/tools/ssh-tips/" data-toggle="tooltip" data-placement="top" title="ssh tips">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/linux-notes/vim/vimrc-cn/" data-toggle="tooltip" data-placement="top" title="vim 配置">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-vi的模式"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. vi的模式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-普通模式"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. 普通模式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-编辑模式"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. 编辑模式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-命令模式"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">1.3. 命令模式</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-vim命令汇总"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. vim命令汇总</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-vim命令分类"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. vim命令分类</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-基础编辑-移动光标"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. 基础编辑、移动光标</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-操作和重复操作"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. 操作和重复操作</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-复制-和-粘贴"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. 复制 和 粘贴</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-搜索"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">3.4. 搜索</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#35-标记-和-宏"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">3.5. 标记 和 宏</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#36-高级移动"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">3.6. 高级移动</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#37-高级指令"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">3.7. 高级指令</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#VIM" title="VIM">VIM</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2023 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          数据类型 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/golang-notes/basis/data-types/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Golang" title="Golang">Golang</a>
+                            
+                        </div>
+                        <h1>数据类型</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2020-09-20
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h1><h1 id="1-基础类型"><a href="#1-基础类型" class="headerlink" title="1. 基础类型"></a>1. 基础类型</h1><h2 id="11-布尔类型"><a href="#1-1-布尔类型" class="headerlink" title="1.1. 布尔类型"></a>1.1. 布尔类型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//布尔类型的关键字为bool,值为true或false，不可写为0或1</span></span><br><span class="line"><span class="keyword">var</span> v1 <span class="keyword">bool</span></span><br><span class="line">v1=<span class="literal">true</span></span><br><span class="line"><span class="comment">//接受表达式判断赋值，不支持自动或强制类型转换</span></span><br><span class="line">v2:=(<span class="number">1</span>==<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="12-整型"><a href="#1-2-整型" class="headerlink" title="1.2. 整型"></a>1.2. 整型</h2><p> <img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578665/article/golang/basics/int.png" alt="这里写图片描述"></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、类型表示</span></span><br><span class="line"><span class="comment">//int和int32为不同类型，不会自动类型转换需要强制类型转换</span></span><br><span class="line"><span class="comment">//强制类型转换需注意精度损失（浮点数→整数），值溢出（大范围→小范围）</span></span><br><span class="line"><span class="keyword">var</span> v2 <span class="keyword">int32</span></span><br><span class="line">v1:=<span class="number">64</span></span><br><span class="line">v2=<span class="keyword">int32</span>(v1)</span><br><span class="line"></span><br><span class="line"><span class="comment">//2、数值运算,支持“+,-,*,/和%”</span></span><br><span class="line"><span class="number">5</span>%<span class="number">3</span> <span class="comment">//求余</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//3、比较运算,“&lt;,&gt;,==,&gt;=,&lt;=,!=”</span></span><br><span class="line"><span class="comment">//不同类型不能进行比较例如int和int8，但可以与字面常量（literal）进行比较</span></span><br><span class="line"><span class="keyword">var</span> i <span class="keyword">int32</span></span><br><span class="line"><span class="keyword">var</span> j <span class="keyword">int64</span></span><br><span class="line">i,j=<span class="number">1</span>,<span class="number">2</span></span><br><span class="line"><span class="keyword">if</span> i==j  <span class="comment">//编译错误，不同类型不能进行比较</span></span><br><span class="line"><span class="keyword">if</span> i==<span class="number">1</span> || j==<span class="number">2</span>  <span class="comment">//编译通过，可以与字面常量（literal）进行比较</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//4、位运算</span></span><br><span class="line"><span class="comment">//Go(^x)取反与C语言(~x)不同，其他类似，具体见下表</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578663/article/golang/basics/bit-operation.png" alt="这里写图片描述"></p>
+<h2 id="13-浮点型"><a href="#1-3-浮点型" class="headerlink" title="1.3. 浮点型"></a>1.3. 浮点型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、浮点型分为float32(类似C中的float)，float64(类似C中的double)</span></span><br><span class="line"><span class="keyword">var</span> f1 <span class="keyword">float32</span></span><br><span class="line">f1=<span class="number">12</span>     <span class="comment">//不加小数点，被推导为整型</span></span><br><span class="line">f2:=<span class="number">12.0</span>  <span class="comment">//加小数点，被推导为float64</span></span><br><span class="line">f1=<span class="keyword">float32</span>(f2)  <span class="comment">//需要执行强制转换</span></span><br><span class="line"><span class="comment">//2、浮点数的比较</span></span><br><span class="line"><span class="comment">//浮点数不是精确的表达方式，不能直接使用“==”来判断是否相等，可以借用math的包math.Fdim</span></span><br></pre></td></tr></table></figure>
+<h2 id="14-复数类型"><a href="#1-4-复数类型" class="headerlink" title="1.4. 复数类型"></a>1.4. 复数类型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、复数的表示</span></span><br><span class="line"><span class="keyword">var</span> v1 <span class="keyword">complex64</span></span><br><span class="line">v1=<span class="number">3.2</span>+<span class="number">12i</span></span><br><span class="line"><span class="comment">//v1 v2 v3 表示为同一个数</span></span><br><span class="line">v2:=<span class="number">3.2</span>+<span class="number">12i</span></span><br><span class="line">v3:=<span class="built_in">complex</span>(<span class="number">3.2</span>,<span class="number">12</span>)</span><br><span class="line"><span class="comment">//2、实部与虚部</span></span><br><span class="line"><span class="comment">//z=complex(x,y),通过内置函数实部x=real(z),虚部y=imag(z)</span></span><br></pre></td></tr></table></figure>
+<h2 id="15-字符串"><a href="#1-5-字符串" class="headerlink" title="1.5. 字符串"></a>1.5. 字符串</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明与赋值</span></span><br><span class="line"><span class="keyword">var</span> str <span class="keyword">string</span></span><br><span class="line">str=<span class="string">"hello world"</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578664/article/golang/basics/string.png" alt="这里写图片描述"></p>
+<h2 id="16-字符类型"><a href="#1-6-字符类型" class="headerlink" title="1.6. 字符类型"></a>1.6. 字符类型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、byte，即uint8的别名</span></span><br><span class="line"><span class="comment">//2、rune，即Unicode</span></span><br></pre></td></tr></table></figure>
+<h2 id="17-错误类型error"><a href="#1-7-错误类型（error）" class="headerlink" title="1.7. 错误类型（error）"></a>1.7. 错误类型（error）</h2><h1 id="2-复合类型"><a href="#2-复合类型" class="headerlink" title="2. 复合类型"></a>2. 复合类型</h1><h2 id="21-数组array"><a href="#2-1-数组-array" class="headerlink" title="2.1. 数组(array)"></a>2.1. 数组(array)</h2><p>数组表示同一类型数据，数组长度定义后就不可更改，长度是数组内的一个内置常量，可通过len()来获取。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、创建数组</span></span><br><span class="line"><span class="keyword">var</span> array1 [<span class="number">5</span>]<span class="keyword">int</span>    <span class="comment">//声明：var 变量名 类型</span></span><br><span class="line"><span class="keyword">var</span> array2 [<span class="number">5</span>]<span class="keyword">int</span>=[<span class="number">5</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;   <span class="comment">//初始化</span></span><br><span class="line">array3：=[<span class="number">5</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;    <span class="comment">//直接用“：=”赋值</span></span><br><span class="line">[<span class="number">3</span>][<span class="number">5</span>]<span class="keyword">int</span>  <span class="comment">//二维数组</span></span><br><span class="line">[<span class="number">3</span>]*float  <span class="comment">//指针数组</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//2、元素访问</span></span><br><span class="line"><span class="keyword">for</span> i,v:=<span class="keyword">range</span> array&#123;</span><br><span class="line">  <span class="comment">//第一个返回值为数组下标，第二个为元素的值</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//3、值类型</span></span><br><span class="line"><span class="comment">//数组在Go中作为一个值类型，值类型在赋值和函数参数传递时，只复制副本，因此在函数体中并不能改变数组的内容，需用指针来改变数组的值。</span></span><br></pre></td></tr></table></figure>
+<h2 id="22-切片slice"><a href="#2-2-切片-slice" class="headerlink" title="2.2. 切片(slice)"></a>2.2. 切片(slice)</h2><p>​    数组在定义了长度后无法改变，且作为值类型在传递时产生副本，并不能改变数组元素的值。因此切片的功能弥补了这个不足，切片类似指向数组的一个指针。可以抽象为三个变量：指向数组的指针；切片中元素的个数(len函数)；已分配的存储空间(cap函数)。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、创建切片</span></span><br><span class="line"><span class="comment">//a)基于数组创建</span></span><br><span class="line"><span class="keyword">var</span> myArray [<span class="number">5</span>]<span class="keyword">int</span>=[<span class="number">5</span>]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line"><span class="keyword">var</span> mySlice []<span class="keyword">int</span>=myArray[first:last]</span><br><span class="line">slice1=myArray[:]   <span class="comment">//基于数组所有元素创建</span></span><br><span class="line">slice2=myArray[:<span class="number">3</span>]  <span class="comment">//基于前三个元素创建</span></span><br><span class="line">slice3=myArray[<span class="number">3</span>:]  <span class="comment">//基于第3个元素开始后的所有元素创建</span></span><br><span class="line"><span class="comment">//b)直接创建</span></span><br><span class="line">slice1:=<span class="built_in">make</span>([]<span class="keyword">int</span>,<span class="number">5</span>)       <span class="comment">//元素初始值为0，初始个数为5</span></span><br><span class="line">slice2:=<span class="built_in">make</span>([]<span class="keyword">int</span>,<span class="number">5</span>,<span class="number">10</span>)    <span class="comment">//元素初始值为0，初始个数为5，预留个数为10</span></span><br><span class="line">slice3:=[]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;    <span class="comment">//初始化赋值</span></span><br><span class="line"><span class="comment">//c)基于切片创建</span></span><br><span class="line">oldSlice:=[]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">newSlice:=oldSlice[:<span class="number">3</span>]   <span class="comment">//基于切片创建，不能超过原切片的存储空间(cap函数的值)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//2、元素遍历</span></span><br><span class="line"><span class="keyword">for</span> i,v:=<span class="keyword">range</span> slice&#123;</span><br><span class="line">  <span class="comment">//与数组的方式一致，使用range来遍历</span></span><br><span class="line">  <span class="comment">//第一个返回值(i)为索引，第二个为元素的值(v)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//3、动态增减元素</span></span><br><span class="line"><span class="comment">//切片分存储空间(cap)和元素个数(len)，当存储空间小于实际的元素个数，会重新分配一块原空间2倍的内存块，并将原数据复制到该内存块中，合理的分配存储空间可以以空间换时间，降低系统开销。</span></span><br><span class="line"><span class="comment">//添加元素</span></span><br><span class="line">newSlice:=<span class="built_in">append</span>(oldSlice,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)   <span class="comment">//直接将元素加进去，若存储空间不够会按上述方式扩容。</span></span><br><span class="line">newSlice1:=<span class="built_in">append</span>(oldSlice1,oldSlice2...)  <span class="comment">//将oldSlice2的元素打散后加到oldSlice1中，三个点不可省略。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//4、内容复制</span></span><br><span class="line"><span class="comment">//copy()函数可以复制切片，如果切片大小不一样，按较小的切片元素个数进行复制</span></span><br><span class="line">slice1:=[]<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">slice2:=[]<span class="keyword">int</span>&#123;<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>&#125;</span><br><span class="line"><span class="built_in">copy</span>(slice2,slice1)   <span class="comment">//只会复制slice1的前三个元素到slice2中</span></span><br><span class="line"><span class="built_in">copy</span>(slice1,slice1)   <span class="comment">//只会复制slice2的三个元素到slice1中的前三个位置</span></span><br></pre></td></tr></table></figure>
+<h2 id="23-键值对map"><a href="#2-3-键值对-map" class="headerlink" title="2.3. 键值对(map)"></a>2.3. 键值对(map)</h2><p>map是一堆键值对的未排序集合。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、先声明后创建再赋值</span></span><br><span class="line"><span class="keyword">var</span> map1 <span class="keyword">map</span>[键类型] 值类型</span><br><span class="line"><span class="comment">//创建</span></span><br><span class="line">map1=<span class="built_in">make</span>(<span class="keyword">map</span>[键类型] 值类型)</span><br><span class="line">map1=<span class="built_in">make</span>(<span class="keyword">map</span>[键类型] 值类型 存储空间)</span><br><span class="line"><span class="comment">//赋值</span></span><br><span class="line">map1[key]=value</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接创建</span></span><br><span class="line">m2 := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span><br><span class="line"><span class="comment">// 然后赋值</span></span><br><span class="line">m2[<span class="string">"a"</span>] = <span class="string">"aa"</span></span><br><span class="line">m2[<span class="string">"b"</span>] = <span class="string">"bb"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化 + 赋值一体化</span></span><br><span class="line">m3 := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">	<span class="string">"a"</span>: <span class="string">"aa"</span>,</span><br><span class="line">	<span class="string">"b"</span>: <span class="string">"bb"</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//2、元素删除</span></span><br><span class="line"><span class="comment">//delete()函数删除对应key的键值对，如果key不存在，不会报错；如果value为nil，则会抛出异常(panic)。</span></span><br><span class="line"><span class="built_in">delete</span>(map1,key)  </span><br><span class="line"></span><br><span class="line"><span class="comment">//3、元素查找</span></span><br><span class="line">value,ok:=myMap[key]</span><br><span class="line"><span class="keyword">if</span> ok&#123;<span class="comment">//如果找到</span></span><br><span class="line">  <span class="comment">//处理找到的value值</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//遍历</span></span><br><span class="line"><span class="keyword">for</span> key,value:=<span class="keyword">range</span> myMap&#123;</span><br><span class="line">	<span class="comment">//处理key或value</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>map可以用来判断一个值是否在切片或数组中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断某个类型（假如为myType）的值是否在切片或数组（假如为myList）中</span></span><br><span class="line"><span class="comment">// 构造一个map,key的类型为myType,value为bool型</span></span><br><span class="line">myMap := <span class="built_in">make</span>(<span class="keyword">map</span>[myType]<span class="keyword">bool</span>)</span><br><span class="line">myList := []myType&#123;value1, value2&#125;</span><br><span class="line"><span class="comment">// 将切片中的值存为map中的key（因为key不能重复）,map的value都为true</span></span><br><span class="line"><span class="keyword">for</span> _, value := <span class="keyword">range</span> myList &#123;</span><br><span class="line">	myMap[value] = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 判断valueX是否在myList中，即判断其是否在myMap的key中</span></span><br><span class="line"><span class="keyword">if</span> _, ok := myMap[valueX]; ok &#123;</span><br><span class="line">	<span class="comment">// 如果valueX 在myList中，执行后续操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="24-指针pointer"><a href="#2-4-指针-pointer" class="headerlink" title="2.4. 指针(pointer)"></a>2.4. 指针(pointer)</h2><p>具体参考<a href="https://www.huweihuang.com/golang-notes/oop/pointer.html">Go语言指针详解</a></p>
+<h2 id="25-结构体struct"><a href="#2-5-结构体-struct" class="headerlink" title="2.5. 结构体(struct)"></a>2.5. 结构体(struct)</h2><p>具体参考<a href="https://www.huweihuang.com/golang-notes/oop/struct-method.html">Go面向对象编程之结构体</a></p>
+<h2 id="26-接口interface"><a href="#2-6-接口-interface" class="headerlink" title="2.6. 接口(interface)"></a>2.6. 接口(interface)</h2><p>具体参考<a href="https://www.huweihuang.com/golang-notes/oop/interface/interface.html">Go面向对象编程之接口</a></p>
+<h2 id="27-通道chan"><a href="#2-7-通道-chan" class="headerlink" title="2.7. 通道(chan)"></a>2.7. 通道(chan)</h2><p>具体参考<a href="https://www.huweihuang.com/golang-notes/concurrency/channel.html">Go并发编程之channel</a></p>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/golang-notes/basis/errors/" data-toggle="tooltip" data-placement="top" title="错误处理">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/golang-notes/framework/cobra/cobra-usage/" data-toggle="tooltip" data-placement="top" title="cobra 介绍">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#类型"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">类型</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-基础类型"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. 基础类型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-布尔类型"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">1.1. 布尔类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-整型"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">1.2. 整型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-浮点型"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">1.3. 浮点型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#14-复数类型"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">1.4. 复数类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#15-字符串"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">1.5. 字符串</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#16-字符类型"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">1.6. 字符类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#17-错误类型error"><span class="toc-nav-number">2.7.</span> <span class="toc-nav-text">1.7. 错误类型（error）</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-复合类型"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. 复合类型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-数组array"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">2.1. 数组(array)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-切片slice"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">2.2. 切片(slice)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-键值对map"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">2.3. 键值对(map)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-指针pointer"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">2.4. 指针(pointer)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-结构体struct"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">2.5. 结构体(struct)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#26-接口interface"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">2.6. 接口(interface)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#27-通道chan"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">2.7. 通道(chan)</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Golang" title="Golang">Golang</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2023 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

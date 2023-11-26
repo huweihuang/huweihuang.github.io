@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          [Docker] Docker源码分析（三）之Docker Server - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/docker/code-analysis/code-analysis-of-docker-server/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                            
+                        </div>
+                        <h1>[Docker] Docker源码分析（三）之Docker Server</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-07-09
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h2 id="一-docker-server创建流程"><a href="#一、Docker-Server创建流程" class="headerlink" title="一、Docker Server创建流程"></a>一、Docker Server创建流程</h2><p>Docker Server是Daemon Server的重要组成部分，功能：接收Docker Client发送的请求，并按照相应的路由规则实现请求的路由分发，最终将请求处理的结果返回给Docker Client。<br>Docker Daemon启动，在mainDaemon()运行的最后创建并运行serverapi的Job，让Docker Daemon提供API访问服务。<br>Docker Server的整个生命周期</p>
+<ol>
+<li>创建Docker Server的Job</li>
+<li>配置Job的环境变量</li>
+<li>触发执行Job</li>
+</ol>
+<p>说明：本文分析的代码为Docker 1.2.0版本。</p>
+<h3 id="一创建serverapi的job"><a href="#（一）创建“serverapi”的Job" class="headerlink" title="（一）创建“serverapi”的Job"></a>（一）创建“serverapi”的Job</h3><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mainDaemon</span><span class="params">()</span></span> &#123;</span><br><span class="line">      ...</span><br><span class="line">      <span class="comment">// Serve api</span></span><br><span class="line">      job := eng.Job(<span class="string">"serveapi"</span>, flHosts...)</span><br><span class="line">      ...</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>运行serverapi的Job时，会执行该Job的处理方法api.ServeApi。</p>
+<h3 id="二配置job环境变量"><a href="#（二）配置Job环境变量" class="headerlink" title="（二）配置Job环境变量"></a>（二）配置Job环境变量</h3><p><strong>/docker/daemon.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">job.SetenvBool(<span class="string">"Logging"</span>, <span class="literal">true</span>)</span><br><span class="line">job.SetenvBool(<span class="string">"EnableCors"</span>, *flEnableCors)</span><br><span class="line">job.Setenv(<span class="string">"Version"</span>, dockerversion.VERSION)</span><br><span class="line">job.Setenv(<span class="string">"SocketGroup"</span>, *flSocketGroup)</span><br><span class="line"> </span><br><span class="line">job.SetenvBool(<span class="string">"Tls"</span>, *flTls)</span><br><span class="line">job.SetenvBool(<span class="string">"TlsVerify"</span>, *flTlsVerify)</span><br><span class="line">job.Setenv(<span class="string">"TlsCa"</span>, *flCa)</span><br><span class="line">job.Setenv(<span class="string">"TlsCert"</span>, *flCert)</span><br><span class="line">job.Setenv(<span class="string">"TlsKey"</span>, *flKey)</span><br><span class="line">job.SetenvBool(<span class="string">"BufferRequests"</span>, <span class="literal">true</span>)</span><br></pre></td></tr></table></figure>
+<p>参数分为两种</p>
+<ul>
+<li>创建Job实例时，用指定参数直接初始化Job的Args属性</li>
+<li>创建Job后，给Job添加指定的环境变量</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>环境变量名</th>
+<th>FLAG参数</th>
+<th>默认</th>
+<th>作用值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Logging</td>
+<td></td>
+<td>true</td>
+<td>启用Docker容器的日志输出</td>
+</tr>
+<tr>
+<td>EnableCors</td>
+<td>flEnableCors</td>
+<td>false</td>
+<td>在远程API中提供CORS头</td>
+</tr>
+<tr>
+<td>Version</td>
+<td></td>
+<td></td>
+<td>显示Docker版本号</td>
+</tr>
+<tr>
+<td>SocketGroup</td>
+<td>flSockerGroup</td>
+<td>docker</td>
+<td>在daemon模式中unix domain socket分配用户组名</td>
+</tr>
+<tr>
+<td>Tls</td>
+<td>flTls</td>
+<td>false</td>
+<td>使用TLS安全传输协议</td>
+</tr>
+<tr>
+<td>TlsVerify</td>
+<td>flTlsVerify</td>
+<td>false</td>
+<td>使用TLS并验证远程客户端</td>
+</tr>
+<tr>
+<td>TlsCa</td>
+<td>flCa</td>
+<td></td>
+<td>指定CA文件路径</td>
+</tr>
+<tr>
+<td>TlsCert</td>
+<td>flCert</td>
+<td></td>
+<td>TLS证书文件路径</td>
+</tr>
+<tr>
+<td>TlsKey</td>
+<td>flKey</td>
+<td></td>
+<td>TLS密钥文件路径</td>
+</tr>
+<tr>
+<td>BufferRequest</td>
+<td></td>
+<td>true</td>
+<td>缓存Docker Client请求</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="三运行job"><a href="#（三）运行Job" class="headerlink" title="（三）运行Job"></a>（三）运行Job</h3><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> err := job.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Docker在eng对象中注册过键位serverapi的处理方法，在运行Job的时候执行这个处理方法的值函数，相应的处理方法的值为api.ServeApi。</p>
+<h2 id="二-serveapi运行流程"><a href="#二、ServeApi运行流程" class="headerlink" title="二、ServeApi运行流程"></a>二、ServeApi运行流程</h2><p>​     ServeApi属于Docker Server提供API服务的部分，作为一个监听请求、处理请求、响应请求的服务端，支持三种协议：TCP协议、UNIX Socket形式以及fd的形式。功能是：循环检查Docker Daemon支持的所有协议，并为每一种协议创建一个协程goroutine，并在协程内部配置一个服务于HTTP请求的服务端。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServeApi loops through all of the protocols sent in to docker and spawns</span></span><br><span class="line"><span class="comment">// off a go routine to setup a serving http.Server for each.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeApi</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(job.Args) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        protoAddrs = job.Args</span><br><span class="line">        chErrors   = <span class="built_in">make</span>(<span class="keyword">chan</span> error, <span class="built_in">len</span>(protoAddrs))</span><br><span class="line">    )</span><br><span class="line">    activationLock = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> _, protoAddr := <span class="keyword">range</span> protoAddrs &#123;</span><br><span class="line">        protoAddrParts := strings.SplitN(protoAddr, <span class="string">"://"</span>, <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(protoAddrParts) != <span class="number">2</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            log.Infof(<span class="string">"Listening for HTTP on %s (%s)"</span>, protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>])</span><br><span class="line">            chErrors &lt;- ListenAndServe(protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>], job)</span><br><span class="line">        &#125;()</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(protoAddrs); i += <span class="number">1</span> &#123;</span><br><span class="line">        err := &lt;-chErrors</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> job.Error(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> engine.StatusOK</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ServeApi执行流程：</p>
+<ol>
+<li>检查Job参数，确保传入参数无误</li>
+<li>定义Docker Server的监听协议与地址，以及错误信息管理channel</li>
+<li>遍历协议地址，针对协议创建相应的服务端</li>
+<li>通过chErrors建立goroutine与主进程之间的协调关系</li>
+</ol>
+<h3 id="一判断job参数"><a href="#（一）判断Job参数" class="headerlink" title="（一）判断Job参数"></a>（一）判断Job参数</h3><p>判断Job参数，job.Args，即数组flHost，若flHost的长度为0，则说明没有监听的协议与地址，参数有误。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeApi</span><span class="params">(job *engine.Job)</span> <span class="title">engine</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(job.Args) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="二定义监听协议与地址及错误信息"><a href="#（二）定义监听协议与地址及错误信息" class="headerlink" title="（二）定义监听协议与地址及错误信息"></a>（二）定义监听协议与地址及错误信息</h3><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">       protoAddrs = job.Args</span><br><span class="line">       chErrors   = <span class="built_in">make</span>(<span class="keyword">chan</span> error, <span class="built_in">len</span>(protoAddrs))</span><br><span class="line">   )</span><br><span class="line">   activationLock = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p>定义protoAddrs[flHosts的内容]、chErrors[错误类型管道]与activationLock[同步serveapi和acceptconnections两个job执行的管道]三个变量，</p>
+<h3 id="三遍历协议地址"><a href="#（三）遍历协议地址" class="headerlink" title="（三）遍历协议地址"></a>（三）遍历协议地址</h3><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> _, protoAddr := <span class="keyword">range</span> protoAddrs &#123;</span><br><span class="line">    protoAddrParts := strings.SplitN(protoAddr, <span class="string">"://"</span>, <span class="number">2</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(protoAddrParts) != <span class="number">2</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Errorf(<span class="string">"usage: %s PROTO://ADDR [PROTO://ADDR ...]"</span>, job.Name)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        log.Infof(<span class="string">"Listening for HTTP on %s (%s)"</span>, protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>])</span><br><span class="line">        chErrors &lt;- ListenAndServe(protoAddrParts[<span class="number">0</span>], protoAddrParts[<span class="number">1</span>], job)</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>遍历协议地址，针对协议创建相应的服务端。协议地址</p>
+<h3 id="四协调cherrors与主进程关系"><a href="#（四）协调chErrors与主进程关系" class="headerlink" title="（四）协调chErrors与主进程关系"></a>（四）协调chErrors与主进程关系</h3><p>根据chErrors的值运行，如果chErrors这个管道中有错误内容，则ServerApi一次循环结束，若无错误内容，循环被阻塞。即chErrors确保ListenAndServe所对应的协程能和主函数ServeApi进行协调，如果协程出错，主函数ServeApi仍然可以捕获这样的错误，从而导致程序退出。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(protoAddrs); i += <span class="number">1</span> &#123;</span><br><span class="line">    err := &lt;-chErrors</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> job.Error(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> engine.StatusOK</span><br></pre></td></tr></table></figure>
+<h2 id="三-listenandserve实现"><a href="#三、ListenAndServe实现" class="headerlink" title="三、ListenAndServe实现"></a>三、ListenAndServe实现</h2><p>ListenAndServe的功能：使Docker Server监听某一指定地址，并接收该地址的请求，并对以上请求路由转发至相应的处理方法处。<br>ListenAndServe执行流程：</p>
+<ol>
+<li>创建route路由实例</li>
+<li>创建listener监听实例</li>
+<li>创建http.Server</li>
+<li>启动API服务</li>
+</ol>
+<p>流程图：<br><img src="http://res.cloudinary.com/dqxtn0ick/image/upload/v1510578158/article/docker/dockerServer/DockerServerFlow.jpg" width="50%"></p>
+<h3 id="一创建route路由实例"><a href="#（一）创建route路由实例" class="headerlink" title="（一）创建route路由实例"></a>（一）创建route路由实例</h3><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ListenAndServe sets up the required http.Server and gets it listening for</span></span><br><span class="line"><span class="comment">// each addr passed in and does protocol specific checking.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ListenAndServe</span><span class="params">(proto, addr <span class="keyword">string</span>, job *engine.Job)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> l net.Listener</span><br><span class="line">    r, err := createRouter(job.Eng, job.GetenvBool(<span class="string">"Logging"</span>), job.GetenvBool(<span class="string">"EnableCors"</span>), job.Getenv(<span class="string">"Version"</span>))</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>路由实例的作用：负责Docker Server对外部请求的路由及转发。<br>实现过程：</p>
+<ol>
+<li>创建全新的route路由实例</li>
+<li>为route实例添加路由记录</li>
+</ol>
+<h4 id="1-创建空路由实例"><a href="#1、创建空路由实例" class="headerlink" title="1、创建空路由实例"></a>1、创建空路由实例</h4><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createRouter</span><span class="params">(eng *engine.Engine, logging, enableCors <span class="keyword">bool</span>, dockerVersion <span class="keyword">string</span>)</span> <span class="params">(*mux.Router, error)</span></span> &#123;</span><br><span class="line">     r := mux.NewRouter()</span><br><span class="line">     ...</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>/vendor/src/github.com/gorilla/mux/mux.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewRouter returns a new router instance.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRouter</span><span class="params">()</span> *<span class="title">Router</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Router&#123;namedRoutes: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*Route), KeepContext: <span class="literal">false</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// This will send all incoming requests to the router.</span></span><br><span class="line"><span class="keyword">type</span> Router <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// Configurable Handler to be used when no route matches.</span></span><br><span class="line">    NotFoundHandler http.Handler</span><br><span class="line">    <span class="comment">// Parent route, if this is a subrouter.</span></span><br><span class="line">    parent parentRoute</span><br><span class="line">    <span class="comment">// Routes to be matched, in order.</span></span><br><span class="line">    routes []*Route</span><br><span class="line">    <span class="comment">// Routes by name for URL building.</span></span><br><span class="line">    namedRoutes <span class="keyword">map</span>[<span class="keyword">string</span>]*Route</span><br><span class="line">    <span class="comment">// See Router.StrictSlash(). This defines the flag for new routes.</span></span><br><span class="line">    strictSlash <span class="keyword">bool</span></span><br><span class="line">    <span class="comment">// If true, do not clear the request context after handling the request</span></span><br><span class="line">    KeepContext <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>NewRoute()函数返回一个全新的route实例r，类型为mux.Router。实例初始化nameRoutes和KeepContext。</p>
+<ul>
+<li>nameRoutes：map类型，key为string类型，value为Route路由记录类型</li>
+<li>KeepContext：属性为false，则处理完请求后清除请求内容，不对请求做存储操作</li>
+</ul>
+<p>mux.Router会通过一系列已经注册过的路由记录，来匹配接收的请求。先通过请求的URL或者其他条件找到相应的路由记录，并调用这条记录中的执行处理方法。<br>mux.Router特性</p>
+<ul>
+<li>请求可以基于URL的主机名、路径、路径前缀、shemes、请求头和请求值、HTTP请求方法类型或者使用自定义的匹配规则</li>
+<li>URL主机名和路径可以通过一个正则表达式来表示</li>
+<li>注册的URL可以直接被运用，也可以保留从而保证维护资源的使用</li>
+<li>路由记录同样看可以作用于子路由记录</li>
+</ul>
+<h4 id="2-添加路由记录"><a href="#2、添加路由记录" class="headerlink" title="2、添加路由记录"></a>2、添加路由记录</h4><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> os.Getenv(<span class="string">"DEBUG"</span>) != <span class="string">""</span> &#123;</span><br><span class="line">       AttachProfiler(r)</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">map</span>[<span class="keyword">string</span>]HttpApiFunc&#123;</span><br><span class="line">       <span class="string">"GET"</span>: &#123;</span><br><span class="line">           <span class="string">"/_ping"</span>:                          ping,</span><br><span class="line">           <span class="string">"/events"</span>:                         getEvents,</span><br><span class="line">           <span class="string">"/info"</span>:                           getInfo,</span><br><span class="line">           <span class="string">"/version"</span>:                        getVersion,</span><br><span class="line">           <span class="string">"/images/json"</span>:                    getImagesJSON,</span><br><span class="line">           <span class="string">"/images/viz"</span>:                     getImagesViz,</span><br><span class="line">           <span class="string">"/images/search"</span>:                  getImagesSearch,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/get"</span>:           getImagesGet,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/history"</span>:       getImagesHistory,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/json"</span>:          getImagesByName,</span><br><span class="line">           <span class="string">"/containers/ps"</span>:                  getContainersJSON,</span><br><span class="line">           <span class="string">"/containers/json"</span>:                getContainersJSON,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/export"</span>:    getContainersExport,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/changes"</span>:   getContainersChanges,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/json"</span>:      getContainersByName,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/top"</span>:       getContainersTop,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/logs"</span>:      getContainersLogs,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/attach/ws"</span>: wsContainersAttach,</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="string">"POST"</span>: &#123;</span><br><span class="line">           <span class="string">"/auth"</span>:                         postAuth,</span><br><span class="line">           <span class="string">"/commit"</span>:                       postCommit,</span><br><span class="line">           <span class="string">"/build"</span>:                        postBuild,</span><br><span class="line">           <span class="string">"/images/create"</span>:                postImagesCreate,</span><br><span class="line">           <span class="string">"/images/load"</span>:                  postImagesLoad,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/push"</span>:        postImagesPush,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;/tag"</span>:         postImagesTag,</span><br><span class="line">           <span class="string">"/containers/create"</span>:            postContainersCreate,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/kill"</span>:    postContainersKill,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/pause"</span>:   postContainersPause,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/unpause"</span>: postContainersUnpause,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/restart"</span>: postContainersRestart,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/start"</span>:   postContainersStart,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/stop"</span>:    postContainersStop,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/wait"</span>:    postContainersWait,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/resize"</span>:  postContainersResize,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/attach"</span>:  postContainersAttach,</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;/copy"</span>:    postContainersCopy,</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="string">"DELETE"</span>: &#123;</span><br><span class="line">           <span class="string">"/containers/&#123;name:.*&#125;"</span>: deleteContainers,</span><br><span class="line">           <span class="string">"/images/&#123;name:.*&#125;"</span>:     deleteImages,</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="string">"OPTIONS"</span>: &#123;</span><br><span class="line">           <span class="string">""</span>: optionsHandler,</span><br><span class="line">       &#125;,</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>m的类型为映射，key表示HTTP的请求类型，如GET、POST、DELETE等，value为映射类型，代表URL与执行处理方法的映射。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> HttpApiFunc <span class="function"><span class="keyword">func</span><span class="params">(eng *engine.Engine, version version.Version, w http.ResponseWriter, r *http.Request, vars <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="二创建listener监听实例"><a href="#（二）创建listener监听实例" class="headerlink" title="（二）创建listener监听实例"></a>（二）创建listener监听实例</h3><p>路由模块完成请求的路由与分发，监听模块完成请求的监听功能。Listener是一种面向流协议的通用网络监听模块。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> l net.Listener</span><br><span class="line"> ...</span><br><span class="line"> <span class="keyword">if</span> job.GetenvBool(<span class="string">"BufferRequests"</span>) &#123;</span><br><span class="line">     l, err = listenbuffer.NewListenBuffer(proto, addr, activationLock)</span><br><span class="line"> &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">     l, err = net.Listen(proto, addr)</span><br></pre></td></tr></table></figure>
+<p>Listenbuffer的作用：让Docker Server立即监听指定协议地址上的请求，但将这些请求暂时先缓存下来，等Docker Daemon全部启动完毕之后才让Docker Server开始接受这些请求。</p>
+<p><strong>/pkg/listenbuffer/buffer.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewListenBuffer returns a listener listening on addr with the protocol.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewListenBuffer</span><span class="params">(proto, addr <span class="keyword">string</span>, activate <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="params">(net.Listener, error)</span></span> &#123;</span><br><span class="line">    wrapped, err := net.Listen(proto, addr)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> &amp;defaultListener&#123;</span><br><span class="line">        wrapped:  wrapped,</span><br><span class="line">        activate: activate,</span><br><span class="line">    &#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>若协议类型为TCP，Job环境变量中Tls或TlsVerity有一个为true，则说明Docker Server需要支持HTTPS服务。需要建立一个tls.Config类型实例tlsConfig，在tlsConfig中加载证书、认证信息，通过tls包中的NewListener函数创建HTTPS协议请求的Listener实例。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l = tls.NewListener(l, tlsConfig)</span><br></pre></td></tr></table></figure>
+<h3 id="三创建httpserver"><a href="#（三）创建http-Server" class="headerlink" title="（三）创建http.Server"></a>（三）创建http.Server</h3><p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpSrv := http.Server&#123;Addr: addr, Handler: r&#125;</span><br></pre></td></tr></table></figure>
+<p>Docker Server需要创建一个Server对象来运行HTTP/HTTPS服务端，创建http.Server，addr为需要监听的地址，r为mux.Router。</p>
+<h3 id="四启动api服务"><a href="#（四）启动API服务" class="headerlink" title="（四）启动API服务"></a>（四）启动API服务</h3><p>创建http.Server实例后，即启动API服务，监听请求，并对每一个请求生成一个新的协程来做专属服务。对于每个请求，协程会读取请求，查询路由表中的路由记录项，找到匹配的路由记录，最终调用路由记录中的处理方法，执行完毕返回响应信息。</p>
+<p><strong>/api/server/server.go</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> httpSrv.Serve(l)</span><br></pre></td></tr></table></figure><div><h2 id="推荐文章">推荐文章<span style="font-size:0.45em; color:gray"></span></h2><ul><li><a href="http://www.huweihuang.com/article/docker/install-docker/">[Docker] 安装Docker</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-architecture/">[Docker] Docker整体架构图</a></li><li><a href="http://www.huweihuang.com/article/docker/docker-commands-principle/">[Docker] Docker常用命令原理图</a></li></ul></div></div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/runtime/docker/docker-commands-principle/" data-toggle="tooltip" data-placement="top" title="Docker常用命令原理图">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/docker/code-analysis/code-analysis-of-docker-client/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（一）之Docker Client">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#一-docker-server创建流程"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">一、Docker Server创建流程</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一创建serverapi的job"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">（一）创建“serverapi”的Job</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#二配置job环境变量"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">（二）配置Job环境变量</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#三运行job"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">（三）运行Job</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二-serveapi运行流程"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">二、ServeApi运行流程</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一判断job参数"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">（一）判断Job参数</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#二定义监听协议与地址及错误信息"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">（二）定义监听协议与地址及错误信息</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#三遍历协议地址"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">（三）遍历协议地址</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#四协调cherrors与主进程关系"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">（四）协调chErrors与主进程关系</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#三-listenandserve实现"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">三、ListenAndServe实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一创建route路由实例"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">（一）创建route路由实例</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#1-创建空路由实例"><span class="toc-nav-number">3.1.1.</span> <span class="toc-nav-text">1、创建空路由实例</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#2-添加路由记录"><span class="toc-nav-number">3.1.2.</span> <span class="toc-nav-text">2、添加路由记录</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#二创建listener监听实例"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">（二）创建listener监听实例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#三创建httpserver"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">（三）创建http.Server</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#四启动api服务"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">（四）启动API服务</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#推荐文章"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">推荐文章</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Docker" title="Docker">Docker</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2023 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

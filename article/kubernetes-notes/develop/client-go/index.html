@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          client-go的使用及源码分析 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/develop/client-go/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>client-go的使用及源码分析</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2017-12-16
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-client-go简介"><a href="#1-client-go简介" class="headerlink" title="1. client-go简介"></a>1. client-go简介</h1><h2 id="11-client-go说明"><a href="#1-1-client-go说明" class="headerlink" title="1.1 client-go说明"></a>1.1 client-go说明</h2><p>​    client-go是一个调用kubernetes集群资源对象API的客户端，即通过client-go实现对kubernetes集群中资源对象（包括deployment、service、ingress、replicaSet、pod、namespace、node等）的增删改查等操作。大部分对kubernetes进行前置API封装的二次开发都通过client-go这个第三方包来实现。</p>
+<p>​    client-go官方文档：<a href="https://github.com/kubernetes/client-go" target="_blank" rel="noopener">https://github.com/kubernetes/client-go</a></p>
+<h2 id="12-示例代码"><a href="#1-2-示例代码" class="headerlink" title="1.2 示例代码"></a>1.2 示例代码</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/huweihuang/client-go.git</span><br><span class="line">cd client-go</span><br><span class="line"><span class="meta">#</span><span class="bash">保证本地HOME目录有配置kubernetes集群的配置文件</span></span><br><span class="line">go run client-go.go</span><br></pre></td></tr></table></figure>
+<p><strong><a href="https://github.com/huweihuang/client-go/blob/master/client-go.go" target="_blank" rel="noopener">client-go.go</a></strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"path/filepath"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	metav1 <span class="string">"k8s.io/apimachinery/pkg/apis/meta/v1"</span></span><br><span class="line">	<span class="string">"k8s.io/client-go/kubernetes"</span></span><br><span class="line">	<span class="string">"k8s.io/client-go/tools/clientcmd"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> kubeconfig *<span class="keyword">string</span></span><br><span class="line">	<span class="keyword">if</span> home := homeDir(); home != <span class="string">""</span> &#123;</span><br><span class="line">		kubeconfig = flag.String(<span class="string">"kubeconfig"</span>, filepath.Join(home, <span class="string">".kube"</span>, <span class="string">"config"</span>), <span class="string">"(optional) absolute path to the kubeconfig file"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		kubeconfig = flag.String(<span class="string">"kubeconfig"</span>, <span class="string">""</span>, <span class="string">"absolute path to the kubeconfig file"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	flag.Parse()</span><br><span class="line">	<span class="comment">// uses the current context in kubeconfig</span></span><br><span class="line">	config, err := clientcmd.BuildConfigFromFlags(<span class="string">""</span>, *kubeconfig)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// creates the clientset</span></span><br><span class="line">	clientset, err := kubernetes.NewForConfig(config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		pods, err := clientset.CoreV1().Pods(<span class="string">""</span>).List(metav1.ListOptions&#123;&#125;)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err.Error())</span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Printf(<span class="string">"There are %d pods in the cluster\n"</span>, <span class="built_in">len</span>(pods.Items))</span><br><span class="line">		time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">homeDir</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> h := os.Getenv(<span class="string">"HOME"</span>); h != <span class="string">""</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> h</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> os.Getenv(<span class="string">"USERPROFILE"</span>) <span class="comment">// windows</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="13-运行结果"><a href="#1-3-运行结果" class="headerlink" title="1.3 运行结果"></a>1.3 运行结果</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">➜ go run client-go.go</span><br><span class="line">There are 9 pods in the cluster</span><br><span class="line">There are 7 pods in the cluster</span><br><span class="line">There are 7 pods in the cluster</span><br><span class="line">There are 7 pods in the cluster</span><br><span class="line">There are 7 pods in the cluster</span><br></pre></td></tr></table></figure>
+<h1 id="2-client-go源码分析"><a href="#2-client-go源码分析" class="headerlink" title="2. client-go源码分析"></a>2. client-go源码分析</h1><p><strong>client-go源码</strong>：<a href="https://github.com/kubernetes/client-go" target="_blank" rel="noopener">https://github.com/kubernetes/client-go</a></p>
+<p><strong>client-go源码目录结构</strong></p>
+<ul>
+<li>The <code>kubernetes</code> package contains the clientset to access Kubernetes API.</li>
+<li>The <code>discovery</code> package is used to discover APIs supported by a Kubernetes API server.</li>
+<li>The <code>dynamic</code> package contains a dynamic client that can perform generic operations on arbitrary Kubernetes API objects.</li>
+<li>The <code>transport</code> package is used to set up auth and start a connection.</li>
+<li>The <code>tools/cache</code> package is useful for writing controllers.</li>
+</ul>
+<h2 id="21-kubeconfig"><a href="#2-1-kubeconfig" class="headerlink" title="2.1 kubeconfig"></a>2.1 kubeconfig</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeconfig = flag.String(<span class="string">"kubeconfig"</span>, filepath.Join(home, <span class="string">".kube"</span>, <span class="string">"config"</span>), <span class="string">"(optional) absolute path to the kubeconfig file"</span>)</span><br></pre></td></tr></table></figure>
+<p>获取kubernetes配置文件kubeconfig的绝对路径。一般路径为<code>$HOME/.kube/config</code>。该文件主要用来配置本地连接的kubernetes集群。</p>
+<p>config内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">clusters:</span><br><span class="line">- cluster:</span><br><span class="line">    server: http://&lt;kube-master-ip&gt;:8080</span><br><span class="line">  name: k8s</span><br><span class="line">contexts:</span><br><span class="line">- context:</span><br><span class="line">    cluster: k8s</span><br><span class="line">    namespace: default</span><br><span class="line">    user: ""</span><br><span class="line">  name: default</span><br><span class="line">current-context: default</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line">users: []</span><br></pre></td></tr></table></figure>
+<h2 id="22-restconfig"><a href="#2-2-rest-config" class="headerlink" title="2.2 rest.config"></a>2.2 rest.config</h2><p>通过参数（master的url或者kubeconfig路径）和<code>BuildConfigFromFlags</code>方法来获取<code>rest.Config</code>对象，一般是通过参数kubeconfig的路径。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config, err := clientcmd.BuildConfigFromFlags(<span class="string">""</span>, *kubeconfig)</span><br></pre></td></tr></table></figure>
+<p><strong>BuildConfigFromFlags函数源码</strong></p>
+<p><a href="https://github.com/kubernetes/client-go/blob/master/tools/clientcmd/client_config.go#L522" target="_blank" rel="noopener">k8s.io/client-go/tools/clientcmd/client_config.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BuildConfigFromFlags is a helper function that builds configs from a master</span></span><br><span class="line"><span class="comment">// url or a kubeconfig filepath. These are passed in as command line flags for cluster</span></span><br><span class="line"><span class="comment">// components. Warnings should reflect this usage. If neither masterUrl or kubeconfigPath</span></span><br><span class="line"><span class="comment">// are passed in we fallback to inClusterConfig. If inClusterConfig fails, we fallback</span></span><br><span class="line"><span class="comment">// to the default config.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BuildConfigFromFlags</span><span class="params">(masterUrl, kubeconfigPath <span class="keyword">string</span>)</span> <span class="params">(*restclient.Config, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> kubeconfigPath == <span class="string">""</span> &amp;&amp; masterUrl == <span class="string">""</span> &#123;</span><br><span class="line">		glog.Warningf(<span class="string">"Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work."</span>)</span><br><span class="line">		kubeconfig, err := restclient.InClusterConfig()</span><br><span class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> kubeconfig, <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">		glog.Warning(<span class="string">"error creating inClusterConfig, falling back to default config: "</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> NewNonInteractiveDeferredLoadingClientConfig(</span><br><span class="line">		&amp;ClientConfigLoadingRules&#123;ExplicitPath: kubeconfigPath&#125;,</span><br><span class="line">		&amp;ConfigOverrides&#123;ClusterInfo: clientcmdapi.Cluster&#123;Server: masterUrl&#125;&#125;).ClientConfig()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="23-clientset"><a href="#2-3-clientset" class="headerlink" title="2.3 clientset"></a>2.3 clientset</h2><p>通过<code>*rest.Config</code>参数和<code>NewForConfig</code>方法来获取<code>clientset</code>对象，<code>clientset</code>是多个<code>client</code>的集合，每个<code>client</code>可能包含不同版本的方法调用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clientset, err := kubernetes.NewForConfig(config)</span><br></pre></td></tr></table></figure>
+<h3 id="231-newforconfig"><a href="#2-3-1-NewForConfig" class="headerlink" title="2.3.1 NewForConfig"></a>2.3.1 NewForConfig</h3><p><code>NewForConfig</code>函数就是初始化clientset中的每个client。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/clientset.go#L396" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/clientset.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewForConfig creates a new Clientset for the given config.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewForConfig</span><span class="params">(c *rest.Config)</span> <span class="params">(*Clientset, error)</span></span> &#123;</span><br><span class="line">	configShallowCopy := *c</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">var</span> cs Clientset</span><br><span class="line">	cs.appsV1beta1, err = appsv1beta1.NewForConfig(&amp;configShallowCopy)</span><br><span class="line">	...</span><br><span class="line">	cs.coreV1, err = corev1.NewForConfig(&amp;configShallowCopy)</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="232-clientset的结构体"><a href="#2-3-2-clientset的结构体" class="headerlink" title="2.3.2 clientset的结构体"></a>2.3.2 clientset的结构体</h3><p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/clientset.go#L118" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/clientset.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Clientset contains the clients for groups. Each group has exactly one</span></span><br><span class="line"><span class="comment">// version included in a Clientset.</span></span><br><span class="line"><span class="keyword">type</span> Clientset <span class="keyword">struct</span> &#123;</span><br><span class="line">	*discovery.DiscoveryClient</span><br><span class="line">	admissionregistrationV1alpha1 *admissionregistrationv1alpha1.AdmissionregistrationV1alpha1Client</span><br><span class="line">	appsV1beta1                   *appsv1beta1.AppsV1beta1Client</span><br><span class="line">	appsV1beta2                   *appsv1beta2.AppsV1beta2Client</span><br><span class="line">	authenticationV1              *authenticationv1.AuthenticationV1Client</span><br><span class="line">	authenticationV1beta1         *authenticationv1beta1.AuthenticationV1beta1Client</span><br><span class="line">	authorizationV1               *authorizationv1.AuthorizationV1Client</span><br><span class="line">	authorizationV1beta1          *authorizationv1beta1.AuthorizationV1beta1Client</span><br><span class="line">	autoscalingV1                 *autoscalingv1.AutoscalingV1Client</span><br><span class="line">	autoscalingV2beta1            *autoscalingv2beta1.AutoscalingV2beta1Client</span><br><span class="line">	batchV1                       *batchv1.BatchV1Client</span><br><span class="line">	batchV1beta1                  *batchv1beta1.BatchV1beta1Client</span><br><span class="line">	batchV2alpha1                 *batchv2alpha1.BatchV2alpha1Client</span><br><span class="line">	certificatesV1beta1           *certificatesv1beta1.CertificatesV1beta1Client</span><br><span class="line">	coreV1                        *corev1.CoreV1Client</span><br><span class="line">	extensionsV1beta1             *extensionsv1beta1.ExtensionsV1beta1Client</span><br><span class="line">	networkingV1                  *networkingv1.NetworkingV1Client</span><br><span class="line">	policyV1beta1                 *policyv1beta1.PolicyV1beta1Client</span><br><span class="line">	rbacV1                        *rbacv1.RbacV1Client</span><br><span class="line">	rbacV1beta1                   *rbacv1beta1.RbacV1beta1Client</span><br><span class="line">	rbacV1alpha1                  *rbacv1alpha1.RbacV1alpha1Client</span><br><span class="line">	schedulingV1alpha1            *schedulingv1alpha1.SchedulingV1alpha1Client</span><br><span class="line">	settingsV1alpha1              *settingsv1alpha1.SettingsV1alpha1Client</span><br><span class="line">	storageV1beta1                *storagev1beta1.StorageV1beta1Client</span><br><span class="line">	storageV1                     *storagev1.StorageV1Client</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="233-clientsetinterface"><a href="#2-3-3-clientset-Interface" class="headerlink" title="2.3.3 clientset.Interface"></a>2.3.3 clientset.Interface</h3><p>clientset实现了以下的Interface，因此可以通过调用以下方法获得具体的client。例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pods, err := clientset.CoreV1().Pods(<span class="string">""</span>).List(metav1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p><strong>clientset的方法集接口</strong></p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/clientset.go#L54" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/clientset.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">	Discovery() discovery.DiscoveryInterface</span><br><span class="line">	AdmissionregistrationV1alpha1() admissionregistrationv1alpha1.AdmissionregistrationV1alpha1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Admissionregistration() admissionregistrationv1alpha1.AdmissionregistrationV1alpha1Interface</span><br><span class="line">	AppsV1beta1() appsv1beta1.AppsV1beta1Interface</span><br><span class="line">	AppsV1beta2() appsv1beta2.AppsV1beta2Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Apps() appsv1beta2.AppsV1beta2Interface</span><br><span class="line">	AuthenticationV1() authenticationv1.AuthenticationV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Authentication() authenticationv1.AuthenticationV1Interface</span><br><span class="line">	AuthenticationV1beta1() authenticationv1beta1.AuthenticationV1beta1Interface</span><br><span class="line">	AuthorizationV1() authorizationv1.AuthorizationV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Authorization() authorizationv1.AuthorizationV1Interface</span><br><span class="line">	AuthorizationV1beta1() authorizationv1beta1.AuthorizationV1beta1Interface</span><br><span class="line">	AutoscalingV1() autoscalingv1.AutoscalingV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Autoscaling() autoscalingv1.AutoscalingV1Interface</span><br><span class="line">	AutoscalingV2beta1() autoscalingv2beta1.AutoscalingV2beta1Interface</span><br><span class="line">	BatchV1() batchv1.BatchV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Batch() batchv1.BatchV1Interface</span><br><span class="line">	BatchV1beta1() batchv1beta1.BatchV1beta1Interface</span><br><span class="line">	BatchV2alpha1() batchv2alpha1.BatchV2alpha1Interface</span><br><span class="line">	CertificatesV1beta1() certificatesv1beta1.CertificatesV1beta1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Certificates() certificatesv1beta1.CertificatesV1beta1Interface</span><br><span class="line">	CoreV1() corev1.CoreV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Core() corev1.CoreV1Interface</span><br><span class="line">	ExtensionsV1beta1() extensionsv1beta1.ExtensionsV1beta1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Extensions() extensionsv1beta1.ExtensionsV1beta1Interface</span><br><span class="line">	NetworkingV1() networkingv1.NetworkingV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Networking() networkingv1.NetworkingV1Interface</span><br><span class="line">	PolicyV1beta1() policyv1beta1.PolicyV1beta1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Policy() policyv1beta1.PolicyV1beta1Interface</span><br><span class="line">	RbacV1() rbacv1.RbacV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Rbac() rbacv1.RbacV1Interface</span><br><span class="line">	RbacV1beta1() rbacv1beta1.RbacV1beta1Interface</span><br><span class="line">	RbacV1alpha1() rbacv1alpha1.RbacV1alpha1Interface</span><br><span class="line">	SchedulingV1alpha1() schedulingv1alpha1.SchedulingV1alpha1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Scheduling() schedulingv1alpha1.SchedulingV1alpha1Interface</span><br><span class="line">	SettingsV1alpha1() settingsv1alpha1.SettingsV1alpha1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Settings() settingsv1alpha1.SettingsV1alpha1Interface</span><br><span class="line">	StorageV1beta1() storagev1beta1.StorageV1beta1Interface</span><br><span class="line">	StorageV1() storagev1.StorageV1Interface</span><br><span class="line">	<span class="comment">// Deprecated: please explicitly pick a version if possible.</span></span><br><span class="line">	Storage() storagev1.StorageV1Interface</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="24-corev1client"><a href="#2-4-CoreV1Client" class="headerlink" title="2.4 CoreV1Client"></a>2.4 CoreV1Client</h2><p>我们以clientset中的<code>CoreV1Client</code>为例做分析。</p>
+<p>通过传入的配置信息<code>rest.Config</code>初始化<code>CoreV1Client</code>对象。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/clientset.go#L464" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/clientset.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cs.coreV1, err = corev1.NewForConfig(&amp;configShallowCopy)</span><br></pre></td></tr></table></figure>
+<h3 id="241-corev1newforconfig"><a href="#2-4-1-corev1-NewForConfig" class="headerlink" title="2.4.1 corev1.NewForConfig"></a>2.4.1 corev1.NewForConfig</h3><p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/core_client.go#L116:6" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/core_client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewForConfig creates a new CoreV1Client for the given config.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewForConfig</span><span class="params">(c *rest.Config)</span> <span class="params">(*CoreV1Client, error)</span></span> &#123;</span><br><span class="line">	config := *c</span><br><span class="line">	<span class="keyword">if</span> err := setConfigDefaults(&amp;config); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	client, err := rest.RESTClientFor(&amp;config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;CoreV1Client&#123;client&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>corev1.NewForConfig</code>方法本质是调用了<code>rest.RESTClientFor(&amp;config)</code>方法创建<code>RESTClient</code>对象，即<code>CoreV1Client</code>的本质就是一个<code>RESTClient</code>对象。</p>
+<h3 id="242-corev1client结构体"><a href="#2-4-2-CoreV1Client结构体" class="headerlink" title="2.4.2 CoreV1Client结构体"></a>2.4.2 CoreV1Client结构体</h3><p>以下是<code>CoreV1Client</code>结构体的定义：</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/core_client.go#L47:6" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/core_client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CoreV1Client is used to interact with features provided by the  group.</span></span><br><span class="line"><span class="keyword">type</span> CoreV1Client <span class="keyword">struct</span> &#123;</span><br><span class="line">	restClient rest.Interface</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>CoreV1Client</code>实现了<code>CoreV1Interface</code>的接口，即以下方法，从而对kubernetes的资源对象进行增删改查的操作。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/core_client.go#L51" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/core_client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//CoreV1Client的方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">ComponentStatuses</span><span class="params">()</span> <span class="title">ComponentStatusInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//ConfigMaps</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">ConfigMaps</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">ConfigMapInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//Endpoints</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Endpoints</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">EndpointsInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Events</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">EventInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">LimitRanges</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">LimitRangeInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//Namespaces</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Namespaces</span><span class="params">()</span> <span class="title">NamespaceInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//Nodes</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Nodes</span><span class="params">()</span> <span class="title">NodeInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">PersistentVolumes</span><span class="params">()</span> <span class="title">PersistentVolumeInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">PersistentVolumeClaims</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">PersistentVolumeClaimInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//Pods</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Pods</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">PodInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">PodTemplates</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">PodTemplateInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//ReplicationControllers</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">ReplicationControllers</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">ReplicationControllerInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">ResourceQuotas</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">ResourceQuotaInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Secrets</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">SecretInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="comment">//Services</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Services</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">ServiceInterface</span></span> &#123;...&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">ServiceAccounts</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">ServiceAccountInterface</span></span> &#123;...&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="243-corev1interface"><a href="#2-4-3-CoreV1Interface" class="headerlink" title="2.4.3 CoreV1Interface"></a>2.4.3 CoreV1Interface</h3><p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/core_client.go#L26" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/core_client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> CoreV1Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">	RESTClient() rest.Interface</span><br><span class="line">	ComponentStatusesGetter</span><br><span class="line">	ConfigMapsGetter</span><br><span class="line">	EndpointsGetter</span><br><span class="line">	EventsGetter</span><br><span class="line">	LimitRangesGetter</span><br><span class="line">	NamespacesGetter</span><br><span class="line">	NodesGetter</span><br><span class="line">	PersistentVolumesGetter</span><br><span class="line">	PersistentVolumeClaimsGetter</span><br><span class="line">	PodsGetter</span><br><span class="line">	PodTemplatesGetter</span><br><span class="line">	ReplicationControllersGetter</span><br><span class="line">	ResourceQuotasGetter</span><br><span class="line">	SecretsGetter</span><br><span class="line">	ServicesGetter</span><br><span class="line">	ServiceAccountsGetter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>CoreV1Interface</code>中包含了各种<code>kubernetes</code>对象的调用接口，例如<code>PodsGetter</code>是对kubernetes中<code>pod</code>对象增删改查操作的接口。<code>ServicesGetter</code>是对<code>service</code>对象的操作的接口。</p>
+<h3 id="244-podsgetter"><a href="#2-4-4-PodsGetter" class="headerlink" title="2.4.4 PodsGetter"></a>2.4.4 PodsGetter</h3><p>以下我们以<code>PodsGetter</code>接口为例分析<code>CoreV1Client</code>对<code>pod</code>对象的增删改查接口调用。</p>
+<p>示例中的代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pods, err := clientset.CoreV1().Pods(<span class="string">""</span>).List(metav1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p><strong>CoreV1().Pods()</strong></p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/core_client.go#L87" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/core_client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *CoreV1Client)</span> <span class="title">Pods</span><span class="params">(namespace <span class="keyword">string</span>)</span> <span class="title">PodInterface</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> newPods(c, namespace)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>newPods()</strong></p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/pod.go#L54" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/pod.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// newPods returns a Pods</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newPods</span><span class="params">(c *CoreV1Client, namespace <span class="keyword">string</span>)</span> *<span class="title">pods</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;pods&#123;</span><br><span class="line">		client: c.RESTClient(),</span><br><span class="line">		ns:     namespace,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>CoreV1().Pods()</code>的方法实际上是调用了<code>newPods()</code>的方法，创建了一个<code>pods</code>对象，<code>pods</code>对象继承了<code>rest.Interface</code>接口，即最终的实现本质是<code>RESTClient</code>的HTTP调用。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/pod.go#L48" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/pod.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pods implements PodInterface</span></span><br><span class="line"><span class="keyword">type</span> pods <span class="keyword">struct</span> &#123;</span><br><span class="line">	client rest.Interface</span><br><span class="line">	ns     <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>pods</code>对象实现了<code>PodInterface</code>接口。<code>PodInterface</code>定义了<code>pods</code>对象的增删改查等方法。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/pod.go#L34" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/pod.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PodInterface has methods to work with Pod resources.</span></span><br><span class="line"><span class="keyword">type</span> PodInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">	Create(*v1.Pod) (*v1.Pod, error)</span><br><span class="line">	Update(*v1.Pod) (*v1.Pod, error)</span><br><span class="line">	UpdateStatus(*v1.Pod) (*v1.Pod, error)</span><br><span class="line">	Delete(name <span class="keyword">string</span>, options *meta_v1.DeleteOptions) error</span><br><span class="line">	DeleteCollection(options *meta_v1.DeleteOptions, listOptions meta_v1.ListOptions) error</span><br><span class="line">	Get(name <span class="keyword">string</span>, options meta_v1.GetOptions) (*v1.Pod, error)</span><br><span class="line">	List(opts meta_v1.ListOptions) (*v1.PodList, error)</span><br><span class="line">	Watch(opts meta_v1.ListOptions) (watch.Interface, error)</span><br><span class="line">	Patch(name <span class="keyword">string</span>, pt types.PatchType, data []<span class="keyword">byte</span>, subresources ...<span class="keyword">string</span>) (result *v1.Pod, err error)</span><br><span class="line">	PodExpansion</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>PodsGetter</strong></p>
+<p>PodsGetter继承了PodInterface的接口。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/pod.go#L28" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/pod.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// PodsGetter has a method to return a PodInterface.</span></span><br><span class="line"><span class="comment">// A group's client should implement this interface.</span></span><br><span class="line"><span class="keyword">type</span> PodsGetter <span class="keyword">interface</span> &#123;</span><br><span class="line">	Pods(namespace <span class="keyword">string</span>) PodInterface</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Pods().List()</strong></p>
+<p>pods.List()方法通过<code>RESTClient</code>的HTTP调用来实现对kubernetes的pod资源的获取。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/pod.go#L75" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/pod.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// List takes label and field selectors, and returns the list of Pods that match those selectors.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *pods)</span> <span class="title">List</span><span class="params">(opts meta_v1.ListOptions)</span> <span class="params">(result *v1.PodList, err error)</span></span> &#123;</span><br><span class="line">	result = &amp;v1.PodList&#123;&#125;</span><br><span class="line">	err = c.client.Get().</span><br><span class="line">		Namespace(c.ns).</span><br><span class="line">		Resource(<span class="string">"pods"</span>).</span><br><span class="line">		VersionedParams(&amp;opts, scheme.ParameterCodec).</span><br><span class="line">		Do().</span><br><span class="line">		Into(result)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上分析了<code>clientset.CoreV1().Pods(&quot;&quot;).List(metav1.ListOptions{})</code>对pod资源获取的过程，最终是调用<code>RESTClient</code>的方法实现。</p>
+<h2 id="25-restclient"><a href="#2-5-RESTClient" class="headerlink" title="2.5 RESTClient"></a>2.5 RESTClient</h2><p>以下分析<code>RESTClient</code>的创建过程及作用。</p>
+<p><code>RESTClient</code>对象的创建同样是依赖传入的config信息。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/kubernetes/typed/core/v1/core_client.go#L121" target="_blank" rel="noopener">k8s.io/client-go/kubernetes/typed/core/v1/core_client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client, err := rest.RESTClientFor(&amp;config)</span><br></pre></td></tr></table></figure>
+<h3 id="251-restrestclientfor"><a href="#2-5-1-rest-RESTClientFor" class="headerlink" title="2.5.1 rest.RESTClientFor"></a>2.5.1 rest.RESTClientFor</h3><p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/rest/config.go#L182" target="_blank" rel="noopener">k8s.io/client-go/rest/config.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RESTClientFor returns a RESTClient that satisfies the requested attributes on a client Config</span></span><br><span class="line"><span class="comment">// object. Note that a RESTClient may require fields that are optional when initializing a Client.</span></span><br><span class="line"><span class="comment">// A RESTClient created by this method is generic - it expects to operate on an API that follows</span></span><br><span class="line"><span class="comment">// the Kubernetes conventions, but may not be the Kubernetes API.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RESTClientFor</span><span class="params">(config *Config)</span> <span class="params">(*RESTClient, error)</span></span> &#123;</span><br><span class="line">	...</span><br><span class="line">	qps := config.QPS</span><br><span class="line">	...</span><br><span class="line">	burst := config.Burst</span><br><span class="line">	...</span><br><span class="line">	baseURL, versionedAPIPath, err := defaultServerUrlFor(config)</span><br><span class="line">	...</span><br><span class="line">	transport, err := TransportFor(config)</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">var</span> httpClient *http.Client</span><br><span class="line">	<span class="keyword">if</span> transport != http.DefaultTransport &#123;</span><br><span class="line">		httpClient = &amp;http.Client&#123;Transport: transport&#125;</span><br><span class="line">		<span class="keyword">if</span> config.Timeout &gt; <span class="number">0</span> &#123;</span><br><span class="line">			httpClient.Timeout = config.Timeout</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> NewRESTClient(baseURL, versionedAPIPath, config.ContentConfig, qps, burst, config.RateLimiter, httpClient)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>RESTClientFor</code>函数调用了<code>NewRESTClient</code>的初始化函数。</p>
+<h3 id="252-newrestclient"><a href="#2-5-2-NewRESTClient" class="headerlink" title="2.5.2 NewRESTClient"></a>2.5.2 NewRESTClient</h3><p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/rest/client.go#L91" target="_blank" rel="noopener">k8s.io/client-go/rest/client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewRESTClient creates a new RESTClient. This client performs generic REST functions</span></span><br><span class="line"><span class="comment">// such as Get, Put, Post, and Delete on specified paths.  Codec controls encoding and</span></span><br><span class="line"><span class="comment">// decoding of responses from the server.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRESTClient</span><span class="params">(baseURL *url.URL, versionedAPIPath <span class="keyword">string</span>, config ContentConfig, maxQPS <span class="keyword">float32</span>, maxBurst <span class="keyword">int</span>, rateLimiter flowcontrol.RateLimiter, client *http.Client)</span> <span class="params">(*RESTClient, error)</span></span> &#123;</span><br><span class="line">	base := *baseURL</span><br><span class="line">	...</span><br><span class="line">	serializers, err := createSerializers(config)</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">return</span> &amp;RESTClient&#123;</span><br><span class="line">		base:             &amp;base,</span><br><span class="line">		versionedAPIPath: versionedAPIPath,</span><br><span class="line">		contentConfig:    config,</span><br><span class="line">		serializers:      *serializers,</span><br><span class="line">		createBackoffMgr: readExpBackoffConfig,</span><br><span class="line">		Throttle:         throttle,</span><br><span class="line">		Client:           client,</span><br><span class="line">	&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="253-restclient结构体"><a href="#2-5-3-RESTClient结构体" class="headerlink" title="2.5.3 RESTClient结构体"></a>2.5.3 RESTClient结构体</h3><p>以下介绍RESTClient的结构体定义，RESTClient结构体中包含了<code>http.Client</code>，即本质上RESTClient就是一个<code>http.Client</code>的封装实现。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/rest/client.go#L54" target="_blank" rel="noopener">k8s.io/client-go/rest/client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RESTClient imposes common Kubernetes API conventions on a set of resource paths.</span></span><br><span class="line"><span class="comment">// The baseURL is expected to point to an HTTP or HTTPS path that is the parent</span></span><br><span class="line"><span class="comment">// of one or more resources.  The server should return a decodable API resource</span></span><br><span class="line"><span class="comment">// object, or an api.Status object which contains information about the reason for</span></span><br><span class="line"><span class="comment">// any failure.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Most consumers should use client.New() to get a Kubernetes API client.</span></span><br><span class="line"><span class="keyword">type</span> RESTClient <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// base is the root URL for all invocations of the client</span></span><br><span class="line">	base *url.URL</span><br><span class="line">	<span class="comment">// versionedAPIPath is a path segment connecting the base URL to the resource root</span></span><br><span class="line">	versionedAPIPath <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// contentConfig is the information used to communicate with the server.</span></span><br><span class="line">	contentConfig ContentConfig</span><br><span class="line"></span><br><span class="line">	<span class="comment">// serializers contain all serializers for underlying content type.</span></span><br><span class="line">	serializers Serializers</span><br><span class="line"></span><br><span class="line">	<span class="comment">// creates BackoffManager that is passed to requests.</span></span><br><span class="line">	createBackoffMgr <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">BackoffManager</span></span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// TODO extract this into a wrapper interface via the RESTClient interface in kubectl.</span></span><br><span class="line">	Throttle flowcontrol.RateLimiter</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Set specific behavior of the client.  If not set http.DefaultClient will be used.</span></span><br><span class="line">	Client *http.Client</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="254-restclientinterface"><a href="#2-5-4-RESTClient-Interface" class="headerlink" title="2.5.4 RESTClient.Interface"></a>2.5.4 RESTClient.Interface</h3><p>RESTClient实现了以下的接口方法：</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/rest/client.go#L42" target="_blank" rel="noopener">k8s.io/client-go/rest/client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Interface captures the set of operations for generically interacting with Kubernetes REST apis.</span></span><br><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">	GetRateLimiter() flowcontrol.RateLimiter</span><br><span class="line">	Verb(verb <span class="keyword">string</span>) *Request</span><br><span class="line">	Post() *Request</span><br><span class="line">	Put() *Request</span><br><span class="line">	Patch(pt types.PatchType) *Request</span><br><span class="line">	Get() *Request</span><br><span class="line">	Delete() *Request</span><br><span class="line">	APIVersion() schema.GroupVersion</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在调用HTTP方法（Post()，Put()，Get()，Delete() ）时，实际上调用了Verb(verb string)函数。</p>
+<p><a href="https://github.com/kubernetes/client-go/blob/87887458218a51f3944b2f4c553eb38173458e97/rest/client.go#L208" target="_blank" rel="noopener">k8s.io/client-go/rest/client.go</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Verb begins a request with a verb (GET, POST, PUT, DELETE).</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Example usage of RESTClient's request building interface:</span></span><br><span class="line"><span class="comment">// c, err := NewRESTClient(...)</span></span><br><span class="line"><span class="comment">// if err != nil &#123; ... &#125;</span></span><br><span class="line"><span class="comment">// resp, err := c.Verb("GET").</span></span><br><span class="line"><span class="comment">//  Path("pods").</span></span><br><span class="line"><span class="comment">//  SelectorParam("labels", "area=staging").</span></span><br><span class="line"><span class="comment">//  Timeout(10*time.Second).</span></span><br><span class="line"><span class="comment">//  Do()</span></span><br><span class="line"><span class="comment">// if err != nil &#123; ... &#125;</span></span><br><span class="line"><span class="comment">// list, ok := resp.(*api.PodList)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *RESTClient)</span> <span class="title">Verb</span><span class="params">(verb <span class="keyword">string</span>)</span> *<span class="title">Request</span></span> &#123;</span><br><span class="line">	backoff := c.createBackoffMgr()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> c.Client == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> NewRequest(<span class="literal">nil</span>, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> NewRequest(c.Client, verb, c.base, c.versionedAPIPath, c.contentConfig, c.serializers, backoff, c.Throttle)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Verb</code>函数调用了<code>NewRequest</code>方法，最后调用<code>Do()</code>方法实现一个HTTP请求获取Result。</p>
+<h2 id="26-总结"><a href="#2-6-总结" class="headerlink" title="2.6 总结"></a>2.6 总结</h2><p><code>client-go</code>对kubernetes资源对象的调用，需要先获取kubernetes的配置信息，即<code>$HOME/.kube/config</code>。</p>
+<p>整个调用的过程如下：</p>
+<p>kubeconfig→rest.config→clientset→具体的client(CoreV1Client)→具体的资源对象(pod)→RESTClient→http.Client→HTTP请求的发送及响应</p>
+<p>通过clientset中不同的client和client中不同资源对象的方法实现对kubernetes中资源对象的增删改查等操作，常用的client有<code>CoreV1Client</code>、<code>AppsV1beta1Client</code>、<code>ExtensionsV1beta1Client</code>等。</p>
+<h1 id="3-client-go对k8s资源的调用"><a href="#3-client-go对k8s资源的调用" class="headerlink" title="3. client-go对k8s资源的调用"></a>3. client-go对k8s资源的调用</h1><p><strong>创建clientset</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取kubeconfig</span></span><br><span class="line">kubeconfig = flag.String(<span class="string">"kubeconfig"</span>, filepath.Join(home, <span class="string">".kube"</span>, <span class="string">"config"</span>), <span class="string">"(optional) absolute path to the kubeconfig file"</span>)</span><br><span class="line"><span class="comment">//创建config	</span></span><br><span class="line">config, err := clientcmd.BuildConfigFromFlags(<span class="string">""</span>, *kubeconfig)</span><br><span class="line"><span class="comment">//创建clientset</span></span><br><span class="line">clientset, err := kubernetes.NewForConfig(config)</span><br><span class="line"><span class="comment">//具体的资源调用见以下例子</span></span><br></pre></td></tr></table></figure>
+<h2 id="31-deployment"><a href="#3-1-deployment" class="headerlink" title="3.1 deployment"></a>3.1 deployment</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明deployment对象</span></span><br><span class="line"><span class="keyword">var</span> deployment *v1beta1.Deployment</span><br><span class="line"><span class="comment">//构造deployment对象</span></span><br><span class="line"><span class="comment">//创建deployment</span></span><br><span class="line">deployment, err := clientset.AppsV1beta1().Deployments(&lt;namespace&gt;).Create(&lt;deployment&gt;)</span><br><span class="line"><span class="comment">//更新deployment</span></span><br><span class="line">deployment, err := clientset.AppsV1beta1().Deployments(&lt;namespace&gt;).Update(&lt;deployment&gt;)</span><br><span class="line"><span class="comment">//删除deployment</span></span><br><span class="line">err := clientset.AppsV1beta1().Deployments(&lt;namespace&gt;).Delete(&lt;deployment.Name&gt;, &amp;meta_v1.DeleteOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//查询deployment</span></span><br><span class="line">deployment, err := clientset.AppsV1beta1().Deployments(&lt;namespace&gt;).Get(&lt;deployment.Name&gt;, meta_v1.GetOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//列出deployment</span></span><br><span class="line">deploymentList, err := clientset.AppsV1beta1().Deployments(&lt;namespace&gt;).List(&amp;meta_v1.ListOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//watch deployment</span></span><br><span class="line">watchInterface, err := clientset.AppsV1beta1().Deployments(&lt;namespace&gt;).Watch(&amp;meta_v1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="32-service"><a href="#3-2-service" class="headerlink" title="3.2 service"></a>3.2 service</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明service对象</span></span><br><span class="line"><span class="keyword">var</span> service *v1.Service</span><br><span class="line"><span class="comment">//构造service对象</span></span><br><span class="line"><span class="comment">//创建service</span></span><br><span class="line">service, err := clientset.CoreV1().Services(&lt;namespace&gt;).Create(&lt;service&gt;)</span><br><span class="line"><span class="comment">//更新service</span></span><br><span class="line">service, err := clientset.CoreV1().Services(&lt;namespace&gt;).Update(&lt;service&gt;)</span><br><span class="line"><span class="comment">//删除service</span></span><br><span class="line">err := clientset.CoreV1().Services(&lt;namespace&gt;).Delete(&lt;service.Name&gt;, &amp;meta_v1.DeleteOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//查询service</span></span><br><span class="line">service, err := clientset.CoreV1().Services(&lt;namespace&gt;).Get(&lt;service.Name&gt;, meta_v1.GetOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//列出service</span></span><br><span class="line">serviceList, err := clientset.CoreV1().Services(&lt;namespace&gt;).List(&amp;meta_v1.ListOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//watch service</span></span><br><span class="line">watchInterface, err := clientset.CoreV1().Services(&lt;namespace&gt;).Watch(&amp;meta_v1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="33-ingress"><a href="#3-3-ingress" class="headerlink" title="3.3 ingress"></a>3.3 ingress</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明ingress对象</span></span><br><span class="line"><span class="keyword">var</span> ingress *v1beta1.Ingress</span><br><span class="line"><span class="comment">//构造ingress对象</span></span><br><span class="line"><span class="comment">//创建ingress</span></span><br><span class="line">ingress, err := clientset.ExtensionsV1beta1().Ingresses(&lt;namespace&gt;).Create(&lt;ingress&gt;)</span><br><span class="line"><span class="comment">//更新ingress</span></span><br><span class="line">ingress, err := clientset.ExtensionsV1beta1().Ingresses(&lt;namespace&gt;).Update(&lt;ingress&gt;)</span><br><span class="line"><span class="comment">//删除ingress</span></span><br><span class="line">err := clientset.ExtensionsV1beta1().Ingresses(&lt;namespace&gt;).Delete(&lt;ingress.Name&gt;, &amp;meta_v1.DeleteOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//查询ingress</span></span><br><span class="line">ingress, err := clientset.ExtensionsV1beta1().Ingresses(&lt;namespace&gt;).Get(&lt;ingress.Name&gt;, meta_v1.GetOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//列出ingress</span></span><br><span class="line">ingressList, err := clientset.ExtensionsV1beta1().Ingresses(&lt;namespace&gt;).List(&amp;meta_v1.ListOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//watch ingress</span></span><br><span class="line">watchInterface, err := clientset.ExtensionsV1beta1().Ingresses(&lt;namespace&gt;).Watch(&amp;meta_v1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="34-replicaset"><a href="#3-4-replicaSet" class="headerlink" title="3.4 replicaSet"></a>3.4 replicaSet</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明replicaSet对象</span></span><br><span class="line"><span class="keyword">var</span> replicaSet *v1beta1.ReplicaSet</span><br><span class="line"><span class="comment">//构造replicaSet对象</span></span><br><span class="line"><span class="comment">//创建replicaSet</span></span><br><span class="line">replicaSet, err := clientset.ExtensionsV1beta1().ReplicaSets(&lt;namespace&gt;).Create(&lt;replicaSet&gt;)</span><br><span class="line"><span class="comment">//更新replicaSet</span></span><br><span class="line">replicaSet, err := clientset.ExtensionsV1beta1().ReplicaSets(&lt;namespace&gt;).Update(&lt;replicaSet&gt;)</span><br><span class="line"><span class="comment">//删除replicaSet</span></span><br><span class="line">err := clientset.ExtensionsV1beta1().ReplicaSets(&lt;namespace&gt;).Delete(&lt;replicaSet.Name&gt;, &amp;meta_v1.DeleteOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//查询replicaSet</span></span><br><span class="line">replicaSet, err := clientset.ExtensionsV1beta1().ReplicaSets(&lt;namespace&gt;).Get(&lt;replicaSet.Name&gt;, meta_v1.GetOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//列出replicaSet</span></span><br><span class="line">replicaSetList, err := clientset.ExtensionsV1beta1().ReplicaSets(&lt;namespace&gt;).List(&amp;meta_v1.ListOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//watch replicaSet</span></span><br><span class="line">watchInterface, err := clientset.ExtensionsV1beta1().ReplicaSets(&lt;namespace&gt;).Watch(&amp;meta_v1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p>新版的kubernetes中一般通过deployment来创建replicaSet，再通过replicaSet来控制pod。</p>
+<h2 id="35-pod"><a href="#3-5-pod" class="headerlink" title="3.5 pod"></a>3.5 pod</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明pod对象</span></span><br><span class="line"><span class="keyword">var</span> pod *v1.Pod</span><br><span class="line"><span class="comment">//创建pod</span></span><br><span class="line">pod, err := clientset.CoreV1().Pods(&lt;namespace&gt;).Create(&lt;pod&gt;)</span><br><span class="line"><span class="comment">//更新pod</span></span><br><span class="line">pod, err := clientset.CoreV1().Pods(&lt;namespace&gt;).Update(&lt;pod&gt;)</span><br><span class="line"><span class="comment">//删除pod</span></span><br><span class="line">err := clientset.CoreV1().Pods(&lt;namespace&gt;).Delete(&lt;pod.Name&gt;, &amp;meta_v1.DeleteOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//查询pod</span></span><br><span class="line">pod, err := clientset.CoreV1().Pods(&lt;namespace&gt;).Get(&lt;pod.Name&gt;, meta_v1.GetOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//列出pod</span></span><br><span class="line">podList, err := clientset.CoreV1().Pods(&lt;namespace&gt;).List(&amp;meta_v1.ListOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//watch pod</span></span><br><span class="line">watchInterface, err := clientset.CoreV1().Pods(&lt;namespace&gt;).Watch(&amp;meta_v1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="36-statefulset"><a href="#3-6-statefulset" class="headerlink" title="3.6 statefulset"></a>3.6 statefulset</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明statefulset对象</span></span><br><span class="line"><span class="keyword">var</span> statefulset *v1.StatefulSet</span><br><span class="line"><span class="comment">//创建statefulset</span></span><br><span class="line">statefulset, err := clientset.AppsV1().StatefulSets(&lt;namespace&gt;).Create(&lt;statefulset&gt;)</span><br><span class="line"><span class="comment">//更新statefulset</span></span><br><span class="line">statefulset, err := clientset.AppsV1().StatefulSets(&lt;namespace&gt;).Update(&lt;statefulset&gt;)</span><br><span class="line"><span class="comment">//删除statefulset</span></span><br><span class="line">err := clientset.AppsV1().StatefulSets(&lt;namespace&gt;).Delete(&lt;statefulset.Name&gt;, &amp;meta_v1.DeleteOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//查询statefulset</span></span><br><span class="line">statefulset, err := clientset.AppsV1().StatefulSets(&lt;namespace&gt;).Get(&lt;statefulset.Name&gt;, meta_v1.GetOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//列出statefulset</span></span><br><span class="line">statefulsetList, err := clientset.AppsV1().StatefulSets(&lt;namespace&gt;).List(&amp;meta_v1.ListOptions&#123;&#125;)</span><br><span class="line"><span class="comment">//watch statefulset</span></span><br><span class="line">watchInterface, err := clientset.AppsV1().StatefulSets(&lt;namespace&gt;).Watch(&amp;meta_v1.ListOptions&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p>​    通过以上对kubernetes的资源对象的操作函数可以看出，每个资源对象都有增删改查等方法，基本调用逻辑类似。一般二次开发只需要创建deployment、service、ingress三个资源对象即可，pod对象由deployment包含的replicaSet来控制创建和删除。函数调用的入参一般只有<code>NAMESPACE</code>和<code>kubernetesObject</code>两个参数，部分操作有<code>Options</code>的参数。在创建前，需要对资源对象构造数据，可以理解为编辑一个资源对象的yaml文件，然后通过<code>kubectl create -f xxx.yaml</code>来创建对象。</p>
+<p>参考文档:</p>
+<ul>
+<li><a href="https://github.com/kubernetes/client-go" target="_blank" rel="noopener">https://github.com/kubernetes/client-go</a></li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/machine-learning/machine-learning-concept/" data-toggle="tooltip" data-placement="top" title="[MachineLearning] 机器学习的概念">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/concepts/architecture/kubernetes-architecture/" data-toggle="tooltip" data-placement="top" title="Kubernetes总架构图">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-client-go简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. client-go简介</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-client-go说明"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1 client-go说明</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-示例代码"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2 示例代码</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-运行结果"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">1.3 运行结果</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-client-go源码分析"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. client-go源码分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-kubeconfig"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1 kubeconfig</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-restconfig"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2 rest.config</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-clientset"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3 clientset</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#231-newforconfig"><span class="toc-nav-number">2.3.1.</span> <span class="toc-nav-text">2.3.1 NewForConfig</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#232-clientset的结构体"><span class="toc-nav-number">2.3.2.</span> <span class="toc-nav-text">2.3.2 clientset的结构体</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#233-clientsetinterface"><span class="toc-nav-number">2.3.3.</span> <span class="toc-nav-text">2.3.3 clientset.Interface</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-corev1client"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4 CoreV1Client</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#241-corev1newforconfig"><span class="toc-nav-number">2.4.1.</span> <span class="toc-nav-text">2.4.1 corev1.NewForConfig</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#242-corev1client结构体"><span class="toc-nav-number">2.4.2.</span> <span class="toc-nav-text">2.4.2 CoreV1Client结构体</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#243-corev1interface"><span class="toc-nav-number">2.4.3.</span> <span class="toc-nav-text">2.4.3 CoreV1Interface</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#244-podsgetter"><span class="toc-nav-number">2.4.4.</span> <span class="toc-nav-text">2.4.4 PodsGetter</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-restclient"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.5 RESTClient</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#251-restrestclientfor"><span class="toc-nav-number">2.5.1.</span> <span class="toc-nav-text">2.5.1 rest.RESTClientFor</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#252-newrestclient"><span class="toc-nav-number">2.5.2.</span> <span class="toc-nav-text">2.5.2 NewRESTClient</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#253-restclient结构体"><span class="toc-nav-number">2.5.3.</span> <span class="toc-nav-text">2.5.3 RESTClient结构体</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#254-restclientinterface"><span class="toc-nav-number">2.5.4.</span> <span class="toc-nav-text">2.5.4 RESTClient.Interface</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#26-总结"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">2.6 总结</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-client-go对k8s资源的调用"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. client-go对k8s资源的调用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-deployment"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1 deployment</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-service"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2 service</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-ingress"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3 ingress</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-replicaset"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">3.4 replicaSet</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#35-pod"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">3.5 pod</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#36-statefulset"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">3.6 statefulset</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2023 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

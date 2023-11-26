@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Redis集群模式部署 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/linux-notes/redis/redis-cluster/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Redis" title="Redis">Redis</a>
+                            
+                        </div>
+                        <h1>Redis集群模式部署</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-04-17
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-redis部署"><a href="#1-Redis部署" class="headerlink" title="1. Redis部署"></a>1. Redis部署</h1><blockquote>
+<p>以下以Linux系统为例</p>
+</blockquote>
+<h2 id="11-下载和编译"><a href="#1-1-下载和编译" class="headerlink" title="1.1 下载和编译"></a>1.1 下载和编译</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://download.redis.io/releases/redis-4.0.7.tar.gz</span><br><span class="line">$ tar xzf redis-4.0.7.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> redis-4.0.7</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
+<p>编译完成后会在<code>src</code>目录下生成Redis服务端程序<code>redis-server</code>和客户端程序<code>redis-cli</code>。</p>
+<h2 id="12-启动服务"><a href="#1-2-启动服务" class="headerlink" title="1.2 启动服务"></a>1.2 启动服务</h2><p><strong>1、前台运行</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src/redis-server</span><br></pre></td></tr></table></figure>
+<p>该方式启动默认为<code>前台方式</code>运行，使用默认配置。</p>
+<p><strong>2、后台运行</strong></p>
+<p>可以修改<code>redis.conf</code>文件的<code>daemonize</code>参数为<code>yes</code>，指定配置文件启动，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vi redis.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># By default Redis does not run as a daemon. Use 'yes' if you need it.</span></span><br><span class="line"><span class="comment"># Note that Redis will write a pid file in /var/run/redis.pid when daemonized.</span></span><br><span class="line">daemonize yes</span><br></pre></td></tr></table></figure>
+<p>指定配置文件启动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src/redis-server redis.conf</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#指定配置文件后台启动</span></span><br><span class="line">[root@kube-node-1 redis-4.0.7]<span class="comment"># src/redis-server redis.conf</span></span><br><span class="line">95778:C 30 Jan 00:44:37.633 <span class="comment"># oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span></span><br><span class="line">95778:C 30 Jan 00:44:37.634 <span class="comment"># Redis version=4.0.7, bits=64, commit=00000000, modified=0, pid=95778, just started</span></span><br><span class="line">95778:C 30 Jan 00:44:37.634 <span class="comment"># Configuration loaded</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看Redis进程</span></span><br><span class="line">[root@kube-node-1 redis-4.0.7]<span class="comment"># ps aux|grep redis</span></span><br><span class="line">root      95779  0.0  0.0 145268   468 ?        Ssl  00:44   0:00 src/redis-server 127.0.0.1:6379</span><br></pre></td></tr></table></figure>
+<p>更多启动参数如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 src]<span class="comment"># ./redis-server --help</span></span><br><span class="line">Usage: ./redis-server [/path/to/redis.conf] [options]</span><br><span class="line">       ./redis-server - (<span class="built_in">read</span> config from stdin)</span><br><span class="line">       ./redis-server -v or --version</span><br><span class="line">       ./redis-server -h or --<span class="built_in">help</span></span><br><span class="line">       ./redis-server --<span class="built_in">test</span>-memory &lt;megabytes&gt;</span><br><span class="line"></span><br><span class="line">Examples:</span><br><span class="line">       ./redis-server (run the server with default conf)</span><br><span class="line">       ./redis-server /etc/redis/6379.conf</span><br><span class="line">       ./redis-server --port 7777</span><br><span class="line">       ./redis-server --port 7777 --slaveof 127.0.0.1 8888</span><br><span class="line">       ./redis-server /etc/myredis.conf --loglevel verbose</span><br><span class="line"></span><br><span class="line">Sentinel mode:</span><br><span class="line">       ./redis-server /etc/sentinel.conf --sentinel</span><br></pre></td></tr></table></figure>
+<h2 id="13-客户端测试"><a href="#1-3-客户端测试" class="headerlink" title="1.3 客户端测试"></a>1.3 客户端测试</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ src/redis-cli</span><br><span class="line">redis&gt; <span class="built_in">set</span> foo bar</span><br><span class="line">OK</span><br><span class="line">redis&gt; get foo</span><br><span class="line"><span class="string">"bar"</span></span><br></pre></td></tr></table></figure>
+<h1 id="2-redis集群部署"><a href="#2-Redis集群部署" class="headerlink" title="2. Redis集群部署"></a>2. Redis集群部署</h1><p>Redis的集群部署需要在每台集群部署的机器上安装Redis（可参考上述的[Redis安装] ），然后修改配置以集群的方式启动。</p>
+<h2 id="21-手动部署集群"><a href="#2-1-手动部署集群" class="headerlink" title="2.1 手动部署集群"></a>2.1 手动部署集群</h2><h3 id="211-设置配置文件及启动实例"><a href="#2-1-1-设置配置文件及启动实例" class="headerlink" title="2.1.1 设置配置文件及启动实例"></a>2.1.1 设置配置文件及启动实例</h3><p>修改配置文件redis.conf，集群模式的最小化配置文件如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#可选操作，该项设置后台方式运行，</span></span><br><span class="line">daemonize yes</span><br><span class="line"></span><br><span class="line">port 7000</span><br><span class="line">cluster-enabled yes</span><br><span class="line">cluster-config-file nodes.conf</span><br><span class="line">cluster-node-timeout 5000</span><br><span class="line">appendonly yes</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>更多集群配置参数可参考默认配置文件redis.conf中<code>Cluster</code>模块的说明</p>
+</blockquote>
+<p>最小集群模式需要三个master实例，一般建议起六个实例，即三主三从。因此我们创建6个以端口号命名的目录存放实例的配置文件和其他信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir cluster-test</span><br><span class="line"><span class="built_in">cd</span> cluster-test</span><br><span class="line">mkdir 7000 7001 7002 7003 7004 7005</span><br></pre></td></tr></table></figure>
+<p>在对应端口号的目录中创建<code>redis.conf</code>的文件，配置文件的内容可参考上述的集群模式配置。每个配置文件中的端口号<code>port</code>参数改为对应目录的端口号。</p>
+<p>复制<code>redis-server</code>的二进制文件到<code>cluster-test</code>目录中，通过指定配置文件的方式启动<code>redis</code>服务，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> 7000</span><br><span class="line">../redis-server ./redis.conf</span><br></pre></td></tr></table></figure>
+<p>如果是以前台方式运行，则会在控制台输出以下信息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[82462] 26 Nov 11:56:55.329 * No cluster configuration found, I<span class="string">'m 97a3a64667477371c4479320d683e4c8db5858b1</span></span><br></pre></td></tr></table></figure>
+<p>每个实例都会生成一个<code>Node ID</code>，类似<code>97a3a64667477371c4479320d683e4c8db5858b1</code>，用来作为Redis实例在集群中的唯一标识，而不是通过IP和Port，IP和Port可能会改变，该<code>Node ID</code>不会改变。</p>
+<p>目录结构可参考：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">cluster-test/</span><br><span class="line">├── 7000</span><br><span class="line">│   ├── appendonly.aof</span><br><span class="line">│   ├── dump.rdb</span><br><span class="line">│   ├── nodes.conf</span><br><span class="line">│   └── redis.conf</span><br><span class="line">├── 7001</span><br><span class="line">│   ├── appendonly.aof</span><br><span class="line">│   ├── dump.rdb</span><br><span class="line">│   ├── nodes.conf</span><br><span class="line">│   └── redis.conf</span><br><span class="line">├── 7002</span><br><span class="line">│   ├── appendonly.aof</span><br><span class="line">│   ├── dump.rdb</span><br><span class="line">│   ├── nodes.conf</span><br><span class="line">│   └── redis.conf</span><br><span class="line">├── 7003</span><br><span class="line">│   ├── appendonly.aof</span><br><span class="line">│   ├── dump.rdb</span><br><span class="line">│   ├── nodes.conf</span><br><span class="line">│   └── redis.conf</span><br><span class="line">├── 7004</span><br><span class="line">│   ├── appendonly.aof</span><br><span class="line">│   ├── dump.rdb</span><br><span class="line">│   ├── nodes.conf</span><br><span class="line">│   └── redis.conf</span><br><span class="line">├── 7005</span><br><span class="line">│   ├── appendonly.aof</span><br><span class="line">│   ├── dump.rdb</span><br><span class="line">│   ├── nodes.conf</span><br><span class="line">│   └── redis.conf</span><br><span class="line">├── redis-cli</span><br><span class="line">└── redis-server</span><br></pre></td></tr></table></figure>
+<h3 id="212-redis-trib创建集群"><a href="#2-1-2-redis-trib创建集群" class="headerlink" title="2.1.2 redis-trib创建集群"></a>2.1.2 redis-trib创建集群</h3><p>Redis的实例全部运行之后，还需要<code>redis-trib.rb</code>工具来完成集群的创建，<code>redis-trib.rb</code>二进制文件在Redis包主目录下的<code>src</code>目录中，运行该工具依赖<code>Ruby</code>环境和<code>gem</code>，因此需要提前安装。</p>
+<p><strong>1、安装Ruby</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ruby rubygems</span><br></pre></td></tr></table></figure>
+<p>查看Ruby版本信息。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 src]<span class="comment"># ruby --version</span></span><br><span class="line">ruby 2.0.0p648 (2015-12-16) [x86_64-linux]</span><br></pre></td></tr></table></figure>
+<p>由于<code>centos</code>系统默认支持Ruby版本为<code>2.0.0</code>，因此执行<code>gem install redis</code>命令时会报以下错误。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 src]<span class="comment"># gem install redis</span></span><br><span class="line">Fetching: redis-4.0.1.gem (100%)</span><br><span class="line">ERROR:  Error installing redis:</span><br><span class="line">	redis requires Ruby version &gt;= 2.2.2.</span><br></pre></td></tr></table></figure>
+<p>解决方法是先安装<code>rvm</code>，再升级<code>ruby</code>版本。</p>
+<p><strong>2、安装rvm</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L get.rvm.io | bash -s stable</span><br></pre></td></tr></table></figure>
+<p>如果遇到以下报错，则执行报错中的<code>gpg2 --recv-keys</code>的命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 ~]<span class="comment"># curl -L get.rvm.io | bash -s stable</span></span><br><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100   194  100   194    0     0    335      0 --:--:-- --:--:-- --:--:--   335</span><br><span class="line">100 24090  100 24090    0     0  17421      0  0:00:01  0:00:01 --:--:-- 44446</span><br><span class="line">Downloading https://github.com/rvm/rvm/archive/1.29.3.tar.gz</span><br><span class="line">Downloading https://github.com/rvm/rvm/releases/download/1.29.3/1.29.3.tar.gz.asc</span><br><span class="line">gpg: 于 2017年09月11日 星期一 04时59分21秒 CST 创建的签名，使用 RSA，钥匙号 BF04FF17</span><br><span class="line">gpg: 无法检查签名：没有公钥</span><br><span class="line">Warning, RVM 1.26.0 introduces signed releases and automated check of signatures when GPG software found. Assuming you trust Michal Papis import the mpapis public key (downloading the signatures).</span><br><span class="line"></span><br><span class="line">GPG signature verification failed <span class="keyword">for</span> <span class="string">'/usr/local/rvm/archives/rvm-1.29.3.tgz'</span> - <span class="string">'https://github.com/rvm/rvm/releases/download/1.29.3/1.29.3.tar.gz.asc'</span>! Try to install GPG v2 and <span class="keyword">then</span> fetch the public key:</span><br><span class="line"></span><br><span class="line">    gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3</span><br><span class="line"></span><br><span class="line">or <span class="keyword">if</span> it fails:</span><br><span class="line"></span><br><span class="line">    <span class="built_in">command</span> curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -</span><br><span class="line"></span><br><span class="line">the key can be compared with:</span><br><span class="line"></span><br><span class="line">    https://rvm.io/mpapis.asc</span><br><span class="line">    https://keybase.io/mpapis</span><br><span class="line"></span><br><span class="line">NOTE: GPG version 2.1.17 have a bug <span class="built_in">which</span> cause failures during fetching keys from remote server. Please downgrade or upgrade to newer version (<span class="keyword">if</span> available) or use the second method described above.</span><br></pre></td></tr></table></figure>
+<p>执行报错中的<code>gpg2 --recv-keys</code>的命令。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 ~]<span class="comment"># gpg2 --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3</span></span><br><span class="line">gpg: 钥匙环‘/root/.gnupg/secring.gpg’已建立</span><br><span class="line">gpg: 下载密钥‘D39DC0E3’，从 hkp 服务器 keys.gnupg.net</span><br><span class="line">gpg: /root/.gnupg/trustdb.gpg：建立了信任度数据库</span><br><span class="line">gpg: 密钥 D39DC0E3：公钥“Michal Papis (RVM signing) &lt;mpapis@gmail.com&gt;”已导入</span><br><span class="line">gpg: 没有找到任何绝对信任的密钥</span><br><span class="line">gpg: 合计被处理的数量：1</span><br><span class="line">gpg:           已导入：1  (RSA: 1)</span><br></pre></td></tr></table></figure>
+<p>再次执行命令<code>curl -L get.rvm.io | bash -s stable</code>。例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 ~]<span class="comment"># curl -L get.rvm.io | bash -s stable</span></span><br><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100   194  100   194    0     0    310      0 --:--:-- --:--:-- --:--:--   309</span><br><span class="line">100 24090  100 24090    0     0  18230      0  0:00:01  0:00:01 --:--:--  103k</span><br><span class="line">Downloading https://github.com/rvm/rvm/archive/1.29.3.tar.gz</span><br><span class="line">Downloading https://github.com/rvm/rvm/releases/download/1.29.3/1.29.3.tar.gz.asc</span><br><span class="line">gpg: 于 2017年09月11日 星期一 04时59分21秒 CST 创建的签名，使用 RSA，钥匙号 BF04FF17</span><br><span class="line">gpg: 完好的签名，来自于“Michal Papis (RVM signing) &lt;mpapis@gmail.com&gt;”</span><br><span class="line">gpg:               亦即“Michal Papis &lt;michal.papis@toptal.com&gt;”</span><br><span class="line">gpg:               亦即“[jpeg image of size 5015]”</span><br><span class="line">gpg: 警告：这把密钥未经受信任的签名认证！</span><br><span class="line">gpg:       没有证据表明这个签名属于它所声称的持有者。</span><br><span class="line">主钥指纹： 409B 6B17 96C2 7546 2A17  0311 3804 BB82 D39D C0E3</span><br><span class="line">子钥指纹： 62C9 E5F4 DA30 0D94 AC36  166B E206 C29F BF04 FF17</span><br><span class="line">GPG verified <span class="string">'/usr/local/rvm/archives/rvm-1.29.3.tgz'</span></span><br><span class="line">Creating group <span class="string">'rvm'</span></span><br><span class="line"></span><br><span class="line">Installing RVM to /usr/<span class="built_in">local</span>/rvm/</span><br><span class="line">Installation of RVM <span class="keyword">in</span> /usr/<span class="built_in">local</span>/rvm/ is almost complete:</span><br><span class="line"></span><br><span class="line">  * First you need to add all users that will be using rvm to <span class="string">'rvm'</span> group,</span><br><span class="line">    and <span class="built_in">logout</span> - login again, anyone using rvm will be operating with `<span class="built_in">umask</span> u=rwx,g=rwx,o=rx`.</span><br><span class="line"></span><br><span class="line">  * To start using RVM you need to run `<span class="built_in">source</span> /etc/profile.d/rvm.sh`</span><br><span class="line">    <span class="keyword">in</span> all your open bash windows, <span class="keyword">in</span> rare cases you need to reopen all bash windows.</span><br></pre></td></tr></table></figure>
+<p>以上表示执行成功，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> /usr/<span class="built_in">local</span>/rvm/scripts/rvm</span><br></pre></td></tr></table></figure>
+<p>查看rvm库中已知的ruby版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rvm list known</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 ~]<span class="comment"># rvm list known</span></span><br><span class="line"><span class="comment"># MRI Rubies</span></span><br><span class="line">[ruby-]1.8.6[-p420]</span><br><span class="line">[ruby-]1.8.7[-head] <span class="comment"># security released on head</span></span><br><span class="line">[ruby-]1.9.1[-p431]</span><br><span class="line">[ruby-]1.9.2[-p330]</span><br><span class="line">[ruby-]1.9.3[-p551]</span><br><span class="line">[ruby-]2.0.0[-p648]</span><br><span class="line">[ruby-]2.1[.10]</span><br><span class="line">[ruby-]2.2[.7]</span><br><span class="line">[ruby-]2.3[.4]</span><br><span class="line">[ruby-]2.4[.1]</span><br><span class="line">ruby-head</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p><strong>3、升级Ruby</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#安装ruby</span></span><br><span class="line">rvm install  2.4.0</span><br><span class="line"><span class="comment">#使用新版本</span></span><br><span class="line">rvm use  2.4.0</span><br><span class="line"><span class="comment">#移除旧版本</span></span><br><span class="line">rvm remove 2.0.0</span><br><span class="line"><span class="comment">#查看当前版本</span></span><br><span class="line">ruby --version</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 ~]<span class="comment"># rvm install  2.4.0</span></span><br><span class="line">Searching <span class="keyword">for</span> binary rubies, this might take some time.</span><br><span class="line">Found remote file https://rvm_io.global.ssl.fastly.net/binaries/centos/7/x86_64/ruby-2.4.0.tar.bz2</span><br><span class="line">Checking requirements <span class="keyword">for</span> centos.</span><br><span class="line">Installing requirements <span class="keyword">for</span> centos.</span><br><span class="line">Installing required packages: autoconf, automake, bison, bzip2, gcc-c++, libffi-devel, libtool, readline-devel, sqlite-devel, zlib-devel, libyaml-devel, openssl-devel................................</span><br><span class="line">Requirements installation successful.</span><br><span class="line">ruby-2.4.0 - <span class="comment">#configure</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#download</span></span><br><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100 14.0M  100 14.0M    0     0   852k      0  0:00:16  0:00:16 --:--:--  980k</span><br><span class="line">No checksum <span class="keyword">for</span> downloaded archive, recording checksum <span class="keyword">in</span> user configuration.</span><br><span class="line">ruby-2.4.0 - <span class="comment">#validate archive</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#extract</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#validate binary</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#setup</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#gemset created /usr/local/rvm/gems/ruby-2.4.0@global</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#importing gemset /usr/local/rvm/gemsets/global.gems..............................</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#generating global wrappers........</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#gemset created /usr/local/rvm/gems/ruby-2.4.0</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#importing gemsetfile /usr/local/rvm/gemsets/default.gems evaluated to empty gem list</span></span><br><span class="line">ruby-2.4.0 - <span class="comment">#generating default wrappers........</span></span><br><span class="line"></span><br><span class="line">[root@kube-node-1 ~]<span class="comment"># rvm use  2.4.0</span></span><br><span class="line">Using /usr/<span class="built_in">local</span>/rvm/gems/ruby-2.4.0</span><br><span class="line"></span><br><span class="line">[root@kube-node-1 ~]<span class="comment"># rvm remove 2.0.0</span></span><br><span class="line">ruby-2.0.0-p648 - <span class="comment">#already gone</span></span><br><span class="line">Using /usr/<span class="built_in">local</span>/rvm/gems/ruby-2.4.0</span><br><span class="line"></span><br><span class="line">[root@kube-node-1 ~]<span class="comment"># ruby --version</span></span><br><span class="line">ruby 2.4.0p0 (2016-12-24 revision 57164) [x86_64-linux]</span><br></pre></td></tr></table></figure>
+<p><strong>4、安装gem</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install redis</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 ~]<span class="comment"># gem install redis</span></span><br><span class="line"></span><br><span class="line">Fetching: redis-4.0.1.gem (100%)</span><br><span class="line">Successfully installed redis-4.0.1</span><br><span class="line">Parsing documentation <span class="keyword">for</span> redis-4.0.1</span><br><span class="line">Installing ri documentation <span class="keyword">for</span> redis-4.0.1</span><br><span class="line">Done installing documentation <span class="keyword">for</span> redis after 2 seconds</span><br><span class="line">1 gem installed</span><br></pre></td></tr></table></figure>
+<p><strong>5、执行redis-trib.rb命令</strong></p>
+<p>以上表示安装成功，可以执行<code>redis-trib.rb</code>命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> src </span><br><span class="line"><span class="comment">#执行redis-trib.rb命令</span></span><br><span class="line">./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 \</span><br><span class="line">&gt; 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005</span><br></pre></td></tr></table></figure>
+<p>参数<code>create</code>表示创建一个新的集群，<code>--replicas 1</code>表示为每个master创建一个slave。</p>
+<p>如果创建成功会显示以下信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[OK] All 16384 slots covered</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">[root@kube-node-1 src]<span class="comment"># ./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 \</span></span><br><span class="line">&gt; 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005</span><br><span class="line">&gt;&gt;&gt; Creating cluster</span><br><span class="line">&gt;&gt;&gt; Performing <span class="built_in">hash</span> slots allocation on 6 nodes...</span><br><span class="line">Using 3 masters:</span><br><span class="line">127.0.0.1:7000</span><br><span class="line">127.0.0.1:7001</span><br><span class="line">127.0.0.1:7002</span><br><span class="line">Adding replica 127.0.0.1:7004 to 127.0.0.1:7000</span><br><span class="line">Adding replica 127.0.0.1:7005 to 127.0.0.1:7001</span><br><span class="line">Adding replica 127.0.0.1:7003 to 127.0.0.1:7002</span><br><span class="line">&gt;&gt;&gt; Trying to optimize slaves allocation <span class="keyword">for</span> anti-affinity</span><br><span class="line">[WARNING] Some slaves are <span class="keyword">in</span> the same host as their master</span><br><span class="line">M: d5a834d075fd93eefab877c6ebb86efff680650f 127.0.0.1:7000</span><br><span class="line">   slots:0-5460 (5461 slots) master</span><br><span class="line">M: 13d0c397604a0b2644244c37b666fce83f29faa8 127.0.0.1:7001</span><br><span class="line">   slots:5461-10922 (5462 slots) master</span><br><span class="line">M: be2718476eba4e56f696e56b75e67df720b7fc24 127.0.0.1:7002</span><br><span class="line">   slots:10923-16383 (5461 slots) master</span><br><span class="line">S: 3d02f59b34047486faecc023685379de7b38076c 127.0.0.1:7003</span><br><span class="line">   replicates 13d0c397604a0b2644244c37b666fce83f29faa8</span><br><span class="line">S: dedf672f0a75faf37407ac4edd5da23bc4651e25 127.0.0.1:7004</span><br><span class="line">   replicates be2718476eba4e56f696e56b75e67df720b7fc24</span><br><span class="line">S: 99c07119a449a703583019f7699e15afa0e41952 127.0.0.1:7005</span><br><span class="line">   replicates d5a834d075fd93eefab877c6ebb86efff680650f</span><br><span class="line">Can I <span class="built_in">set</span> the above configuration? (<span class="built_in">type</span> <span class="string">'yes'</span> to accept): yes</span><br><span class="line">&gt;&gt;&gt; Nodes configuration updated</span><br><span class="line">&gt;&gt;&gt; Assign a different config epoch to each node</span><br><span class="line">&gt;&gt;&gt; Sending CLUSTER MEET messages to join the cluster</span><br><span class="line">Waiting <span class="keyword">for</span> the cluster to join....</span><br><span class="line">&gt;&gt;&gt; Performing Cluster Check (using node 127.0.0.1:7000)</span><br><span class="line">M: d5a834d075fd93eefab877c6ebb86efff680650f 127.0.0.1:7000</span><br><span class="line">   slots:0-5460 (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">M: be2718476eba4e56f696e56b75e67df720b7fc24 127.0.0.1:7002</span><br><span class="line">   slots:10923-16383 (5461 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">M: 13d0c397604a0b2644244c37b666fce83f29faa8 127.0.0.1:7001</span><br><span class="line">   slots:5461-10922 (5462 slots) master</span><br><span class="line">   1 additional replica(s)</span><br><span class="line">S: 3d02f59b34047486faecc023685379de7b38076c 127.0.0.1:7003</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates 13d0c397604a0b2644244c37b666fce83f29faa8</span><br><span class="line">S: 99c07119a449a703583019f7699e15afa0e41952 127.0.0.1:7005</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates d5a834d075fd93eefab877c6ebb86efff680650f</span><br><span class="line">S: dedf672f0a75faf37407ac4edd5da23bc4651e25 127.0.0.1:7004</span><br><span class="line">   slots: (0 slots) slave</span><br><span class="line">   replicates be2718476eba4e56f696e56b75e67df720b7fc24</span><br><span class="line">[OK] All nodes agree about slots configuration.</span><br><span class="line">&gt;&gt;&gt; Check <span class="keyword">for</span> open slots...</span><br><span class="line">&gt;&gt;&gt; Check slots coverage...</span><br><span class="line">[OK] All 16384 slots covered.</span><br></pre></td></tr></table></figure>
+<h3 id="213-部署结果验证"><a href="#2-1-3-部署结果验证" class="headerlink" title="2.1.3 部署结果验证"></a>2.1.3 部署结果验证</h3><p><strong>1、客户端访问</strong></p>
+<p>使用客户端<code>redis-cli</code>二进制访问某个实例，执行<code>set</code>和<code>get</code>的测试。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ redis-cli -c -p 7000</span><br><span class="line">redis 127.0.0.1:7000&gt; <span class="built_in">set</span> foo bar</span><br><span class="line">-&gt; Redirected to slot [12182] located at 127.0.0.1:7002</span><br><span class="line">OK</span><br><span class="line">redis 127.0.0.1:7002&gt; <span class="built_in">set</span> hello world</span><br><span class="line">-&gt; Redirected to slot [866] located at 127.0.0.1:7000</span><br><span class="line">OK</span><br><span class="line">redis 127.0.0.1:7000&gt; get foo</span><br><span class="line">-&gt; Redirected to slot [12182] located at 127.0.0.1:7002</span><br><span class="line"><span class="string">"bar"</span></span><br><span class="line">redis 127.0.0.1:7000&gt; get hello</span><br><span class="line">-&gt; Redirected to slot [866] located at 127.0.0.1:7000</span><br><span class="line"><span class="string">"world"</span></span><br></pre></td></tr></table></figure>
+<p><strong>2、查看集群状态</strong></p>
+<p>使用<code>cluster info</code>命令查看集群状态。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:7000&gt; cluster info</span><br><span class="line">cluster_state:ok                       <span class="comment">#集群状态</span></span><br><span class="line">cluster_slots_assigned:16384           <span class="comment">#被分配的槽位数</span></span><br><span class="line">cluster_slots_ok:16384                 <span class="comment">#正确分配的槽位</span></span><br><span class="line">cluster_slots_pfail:0</span><br><span class="line">cluster_slots_fail:0</span><br><span class="line">cluster_known_nodes:6                  <span class="comment">#当前节点</span></span><br><span class="line">cluster_size:3</span><br><span class="line">cluster_current_epoch:6</span><br><span class="line">cluster_my_epoch:1</span><br><span class="line">cluster_stats_messages_ping_sent:48273</span><br><span class="line">cluster_stats_messages_pong_sent:49884</span><br><span class="line">cluster_stats_messages_sent:98157</span><br><span class="line">cluster_stats_messages_ping_received:49879</span><br><span class="line">cluster_stats_messages_pong_received:48273</span><br><span class="line">cluster_stats_messages_meet_received:5</span><br><span class="line">cluster_stats_messages_received:98157</span><br></pre></td></tr></table></figure>
+<p><strong>3、查看节点状态</strong></p>
+<p>使用<code>cluster nodes</code>命令查看节点状态。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:7000&gt; cluster nodes</span><br><span class="line">be2718476eba4e56f696e56b75e67df720b7fc24 127.0.0.1:7002@17002 master - 0 1517303607000 3 connected 10923-16383</span><br><span class="line">13d0c397604a0b2644244c37b666fce83f29faa8 127.0.0.1:7001@17001 master - 0 1517303606000 2 connected 5461-10922</span><br><span class="line">3d02f59b34047486faecc023685379de7b38076c 127.0.0.1:7003@17003 slave 13d0c397604a0b2644244c37b666fce83f29faa8 0 1517303606030 4 connected</span><br><span class="line">d5a834d075fd93eefab877c6ebb86efff680650f 127.0.0.1:7000@17000 myself,master - 0 1517303604000 1 connected 0-5460</span><br><span class="line">99c07119a449a703583019f7699e15afa0e41952 127.0.0.1:7005@17005 slave d5a834d075fd93eefab877c6ebb86efff680650f 0 1517303607060 6 connected</span><br><span class="line">dedf672f0a75faf37407ac4edd5da23bc4651e25 127.0.0.1:7004@17004 slave be2718476eba4e56f696e56b75e67df720b7fc24 0 1517303608082 5 connected</span><br></pre></td></tr></table></figure>
+<p> 参考文章：</p>
+<p><a href="https://redis.io/download" target="_blank" rel="noopener">https://redis.io/download</a></p>
+<p><a href="https://redis.io/topics/cluster-tutorial" target="_blank" rel="noopener">https://redis.io/topics/cluster-tutorial</a></p>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/arithmetic/data-structure-overview/" data-toggle="tooltip" data-placement="top" title="[Arithmetic] 数据结构概述">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/linux-notes/redis/redis-conf-cn/" data-toggle="tooltip" data-placement="top" title="Redis配置详解（中文版）">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-redis部署"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Redis部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-下载和编译"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1 下载和编译</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-启动服务"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2 启动服务</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-客户端测试"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">1.3 客户端测试</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-redis集群部署"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. Redis集群部署</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-手动部署集群"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1 手动部署集群</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#211-设置配置文件及启动实例"><span class="toc-nav-number">2.1.1.</span> <span class="toc-nav-text">2.1.1 设置配置文件及启动实例</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#212-redis-trib创建集群"><span class="toc-nav-number">2.1.2.</span> <span class="toc-nav-text">2.1.2 redis-trib创建集群</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#213-部署结果验证"><span class="toc-nav-number">2.1.3.</span> <span class="toc-nav-text">2.1.3 部署结果验证</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Redis" title="Redis">Redis</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2023 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
