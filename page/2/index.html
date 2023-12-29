@@ -228,10 +228,11 @@
         </h3>
         <div class="post-content-preview">
             kube-controller-manager源码分析（三）之 Informer机制
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析k8s中各个核心组件经常使用到的Informer机制(即List-Watch)。该部分的代码主要位于client-go这个第三方包中。
-此部分的逻辑主要位于/vendor/k8s.io/client-go/tools/cache包......
+此部分的逻辑主要位于/vendor/k8s.io/client-go/tools/cache......
         </div>
     </a>
     
@@ -268,10 +269,12 @@
         </h3>
         <div class="post-content-preview">
             kubelet源码分析（五）之 syncPod
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
 本文主要分析kubelet中syncPod的部分。
-1. managePodLoopmanagePodLoop通过读取podUpdateschannel的信息，执行syncPodFn函数，而syncPodFn函数在newPodWorkers的时候赋值了，即kubelet.sync......
+1. managePodLoop
+managePodLoop通过读取podUpdateschannel的信息，执行syncPodFn函数，而syncPodFn函数在newPodWorkers的时候赋值了，即kubelet.sy......
         </div>
     </a>
     
@@ -300,16 +303,20 @@
             
         </h3>
         <div class="post-content-preview">
-            1.27参考：
+            1.27
+参考：
+
 
 Kubernetes 在 v1.27 中移除的特性和主要变更
 
+
 https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md#changelog-since-v1260
+
 
 202304 | K8s 1.27 正式发布 - DaoCloud Enterprise
 
 
-（一）重要......
+（......
         </div>
     </a>
     
@@ -340,13 +347,16 @@ https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md
         <div class="post-content-preview">
             开发一个k8s operator组件主要会用到以下几个仓库或工具：
 
+
 kubebuilder/operator-sdk：主要用于创建CRD对象。
+
 
 controller-manager：主要用于实现operator的controller逻辑。
 
 
 本文以kubebuilder的工具和controller-manager example为例。
-1. 准备工具环境及创建项目安装kubebuild......
+1. 准备工具环境及创建项目
+安装kubebu......
         </div>
     </a>
     
@@ -375,11 +385,13 @@ controller-manager：主要用于实现operator的controller逻辑。
             
         </h3>
         <div class="post-content-preview">
-            Deployment配置金丝雀发布金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。
-1. 设置发版节奏主要是两个字段的设置：
+            Deployment配置金丝雀发布
+金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。
+1. 设置发版节奏
+主要是两个字段的设置：
 
 maxSurge：最大发版实例数，可以创建的超出期望 Pod 个数的 Pod 数量。可以是百分比或者是数字。
-maxUnav......
+maxUn......
         </div>
     </a>
     
@@ -409,11 +421,12 @@ maxUnav......
         </h3>
         <div class="post-content-preview">
             
-本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析tunnel-server的实现逻辑。
+本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析tunnel-server的实现逻辑。
 
-1. Tunnel-server简介云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:
+1. Tunnel-server简介
+云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:
 
-K8s 原生运维能力......
+K8s 原生运维能......
         </div>
     </a>
     
@@ -442,12 +455,15 @@ K8s 原生运维能力......
             
         </h3>
         <div class="post-content-preview">
-            Docker部署1docker run -d -p 3000:3000 grafana/grafana:latest
-K8S部署helm部署
+            Docker部署
+1docker run -d -p 3000:3000 grafana/grafana:latest
+K8S部署
+helm部署
 123helm repo add grafana https://grafana.github.io/helm-chartshelm search repo grafana
 参考：
 
-Install Grafana | Grafana document......
+
+Install Grafana | Grafana docum......
         </div>
     </a>
     
@@ -476,7 +492,8 @@ Install Grafana | Grafana document......
             
         </h3>
         <div class="post-content-preview">
-            1. kube-prometheus-stack简介kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。
+            1. kube-prometheus-stack简介
+kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。
 各组件包括
 
 grafana
@@ -485,7 +502,8 @@ prometheus
 alertmanager
 node-exporter
 
-2. 安装kube-prometheus-stack执行以下命......
+2. 安装kube-prometheus-stack
+执行以......
         </div>
     </a>
     
@@ -514,9 +532,10 @@ node-exporter
             
         </h3>
         <div class="post-content-preview">
-            1. Tunnel-Agent简介tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与云端的tunnel-server建立连接。以下分析tunnel-agent的源码逻辑。
+            1. Tunnel-Agent简介
+tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与云端的tunnel-server建立连接。以下分析tunnel-agent的源码逻辑。
 常用的启动参数：
-1234567- args:  - --node-name=$(NODE_NAME)  - --node-ip=$(POD_IP)  - --tunnelser......
+1234567- args:  - --node-name=$(NODE_NAME)  - --node-ip=$(POD_IP)  - --tunnelse......
         </div>
     </a>
     
@@ -545,10 +564,11 @@ node-exporter
             
         </h3>
         <div class="post-content-preview">
-            1. kubeconfig说明默认情况下，kubectl 在 $HOME/.kube 目录下查找名为 config 的文件。 你可以通过设置 KUBECONFIG 环境变量或者设置 --kubeconfig参数来指定其他 kubeconfig 文件。
+            1. kubeconfig说明
+默认情况下，kubectl 在 $HOME/.kube 目录下查找名为 config 的文件。 你可以通过设置 KUBECONFIG 环境变量或者设置 --kubeconfig参数来指定其他 kubeconfig 文件。
 kubeconfig内容示例：
 以下证书以文件的形式读取。
-12345678910111213141516171819apiVersion: ......
+12345678910111213141516171819apiVersion:......
         </div>
     </a>
     
@@ -635,15 +655,13 @@ kubeconfig内容示例：
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
-            
-        
-            
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
             
         
             
@@ -651,63 +669,15 @@ kubeconfig内容示例：
             
         
             
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
-            
-        
-            
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
-            
-        
-            
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
-            
-        
-            
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -724,6 +694,56 @@ kubeconfig内容示例：
             <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
+            
+        
+            
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             

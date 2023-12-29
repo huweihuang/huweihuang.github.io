@@ -211,36 +211,6 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
-        <h2 class="post-title">
-                        
-            Virtual Kubelet介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 简介Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
-一句话概括：Kubernetes API on top, programma......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#VirtualKubelet" title="VirtualKubelet">VirtualKubelet</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
         <h2 class="post-title">
                         
@@ -250,7 +220,8 @@
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet —help1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggableb......
+            virtual-kubelet --help
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
         </div>
     </a>
     
@@ -270,28 +241,28 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/registry/config-private-registry/">
+    <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
         <h2 class="post-title">
                         
-            配置私有镜像仓库
+            Etcd中的k8s数据
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 镜像仓库的基本操作1.1. 登录镜像仓库1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
-1.2. 拉取镜像1docker pull https://registry.xxx.com/dev/nginx:latest
-1.3. 推送镜像1docker push https://regi......
+            1. 读取数据key
+使用以下命令列出所有的key。
+1ETCDCTL_API=3 etcdctl --endpoints=&lt;etcd-ip-1&gt;:2379,&lt;etcd-ip-2&gt;:2379,&lt;etcd-ip-3&gt;:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt  --key=/etc/kubernetes/pk......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-06-23
+            2020-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
             
         </div>
     
@@ -311,7 +282,8 @@
         </h3>
         <div class="post-content-preview">
             常见镜像拉取问题排查
-1. Pod状态为ErrImagePull或ImagePullBackOff12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b  ......
+1. Pod状态为ErrImagePull或ImagePullBackOff
+12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b ......
         </div>
     </a>
     
@@ -343,8 +315,9 @@
             
 本文介绍通过pod指定 ImagePullSecrets来拉取私有镜像仓库的镜像
 
-1. 创建secretsecret是namespace级别的，创建时候需要指定namespace。
-1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-user......
+1. 创建secret
+secret是namespace级别的，创建时候需要指定namespace。
+1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-use......
         </div>
     </a>
     
@@ -364,26 +337,32 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/keepalived/keepalived-introduction/">
+    <a href="/article/kubernetes-notes/operation/registry/config-private-registry/">
         <h2 class="post-title">
                         
-            Keepalived简介
+            配置私有镜像仓库
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Keepalived简介1.1. 概述Keepalived一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP，主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候， 备份服务器......
+            1. 镜像仓库的基本操作
+1.1. 登录镜像仓库
+1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
+1.2. 拉取镜像
+1docker pull https://registry.xxx.com/dev/nginx:latest
+1.3. 推送镜像
+1docker push https://......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2020-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#Keepalived" title="Keepalived">Keepalived</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -393,23 +372,94 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/keymap/iterm2-rzsz/">
+    <a href="/article/linux-notes/git/git-common-cmd/">
         <h2 class="post-title">
                         
-            iterm2 rz与sz的使用
+            Git常用命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文由网络文章整理备份。
+            1. Git常用命令
 
-iterm2 rz与sz的功能本文主要介绍mac环境下使用iterm2的rz sz功能的安装流程。
-1. 安装lrzsz1brew install lrzsz
-2. 安装执行脚本将iterm2-send-zmodem.sh和iterm2-recv-zmodem.sh保存到/usr/local/bin目录下。
-iterm2-send-zmodem.sh
-12345......
+
+
+分类
+子类
+git command
+zsh alias
+
+
+
+
+分支
+查看当前分支
+git branch
+gb
+
+
+
+创建新分支,仍停留在当前分支
+git branch 
+
+
+
+
+创建并切换到新分支
+git checkout -b 
+gcb
+
+
+
+切换分支
+git checkout 
+
+
+
+
+合并分支
+git checkout  #切换到要合并的分支git mer......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-09-20
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Git" title="Git">Git</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/keymap/vscode-keymap/">
+        <h2 class="post-title">
+                        
+            vscode快捷键
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            vscode快捷键
+1. 基本快捷键
+1.1. VsCode 快捷键有五种组合方式
+
+Ctrl + Shift + ? : 这种常规组合按钮
+Ctrl + V Ctrl +V : 同时依赖一个按键的组合
+Shift + V c : 先组合后单键的输入
+Ctrl + Click: 键盘 + 鼠标点击
+Ctrl + DragMouse : 键盘 + 鼠标拖动
+
+1.2. Ctrl+P 模式
+在C......
         </div>
     </a>
     
@@ -429,57 +479,48 @@ iterm2-send-zmodem.sh
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/keymap/eclipse-keymap/">
+    <a href="/article/linux-notes/keymap/chrome-keymap/">
         <h2 class="post-title">
                         
-            eclipse快捷键
+            chrome快捷键
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            eclipse快捷键1. 快捷键1.1. 编辑
+            chrome快捷键
+1. 标签页和窗口快捷键
 
 
 
-作用域
-功能
+操作
 快捷键
 
 
 
 
-全局
-查找并替换
-Ctrl+F
+打开新窗口
+⌘ + n
 
 
-文本编辑器
-查找上一个
-Ctrl+Shift+K
+在无痕模式下打开新窗口
+⌘ + Shift + n
 
 
-文本编辑器
-查找下一个
-Ctrl+K
+打开新的标签页，并跳转到该标签页
+⌘ + t
 
 
-文本编辑器
-删除当前行
-Ctrl+D
+重新打开最后关闭的标签页，并跳转到该标签页
+⌘ + Shift + t
 
 
-文本编辑器
-当前行的下一行插入空行
-Shift+Enter
+跳转到下一个打开的标签页
+⌘ + Option + 向右箭头键
 
 
-文本编辑器
-当前行插入空行
-Ctrl+Shift+Enter
-
-
-文本编......
+跳转到上一个打开的标签页
+⌘ + Opti......
         </div>
     </a>
     
@@ -499,18 +540,27 @@ Ctrl+Shift+Enter
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/keepalived/install-keepalived/">
+    <a href="/article/linux-notes/keymap/tmux-keymap/">
         <h2 class="post-title">
                         
-            Keepalived安装与配置
+            tmux快捷键
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Keepalived的安装1.1. yum install方式1yum install -y keepalived
-1.2. 安装包编译方式更多安装包参考：http://www.keepalived.org/download.html
-12345wget http://www.keepalived.org/software/keepalived-2.0.7.tar.gztar zxvf......
+            1. 安装tmux
+12345# linuxyum install -y tmux# macbrew install tmux
+2. tmux常用命令
+2.1. 进入tmux
+1tmux
+2.2. 退出tmux，程序后台运行
+1按ctrl + b 进入控制台，再按 d
+2.3. 重回上次tmux窗口
+1ctrl + a
+2.4. 结束tmux窗口运行的进程
+1ctrl + d
+3. 更多快捷......
         </div>
     </a>
     
@@ -520,7 +570,7 @@ Ctrl+Shift+Enter
         </p>
         <div class="tags">
             
-              <a href="/tags/#Keepalived" title="Keepalived">Keepalived</a>
+              <a href="/tags/#快捷键" title="快捷键">快捷键</a>
             
         </div>
     
@@ -530,34 +580,27 @@ Ctrl+Shift+Enter
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/git/git-commit-msg/">
+    <a href="/article/linux-notes/git/git-commands/">
         <h2 class="post-title">
                         
-            Git commit规范
+            Git命令分类
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Git commit规范1.1. 格式1&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
-示例：
-1fix(ngRepeat): fix trackBy function being invoked with incorrect scope
-1.2. type主要的提交类型如下：
+            Git 命令详解
+1. 示意图
 
 
+Workspace：工作区
+Index / Stage：暂存区
+Repository：仓库区（或本地仓库）
+Remote：远程仓库
 
-
-Type
-说明
-备注
-
-
-
-
-feat
-提交新功能
-常用
-......
+2. Git 命令分类
+2.1. 新建代码库
+123456# 在当前目录新建一个Git代码库$ git init# 新建一个目录，将其初始化为Git代码库$ git init [project-name]# 下载一个项目和它......
         </div>
     </a>
     
@@ -644,15 +687,13 @@ feat
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
-            
-        
-            
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
             
         
             
@@ -660,63 +701,15 @@ feat
             
         
             
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
-            
-        
-            
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
-            
-        
-            
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
-            
-        
-            
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -733,6 +726,56 @@ feat
             <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
+            
+        
+            
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             

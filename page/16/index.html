@@ -220,11 +220,13 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 比特币交易简介比特币交易是比特币系统最重要的部分，本质是数据结构，数据结构中含有比特币交易参与者价值转移的相关信息。比特币区块链是一本全球复制记账总账簿，每个比特币交易即账簿上公开的一页转账记录。
+            1. 比特币交易简介
+比特币交易是比特币系统最重要的部分，本质是数据结构，数据结构中含有比特币交易参与者价值转移的相关信息。比特币区块链是一本全球复制记账总账簿，每个比特币交易即账簿上公开的一页转账记录。
 2. 比特币交易的生命周期
+
 创建比特币交易，通过一个或多个签名加密，签名标志了该比特币的使用许可。
 交易广播到比特币网络中，每个节点进行验证，并进行广播，直到该交易被大多数节点接收。
-比特币......
+比......
         </div>
     </a>
     
@@ -253,9 +255,10 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 比特币密钥比特币的所有权是通过数字密钥、比特币地址和数字签名来确定的，数字密钥不存在网络中，而由用户生成，存储在一个文件或简单的数据库中，一般称之为钱包。
+            1. 比特币密钥
+比特币的所有权是通过数字密钥、比特币地址和数字签名来确定的，数字密钥不存在网络中，而由用户生成，存储在一个文件或简单的数据库中，一般称之为钱包。
 比特币交易都需要一个有效的签名才会被存储到区块链中，只有有效的密钥才能产生有效的数字签名，因此拥有密钥副本就拥有了该账户的比特币控制权。
-密钥是成对出现的，由公钥和私钥组成。公钥类似银行账号，私钥类似支票签名。在比特币交易环节， 收......
+密钥是成对出现的，由公钥和私钥组成。公钥类似银行账号，私钥类似支票签名。在比特币交易环节， ......
         </div>
     </a>
     
@@ -287,10 +290,12 @@
             
 如果要开发一个Dynamic Provisioner，需要使用到the helper library。
 
-1. Dynamic Provisioner1.1. Provisioner Interface开发Dynamic Provisioner需要实现Provisioner接口，该接口有两个方法，分别是：
+1. Dynamic Provisioner
+1.1. Provisioner Interface
+开发Dynamic Provisioner需要实现Provisioner接口，该接口有两个方法，分别是：
 
 Provision：创建存储资源，并且返回一个PV对象。
-Delete：移除对应的......
+Delete：移除对......
         </div>
     </a>
     
@@ -322,9 +327,11 @@ Delete：移除对应的......
             
 本文主要分析csi-provisioner的源码，关于开发一个Dynamic Provisioner，具体可参考nfs-client-provisioner的源码分析
 
-1. Dynamic Provisioner1.1. Provisioner Interface开发Dynamic Provisioner需要实现Provisioner接口，该接口有两个方法，分别是：
+1. Dynamic Provisioner
+1.1. Provisioner Interface
+开发Dynamic Provisioner需要实现Provisioner接口，该接口有两个方法，分别是：
 
-Provision......
+Provisi......
         </div>
     </a>
     
@@ -353,14 +360,17 @@ Provision......
             
         </h3>
         <div class="post-content-preview">
-            资源配额（ResourceQuota）ResourceQuota对象用来定义某个命名空间下所有资源的使用限额，其实包括：
+            资源配额（ResourceQuota）
+ResourceQuota对象用来定义某个命名空间下所有资源的使用限额，其实包括：
 
 计算资源的配额
 存储资源的配额
 对象数量的配额
 
-如果集群的总容量小于命名空间的配额总额，可能会产生资源竞争。这时会按照先到先得来处理。资源竞争和配额的更新都不会影响已经创建好的资源。
-1. 启动资源配额Kubernetes 的众多发行版本默认开启了资源配额的支持。当在......
+如果集群的总容量小于命名空间的配额总额，可能会产生资源竞争。这时会按照先到先得来处理。
+资源竞争和配额的更新都不会影响已经创建好的资源。
+1. 启动资源配额
+Kubernetes 的众多发行版本默认开启了资源配额的支持......
         </div>
     </a>
     
@@ -389,9 +399,10 @@ Provision......
             
         </h3>
         <div class="post-content-preview">
-            1. 环境准备1.1. 部署机器
-以下机器为虚拟机
+            1. 环境准备
+1.1. 部署机器
 
+以下机器为虚拟机
 
 
 
@@ -420,7 +431,7 @@ Centos 4.17.14
 
 
 172.16.94.142
-kube-no......
+kube-n......
         </div>
     </a>
     
@@ -452,7 +463,8 @@ kube-no......
             
 以下内容基于Linux系统，特别为Ubuntu系统
 
-1. 安装kubectl1curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux......
+1. 安装kubectl
+1curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linu......
         </div>
     </a>
     
@@ -482,10 +494,13 @@ kube-no......
         </h3>
         <div class="post-content-preview">
             1. CentOS 安装Docker
+
 建议使用centos7
 
-1.1. 安装Docker1.1.1. 卸载旧版本旧版本的Docker命名为docker或docker-engine，如果有安装旧版本，先卸载旧版本
-12345678910$ sudo yum remove -y docker \                  docker-client \                 ......
+1.1. 安装Docker
+1.1.1. 卸载旧版本
+旧版本的Docker命名为docker或docker-engine，如果有安装旧版本，先卸载旧版本
+12345678910$ sudo yum remove -y docker \                  docker-client \              ......
         </div>
     </a>
     
@@ -505,17 +520,25 @@ kube-no......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/resource/quality-of-service/">
+    <a href="/article/kubernetes-notes/paas/12-factor/">
         <h2 class="post-title">
                         
-            资源服务质量
+            12 Factor
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Resource Quality of Service1. 资源QoS简介request值表示容器保证可被分配到资源。limit表示容器可允许使用的最大资源。Pod级别的request和limit是其所有容器的request和limit之和。
-2. Requests and LimitsPod可以指定request和limit资源。其中0 &lt;= request &lt;=Node Al......
+            
+以下主要介绍PaaS平台设计架构中使用到的方法论，统称为12-Factor(要素)
+
+简介
+软件通常会作为一种服务来交付，即软件即服务(SaaS)。12-Factor原则为构建SaaS应用提供了以下的方法论：
+
+使用标准化流程自动配置，减少开发者的学习成本。
+和操作系统解耦，使其可以在各个系统间提供最大的移植性。
+适合部署在现代的云计算平台上，从而在服务器和系统管理方面节省资源。
+将开发环......
         </div>
     </a>
     
@@ -544,17 +567,19 @@ kube-no......
             
         </h3>
         <div class="post-content-preview">
-            1. k8s知识体系以下整理了k8s涉及的相关知识体系。
+            1. k8s知识体系
+以下整理了k8s涉及的相关知识体系。
 
 思维导图：https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2
 2. k8s重点开源项目
+
 TODO
 
 
 
 			
 			
-			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|......
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPo......
         </div>
     </a>
     
@@ -641,15 +666,13 @@ TODO
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
-            
-        
-            
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
             
         
             
@@ -657,63 +680,15 @@ TODO
             
         
             
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
-            
-        
-            
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
-            
-        
-            
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
-            
-        
-            
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -730,6 +705,56 @@ TODO
             <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
+            
+        
+            
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             

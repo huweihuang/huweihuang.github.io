@@ -220,7 +220,8 @@
             
         </h3>
         <div class="post-content-preview">
-            1. kubectl的安装1curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl &amp;&amp; c......
+            1. kubectl的安装
+1curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl &amp;&amp; ......
         </div>
     </a>
     
@@ -252,9 +253,49 @@
             
 本文主要介绍etcd-operator的部署及使用
 
-1. 部署RBAC下载create_role.sh、cluster-role-binding-template.yaml、cluster-role-template.yaml
+1. 部署RBAC
+下载create_role.sh、cluster-role-binding-template.yaml、cluster-role-template.yaml
 例如：
-1234567|-- cluster-role-binding-template.yaml|-- cluster-role-template.yaml|-......
+1234567|-- cluster-role-binding-template.yaml|-- cluster-role-template.yaml|......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/etcd/raft/">
+        <h2 class="post-title">
+                        
+            Raft算法
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Raft协议[分布式一致性算法]
+
+raft算法中涉及三种角色，分别是：
+
+follower: 跟随者
+candidate: 候选者，选举过程中的中间状态角色
+leader: 领导者
+
+2. 过程
+2.1. 选举
+有两个timeout来控制选举，第一个是election timeout，该时间是节点从follower到成为candidate的时间，该时间是150到300毫秒之间的随机值......
         </div>
     </a>
     
@@ -283,10 +324,12 @@
             
         </h3>
         <div class="post-content-preview">
-            1. 虚拟化借助虚拟化技术，用户能以单个物理硬件系统为基础，创建多个模拟环境或专用资源，并使用一款名为“Hypervisor”（虚拟机监控程序）的软件直接连接到硬件，从而将一个系统划分为不同、单独而安全的环境，即虚拟机 (VM)。
+            1. 虚拟化
+借助虚拟化技术，用户能以单个物理硬件系统为基础，创建多个模拟环境或专用资源，并使用一款名为“Hypervisor”（虚拟机监控程序）的软件直接连接到硬件，从而将一个系统划分为不同、单独而安全的环境，即虚拟机 (VM)。
 虚拟化技术可以重新划分IT资源，提高资源的利用率。
-2. 虚拟化的类型全虚拟化（Full virtualization）
-全虚拟化使用未修改的guest操作系统版......
+2. 虚拟化的类型
+全虚拟化（Full virtualization）
+全虚拟化使用未修改的guest操作系......
         </div>
     </a>
     
@@ -306,33 +349,31 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/etcd/raft/">
+    <a href="/article/kubernetes-notes/storage/csi/provisioner/cephfs-provisioner/">
         <h2 class="post-title">
                         
-            Raft算法
+            部署cephfs-provisioner
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Raft协议[分布式一致性算法]
-raft算法中涉及三种角色，分别是：
-
-follower: 跟随者
-candidate: 候选者，选举过程中的中间状态角色
-leader: 领导者
-
-2. 过程2.1. 选举有两个timeout来控制选举，第一个是election timeout，该时间是节点从follower到成为candidate的时间，该时间是150到300毫秒之间的随机值。另一......
+            1. 安装cephfs客户端
+所有node节点安装cephfs客户端，主要用来和ceph集群挂载使用。
+1yum install -y ceph-common
+2. 部署RBAC
+2.1. ClusterRole
+12345678910111213141516171819202122kind: ClusterRoleapiVersion: rbac.authorization.k8s.io/......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-07-10
+            2019-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+              <a href="/tags/#CSI" title="CSI">CSI</a>
             
         </div>
     
@@ -342,17 +383,18 @@ leader: 领导者
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/storage/volume/dynamic-provisioning/">
+    <a href="/article/kubernetes-notes/storage/volume/storage-class/">
         <h2 class="post-title">
                         
-            Dynamic Volume Provisioning 介绍
+            StorageClass 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Dynamic Volume ProvisioningDynamic volume provisioning允许用户按需自动创建存储卷，这种方式可以让用户不需要关心存储的复杂性和差别，又可以选择不同的存储类型。
-1. 开启Dynamic Provisioning需要先提前创建StorageClass对象，StorageClass中定义了使用哪个provisioner，并且在provision......
+            1. StorageClass概述
+StorageClass提供了一种描述存储类（class）的方法，不同的class可能会映射到不同的服务质量等级和备份策略或其他策略等。
+StorageClass 对象中包含 provisioner、parameters 和 reclaimPolicy 字段，当需要动态分配 PersistentVolume 时会使用到。当创建 StorageClass 对......
         </div>
     </a>
     
@@ -372,29 +414,62 @@ leader: 领导者
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/principle/flow/pod-flow/">
+    <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/">
         <h2 class="post-title">
                         
-            Pod创建流程
+            PersistentVolumeClaim 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Pod创建基本流程图
-Pod创建完整流程图
+            1. PVC概述
+PersistentVolumeClaim（简称PVC）是用户存储的请求，PVC消耗PV的资源，可以请求特定的大小和访问模式，需要指定归属于某个Namespace，在同一个Namespace的Pod才可以指定对应的PVC。
+当需要不同性质的PV来满足存储需求时，可以使用StorageClass来实现。
+每个 PVC 中都包含一个 spec 规格字段和一个 status 声明......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2019-06-23
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
 
-图片来源：https://fuckcloudnative.io/posts/what-happens-when-k8s/
+</div>
+<hr>
 
-参考:
+<div class="post-preview">
 
-https://fuckcloudnative.io/posts/what-happens-when-k8s/
+    <a href="/article/kubernetes-notes/setup/k8s-cert/">
+        <h2 class="post-title">
+                        
+            k8s证书及秘钥
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 证书分类
 
 
+服务器证书：server cert，用于客户端验证服务端的身份。
 
-			
-			
-			var isMobile = navigator.userAgent.ma......
+
+客户端证书：client cert，用于服务端验证客户端的身份。
+
+
+对等证书：peer cert（既是server cert又是client cert），用户成员之间的身份验证，例如 etcd。
+
+
+1.1. k8s集群的证书分类
+
+etcd节点：需要标识自己服务的server cert，也需要cli......
         </div>
     </a>
     
@@ -423,9 +498,11 @@ https://fuckcloudnative.io/posts/what-happens-when-k8s/
             
         </h3>
         <div class="post-content-preview">
-            1. 安装kindOn mac or linux
+            1. 安装kind
+On mac or linux
 123curl -Lo ./kind "https://github.com/kubernetes-sigs/kind/releases/download/v0.7.0/kind-$(uname)-amd64"chmod +x ./kindmv ./kind /some-dir-in-your-PATH/kind
-2. 创建k8s集群1234......
+2. 创建k8s集群
+12......
         </div>
     </a>
     
@@ -445,17 +522,22 @@ https://fuckcloudnative.io/posts/what-happens-when-k8s/
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/setup/kubeadm-certs/">
+    <a href="/article/kubernetes-notes/storage/volume/volume/">
         <h2 class="post-title">
                         
-            kubeadm管理证书
+            Volume介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            通过kubeadm搭建的集群默认的证书时间是1年（由于官方期望每年更新一次k8s的版本，在更新的时候会默认更新证书），当你执行命令出现以下报错，说明你的证书已经到期了，则需要手动更新证书。
-12345# kubectl get nodeUnable to connect to the server: x509: certificate has expired or is not yet va......
+            1. volume概述
+
+容器上的文件生命周期同容器的生命周期一致，即容器挂掉之后，容器将会以最初镜像中的文件系统内容启动，之前容器运行时产生的文件将会丢失。
+Pod的volume的生命周期同Pod的生命周期一致，当Pod被删除的时候，对应的volume才会被删除。即Pod中的容器重启时，之前的文件仍可以保存。
+
+容器中的进程看到的是由其 Docker 镜像和卷组成的文件系统视图。
+Pod ......
         </div>
     </a>
     
@@ -465,75 +547,7 @@ https://fuckcloudnative.io/posts/what-happens-when-k8s/
         </p>
         <div class="tags">
             
-              <a href="/tags/#kubeadm" title="kubeadm">kubeadm</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/storage/csi/ceph/deploy-csi-cephfs/">
-        <h2 class="post-title">
-                        
-            部署csi-cephfs
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            0. 说明要求Kubernetes的版本在1.11及以上，k8s集群必须允许特权Pod（privileged pods），即apiserver和kubelet需要设置--allow-privileged为true。节点的Docker daemon需要允许挂载共享卷。
-涉及镜像
-quay.io/k8scsi/csi-provisioner:v0.3.0
-quay.io/k8scsi/csi-a......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CSI" title="CSI">CSI</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/">
-        <h2 class="post-title">
-                        
-            csi-cephfs-plugin
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 编译CSI CephFS pluginCSI CephFS plugin用来提供CephFS存储卷和挂载存储卷，源码参考：https://github.com/ceph/ceph-csi 。
-1.1. 编译二进制1$ make cephfsplugin
-1.2. 编译Docker镜像1$ make image-cephfsplugin
-2. 配置项2.1. 命令行参数
-
-
-
-Optio......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#CSI" title="CSI">CSI</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -610,15 +624,13 @@ Optio......
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
-            
-        
-            
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
             
         
             
@@ -626,63 +638,15 @@ Optio......
             
         
             
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
-            
-        
-            
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
-            
-        
-            
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
-            
-        
-            
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -699,6 +663,56 @@ Optio......
             <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
+            
+        
+            
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             

@@ -211,21 +211,55 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/tools/confd-usage/">
+    <a href="/article/linux-notes/tools/nfs-usage/">
         <h2 class="post-title">
                         
-            confd的使用
+            NFS的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
+            1. NFS简介
+NFS，是Network File System的简写，即网络文件系统。网络文件系统是FreeBSD支持的文件系统中的一种，也被称为NFS. NFS允许一个系统在网络上与他人共享目录和文件。
+通过使用NFS，用户和程序可以像访问本地文件一样访问远端系统上的文件。
+2. NFS的安装与配置
+2.1 服务端
+NFS需要安装nfs-utils、rpcbind两个包。
+123456......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-05-01
+        </p>
+        <div class="tags">
             
-confd的源码参考：https://github.com/kelseyhightower/confd
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
 
-1. confd的部署以下Linux系统为例。
-下载confd的二进制文件，下载地址为：https://github.com/kelseyhightower/confd/releases。例如：
-123456789# Download the binarywget https://gi......
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/tools/ceph-fuse/">
+        <h2 class="post-title">
+                        
+            ceph-fuse的使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 安装ceph-fuse
+1yum install -y ceph-fuse
+如果安装失败，先执行以下命令，再执行上述安装命令
+1234yum -y install epel-releaserpm -Uhv http://download.ceph.com/rpm-jewel/el7/noarch/ceph-release-1-1.el7.noarch.rpm
+2. 配置客户端访问的ke......
         </div>
     </a>
     
@@ -254,14 +288,18 @@ confd的源码参考：https://github.com/kelseyhightower/confd
             
         </h3>
         <div class="post-content-preview">
-            1. 安装以centos为例。
+            1. 安装
+以centos为例。
 1yum install -y ansible
-2. 配置默认配置目录在/etc/ansible/，主要有以下两个配置：
+2. 配置
+默认配置目录在/etc/ansible/，主要有以下两个配置：
 
 ansible.cfg：ansible的配置文件
 hosts：配置ansible所连接的机器IP信息
 
-2.1. ansible.cfg2.2. hosts12345678910111213141516171819202122232425......
+2.1. ansible.cfg
+2.2. hosts
+1234567891011121314151617181920212223......
         </div>
     </a>
     
@@ -281,38 +319,6 @@ hosts：配置ansible所连接的机器IP信息
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/vim/basic-vimrc/">
-        <h2 class="post-title">
-                        
-            basic vimrc
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-以下转自https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim
-
-basic vimrc1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-05-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#VIM" title="VIM">VIM</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
     <a href="/article/golang-notes/introduction/package/dep-usage/">
         <h2 class="post-title">
                         
@@ -322,155 +328,12 @@ basic vimrc123456789101112131415161718192021222324252627282930313233343536373839
             
         </h3>
         <div class="post-content-preview">
-            1. dep简介dep是一个golang项目的包管理工具，一般只需要2-3个命令就可以将go依赖包自动下载并归档到vendor的目录中。dep官网参考：https://github.com/golang/dep
-2. dep安装1go get -u github.com/golang/dep/cmd/dep
-3. dep使用1234567#进入到项目目录cd /home/gopath/src......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-05-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/text/string/">
-        <h2 class="post-title">
-                        
-            字符串处理
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            字符串处理字符串操作涉及的标准库有strings和strconv两个包
-1. 字符串操作
-
-
-
-函数
-说明
-
-
-
-
-func Contains(s, substr string) bool
-字符串 s 中是否包含 substr，返回 bool 值
-
-
-func Join(a []string, sep string) string
-字符串链接，把 slice a 通过 sep 链接起来
-
-
-......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-05-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/text/file/">
-        <h2 class="post-title">
-                        
-            文件操作
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            文件操作更多文件操作见Go的os包。
-1. 目录操作
-func Mkdir(name string, perm FileMode) error创建名称为 name 的目录，权限设置是 perm，例如 0777
-
-
-func MkdirAll(path string, perm FileMode) error根据 path 创建多级子目录，例如 astaxie/test1/test2。
-fun......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2018-05-01
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/golang-notes/summary/language/">
-        <h2 class="post-title">
-                        
-            计算机语言概述
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 计算机语言概述学习一门计算机语言，将计算机语言分为以下几大部分：
-
-语言特点
-环境准备
-基本语法
-数据类型
-变量
-常量
-引用类型
-
-
-流程语句
-判断语句
-循环语句
-选择语句
-
-
-函数
-面向对象编程
-封装（类与方法）
-继承
-多态（接口）
-
-
-并发编程
-特殊属性
-包管理
-标准库
-
-2. 思维导图
-
-
-			
-			
-			var isMobile = navigator.userAgent......
+            1. dep简介
+dep是一个golang项目的包管理工具，一般只需要2-3个命令就可以将go依赖包自动下载并归档到vendor的目录中。dep官网参考：https://github.com/golang/dep
+2. dep安装
+1go get -u github.com/golang/dep/cmd/dep
+3. dep使用
+1234567#进入到项目目录cd /home/gopath/......
         </div>
     </a>
     
@@ -502,22 +365,32 @@ fun......
             
 本文主要记录一些Golang相关的资源链接和书籍
 
-1. 官方文档1.1. 官网
+1. 官方文档
+1.1. 官网
+
+
 https://golang.org/
+
 
 https://golang.org/doc/
 
 
 1.2. 基础
+
+
 A Tour of Go
+
 
 Effective Go
 
+
 Frequently Asked Questions (FAQ)
+
 
 CodeReviewComments
 
-Uber Go Style Guid......
+
+Uber Go ......
         </div>
     </a>
     
@@ -548,6 +421,7 @@ Uber Go Style Guid......
         <div class="post-content-preview">
             后端开发技能树
 
+
 图片来源于网络
 
 参考：
@@ -558,7 +432,161 @@ https://github.com/xingshaocheng/architect-awesome
 
 			
 			
-			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMob......
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-05-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/summary/language/">
+        <h2 class="post-title">
+                        
+            计算机语言概述
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 计算机语言概述
+学习一门计算机语言，将计算机语言分为以下几大部分：
+
+语言特点
+环境准备
+基本语法
+数据类型
+
+变量
+常量
+引用类型
+
+
+流程语句
+
+判断语句
+循环语句
+选择语句
+
+
+函数
+面向对象编程
+
+封装（类与方法）
+继承
+多态（接口）
+
+
+并发编程
+特殊属性
+包管理
+标准库
+
+2. 思维导图
+
+
+
+			
+			
+			var isMobile = navigator.user......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-05-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/text/file/">
+        <h2 class="post-title">
+                        
+            文件操作
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            文件操作
+更多文件操作见Go的os包。
+1. 目录操作
+
+func Mkdir(name string, perm FileMode) error
+创建名称为 name 的目录，权限设置是 perm，例如 0777
+
+
+func MkdirAll(path string, perm FileMode) error
+根据 path 创建多级子目录，例如 astaxie/test1/test2。......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2018-05-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/text/string/">
+        <h2 class="post-title">
+                        
+            字符串处理
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            字符串处理
+字符串操作涉及的标准库有strings和strconv两个包
+1. 字符串操作
+
+
+
+函数
+说明
+
+
+
+
+func Contains(s, substr string) bool
+字符串 s 中是否包含 substr，返回 bool 值
+
+
+func Join(a []string, sep string) string
+字符串链接，把 slice a 通过 sep 链接起来
+
+......
         </div>
     </a>
     
@@ -587,9 +615,12 @@ https://github.com/xingshaocheng/architect-awesome
             
         </h3>
         <div class="post-content-preview">
-            1. glide简介glide是一个golang项目的包管理工具，非常方便快捷，一般只需要2-3个命令就可以将go依赖包自动下载并归档到vendor的目录中。
-2. glide安装1go get github.com/Masterminds/glide
-3. glide使用123456#进入到项目目录cd /home/gopath/src/demo#glide初始化，初始化配置文件glide......
+            1. glide简介
+glide是一个golang项目的包管理工具，非常方便快捷，一般只需要2-3个命令就可以将go依赖包自动下载并归档到vendor的目录中。
+2. glide安装
+1go get github.com/Masterminds/glide
+3. glide使用
+123456#进入到项目目录cd /home/gopath/src/demo#glide初始化，初始化配置文件gl......
         </div>
     </a>
     
@@ -676,15 +707,13 @@ https://github.com/xingshaocheng/architect-awesome
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
-            
-        
-            
             <a href="/tags/#Etcd" title="Etcd" rel="8">Etcd</a>
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            
+        
             
         
             
@@ -692,63 +721,15 @@ https://github.com/xingshaocheng/architect-awesome
             
         
             
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
-            
-        
-            
             <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
-            
-        
-            
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
-            
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
-            
-        
-            
-            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
-            
-        
-            
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
-            
-        
-            
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
-            
-        
-            
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
-            
-        
-            
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
-            
-        
-            
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -765,6 +746,56 @@ https://github.com/xingshaocheng/architect-awesome
             <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
             
         
+            
+        
+            
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
+            <a href="/tags/#快捷键" title="快捷键" rel="5">快捷键</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            
+        
+            
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            
+        
+            
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            
+        
+            
+            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
