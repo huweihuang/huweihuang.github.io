@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,23 +212,152 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-虚拟化"><a href="#1-虚拟化" class="headerlink" title="1. 虚拟化"></a>1. 虚拟化</h1><p>借助虚拟化技术，用户能以单个物理硬件系统为基础，创建多个模拟环境或专用资源，并使用一款名为“Hypervisor”（虚拟机监控程序）的软件直接连接到硬件，从而将一个系统划分为不同、单独而安全的环境，即虚拟机 (VM)。</p>
+                <div id="vip-container"><h1 id="1-虚拟化">1. 虚拟化</h1>
+<p>借助虚拟化技术，用户能以单个物理硬件系统为基础，创建多个模拟环境或专用资源，并使用一款名为“Hypervisor”（虚拟机监控程序）的软件直接连接到硬件，从而将一个系统划分为不同、单独而安全的环境，即虚拟机 (VM)。</p>
 <p>虚拟化技术可以重新划分IT资源，提高资源的利用率。</p>
-<h1 id="2-虚拟化的类型"><a href="#2-虚拟化的类型" class="headerlink" title="2. 虚拟化的类型"></a>2. 虚拟化的类型</h1><p><strong>全虚拟化（Full virtualization）</strong></p>
+<h1 id="2-虚拟化的类型">2. 虚拟化的类型</h1>
+<p><strong>全虚拟化（Full virtualization）</strong></p>
 <p>全虚拟化使用未修改的guest操作系统版本，guest直接与CPU通信，是最快的虚拟化方法。</p>
 <p><strong>半虚拟化（Paravirtualization）</strong></p>
 <p>半虚拟化使用修改过的guest操作系统，guest与hypervisor通信，hypervisor将guest的调用传递给CPU和其他接口。因为通信经过hypervisor，因此比全虚拟化慢。</p>
-<h1 id="3-hypervisor"><a href="#3-hypervisor" class="headerlink" title="3. hypervisor"></a>3. hypervisor</h1><p><code>hypervisor</code>又称为 <strong>virtual machine monitor</strong> (<strong>VMM</strong>)，是一个创建和运行虚拟机的程序。被 hypervisor 用来运行一个或多个虚拟机的计算机称为宿主机（<code>host machine</code>），这些虚拟机则称为客户机（<code>guest machine</code>）。</p>
-<h1 id="4-kvm"><a href="#4-kvm" class="headerlink" title="4. kvm"></a>4. kvm</h1><p><code>kvm(Kernel-based Virtual Machine)</code>是Linux内核的虚拟化模块，可以利用Linux内核的功能来作为hypervisor。</p>
+<h1 id="3-hypervisor">3. hypervisor</h1>
+<p><code>hypervisor</code>又称为 <strong>virtual machine monitor</strong> (<strong>VMM</strong>)，是一个创建和运行虚拟机的程序。被 hypervisor 用来运行一个或多个虚拟机的计算机称为宿主机（<code>host machine</code>），这些虚拟机则称为客户机（<code>guest machine</code>）。</p>
+<p>在虚拟化技术中，Hypervisor（虚拟机监视器）是一种软件、固件或硬件，能够创建和运行虚拟机（VM）。Hypervisor 起到物理硬件与虚拟机之间的中介作用，管理和分配物理资源（如 CPU、内存、存储和网络）给虚拟机，并确保每个虚拟机的隔离性和安全性。</p>
+<p><strong>Hypervisor 的功能</strong></p>
+<ol>
+<li><strong>虚拟化资源管理</strong>：
+<ul>
+<li>分配物理硬件资源（CPU、内存、存储、网络）给虚拟机。</li>
+<li>管理和调度虚拟机的运行。</li>
+</ul>
+</li>
+<li><strong>虚拟机隔离</strong>：
+<ul>
+<li>确保虚拟机之间的隔离性，防止一个虚拟机的故障或安全问题影响其他虚拟机。</li>
+</ul>
+</li>
+<li><strong>硬件抽象</strong>：
+<ul>
+<li>抽象底层硬件，使虚拟机可以运行在不同的硬件平台上，而无需修改虚拟机内的操作系统和应用程序。</li>
+</ul>
+</li>
+<li><strong>资源优化</strong>：
+<ul>
+<li>动态调整虚拟机资源，提供负载均衡、资源共享和节能功能。</li>
+</ul>
+</li>
+<li><strong>高可用性和容错</strong>：
+<ul>
+<li>提供虚拟机快照、备份和恢复功能，确保高可用性和数据安全。</li>
+<li>支持虚拟机迁移和克隆，方便运维管理。</li>
+</ul>
+</li>
+</ol>
+<p><strong>Hypervisor 的优点</strong></p>
+<ul>
+<li><strong>硬件利用率</strong>：通过虚拟化，可以更高效地利用物理硬件资源，减少硬件浪费。</li>
+<li><strong>灵活性</strong>：虚拟机可以轻松创建、删除和迁移，方便开发、测试和部署。</li>
+<li><strong>隔离性</strong>：虚拟机之间相互隔离，提高系统安全性和稳定性。</li>
+<li><strong>成本效益</strong>：减少对物理硬件的需求，降低硬件和维护成本。</li>
+</ul>
+<h1 id="4-kvm">4. kvm</h1>
+<p><code>kvm(Kernel-based Virtual Machine)</code>是Linux内核的虚拟化模块，可以利用Linux内核的功能来作为hypervisor。</p>
 <p>KVM本身不进行模拟，而是暴露一个<code>/dev/kvm</code>接口。</p>
 <p>使用KVM，可以在Linux的镜像上</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Kernel-based_Virtual_Machine_zh-CN.svg"></p>
-<h1 id="5-qemu"><a href="#5-qemu" class="headerlink" title="5. qemu"></a>5. qemu</h1><p><strong>QEMU</strong>（quick emulator）</p>
-<blockquote>
-<p>待补充</p>
-</blockquote>
-<h1 id="6-libvirt"><a href="#6-libvirt" class="headerlink" title="6. libvirt"></a>6. libvirt</h1><p>libvirt是一个硬件虚拟化的管理工具API，可用于KVM、QEMU等虚拟化技术，</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Libvirt_support.svg"></p>
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5c/Kernel-based_Virtual_Machine_zh-CN.svg" width="50%">
+<h1 id="5-qemu">5. qemu</h1>
+<p>QEMU（Quick Emulator）是一个开源的硬件虚拟化和仿真器软件。它被广泛用于创建和运行虚拟机，支持多种不同的硬件平台和操作系统。以下是对 QEMU 的详细介绍：</p>
+<p><strong>QEMU 的主要特点</strong></p>
+<ol>
+<li><strong>虚拟化和仿真</strong>：
+<ul>
+<li><strong>虚拟化</strong>：QEMU 能够利用硬件虚拟化技术（如 Intel VT-x 和 AMD-V）来运行虚拟机。通过硬件辅助虚拟化，QEMU 可以提供接近原生性能的虚拟机运行环境。</li>
+<li><strong>仿真</strong>：QEMU 还可以完全在软件中仿真硬件，无需硬件虚拟化支持。这种模式下，QEMU 能够仿真多种不同的 CPU 架构（如 x86、ARM、MIPS、PowerPC 等），适用于跨平台开发和测试。</li>
+</ul>
+</li>
+<li><strong>多种平台支持</strong>：
+<ul>
+<li>QEMU 支持多种不同的主机平台和目标平台，能够在一个平台上运行不同架构的操作系统。这使得 QEMU 成为跨平台开发和测试的理想工具。</li>
+</ul>
+</li>
+<li><strong>与 KVM 集成</strong>：
+<ul>
+<li>QEMU 可以与内核虚拟机（KVM）集成使用，以提高虚拟化性能。KVM 提供了基于 Linux 内核的高效虚拟化解决方案，而 QEMU 提供了强大的虚拟机管理和仿真功能。</li>
+</ul>
+</li>
+<li><strong>设备仿真</strong>：
+<ul>
+<li>QEMU 提供了丰富的设备仿真功能，包括网络接口、磁盘存储、图形显示、USB 设备等。这些设备仿真使得虚拟机能够模拟真实硬件环境，方便开发和测试。</li>
+</ul>
+</li>
+<li><strong>快照和恢复</strong>：
+<ul>
+<li>QEMU 支持虚拟机快照功能，允许用户在特定时刻保存虚拟机的状态，并在需要时恢复到该状态。这对于调试和测试非常有用。</li>
+</ul>
+</li>
+</ol>
+<h1 id="6-libvirt">6. libvirt</h1>
+<p>Libvirt 是一个开源的虚拟化管理框架和工具集，用于管理不同的虚拟化技术，包括 KVM、QEMU、Xen、VMware ESXi、Hyper-V 以及其他一些虚拟化平台。它提供了一个统一的 API，用于创建、管理和监控虚拟机，使得对不同虚拟化技术的操作更加简化和一致。</p>
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Libvirt_support.svg">
+<h2 id="61-特点">6.1. 特点</h2>
+<ol>
+<li><strong>统一接口</strong></li>
+</ol>
+<ul>
+<li>提供了一个统一的 API 和命令行工具，使用户和开发者可以通过一致的接口管理不同的虚拟化技术。</li>
+</ul>
+<ol start="2">
+<li><strong>多种虚拟化技术支持</strong>：
+<ul>
+<li>支持多种虚拟化平台，如 KVM、QEMU、Xen、VMware ESXi、Hyper-V、LXC（Linux 容器）等，提供跨平台的虚拟化管理功能。</li>
+</ul>
+</li>
+<li><strong>管理和监控</strong>：
+<ul>
+<li>提供强大的管理和监控功能，包括创建、启动、停止、迁移虚拟机，以及管理存储和网络资源。</li>
+</ul>
+</li>
+<li><strong>XML 配置</strong>：
+<ul>
+<li>使用 XML 配置文件来定义虚拟机和资源，提供灵活和可扩展的配置方式，易于保存和版本控制。</li>
+</ul>
+</li>
+<li><strong>安全性</strong>：
+<ul>
+<li>支持多种安全机制，如基于 SELinux 的安全策略，确保虚拟机和宿主系统的隔离性和安全性。</li>
+</ul>
+</li>
+<li><strong>网络管理</strong>：
+<ul>
+<li>提供网络桥接、NAT、虚拟交换机等网络管理功能，支持复杂的网络拓扑配置。</li>
+</ul>
+</li>
+<li><strong>存储管理</strong>：
+<ul>
+<li>支持多种存储后端，如本地磁盘、网络文件系统（NFS）、iSCSI、LVM 等，方便虚拟机的存储资源管理。</li>
+</ul>
+</li>
+</ol>
+<h2 id="62-主要组件">6.2. 主要组件</h2>
+<ol>
+<li><strong>libvirtd</strong>：
+<ul>
+<li>Libvirt 的守护进程，负责处理客户端请求和管理虚拟机。通过这个守护进程，可以与不同的虚拟化后端进行交互。</li>
+</ul>
+</li>
+<li><strong>virsh</strong>：
+<ul>
+<li>Libvirt 的命令行工具，提供了一系列命令用于管理虚拟机和资源。通过 <code>virsh</code>，用户可以执行创建、启动、停止、迁移虚拟机等操作。</li>
+</ul>
+</li>
+<li><strong>libvirt API</strong>：
+<ul>
+<li>提供 C 语言的库和 API，同时支持多种编程语言的绑定，如 Python、Perl、Ruby、Java、Go 等，使得开发者可以在不同的编程环境中使用 Libvirt 的功能。</li>
+</ul>
+</li>
+</ol>
+<h2 id="63-virsh命令">6.3. virsh命令</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出所有虚拟机</span></span><br><span class="line">virsh list --all</span><br><span class="line"><span class="comment"># 启动虚拟机</span></span><br><span class="line">virsh start &lt;vm_name&gt;</span><br><span class="line"><span class="comment"># 关闭虚拟机</span></span><br><span class="line">virsh shutdown &lt;vm_name&gt;</span><br><span class="line"><span class="comment"># 定义新的虚拟机</span></span><br><span class="line">virsh define /path/to/vm.xml</span><br><span class="line"><span class="comment"># 创建并启动虚拟机</span></span><br><span class="line">virsh create /path/to/vm.xml</span><br><span class="line"><span class="comment"># 迁移虚拟机</span></span><br><span class="line">virsh migrate --live &lt;vm_name&gt; qemu+ssh://destination_host/system</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
 <li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/virtualization_getting_started_guide/chap-virtualization_getting_started-what_is_it" target="_blank" rel="noopener">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/virtualization_getting_started_guide/chap-virtualization_getting_started-what_is_it</a></li>
@@ -267,7 +396,7 @@
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/etcd/raft/" data-toggle="tooltip" data-placement="top" title="Raft算法">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/storage/csi/flexvolume/" data-toggle="tooltip" data-placement="top" title="FlexVolume介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -353,7 +482,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-虚拟化"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 虚拟化</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-虚拟化的类型"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 虚拟化的类型</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-hypervisor"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. hypervisor</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-kvm"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. kvm</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-qemu"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. qemu</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-libvirt"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. libvirt</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-虚拟化"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 虚拟化</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-虚拟化的类型"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 虚拟化的类型</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-hypervisor"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. hypervisor</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-kvm"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. kvm</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-qemu"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. qemu</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-libvirt"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. libvirt</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#61-特点"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">6.1. 特点</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#62-主要组件"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">6.2. 主要组件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#63-virsh命令"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">6.3. virsh命令</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -545,7 +674,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

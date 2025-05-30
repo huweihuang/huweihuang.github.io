@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -214,28 +214,36 @@
 
                 <div id="vip-container"><p>安装openyurt，为了适配边缘场景，需要对k8s组件进行调整。其中包括：</p>
 <ul>
-<li><p>kube-apiserver</p>
+<li>
+<p>kube-apiserver</p>
 </li>
-<li><p>kube-controller-manager</p>
+<li>
+<p>kube-controller-manager</p>
 </li>
-<li><p>kube-proxy</p>
+<li>
+<p>kube-proxy</p>
 </li>
-<li><p>CoreDNS</p>
+<li>
+<p>CoreDNS</p>
 </li>
 </ul>
-<h1 id="1-kube-apiserver"><a href="#1-kube-apiserver" class="headerlink" title="1. kube-apiserver"></a>1. kube-apiserver</h1><p>为了实现云边通信，即用户可以正常使用kubectl exec/logs的功能来登录或查看边缘容器的信息。需要将kube-apiserver访问kubelet的地址调整为hostname优先。</p>
+<h1 id="1-kube-apiserver">1. kube-apiserver</h1>
+<p>为了实现云边通信，即用户可以正常使用kubectl exec/logs的功能来登录或查看边缘容器的信息。需要将kube-apiserver访问kubelet的地址调整为hostname优先。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">$</span> <span class="string">vi</span> <span class="string">/etc/kubernetes/manifests/kube-apiserver.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">dnsPolicy:</span> <span class="string">"None"</span> <span class="comment"># 1. dnsPolicy修改为None</span></span><br><span class="line">  <span class="attr">dnsConfig:</span>        <span class="comment"># 2. 增加dnsConfig配置</span></span><br><span class="line">    <span class="attr">nameservers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">1.2</span><span class="number">.3</span><span class="number">.4</span> <span class="comment"># 使用yurt-tunnel-dns service的clusterIP替换</span></span><br><span class="line">    <span class="attr">searches:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">kube-system.svc.cluster.local</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">svc.cluster.local</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">cluster.local</span></span><br><span class="line">    <span class="attr">options:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">ndots</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">"5"</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">command:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">kube-apiserver</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">--kubelet-preferred-address-types=Hostname,InternalIP,ExternalIP</span> <span class="comment"># 3. 把Hostname放在第一位</span></span><br><span class="line">  <span class="string">...</span></span><br></pre></td></tr></table></figure>
-<h1 id="2-kube-controller-manager"><a href="#2-kube-controller-manager" class="headerlink" title="2. kube-controller-manager"></a>2. kube-controller-manager</h1><p>禁用默认的 <code>nodelifecycle</code> 控制器，当节点断连时不驱逐pod。</p>
-<p><code>nodelifecycle</code>控制器主要用来根据node的status及lease的更新时间来决定是否要<code>驱逐节点上的pod</code>。为了让 <code>yurt-controller-mamanger</code> 能够正常工作，因此需要禁用controller的驱逐功能。</p>
+<h1 id="2-kube-controller-manager">2. kube-controller-manager</h1>
+<p>禁用默认的 <code>nodelifecycle</code> 控制器，当节点断连时不驱逐pod。</p>
+<p><code>nodelifecycle</code>控制器主要用来根据node的status及lease的更新时间来决定是否要<code>驱逐节点上的pod</code>。为了让 <code>yurt-controller-mamanger</code> 能够正常工作，因此需要禁用controller的驱逐功能。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/kubernetes/manifests/kube-controller-manager.yaml</span><br><span class="line"><span class="comment"># 在--controllers=*,bootstrapsigner,tokencleaner后面添加,-nodelifecycle </span></span><br><span class="line"><span class="comment"># 即参数为： --controllers=*,bootstrapsigner,tokencleaner,-nodelifecycle</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果kube-controller-manager是以static pod部署，修改yaml文件后会自动重启。</span></span><br></pre></td></tr></table></figure>
-<h1 id="3-coredns"><a href="#3-CoreDNS" class="headerlink" title="3. CoreDNS"></a>3. CoreDNS</h1><p>将coredns从deployment部署改为daemonset部署。</p>
+<h1 id="3-coredns">3. CoreDNS</h1>
+<p>将coredns从deployment部署改为daemonset部署。</p>
 <p>将deployment的coredns副本数调整为0。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale --replicas=0 deployment/coredns -n kube-system</span><br></pre></td></tr></table></figure>
 <p>创建daemonset的coredns。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/huweihuang/kubeadm-scripts/main/openyurt/yurt-tunnel/coredns.ds.yaml</span><br><span class="line"></span><br><span class="line">kubectl apply -f</span><br></pre></td></tr></table></figure>
 <p>支持流量拓扑：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 利用openyurt实现endpoint过滤</span></span><br><span class="line">kubectl annotate svc kube-dns -n kube-system openyurt.io/topologyKeys=<span class="string">'openyurt.io/nodepool'</span></span><br></pre></td></tr></table></figure>
-<h1 id="4-kube-proxy"><a href="#4-kube-proxy" class="headerlink" title="4. kube-proxy"></a>4. kube-proxy</h1><p>云边端场景下，边缘节点间很有可能无法互通，因此需要endpoints基于nodepool进行拓扑。直接将kube-proxy的kubeconfig配置删除，将apiserver请求经过yurthub即可解决服务拓扑问题。</p>
+<h1 id="4-kube-proxy">4. kube-proxy</h1>
+<p>云边端场景下，边缘节点间很有可能无法互通，因此需要endpoints基于nodepool进行拓扑。直接将kube-proxy的kubeconfig配置删除，将apiserver请求经过yurthub即可解决服务拓扑问题。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit cm -n kube-system kube-proxy</span><br></pre></td></tr></table></figure>
 <p>示例：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">config.conf:</span> <span class="string">|-</span></span><br><span class="line">    <span class="attr">apiVersion:</span> <span class="string">kubeproxy.config.k8s.io/v1alpha1</span></span><br><span class="line">    <span class="attr">bindAddress:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line">    <span class="attr">bindAddressHardFail:</span> <span class="literal">false</span></span><br><span class="line">    <span class="attr">clientConnection:</span></span><br><span class="line">      <span class="attr">acceptContentTypes:</span> <span class="string">""</span></span><br><span class="line">      <span class="attr">burst:</span> <span class="number">0</span></span><br><span class="line">      <span class="attr">contentType:</span> <span class="string">""</span></span><br><span class="line">      <span class="comment">#kubeconfig: /var/lib/kube-proxy/kubeconfig.conf &lt;-- 删除这个配置</span></span><br><span class="line">      <span class="attr">qps:</span> <span class="number">0</span></span><br><span class="line">    <span class="attr">clusterCIDR:</span> <span class="number">100.64</span><span class="number">.0</span><span class="number">.0</span><span class="string">/10</span></span><br><span class="line">    <span class="attr">configSyncPeriod:</span> <span class="string">0s</span></span><br><span class="line"><span class="string">//</span> <span class="string">省略</span></span><br></pre></td></tr></table></figure>
@@ -550,7 +558,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

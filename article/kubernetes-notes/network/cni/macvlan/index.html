@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,19 +212,25 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h1><p>macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。</p>
+                <div id="vip-container"><h1 id="1-简介">1. 简介</h1>
+<p>macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。</p>
 <p>示意图：</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan.jpg"></p>
-<h1 id="2-四种工作模式"><a href="#2-四种工作模式" class="headerlink" title="2. 四种工作模式"></a>2. 四种工作模式</h1><h2 id="21-vepa-virtual-ethernet-port-aggregator"><a href="#2-1-VEPA-Virtual-Ethernet-Port-Aggregator" class="headerlink" title="2.1. VEPA (Virtual Ethernet Port Aggregator)"></a>2.1. VEPA (Virtual Ethernet Port Aggregator)</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_vepa.jpg"></p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan.jpg">
+<h1 id="2-四种工作模式">2. 四种工作模式</h1>
+<h2 id="21-vepa-virtual-ethernet-port-aggregator">2.1. VEPA (Virtual Ethernet Port Aggregator)</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_vepa.jpg">
 <p>VEPA为默认的工作模式，该模式下，所有macvlan发出的流量都会经过父接口，不管目的地是否与该macvlan共用一个父接口。</p>
-<h2 id="22-bridge-mode"><a href="#2-2-Bridge-mode" class="headerlink" title="2.2. Bridge mode"></a>2.2. Bridge mode</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_bridge.jpg"></p>
+<h2 id="22-bridge-mode">2.2. Bridge mode</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_bridge.jpg">
 <p>该bridge模式类似于传统的网桥模式，拥有相同父接口的macvlan可以直接进行通信，不需要将数据发给父接口转发。该模式下不需要交换机支持hairpin模式，性能比VEPA模式好。另外相对于传统的网桥模式，该模式不需要学习mac地址，不需要STP，使得其性能比传统的网桥性能好得多。但是如果父接口down掉，则所有子接口也会down，同时无法通信。</p>
-<h2 id="23-private-mode"><a href="#2-3-Private-mode" class="headerlink" title="2.3. Private mode"></a>2.3. Private mode</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_private.jpg"></p>
+<h2 id="23-private-mode">2.3. Private mode</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_private.jpg">
 <p>该模式是VEPA模式的增强版，</p>
-<h2 id="24-passthru-mode"><a href="#2-4-Passthru-mode" class="headerlink" title="2.4. Passthru mode"></a>2.4. Passthru mode</h2><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_passthru.jpg"></p>
-<p>. </p>
+<h2 id="24-passthru-mode">2.4. Passthru mode</h2>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1595764512/article/kubernetes/macvlan/macvlan_passthru.jpg">
+<p>.</p>
 <blockquote>
-<p> 待完善</p>
+<p>待完善</p>
 </blockquote>
 <p>参考：</p>
 <ul>
@@ -260,12 +266,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/network/cni/cni/" data-toggle="tooltip" data-placement="top" title="CNI接口介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/resource/lxcfs/lxcfs/" data-toggle="tooltip" data-placement="top" title="Lxcfs资源视图隔离">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/" data-toggle="tooltip" data-placement="top" title="k8s多集群管理的思考">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/network/cni/cni/" data-toggle="tooltip" data-placement="top" title="CNI接口介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -543,7 +549,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,8 +212,10 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="k8s多集群的思考"><a href="#k8s多集群的思考" class="headerlink" title="k8s多集群的思考"></a>k8s多集群的思考</h1><h1 id="1-为什么需要多集群"><a href="#1-为什么需要多集群" class="headerlink" title="1. 为什么需要多集群"></a>1. 为什么需要多集群</h1><p><strong>1、k8s单集群的承载能力有限。</strong></p>
-<p> Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下<em>所有</em>标准的配置：</p>
+                <div id="vip-container"><h1 id="k8s多集群的思考">k8s多集群的思考</h1>
+<h1 id="1-为什么需要多集群">1. 为什么需要多集群</h1>
+<p><strong>1、k8s单集群的承载能力有限。</strong></p>
+<p>Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下<em>所有</em>标准的配置：</p>
 <ul>
 <li>每个节点的 Pod 数量不超过 100</li>
 <li>节点数不超过 5000</li>
@@ -228,7 +230,8 @@
 <p>全部服务都放在一个k8s集群中，当该集群出现异常，短期无法恢复的情况下，则影响全部服务和影响部署。为了避免机房等故障导致单集群异常，建议将k8s的master在分散在延迟较低的不同可用区部署，且在不同region部署多个k8s集群来进行集群级别的容灾。</p>
 <p><strong>3、当前混合云的使用方式和架构</strong></p>
 <p>当前部分公司会存在自建机房+不同云厂商的公有云从而来实现混部云的运营模式，那么自然会引入多集群管理的问题。</p>
-<h1 id="2-多集群部署需要解决哪些问题"><a href="#2-多集群部署需要解决哪些问题" class="headerlink" title="2. 多集群部署需要解决哪些问题"></a>2. 多集群部署需要解决哪些问题</h1><p>目标：<strong>让用户像使用单集群一样来使用多集群</strong>。</p>
+<h1 id="2-多集群部署需要解决哪些问题">2. 多集群部署需要解决哪些问题</h1>
+<p>目标：<strong>让用户像使用单集群一样来使用多集群</strong>。</p>
 <p>扩展集群的边界，服务的边界从单台物理机多个进程，发展到通过k8s集群来管理多台的物理机，再发展到管理多个的k8s集群。<strong>服务的边界从物理机发展到集群</strong>。</p>
 <p>而多集群管理需要解决以下问题：</p>
 <ul>
@@ -238,7 +241,6 @@
 </ul>
 <p>而多集群服务的网络通信可以由Service mesh等来解决，本文不做重点讨论。</p>
 <p>以上几个问题，可以先从k8s管理节点的思维进行分析</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -293,8 +295,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="21-多集群工作负载的分发"><a href="#2-1-多集群工作负载的分发" class="headerlink" title="2.1. 多集群工作负载的分发"></a>2.1. 多集群工作负载的分发</h2><p>单集群中k8s的调度单元是pod，即一个pod只能跑在一个节点上，一个节点可以运行多个pod，而不同节点上的一组pod是通过一个workload来控制和分发。类似这个逻辑，那么在多集群的视角下，多集群的调度单元是一个集群的workload，一个workload只能跑在一个集群中，一个集群可以运行多个workload。</p>
+<h2 id="21-多集群工作负载的分发">2.1. 多集群工作负载的分发</h2>
+<p>单集群中k8s的调度单元是pod，即一个pod只能跑在一个节点上，一个节点可以运行多个pod，而不同节点上的一组pod是通过一个workload来控制和分发。类似这个逻辑，那么在多集群的视角下，多集群的调度单元是一个集群的workload，一个workload只能跑在一个集群中，一个集群可以运行多个workload。</p>
 <p>那么就需要有一个控制器来管理不同k8s集群的相同workload。例如 workloadGroup。而该workloadGroup在不侵入k8s原生API的情况下，主要包含两个部分。</p>
 <p><strong>workloadGroup:</strong></p>
 <ul>
@@ -307,12 +309,17 @@
 <li>一种是自定义API将workloadGroup中的Resource Template和Propagaion Policy合成在一个自定义的对象中，由用户直接指定该workloadGroup信息，从而将不同的workload分发到不同的集群中。</li>
 <li>另一种方式是通过一个k8s载体来记录一个具体的workload对象，再由用户指定Propagaion Policy关联该workload对象，从而让控制器自动根据用户指定的Propagaion Policy将workload分发到不同的集群中。</li>
 </ol>
-<h2 id="22-跨集群自动迁移与调度"><a href="#2-2-跨集群自动迁移与调度" class="headerlink" title="2.2. 跨集群自动迁移与调度"></a>2.2. 跨集群自动迁移与调度</h2><p>单集群中k8s中通过workload中的nodeselector或者nodename以及亲和性来控制pod运行在哪个节点上。而多集群的视角下，则需要有一个控制器来实现集群级别的调度逻辑，例如clustername，cluster selector，cluster AntiAffinity，从而来自动控制workloadGroup下的workload分散在什么集群上。</p>
-<h1 id="3-目前的多集群方案"><a href="#3-目前的多集群方案" class="headerlink" title="3. 目前的多集群方案"></a>3. 目前的多集群方案</h1><h2 id="31-kubefedfederation-v2"><a href="#3-1-Kubefed-Federation-v2" class="headerlink" title="3.1. Kubefed[Federation v2]"></a>3.1. Kubefed[Federation v2]</h2><p>简介</p>
+<h2 id="22-跨集群自动迁移与调度">2.2. 跨集群自动迁移与调度</h2>
+<p>单集群中k8s中通过workload中的nodeselector或者nodename以及亲和性来控制pod运行在哪个节点上。而多集群的视角下，则需要有一个控制器来实现集群级别的调度逻辑，例如clustername，cluster selector，cluster AntiAffinity，从而来自动控制workloadGroup下的workload分散在什么集群上。</p>
+<h1 id="3-目前的多集群方案">3. 目前的多集群方案</h1>
+<h2 id="31-kubefedfederation-v2">3.1. Kubefed[Federation v2]</h2>
+<p>简介</p>
 <p>基本思想</p>
-<h2 id="32-virtual-kubelet"><a href="#3-2-virtual-kubelet" class="headerlink" title="3.2. virtual kubelet"></a>3.2. virtual kubelet</h2><p>简介</p>
+<h2 id="32-virtual-kubelet">3.2. virtual kubelet</h2>
+<p>简介</p>
 <p>基本思想</p>
-<h2 id="33-karmada"><a href="#3-3-Karmada" class="headerlink" title="3.3.  Karmada"></a>3.3.  Karmada</h2><p>简介</p>
+<h2 id="33-karmada">3.3.  Karmada</h2>
+<p>简介</p>
 <p>基本思想</p>
 <p>参考：</p>
 <ul>
@@ -348,12 +355,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/network/cni/macvlan/" data-toggle="tooltip" data-placement="top" title="Macvlan介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/network/cni/cni/" data-toggle="tooltip" data-placement="top" title="CNI接口介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/" data-toggle="tooltip" data-placement="top" title="kubelet 源码思维导图">Next Post &rarr;</a>
+                            <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/" data-toggle="tooltip" data-placement="top" title="controller-manager 源码思维导图">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -631,7 +638,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

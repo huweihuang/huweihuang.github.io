@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,7 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-kube-prometheus-stack简介"><a href="#1-kube-prometheus-stack简介" class="headerlink" title="1. kube-prometheus-stack简介"></a>1. kube-prometheus-stack简介</h1><p>kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。</p>
+                <div id="vip-container"><h1 id="1-kube-prometheus-stack简介">1. kube-prometheus-stack简介</h1>
+<p>kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。</p>
 <p>各组件包括</p>
 <ul>
 <li>grafana</li>
@@ -221,32 +222,38 @@
 <li>alertmanager</li>
 <li>node-exporter</li>
 </ul>
-<h1 id="2-安装kube-prometheus-stack"><a href="#2-安装kube-prometheus-stack" class="headerlink" title="2. 安装kube-prometheus-stack"></a>2. 安装kube-prometheus-stack</h1><p>执行以下命令</p>
+<h1 id="2-安装kube-prometheus-stack">2. 安装kube-prometheus-stack</h1>
+<p>执行以下命令</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">helm repo add prometheus-community https://prometheus-community.github.io/helm-charts</span><br><span class="line">helm repo update</span><br><span class="line"></span><br><span class="line">helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n prometheus</span><br></pre></td></tr></table></figure>
 <p>示例：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># helm install kube-prometheus-stack  prometheus-community/kube-prometheus-stack -n prometheus</span></span><br><span class="line">NAME: kube-prometheus-stack</span><br><span class="line">LAST DEPLOYED: Wed May 17 17:12:24 2023</span><br><span class="line">NAMESPACE: prometheus</span><br><span class="line">STATUS: deployed</span><br><span class="line">REVISION: 1</span><br><span class="line">NOTES:</span><br><span class="line">kube-prometheus-stack has been installed. Check its status by running:</span><br><span class="line">  kubectl --namespace prometheus get pods -l <span class="string">"release=kube-prometheus-stack"</span></span><br><span class="line"></span><br><span class="line">Visit https://github.com/prometheus-operator/kube-prometheus <span class="keyword">for</span> instructions on how to create &amp; configure Alertmanager and Prometheus instances using the Operator.</span><br></pre></td></tr></table></figure>
-<h1 id="3-查看安装结果"><a href="#3-查看安装结果" class="headerlink" title="3. 查看安装结果"></a>3. 查看安装结果</h1><ul>
-<li><p>deployment</p>
+<h1 id="3-查看安装结果">3. 查看安装结果</h1>
 <ul>
-<li>kube-prometheus-stack-grafana </li>
+<li>
+<p>deployment</p>
+<ul>
+<li>kube-prometheus-stack-grafana</li>
 <li>kube-prometheus-stack-kube-state-metrics</li>
-<li>kube-prometheus-stack-operator </li>
+<li>kube-prometheus-stack-operator</li>
 </ul>
 </li>
-<li><p>statefulset</p>
+<li>
+<p>statefulset</p>
 <ul>
-<li>prometheus-kube-prometheus-stack-prometheus </li>
+<li>prometheus-kube-prometheus-stack-prometheus</li>
 <li>alertmanager-kube-prometheus-stack-alertmanager</li>
 </ul>
 </li>
-<li><p>daemonset</p>
+<li>
+<p>daemonset</p>
 <ul>
 <li>kube-prometheus-stack-prometheus-node-exporter</li>
 </ul>
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kg all -n prometheus</span></span><br><span class="line">NAME                                                            READY   STATUS    RESTARTS   AGE</span><br><span class="line">pod/alertmanager-kube-prometheus-stack-alertmanager-0           2/2     Running   0          9m34s</span><br><span class="line">pod/kube-prometheus-stack-grafana-5bb7689dc8-lgrws              3/3     Running   0          9m35s</span><br><span class="line">pod/kube-prometheus-stack-kube-state-metrics-5d6578867c-25xbq   1/1     Running   0          9m35s</span><br><span class="line">pod/kube-prometheus-stack-operator-9c5fbdc68-nrn7h              1/1     Running   0          9m35s</span><br><span class="line">pod/kube-prometheus-stack-prometheus-node-exporter-8ghd8        1/1     Running   0          48s</span><br><span class="line">pod/kube-prometheus-stack-prometheus-node-exporter-brtp9        1/1     Running   0          29s</span><br><span class="line">pod/kube-prometheus-stack-prometheus-node-exporter-n4kdp        1/1     Running   0          88s</span><br><span class="line">pod/kube-prometheus-stack-prometheus-node-exporter-ttksv        1/1     Running   0          35s</span><br><span class="line">pod/prometheus-kube-prometheus-stack-prometheus-0               2/2     Running   0          9m34s</span><br><span class="line"></span><br><span class="line">NAME                                                     TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE</span><br><span class="line">service/alertmanager-operated                            ClusterIP   None             &lt;none&gt;        9093/TCP,9094/TCP,9094/UDP   9m34s</span><br><span class="line">service/kube-prometheus-stack-alertmanager               ClusterIP   10.99.108.180    &lt;none&gt;        9093/TCP                     9m36s</span><br><span class="line">service/kube-prometheus-stack-grafana                    ClusterIP   10.110.62.28     &lt;none&gt;        80/TCP                       9m36s</span><br><span class="line">service/kube-prometheus-stack-kube-state-metrics         ClusterIP   10.110.105.139   &lt;none&gt;        8080/TCP                     9m35s</span><br><span class="line">service/kube-prometheus-stack-operator                   ClusterIP   10.96.147.204    &lt;none&gt;        443/TCP                      9m36s</span><br><span class="line">service/kube-prometheus-stack-prometheus                 ClusterIP   10.98.235.203    &lt;none&gt;        9090/TCP                     9m36s</span><br><span class="line">service/kube-prometheus-stack-prometheus-node-exporter   ClusterIP   10.105.99.77     &lt;none&gt;        9100/TCP                     9m36s</span><br><span class="line">service/prometheus-operated                              ClusterIP   None             &lt;none&gt;        9090/TCP                     9m34s</span><br><span class="line"></span><br><span class="line">NAME                                                            DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span><br><span class="line">daemonset.apps/kube-prometheus-stack-prometheus-node-exporter   4         4         4       4            4           &lt;none&gt;          9m35s</span><br><span class="line"></span><br><span class="line">NAME                                                       READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/kube-prometheus-stack-grafana              1/1     1            1           9m35s</span><br><span class="line">deployment.apps/kube-prometheus-stack-kube-state-metrics   1/1     1            1           9m35s</span><br><span class="line">deployment.apps/kube-prometheus-stack-operator             1/1     1            1           9m35s</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">NAME                                                               READY   AGE</span><br><span class="line">statefulset.apps/alertmanager-kube-prometheus-stack-alertmanager   1/1     9m34s</span><br><span class="line">statefulset.apps/prometheus-kube-prometheus-stack-prometheus       1/1     9m34s</span><br></pre></td></tr></table></figure>
-<h1 id="4-登录grafana"><a href="#4-登录grafana" class="headerlink" title="4. 登录grafana"></a>4. 登录grafana</h1><p>默认账号密码</p>
+<h1 id="4-登录grafana">4. 登录grafana</h1>
+<p>默认账号密码</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">账号：admin</span><br><span class="line">密码：prom-operator</span><br></pre></td></tr></table></figure>
 <p>默认账号密码位于secret中，通过base64解码可得上述密码。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kg secret -n prometheus kube-prometheus-stack-grafana -oyaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  admin-password: cHJvbS1vcGVyYXRvcg==</span><br><span class="line">  admin-user: YWRtaW4=</span><br></pre></td></tr></table></figure>
@@ -566,7 +573,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

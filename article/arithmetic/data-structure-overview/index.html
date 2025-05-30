@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,14 +212,16 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="1-数据结构的基本概念"><a href="#1-数据结构的基本概念" class="headerlink" title="1. 数据结构的基本概念"></a>1. 数据结构的基本概念</h2><p>“数据结构”是研究各种数据的特性以及数据之间存在的关系，进而根据实际应用的要求，合理地组织和存储数据，设计出相应的算法。</p>
+                <div id="vip-container"><h2 id="1-数据结构的基本概念">1. 数据结构的基本概念</h2>
+<p>“数据结构”是研究各种数据的特性以及数据之间存在的关系，进而根据实际应用的要求，合理地组织和存储数据，设计出相应的算法。</p>
 <p>数据是对客观事物的符号表示，</p>
 <ul>
 <li><code>数据元素（节点）</code>：数据的基本单位，在程序中通常作为一个整体进行考虑和处理。一个数据元素可以由若干个数据项组成。</li>
 <li><code>数据项</code>：具有独立含义的最小标识单位。例如，一条数据记录可以称为一个数据元素，数据记录的某个字段就是一个数据项。</li>
 <li><code>数据结构</code>：相互之间存在一种或多种特点关系的数据元素的集合。</li>
 </ul>
-<h3 id="11-数据的逻辑结构"><a href="#1-1-数据的逻辑结构" class="headerlink" title="1.1. 数据的逻辑结构"></a>1.1. 数据的逻辑结构</h3><p>数据的逻辑结构：数据元素与数据元素之间的逻辑关系。可以分为四类基本结构：</p>
+<h3 id="11-数据的逻辑结构">1.1. 数据的逻辑结构</h3>
+<p>数据的逻辑结构：数据元素与数据元素之间的逻辑关系。可以分为四类基本结构：</p>
 <ul>
 <li><code>集合</code>：结构中的数据元素属于一个集合（集合类型元素之间过于松散）</li>
 <li><code>线性结构</code>：结构中的数据元素存在一对一的关系</li>
@@ -229,32 +231,42 @@
 <p>数据的逻辑结构可以用以下的二元组来表示：</p>
 <p><code>S=(D,R)</code></p>
 <p>其中，D是数据节点的有限集合，R是D上的关系的有限集合，其中每个关系都是从D到D的关系。</p>
-<p>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">S = (D,R)</span><br><span class="line">D = &#123;1,2,3,4&#125;</span><br><span class="line">R = &#123;r&#125;</span><br><span class="line">r = &#123;&lt;1,2&gt;,&lt;1,3&gt;,&lt;3,4&gt;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">S = (D,R)</span><br><span class="line">D = &#123;1,2,3,4&#125;</span><br><span class="line">R = &#123;r&#125;</span><br><span class="line">r = &#123;&lt;1,2&gt;,&lt;1,3&gt;,&lt;3,4&gt;&#125;</span><br></pre></td></tr></table></figure>
 <p>说明：</p>
 <ul>
 <li>尖括号表示<code>有向</code>关系，例如<code>&lt;a,b&gt;</code>，表示a→b</li>
 <li>圆括号表示<code>无向</code>关系，例如<code>(a,b)</code>，表示a→b,b→a</li>
-<li><code>前驱结点</code>：<a,b>中a是b的前驱结点</a,b></li>
-<li><code>后继结点</code>：<a,b>中b是a的后继结点</a,b></li>
+<li><code>前驱结点</code>：&lt;a,b&gt;中a是b的前驱结点</li>
+<li><code>后继结点</code>：&lt;a,b&gt;中b是a的后继结点</li>
 <li><code>开始结点</code>：没有前驱结点</li>
 <li><code>终端结点</code>：没有后继结点</li>
 <li><code>内部结点</code>：既有前驱结点，又有后继结点</li>
 </ul>
-<h3 id="12-数据的存储结构"><a href="#1-2-数据的存储结构" class="headerlink" title="1.2. 数据的存储结构"></a>1.2. 数据的存储结构</h3><p>数据在计算机中的存储表示称为数据的存储结构，又称物理结构。<br>数据存储到计算机中即要求存储各节点的<code>数值</code>，又要存储结点与结点之间的<code>逻辑关系</code>。<br>以下介绍四种基本的存储结构：<code>顺序存储</code>、<code>链式存储</code>、<code>索引存储</code>、<code>散列存储</code>。</p>
+<h3 id="12-数据的存储结构">1.2. 数据的存储结构</h3>
+<p>数据在计算机中的存储表示称为数据的存储结构，又称物理结构。<br>
+数据存储到计算机中即要求存储各节点的<code>数值</code>，又要存储结点与结点之间的<code>逻辑关系</code>。<br>
+以下介绍四种基本的存储结构：<code>顺序存储</code>、<code>链式存储</code>、<code>索引存储</code>、<code>散列存储</code>。</p>
 <p><strong>1、顺序存储结构</strong></p>
 <p>顺序存储结构是把逻辑上相邻的元素存储在一组连续的存储单元中，其元素之间的逻辑关系由<code>存储单元地址</code>间的关系隐含表示。</p>
-<p>优点：节省存储空间，只需要存储数据结点，并不需要存储结点的逻辑关系。<br>缺点：不便于修改，插入和删除某个结点需要修改一系列的结点。</p>
+<p>优点：节省存储空间，只需要存储数据结点，并不需要存储结点的逻辑关系。<br>
+缺点：不便于修改，插入和删除某个结点需要修改一系列的结点。</p>
 <p><strong>2、链式存储结构</strong></p>
 <p>链式存储结构，给每个结点增加指针字段，用于存放临近结点的存储地址，每个结点占用两个连续的存储单元，一个存放数据，一个存放临近结点（前驱/后继结点）的地址。</p>
-<p>优点：便于修改，修改时只需要修改结点的指针字段，不需要移动其他结点。<br>缺点：占用存储空间，因为需要存储结点之间的逻辑关系。因为结点之间不一定相邻，因此不能对结点进行随机访问。</p>
+<p>优点：便于修改，修改时只需要修改结点的指针字段，不需要移动其他结点。<br>
+缺点：占用存储空间，因为需要存储结点之间的逻辑关系。因为结点之间不一定相邻，因此不能对结点进行随机访问。</p>
 <p><strong>3、索引存储结构</strong></p>
 <p>索引存储结构即在存储结点的同时，增加索引表，索引表的索引项为：（关键字，地址），关键字标识结点，地址为结点的指针。各结点的地址在索引表中是依次排列的。</p>
-<p>优点：可以快速查找，可以随机访问，方便修改。<br>缺点：建立索引表增加了时间和空间的开销。</p>
+<p>优点：可以快速查找，可以随机访问，方便修改。<br>
+缺点：建立索引表增加了时间和空间的开销。</p>
 <p><strong>4、散列存储结构</strong></p>
 <p>散列存储结构是根据结点的值确定结点的存储地址。以结点作为自变量，通过散列函数算出结果i，再把i作为结点的存储地址。</p>
-<p>优点：查找速度快，适用于快速查找和插入的场景。<br>缺点：只存结点数据，不存结点之间的关系。</p>
-<h3 id="13-数据的运算"><a href="#1-3-数据的运算" class="headerlink" title="1.3. 数据的运算"></a>1.3. 数据的运算</h3><p>数据的运算就是施加于数据的操作，例如对一张表进行增删改查操作，一般数据结构中的运算除了加减乘除外还会涉及<code>算法问题</code>。</p>
-<h3 id="14-数据结构与数据类型"><a href="#1-4-数据结构与数据类型" class="headerlink" title="1.4. 数据结构与数据类型"></a>1.4. 数据结构与数据类型</h3><p>按某种<code>逻辑关系</code>组成的数据元素，按一定的<code>存储方式</code>存储于计算机中，并在其上定义了一个<code>运算</code>的集合，称为一个<code>数据结构</code>。</p>
+<p>优点：查找速度快，适用于快速查找和插入的场景。<br>
+缺点：只存结点数据，不存结点之间的关系。</p>
+<h3 id="13-数据的运算">1.3. 数据的运算</h3>
+<p>数据的运算就是施加于数据的操作，例如对一张表进行增删改查操作，一般数据结构中的运算除了加减乘除外还会涉及<code>算法问题</code>。</p>
+<h3 id="14-数据结构与数据类型">1.4. 数据结构与数据类型</h3>
+<p>按某种<code>逻辑关系</code>组成的数据元素，按一定的<code>存储方式</code>存储于计算机中，并在其上定义了一个<code>运算</code>的集合，称为一个<code>数据结构</code>。</p>
 <p><code>数据结构 = 数据的逻辑结构 + 数据的存储结构 + 数据的运算(算法)</code></p>
 <p><code>数据类型</code>是程序设计语言中对数据结构的实现，数据类型明显或隐含地规定了数据的取值范围、存储方式及允许进行的运算。</p>
 <p>常用的数据类型：</p>
@@ -266,7 +278,9 @@
 <li>组合体类型</li>
 <li>自定义类型</li>
 </ol>
-<h2 id="2-算法的基本概念"><a href="#2-算法的基本概念" class="headerlink" title="2. 算法的基本概念"></a>2. 算法的基本概念</h2><h3 id="21-算法及其特征"><a href="#2-1-算法及其特征" class="headerlink" title="2.1. 算法及其特征"></a>2.1. 算法及其特征</h3><p>算法是对特定问题求解步骤的描述，是指令的有限序列，每条指令包含一个或多个操作。</p>
+<h2 id="2-算法的基本概念">2. 算法的基本概念</h2>
+<h3 id="21-算法及其特征">2.1. 算法及其特征</h3>
+<p>算法是对特定问题求解步骤的描述，是指令的有限序列，每条指令包含一个或多个操作。</p>
 <p>特点：</p>
 <ul>
 <li>有穷性：有限的步骤和有限的时间内完成</li>
@@ -275,7 +289,8 @@
 <li>输入性：一个或多个输入</li>
 <li>输出性：一个或多个输出</li>
 </ul>
-<h3 id="22-算法描述"><a href="#2-2-算法描述" class="headerlink" title="2.2. 算法描述"></a>2.2. 算法描述</h3><ol>
+<h3 id="22-算法描述">2.2. 算法描述</h3>
+<ol>
 <li>输入语句</li>
 <li>输出语句</li>
 <li>赋值语句</li>
@@ -285,7 +300,8 @@
 <li>定义函数语句</li>
 <li>调用函数语句</li>
 </ol>
-<h3 id="23-算法分析"><a href="#2-3-算法分析" class="headerlink" title="2.3. 算法分析"></a>2.3. 算法分析</h3><p>算法分析主要涉及<code>时间复杂度</code>和<code>空间复杂度</code>。一般情况我们讨论时间复杂度。</p>
+<h3 id="23-算法分析">2.3. 算法分析</h3>
+<p>算法分析主要涉及<code>时间复杂度</code>和<code>空间复杂度</code>。一般情况我们讨论时间复杂度。</p>
 <ul>
 <li><code>频度</code>：某语句在算法中被执行的次数。</li>
 <li><code>T(n)</code>：所有语句的频度之和，n为问题规模。</li>
@@ -320,7 +336,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/golang-notes/summary/skill-tree/" data-toggle="tooltip" data-placement="top" title="后端开发技能树">&larr; Previous Post</a>
+                            <a href="/article/golang-notes/summary/go-resource/" data-toggle="tooltip" data-placement="top" title="Golang资源">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -603,7 +619,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

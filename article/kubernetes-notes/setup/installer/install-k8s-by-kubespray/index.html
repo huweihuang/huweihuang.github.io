@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,10 +212,11 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-环境准备"><a href="#1-环境准备" class="headerlink" title="1. 环境准备"></a>1. 环境准备</h1><h2 id="11-部署机器"><a href="#1-1-部署机器" class="headerlink" title="1.1. 部署机器"></a>1.1. 部署机器</h2><blockquote>
+                <div id="vip-container"><h1 id="1-环境准备">1. 环境准备</h1>
+<h2 id="11-部署机器">1.1. 部署机器</h2>
+<blockquote>
 <p>以下机器为虚拟机</p>
 </blockquote>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -257,12 +258,14 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="12-配置管理机"><a href="#1-2-配置管理机" class="headerlink" title="1.2. 配置管理机"></a>1.2. 配置管理机</h2><p>管理机主要用来部署k8s集群，需要安装以下版本的软件，具体可参考：</p>
+<h2 id="12-配置管理机">1.2. 配置管理机</h2>
+<p>管理机主要用来部署k8s集群，需要安装以下版本的软件，具体可参考：</p>
 <ul>
-<li><p><a href="https://github.com/kubernetes-incubator/kubespray#requirements" target="_blank" rel="noopener">https://github.com/kubernetes-incubator/kubespray#requirements</a></p>
+<li>
+<p><a href="https://github.com/kubernetes-incubator/kubespray#requirements" target="_blank" rel="noopener">https://github.com/kubernetes-incubator/kubespray#requirements</a></p>
 </li>
-<li><p><a href="https://github.com/kubernetes-incubator/kubespray/blob/master/requirements.txt" target="_blank" rel="noopener">https://github.com/kubernetes-incubator/kubespray/blob/master/requirements.txt</a></p>
+<li>
+<p><a href="https://github.com/kubernetes-incubator/kubespray/blob/master/requirements.txt" target="_blank" rel="noopener">https://github.com/kubernetes-incubator/kubespray/blob/master/requirements.txt</a></p>
 </li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ansible&gt;=2.4.0</span><br><span class="line">jinja2&gt;=2.9.6</span><br><span class="line">netaddr</span><br><span class="line">pbr&gt;=1.6</span><br><span class="line">ansible-modules-hashivault&gt;=3.9.4</span><br><span class="line">hvac</span><br></pre></td></tr></table></figure>
@@ -275,7 +278,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装pip</span></span><br><span class="line">yum -y install epel-release</span><br><span class="line">yum -y install python-pip</span><br><span class="line"><span class="comment"># 安装python-netaddr</span></span><br><span class="line">pip install netaddr</span><br></pre></td></tr></table></figure>
 <p><strong>3、升级Jinja</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Jinja 2.9 (or newer)</span></span><br><span class="line">pip install --upgrade jinja2</span><br></pre></td></tr></table></figure>
-<h2 id="13-配置部署机器"><a href="#1-3-配置部署机器" class="headerlink" title="1.3. 配置部署机器"></a>1.3. 配置部署机器</h2><p>部署机器即用来运行k8s集群的机器，包括<code>Master</code>和<code>Node</code>。</p>
+<h2 id="13-配置部署机器">1.3. 配置部署机器</h2>
+<p>部署机器即用来运行k8s集群的机器，包括<code>Master</code>和<code>Node</code>。</p>
 <p><strong>1、确认系统版本</strong></p>
 <p>本文采用<code>centos7</code>的系统，建议将系统内核升级到<code>4.x.x</code>以上。</p>
 <p><strong>2、关闭防火墙</strong></p>
@@ -300,9 +304,9 @@
 <li><a href="https://github.com/kubernetes-incubator/kubespray/blob/95f1e4634a1c50fa77312d058a2b713353f4307e/roles/kubernetes/preinstall/tasks/verify-settings.yml#L52" target="_blank" rel="noopener">https://github.com/kubernetes-incubator/kubespray/blob/95f1e4634a1c50fa77312d058a2b713353f4307e/roles/kubernetes/preinstall/tasks/verify-settings.yml#L52</a></li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Stop</span> <span class="string">if</span> <span class="string">memory</span> <span class="string">is</span> <span class="string">too</span> <span class="string">small</span> <span class="string">for</span> <span class="string">masters</span></span><br><span class="line">  <span class="attr">assert:</span></span><br><span class="line">    <span class="attr">that:</span> <span class="string">ansible_memtotal_mb</span> <span class="string">&gt;=</span> <span class="number">1500</span></span><br><span class="line">  <span class="attr">ignore_errors:</span> <span class="string">"<span class="template-variable">&#123;&#123; ignore_assert_errors &#125;&#125;</span>"</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">inventory_hostname</span> <span class="string">in</span> <span class="string">groups['kube-master']</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Stop</span> <span class="string">if</span> <span class="string">memory</span> <span class="string">is</span> <span class="string">too</span> <span class="string">small</span> <span class="string">for</span> <span class="string">nodes</span></span><br><span class="line">  <span class="attr">assert:</span></span><br><span class="line">    <span class="attr">that:</span> <span class="string">ansible_memtotal_mb</span> <span class="string">&gt;=</span> <span class="number">1024</span></span><br><span class="line">  <span class="attr">ignore_errors:</span> <span class="string">"<span class="template-variable">&#123;&#123; ignore_assert_errors &#125;&#125;</span>"</span></span><br><span class="line">  <span class="attr">when:</span> <span class="string">inventory_hostname</span> <span class="string">in</span> <span class="string">groups['kube-node']</span></span><br></pre></td></tr></table></figure>
-<h2 id="14-涉及镜像"><a href="#1-4-涉及镜像" class="headerlink" title="1.4. 涉及镜像"></a>1.4. 涉及镜像</h2><p><code>Docker</code>版本为<code>17.03.2-ce</code>。</p>
+<h2 id="14-涉及镜像">1.4. 涉及镜像</h2>
+<p><code>Docker</code>版本为<code>17.03.2-ce</code>。</p>
 <p><strong>1、Master节点</strong></p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -315,42 +319,42 @@
 </thead>
 <tbody>
 <tr>
-<td>gcr.io/google-containers/hyperkube</td>
+<td><a href="http://gcr.io/google-containers/hyperkube" target="_blank" rel="noopener">gcr.io/google-containers/hyperkube</a></td>
 <td>v1.9.5</td>
 <td>620 MB</td>
 <td>a7e7fdbc5fee</td>
 <td>k8s</td>
 </tr>
 <tr>
-<td>quay.io/coreos/etcd</td>
+<td><a href="http://quay.io/coreos/etcd" target="_blank" rel="noopener">quay.io/coreos/etcd</a></td>
 <td>v3.2.4</td>
 <td>35.7 MB</td>
 <td>498ffffcfd05</td>
 <td></td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/pause-amd64</td>
+<td><a href="http://gcr.io/google_containers/pause-amd64" target="_blank" rel="noopener">gcr.io/google_containers/pause-amd64</a></td>
 <td>3.0</td>
 <td>747 kB</td>
 <td>99e59f495ffa</td>
 <td></td>
 </tr>
 <tr>
-<td>quay.io/calico/node</td>
+<td><a href="http://quay.io/calico/node" target="_blank" rel="noopener">quay.io/calico/node</a></td>
 <td>v2.6.8</td>
 <td>282 MB</td>
 <td>e96a297310fd</td>
 <td>calico</td>
 </tr>
 <tr>
-<td>quay.io/calico/cni</td>
+<td><a href="http://quay.io/calico/cni" target="_blank" rel="noopener">quay.io/calico/cni</a></td>
 <td>v1.11.4</td>
 <td>70.8 MB</td>
 <td>4c4cb67d7a88</td>
 <td>calico</td>
 </tr>
 <tr>
-<td>quay.io/calico/ctl</td>
+<td><a href="http://quay.io/calico/ctl" target="_blank" rel="noopener">quay.io/calico/ctl</a></td>
 <td>v1.6.3</td>
 <td>44.4 MB</td>
 <td>46d3aace8bc6</td>
@@ -358,9 +362,7 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p><strong>2、Node节点</strong></p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -373,70 +375,70 @@
 </thead>
 <tbody>
 <tr>
-<td>gcr.io/google-containers/hyperkube</td>
+<td><a href="http://gcr.io/google-containers/hyperkube" target="_blank" rel="noopener">gcr.io/google-containers/hyperkube</a></td>
 <td>v1.9.5</td>
 <td>620 MB</td>
 <td>a7e7fdbc5fee</td>
 <td>k8s</td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/pause-amd64</td>
+<td><a href="http://gcr.io/google_containers/pause-amd64" target="_blank" rel="noopener">gcr.io/google_containers/pause-amd64</a></td>
 <td>3.0</td>
 <td>747 kB</td>
 <td>99e59f495ffa</td>
 <td></td>
 </tr>
 <tr>
-<td>quay.io/calico/node</td>
+<td><a href="http://quay.io/calico/node" target="_blank" rel="noopener">quay.io/calico/node</a></td>
 <td>v2.6.8</td>
 <td>282 MB</td>
 <td>e96a297310fd</td>
 <td>calico</td>
 </tr>
 <tr>
-<td>quay.io/calico/cni</td>
+<td><a href="http://quay.io/calico/cni" target="_blank" rel="noopener">quay.io/calico/cni</a></td>
 <td>v1.11.4</td>
 <td>70.8 MB</td>
 <td>4c4cb67d7a88</td>
 <td>calico</td>
 </tr>
 <tr>
-<td>quay.io/calico/ctl</td>
+<td><a href="http://quay.io/calico/ctl" target="_blank" rel="noopener">quay.io/calico/ctl</a></td>
 <td>v1.6.3</td>
 <td>44.4 MB</td>
 <td>46d3aace8bc6</td>
 <td>calico</td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64</td>
+<td><a href="http://gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64" target="_blank" rel="noopener">gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64</a></td>
 <td>1.14.8</td>
 <td>40.9 MB</td>
 <td>c2ce1ffb51ed</td>
 <td>dns</td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/k8s-dns-sidecar-amd64</td>
+<td><a href="http://gcr.io/google_containers/k8s-dns-sidecar-amd64" target="_blank" rel="noopener">gcr.io/google_containers/k8s-dns-sidecar-amd64</a></td>
 <td>1.14.8</td>
 <td>42.2 MB</td>
 <td>6f7f2dc7fab5</td>
 <td>dns</td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/k8s-dns-kube-dns-amd64</td>
+<td><a href="http://gcr.io/google_containers/k8s-dns-kube-dns-amd64" target="_blank" rel="noopener">gcr.io/google_containers/k8s-dns-kube-dns-amd64</a></td>
 <td>1.14.8</td>
 <td>50.5 MB</td>
 <td>80cc5ea4b547</td>
 <td>dns</td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/cluster-proportional-autoscaler-amd64</td>
+<td><a href="http://gcr.io/google_containers/cluster-proportional-autoscaler-amd64" target="_blank" rel="noopener">gcr.io/google_containers/cluster-proportional-autoscaler-amd64</a></td>
 <td>1.1.2</td>
 <td>50.5 MB</td>
 <td>78cf3f492e6b</td>
 <td></td>
 </tr>
 <tr>
-<td>gcr.io/google_containers/kubernetes-dashboard-amd64</td>
+<td><a href="http://gcr.io/google_containers/kubernetes-dashboard-amd64" target="_blank" rel="noopener">gcr.io/google_containers/kubernetes-dashboard-amd64</a></td>
 <td>v1.8.3</td>
 <td>102 MB</td>
 <td>0c60bcf89900</td>
@@ -451,26 +453,31 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p><strong>3、说明</strong></p>
 <ul>
 <li>镜像被墙并且全部镜像下载需要较多时间，建议提前下载到部署机器上。</li>
 <li>hyperkube镜像主要用来运行k8s核心组件（例如kube-apiserver等）。</li>
 <li>此处使用的网络组件为calico。</li>
 </ul>
-<h1 id="2-部署集群"><a href="#2-部署集群" class="headerlink" title="2. 部署集群"></a>2. 部署集群</h1><h2 id="21-下载kubespary的源码"><a href="#2-1-下载kubespary的源码" class="headerlink" title="2.1. 下载kubespary的源码"></a>2.1. 下载kubespary的源码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/kubernetes-incubator/kubespray.git</span><br></pre></td></tr></table></figure>
-<h2 id="22-编辑配置文件"><a href="#2-2-编辑配置文件" class="headerlink" title="2.2. 编辑配置文件"></a>2.2. 编辑配置文件</h2><h3 id="221-hostsini"><a href="#2-2-1-hosts-ini" class="headerlink" title="2.2.1. hosts.ini"></a>2.2.1. hosts.ini</h3><p><code>hosts.ini</code>主要为部署节点机器信息的文件，路径为：<code>kubespray/inventory/sample/hosts.ini</code>。</p>
+<h1 id="2-部署集群">2. 部署集群</h1>
+<h2 id="21-下载kubespary的源码">2.1. 下载kubespary的源码</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/kubernetes-incubator/kubespray.git</span><br></pre></td></tr></table></figure>
+<h2 id="22-编辑配置文件">2.2. 编辑配置文件</h2>
+<h3 id="221-hostsini">2.2.1. hosts.ini</h3>
+<p><code>hosts.ini</code>主要为部署节点机器信息的文件，路径为：<code>kubespray/inventory/sample/hosts.ini</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> kubespray</span><br><span class="line"><span class="comment"># 复制一份配置进行修改</span></span><br><span class="line">cp -rfp inventory/sample inventory/k8s</span><br><span class="line">vi inventory/k8s/hosts.ini</span><br></pre></td></tr></table></figure>
 <p>例如：</p>
 <blockquote>
 <p>hosts.ini文件可以填写部署机器的登录密码，也可以不填密码而设置ssh的免密登录。</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Configure 'ip' variable to bind kubernetes services on a</span></span><br><span class="line"><span class="comment"># different ip than the default iface</span></span><br><span class="line"><span class="comment"># 主机名             ssh登陆IP                        ssh用户名               ssh登陆密码                 机器IP          子网掩码</span></span><br><span class="line">kube-master-0     ansible_ssh_host=172.16.94.140   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.140   mask=/24</span><br><span class="line">kube-node-41      ansible_ssh_host=172.16.94.141   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.141   mask=/24</span><br><span class="line">kube-node-42      ansible_ssh_host=172.16.94.142   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.142   mask=/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># configure a bastion host if your nodes are not directly reachable</span></span><br><span class="line"><span class="comment"># bastion ansible_ssh_host=x.x.x.x</span></span><br><span class="line"></span><br><span class="line">[kube-master]</span><br><span class="line">kube-master-0</span><br><span class="line"></span><br><span class="line">[etcd]</span><br><span class="line">kube-master-0</span><br><span class="line"></span><br><span class="line">[kube-node]</span><br><span class="line">kube-node-41</span><br><span class="line">kube-node-42</span><br><span class="line"></span><br><span class="line">[k8s-cluster:children]</span><br><span class="line">kube-node</span><br><span class="line">kube-master</span><br><span class="line"></span><br><span class="line">[calico-rr]</span><br></pre></td></tr></table></figure>
-<h3 id="222-k8s-clusteryml"><a href="#2-2-2-k8s-cluster-yml" class="headerlink" title="2.2.2. k8s-cluster.yml"></a>2.2.2. k8s-cluster.yml</h3><p><code>k8s-cluster.yml</code>主要为k8s集群的配置文件，路径为：<code>kubespray/inventory/k8s/group_vars/k8s-cluster.yml</code>。该文件可以修改安装的k8s集群的版本，参数为：kube_version: v1.9.5。具体可参考：</p>
+<h3 id="222-k8s-clusteryml">2.2.2. k8s-cluster.yml</h3>
+<p><code>k8s-cluster.yml</code>主要为k8s集群的配置文件，路径为：<code>kubespray/inventory/k8s/group_vars/k8s-cluster.yml</code>。该文件可以修改安装的k8s集群的版本，参数为：kube_version: v1.9.5。具体可参考：</p>
 <ul>
 <li><a href="https://github.com/kubernetes-incubator/kubespray/blob/master/inventory/sample/group_vars/k8s-cluster.yml#L22" target="_blank" rel="noopener">https://github.com/kubernetes-incubator/kubespray/blob/master/inventory/sample/group_vars/k8s-cluster.yml#L22</a></li>
 </ul>
-<h2 id="23-执行部署操作"><a href="#2-3-执行部署操作" class="headerlink" title="2.3. 执行部署操作"></a>2.3. 执行部署操作</h2><p>涉及文件为<code>cluster.yml</code>。</p>
+<h2 id="23-执行部署操作">2.3. 执行部署操作</h2>
+<p>涉及文件为<code>cluster.yml</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入主目录</span></span><br><span class="line"><span class="built_in">cd</span> kubespray</span><br><span class="line"><span class="comment"># 执行部署命令</span></span><br><span class="line">ansible-playbook -i inventory/k8s/hosts.ini cluster.yml -b -vvv</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>-vvv 参数表示输出运行日志</p>
@@ -478,35 +485,46 @@
 <p>如果需要<code>重置</code>可以执行以下命令：</p>
 <p>涉及文件为<code>reset.yml</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook -i inventory/k8s/hosts.ini reset.yml -b -vvv</span><br></pre></td></tr></table></figure>
-<h1 id="3-确认部署结果"><a href="#3-确认部署结果" class="headerlink" title="3. 确认部署结果"></a>3. 确认部署结果</h1><h2 id="31-ansible的部署结果"><a href="#3-1-ansible的部署结果" class="headerlink" title="3.1. ansible的部署结果"></a>3.1. ansible的部署结果</h2><p>ansible命令执行完，出现以下日志，则说明部署成功，否则根据报错内容进行修改。</p>
+<h1 id="3-确认部署结果">3. 确认部署结果</h1>
+<h2 id="31-ansible的部署结果">3.1. ansible的部署结果</h2>
+<p>ansible命令执行完，出现以下日志，则说明部署成功，否则根据报错内容进行修改。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PLAY RECAP *****************************************************************************</span><br><span class="line">kube-master-0              : ok=309  changed=30   unreachable=0    failed=0</span><br><span class="line">kube-node-41               : ok=203  changed=8    unreachable=0    failed=0</span><br><span class="line">kube-node-42               : ok=203  changed=8    unreachable=0    failed=0</span><br><span class="line">localhost                  : ok=2    changed=0    unreachable=0    failed=0</span><br></pre></td></tr></table></figure>
 <p>以下为部分部署执行日志：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">kubernetes/preinstall : Update package management cache (YUM) --------------------23.96s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes/preinstall/tasks/main.yml:121 </span><br><span class="line">kubernetes/master : Master | <span class="built_in">wait</span> <span class="keyword">for</span> the apiserver to be running ----------------23.44s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes/master/handlers/main.yml:79 </span><br><span class="line">kubernetes/preinstall : Install packages requirements ----------------------------20.20s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes/preinstall/tasks/main.yml:203 </span><br><span class="line">kubernetes/secrets : Check certs | check <span class="keyword">if</span> a cert already exists on node --------13.94s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes/secrets/tasks/check-certs.yml:17 </span><br><span class="line">gather facts from all instances --------------------------------------------------9.98s</span><br><span class="line">/root/gopath/src/kubespray/cluster.yml:25 </span><br><span class="line">kubernetes/node : install | Compare host kubelet with hyperkube container --------9.66s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes/node/tasks/install_host.yml:2 </span><br><span class="line">kubernetes-apps/ansible : Kubernetes Apps | Start Resources -----------------------9.27s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes-apps/ansible/tasks/main.yml:37 </span><br><span class="line">kubernetes-apps/ansible : Kubernetes Apps | Lay Down KubeDNS Template ------------8.47s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes-apps/ansible/tasks/kubedns.yml:3</span><br><span class="line">download : Sync container ---------------------------------------------------------8.23s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:15 </span><br><span class="line">kubernetes-apps/network_plugin/calico : Start Calico resources --------------------7.82s</span><br><span class="line">/root/gopath/src/kubespray/roles/kubernetes-apps/network_plugin/calico/tasks/main.yml:2 </span><br><span class="line">download : Download items ---------------------------------------------------------7.67s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6 </span><br><span class="line">download : Download items ---------------------------------------------------------7.48s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6 </span><br><span class="line">download : Sync container ---------------------------------------------------------7.35s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:15 </span><br><span class="line">download : Download items ---------------------------------------------------------7.16s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6 </span><br><span class="line">network_plugin/calico : Calico | Copy cni plugins from calico/cni container -------7.10s</span><br><span class="line">/root/gopath/src/kubespray/roles/network_plugin/calico/tasks/main.yml:62 </span><br><span class="line">download : Download items ---------------------------------------------------------7.04s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6</span><br><span class="line">download : Download items ---------------------------------------------------------7.01s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6 </span><br><span class="line">download : Sync container ---------------------------------------------------------7.00s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:15 </span><br><span class="line">download : Download items ---------------------------------------------------------6.98s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6 </span><br><span class="line">download : Download items ---------------------------------------------------------6.79s</span><br><span class="line">/root/gopath/src/kubespray/roles/download/tasks/main.yml:6</span><br></pre></td></tr></table></figure>
-<h2 id="32-k8s集群运行结果"><a href="#3-2-k8s集群运行结果" class="headerlink" title="3.2. k8s集群运行结果"></a>3.2. k8s集群运行结果</h2><p><strong>1、k8s组件信息</strong></p>
+<h2 id="32-k8s集群运行结果">3.2. k8s集群运行结果</h2>
+<p><strong>1、k8s组件信息</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get all --namespace=kube-system</span></span><br><span class="line">NAME             DESIRED   CURRENT   READY     UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span><br><span class="line">ds/calico-node   3         3         3         3            3           &lt;none&gt;          2h</span><br><span class="line"></span><br><span class="line">NAME                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deploy/kube-dns               2         2         2            2           2h</span><br><span class="line">deploy/kubedns-autoscaler     1         1         1            1           2h</span><br><span class="line">deploy/kubernetes-dashboard   1         1         1            1           2h</span><br><span class="line"></span><br><span class="line">NAME                                 DESIRED   CURRENT   READY     AGE</span><br><span class="line">rs/kube-dns-79d99cdcd5               2         2         2         2h</span><br><span class="line">rs/kubedns-autoscaler-5564b5585f     1         1         1         2h</span><br><span class="line">rs/kubernetes-dashboard-69cb58d748   1         1         1         2h</span><br><span class="line"></span><br><span class="line">NAME             DESIRED   CURRENT   READY     UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span><br><span class="line">ds/calico-node   3         3         3         3            3           &lt;none&gt;          2h</span><br><span class="line"></span><br><span class="line">NAME                          DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deploy/kube-dns               2         2         2            2           2h</span><br><span class="line">deploy/kubedns-autoscaler     1         1         1            1           2h</span><br><span class="line">deploy/kubernetes-dashboard   1         1         1            1           2h</span><br><span class="line"></span><br><span class="line">NAME                                 DESIRED   CURRENT   READY     AGE</span><br><span class="line">rs/kube-dns-79d99cdcd5               2         2         2         2h</span><br><span class="line">rs/kubedns-autoscaler-5564b5585f     1         1         1         2h</span><br><span class="line">rs/kubernetes-dashboard-69cb58d748   1         1         1         2h</span><br><span class="line"></span><br><span class="line">NAME                                       READY     STATUS    RESTARTS   AGE</span><br><span class="line">po/calico-node-22vsg                       1/1       Running   0          2h</span><br><span class="line">po/calico-node-t7zgw                       1/1       Running   0          2h</span><br><span class="line">po/calico-node-zqnx8                       1/1       Running   0          2h</span><br><span class="line">po/kube-apiserver-kube-master-0            1/1       Running   0          22h</span><br><span class="line">po/kube-controller-manager-kube-master-0   1/1       Running   0          2h</span><br><span class="line">po/kube-dns-79d99cdcd5-f2t6t               3/3       Running   0          2h</span><br><span class="line">po/kube-dns-79d99cdcd5-gw944               3/3       Running   0          2h</span><br><span class="line">po/kube-proxy-kube-master-0                1/1       Running   2          22h</span><br><span class="line">po/kube-proxy-kube-node-41                 1/1       Running   3          22h</span><br><span class="line">po/kube-proxy-kube-node-42                 1/1       Running   3          22h</span><br><span class="line">po/kube-scheduler-kube-master-0            1/1       Running   0          2h</span><br><span class="line">po/kubedns-autoscaler-5564b5585f-lt9bb     1/1       Running   0          2h</span><br><span class="line">po/kubernetes-dashboard-69cb58d748-wmb9x   1/1       Running   0          2h</span><br><span class="line">po/nginx-proxy-kube-node-41                1/1       Running   3          22h</span><br><span class="line">po/nginx-proxy-kube-node-42                1/1       Running   3          22h</span><br><span class="line"></span><br><span class="line">NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)         AGE</span><br><span class="line">svc/kube-dns               ClusterIP   10.233.0.3     &lt;none&gt;        53/UDP,53/TCP   2h</span><br><span class="line">svc/kubernetes-dashboard   ClusterIP   10.233.27.24   &lt;none&gt;        443/TCP         2h</span><br></pre></td></tr></table></figure>
 <p><strong>2、k8s节点信息</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get nodes</span></span><br><span class="line">NAME            STATUS    ROLES     AGE       VERSION</span><br><span class="line">kube-master-0   Ready     master    22h       v1.9.5</span><br><span class="line">kube-node-41    Ready     node      22h       v1.9.5</span><br><span class="line">kube-node-42    Ready     node      22h       v1.9.5</span><br></pre></td></tr></table></figure>
 <p><strong>3、组件健康信息</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get cs</span></span><br><span class="line">NAME                 STATUS    MESSAGE              ERROR</span><br><span class="line">scheduler            Healthy   ok</span><br><span class="line">controller-manager   Healthy   ok</span><br><span class="line">etcd-0               Healthy   &#123;<span class="string">"health"</span>: <span class="string">"true"</span>&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="4-k8s集群扩容节点"><a href="#4-k8s集群扩容节点" class="headerlink" title="4. k8s集群扩容节点"></a>4. k8s集群扩容节点</h1><h2 id="41-修改hostsini文件"><a href="#4-1-修改hosts-ini文件" class="headerlink" title="4.1. 修改hosts.ini文件"></a>4.1. 修改hosts.ini文件</h2><p>如果需要扩容<code>Node</code>节点，则修改<code>hosts.ini</code>文件，增加新增的机器信息。例如，要增加节点机器kube-node-43（IP为172.16.94.143），修改后的文件内容如下：</p>
+<h1 id="4-k8s集群扩容节点">4. k8s集群扩容节点</h1>
+<h2 id="41-修改hostsini文件">4.1. 修改hosts.ini文件</h2>
+<p>如果需要扩容<code>Node</code>节点，则修改<code>hosts.ini</code>文件，增加新增的机器信息。例如，要增加节点机器kube-node-43（IP为172.16.94.143），修改后的文件内容如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Configure 'ip' variable to bind kubernetes services on a</span></span><br><span class="line"><span class="comment"># different ip than the default iface</span></span><br><span class="line"><span class="comment"># 主机名             ssh登陆IP                        ssh用户名               ssh登陆密码                 机器IP          子网掩码</span></span><br><span class="line">kube-master-0     ansible_ssh_host=172.16.94.140   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.140   mask=/24</span><br><span class="line">kube-node-41      ansible_ssh_host=172.16.94.141   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.141   mask=/24</span><br><span class="line">kube-node-42      ansible_ssh_host=172.16.94.142   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.142   mask=/24</span><br><span class="line">kube-node-43      ansible_ssh_host=172.16.94.143   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.143   mask=/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># configure a bastion host if your nodes are not directly reachable</span></span><br><span class="line"><span class="comment"># bastion ansible_ssh_host=x.x.x.x</span></span><br><span class="line"></span><br><span class="line">[kube-master]</span><br><span class="line">kube-master-0</span><br><span class="line"></span><br><span class="line">[etcd]</span><br><span class="line">kube-master-0</span><br><span class="line"></span><br><span class="line">[kube-node]</span><br><span class="line">kube-node-41</span><br><span class="line">kube-node-42</span><br><span class="line">kube-node-43</span><br><span class="line"></span><br><span class="line">[k8s-cluster:children]</span><br><span class="line">kube-node</span><br><span class="line">kube-master</span><br><span class="line"></span><br><span class="line">[calico-rr]</span><br></pre></td></tr></table></figure>
-<h2 id="42-执行扩容命令"><a href="#4-2-执行扩容命令" class="headerlink" title="4.2. 执行扩容命令"></a>4.2. 执行扩容命令</h2><p>涉及文件为<code>scale.yml</code>。</p>
+<h2 id="42-执行扩容命令">4.2. 执行扩容命令</h2>
+<p>涉及文件为<code>scale.yml</code>。</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入主目录</span></span><br><span class="line"><span class="built_in">cd</span> kubespray</span><br><span class="line"><span class="comment"># 执行部署命令</span></span><br><span class="line">ansible-playbook -i inventory/k8s/hosts.ini scale.yml -b -vvv</span><br></pre></td></tr></table></figure>
-<h2 id="43-检查扩容结果"><a href="#4-3-检查扩容结果" class="headerlink" title="4.3. 检查扩容结果"></a>4.3. 检查扩容结果</h2><p><strong>1、ansible的执行结果</strong></p>
+<h2 id="43-检查扩容结果">4.3. 检查扩容结果</h2>
+<p><strong>1、ansible的执行结果</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PLAY RECAP ***************************************</span><br><span class="line">kube-node-41               : ok=228  changed=11   unreachable=0    failed=0</span><br><span class="line">kube-node-42               : ok=197  changed=6    unreachable=0    failed=0</span><br><span class="line">kube-node-43               : ok=227  changed=69   unreachable=0    failed=0 <span class="comment"># 新增Node节点</span></span><br><span class="line">localhost                  : ok=2    changed=0    unreachable=0    failed=0</span><br></pre></td></tr></table></figure>
 <p><strong>2、k8s的节点信息</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get nodes</span></span><br><span class="line">NAME            STATUS    ROLES     AGE       VERSION</span><br><span class="line">kube-master-0   Ready     master    1d        v1.9.5</span><br><span class="line">kube-node-41    Ready     node      1d        v1.9.5</span><br><span class="line">kube-node-42    Ready     node      1d        v1.9.5</span><br><span class="line">kube-node-43    Ready     node      1m        v1.9.5   <span class="comment">#该节点为新增Node节点</span></span><br></pre></td></tr></table></figure>
 <p>可以看到新增的<code>kube-node-43</code>节点已经扩容完成。</p>
 <p><strong>3、k8s组件信息</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl get po --namespace=kube-system -o wide</span></span><br><span class="line">NAME                                    READY     STATUS    RESTARTS   AGE       IP               NODE</span><br><span class="line">calico-node-22vsg                       1/1       Running   0          10h       172.16.94.140    kube-master-0</span><br><span class="line">calico-node-8fz9x                       1/1       Running   2          27m       172.16.94.143    kube-node-43</span><br><span class="line">calico-node-t7zgw                       1/1       Running   0          10h       172.16.94.142    kube-node-42</span><br><span class="line">calico-node-zqnx8                       1/1       Running   0          10h       172.16.94.141    kube-node-41</span><br><span class="line">kube-apiserver-kube-master-0            1/1       Running   0          1d        172.16.94.140    kube-master-0</span><br><span class="line">kube-controller-manager-kube-master-0   1/1       Running   0          10h       172.16.94.140    kube-master-0</span><br><span class="line">kube-dns-79d99cdcd5-f2t6t               3/3       Running   0          10h       10.233.100.194   kube-node-41</span><br><span class="line">kube-dns-79d99cdcd5-gw944               3/3       Running   0          10h       10.233.107.1     kube-node-42</span><br><span class="line">kube-proxy-kube-master-0                1/1       Running   2          1d        172.16.94.140    kube-master-0</span><br><span class="line">kube-proxy-kube-node-41                 1/1       Running   3          1d        172.16.94.141    kube-node-41</span><br><span class="line">kube-proxy-kube-node-42                 1/1       Running   3          1d        172.16.94.142    kube-node-42</span><br><span class="line">kube-proxy-kube-node-43                 1/1       Running   0          26m       172.16.94.143    kube-node-43</span><br><span class="line">kube-scheduler-kube-master-0            1/1       Running   0          10h       172.16.94.140    kube-master-0</span><br><span class="line">kubedns-autoscaler-5564b5585f-lt9bb     1/1       Running   0          10h       10.233.100.193   kube-node-41</span><br><span class="line">kubernetes-dashboard-69cb58d748-wmb9x   1/1       Running   0          10h       10.233.107.2     kube-node-42</span><br><span class="line">nginx-proxy-kube-node-41                1/1       Running   3          1d        172.16.94.141    kube-node-41</span><br><span class="line">nginx-proxy-kube-node-42                1/1       Running   3          1d        172.16.94.142    kube-node-42</span><br><span class="line">nginx-proxy-kube-node-43                1/1       Running   0          26m       172.16.94.143    kube-node-43</span><br></pre></td></tr></table></figure>
-<h1 id="5-部署高可用集群"><a href="#5-部署高可用集群" class="headerlink" title="5. 部署高可用集群"></a>5. 部署高可用集群</h1><p>将<code>hosts.ini</code>文件中的master和etcd的机器增加到多台，执行部署命令。</p>
+<h1 id="5-部署高可用集群">5. 部署高可用集群</h1>
+<p>将<code>hosts.ini</code>文件中的master和etcd的机器增加到多台，执行部署命令。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook -i inventory/k8s/hosts.ini cluster.yml -b -vvv</span><br></pre></td></tr></table></figure>
 <p>例如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Configure 'ip' variable to bind kubernetes services on a</span></span><br><span class="line"><span class="comment"># different ip than the default iface</span></span><br><span class="line"><span class="comment"># 主机名             ssh登陆IP                        ssh用户名               ssh登陆密码                 机器IP          子网掩码</span></span><br><span class="line">kube-master-0     ansible_ssh_host=172.16.94.140   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.140   mask=/24</span><br><span class="line">kube-master-1     ansible_ssh_host=172.16.94.144   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.144   mask=/24</span><br><span class="line">kube-master-2     ansible_ssh_host=172.16.94.145   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.145   mask=/24</span><br><span class="line">kube-node-41      ansible_ssh_host=172.16.94.141   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.141   mask=/24</span><br><span class="line">kube-node-42      ansible_ssh_host=172.16.94.142   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.142   mask=/24</span><br><span class="line">kube-node-43      ansible_ssh_host=172.16.94.143   ansible_ssh_user=root   ansible_ssh_pass=123  ip=172.16.94.143   mask=/24</span><br><span class="line"></span><br><span class="line"><span class="comment"># configure a bastion host if your nodes are not directly reachable</span></span><br><span class="line"><span class="comment"># bastion ansible_ssh_host=x.x.x.x</span></span><br><span class="line"></span><br><span class="line">[kube-master]</span><br><span class="line">kube-master-0</span><br><span class="line">kube-master-1</span><br><span class="line">kube-master-2</span><br><span class="line"></span><br><span class="line">[etcd]</span><br><span class="line">kube-master-0</span><br><span class="line">kube-master-1</span><br><span class="line">kube-master-2</span><br><span class="line"></span><br><span class="line">[kube-node]</span><br><span class="line">kube-node-41</span><br><span class="line">kube-node-42</span><br><span class="line">kube-node-43</span><br><span class="line"></span><br><span class="line">[k8s-cluster:children]</span><br><span class="line">kube-node</span><br><span class="line">kube-master</span><br><span class="line"></span><br><span class="line">[calico-rr]</span><br></pre></td></tr></table></figure>
-<h1 id="6-升级k8s集群"><a href="#6-升级k8s集群" class="headerlink" title="6. 升级k8s集群"></a>6. 升级k8s集群</h1><p>选择对应的k8s版本信息，执行升级命令。涉及文件为<code>upgrade-cluster.yml</code>。</p>
+<h1 id="6-升级k8s集群">6. 升级k8s集群</h1>
+<p>选择对应的k8s版本信息，执行升级命令。涉及文件为<code>upgrade-cluster.yml</code>。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ansible-playbook upgrade-cluster.yml -b -i inventory/k8s/hosts.ini -e kube_version=v1.10.4 -vvv</span><br></pre></td></tr></table></figure>
-<h1 id="7-troubles-shooting"><a href="#7-troubles-shooting" class="headerlink" title="7. troubles shooting"></a>7. troubles shooting</h1><p>在使用kubespary部署k8s集群时，主要遇到以下报错。</p>
-<h2 id="71-python-netaddr未安装"><a href="#7-1-python-netaddr未安装" class="headerlink" title="7.1. python-netaddr未安装"></a>7.1. python-netaddr未安装</h2><ul>
+<h1 id="7-troubles-shooting">7. troubles shooting</h1>
+<p>在使用kubespary部署k8s集群时，主要遇到以下报错。</p>
+<h2 id="71-python-netaddr未安装">7.1. python-netaddr未安装</h2>
+<ul>
 <li>报错内容：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fatal: [node1]: FAILED! =&gt; &#123;<span class="string">"failed"</span>: <span class="literal">true</span>, <span class="string">"msg"</span>: <span class="string">"The ipaddr filter requires python-netaddr be installed on the ansible controller"</span>&#125;</span><br></pre></td></tr></table></figure>
@@ -514,7 +532,8 @@
 <li>解决方法：</li>
 </ul>
 <p>需要安装 python-netaddr，具体参考上述[环境准备]内容。</p>
-<h2 id="72-swap未关闭"><a href="#7-2-swap未关闭" class="headerlink" title="7.2. swap未关闭"></a>7.2. swap未关闭</h2><ul>
+<h2 id="72-swap未关闭">7.2. swap未关闭</h2>
+<ul>
 <li>报错内容：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">fatal: [kube-master-0]: FAILED! =&gt; &#123;</span><br><span class="line">    <span class="string">"assertion"</span>: <span class="string">"ansible_swaptotal_mb == 0"</span>,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"evaluated_to"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line">fatal: [kube-node-41]: FAILED! =&gt; &#123;</span><br><span class="line">    <span class="string">"assertion"</span>: <span class="string">"ansible_swaptotal_mb == 0"</span>,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"evaluated_to"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line">fatal: [kube-node-42]: FAILED! =&gt; &#123;</span><br><span class="line">    <span class="string">"assertion"</span>: <span class="string">"ansible_swaptotal_mb == 0"</span>,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"evaluated_to"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -522,7 +541,8 @@
 <li>解决方法：</li>
 </ul>
 <p>所有部署机器执行<code>swapoff -a</code>关闭swap，具体参考上述[环境准备]内容。</p>
-<h2 id="73-部署机器内存过小"><a href="#7-3-部署机器内存过小" class="headerlink" title="7.3. 部署机器内存过小"></a>7.3. 部署机器内存过小</h2><ul>
+<h2 id="73-部署机器内存过小">7.3. 部署机器内存过小</h2>
+<ul>
 <li>报错内容：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">TASK [kubernetes/preinstall : Stop <span class="keyword">if</span> memory is too small <span class="keyword">for</span> masters] *********************************************************************************************************************************************************************************************************</span><br><span class="line">task path: /root/gopath/src/kubespray/roles/kubernetes/preinstall/tasks/verify-settings.yml:52</span><br><span class="line">Friday 10 August 2018  21:50:26 +0800 (0:00:00.940)       0:01:14.088 *********</span><br><span class="line">fatal: [kube-master-0]: FAILED! =&gt; &#123;</span><br><span class="line">    <span class="string">"assertion"</span>: <span class="string">"ansible_memtotal_mb &gt;= 1500"</span>,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"evaluated_to"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">TASK [kubernetes/preinstall : Stop <span class="keyword">if</span> memory is too small <span class="keyword">for</span> nodes] ***********************************************************************************************************************************************************************************************************</span><br><span class="line">task path: /root/gopath/src/kubespray/roles/kubernetes/preinstall/tasks/verify-settings.yml:58</span><br><span class="line">Friday 10 August 2018  21:50:27 +0800 (0:00:00.570)       0:01:14.659 *********</span><br><span class="line">fatal: [kube-node-41]: FAILED! =&gt; &#123;</span><br><span class="line">    <span class="string">"assertion"</span>: <span class="string">"ansible_memtotal_mb &gt;= 1024"</span>,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"evaluated_to"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line">fatal: [kube-node-42]: FAILED! =&gt; &#123;</span><br><span class="line">    <span class="string">"assertion"</span>: <span class="string">"ansible_memtotal_mb &gt;= 1024"</span>,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    <span class="string">"evaluated_to"</span>: <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line">	to retry, use: --<span class="built_in">limit</span> @/root/gopath/src/kubespray/cluster.retry</span><br></pre></td></tr></table></figure>
@@ -530,7 +550,8 @@
 <li>解决方法：</li>
 </ul>
 <p>调大所有部署机器的内存，本示例中调整为3G或以上。</p>
-<h2 id="74-kube-scheduler组件运行失败"><a href="#7-4-kube-scheduler组件运行失败" class="headerlink" title="7.4. kube-scheduler组件运行失败"></a>7.4. kube-scheduler组件运行失败</h2><p>kube-scheduler组件运行失败，导致<a href="http://localhost:10251/healthz调用失败。" target="_blank" rel="noopener">http://localhost:10251/healthz调用失败。</a></p>
+<h2 id="74-kube-scheduler组件运行失败">7.4. kube-scheduler组件运行失败</h2>
+<p>kube-scheduler组件运行失败，导致http://localhost:10251/healthz调用失败。</p>
 <ul>
 <li>报错内容：</li>
 </ul>
@@ -539,7 +560,8 @@
 <li>解决方法：</li>
 </ul>
 <p>可能是内存不足导致，本示例中调大了部署机器的内存。</p>
-<h2 id="75-docker安装包冲突"><a href="#7-5-docker安装包冲突" class="headerlink" title="7.5. docker安装包冲突"></a>7.5. docker安装包冲突</h2><ul>
+<h2 id="75-docker安装包冲突">7.5. docker安装包冲突</h2>
+<ul>
 <li>报错内容：</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">failed: [k8s-node-1] (item=&#123;u<span class="string">'name'</span>: u<span class="string">'docker-engine-1.13.1-1.el7.centos'</span>&#125;) =&gt; &#123;</span><br><span class="line">    <span class="string">"attempts"</span>: 4,</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>,</span><br><span class="line">    ...</span><br><span class="line">    <span class="string">"item"</span>: &#123;</span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"docker-engine-1.13.1-1.el7.centos"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"msg"</span>: <span class="string">"Error: docker-ce-selinux conflicts with 2:container-selinux-2.66-1.el7.noarch\n"</span>,</span><br><span class="line">    <span class="string">"rc"</span>: 1,</span><br><span class="line">    <span class="string">"results"</span>: [</span><br><span class="line">        <span class="string">"Loaded plugins: fastestmirror\nLoading mirror speeds from cached hostfile\n * elrepo: mirrors.tuna.tsinghua.edu.cn\n * epel: mirrors.tongji.edu.cn\nPackage docker-engine is obsoleted by docker-ce, trying to install docker-ce-17.03.2.ce-1.el7.centos.x86_64 instead\nResolving Dependencies\n--&gt; Running transaction check\n---&gt; Package docker-ce.x86_64 0:17.03.2.ce-1.el7.centos will be installed\n--&gt; Processing Dependency: docker-ce-selinux &gt;= 17.03.2.ce-1.el7.centos for package: docker-ce-17.03.2.ce-1.el7.centos.x86_64\n--&gt; Processing Dependency: libltdl.so.7()(64bit) for package: docker-ce-17.03.2.ce-1.el7.centos.x86_64\n--&gt; Running transaction check\n---&gt; Package docker-ce-selinux.noarch 0:17.03.2.ce-1.el7.centos will be installed\n---&gt; Package libtool-ltdl.x86_64 0:2.4.2-22.el7_3 will be installed\n--&gt; Processing Conflict: docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch conflicts docker-selinux\n--&gt; Restarting Dependency Resolution with new changes.\n--&gt; Running transaction check\n---&gt; Package container-selinux.noarch 2:2.55-1.el7 will be updated\n---&gt; Package container-selinux.noarch 2:2.66-1.el7 will be an update\n--&gt; Processing Conflict: docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch conflicts docker-selinux\n--&gt; Finished Dependency Resolution\n You could try using --skip-broken to work around the problem\n You could try running: rpm -Va --nofiles --nodigest\n"</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -860,7 +882,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

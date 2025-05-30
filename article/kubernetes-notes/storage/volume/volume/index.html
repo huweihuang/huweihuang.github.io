@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,7 +212,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-volume概述"><a href="#1-volume概述" class="headerlink" title="1. volume概述"></a>1. volume概述</h1><ul>
+                <div id="vip-container"><h1 id="1-volume概述">1. volume概述</h1>
+<ul>
 <li>容器上的文件生命周期同容器的生命周期一致，即容器挂掉之后，容器将会以最初镜像中的文件系统内容启动，之前容器运行时产生的文件将会丢失。</li>
 <li>Pod的volume的生命周期同Pod的生命周期一致，当Pod被删除的时候，对应的volume才会被删除。即Pod中的容器重启时，之前的文件仍可以保存。</li>
 </ul>
@@ -224,38 +225,46 @@
 <li>spec.volumes：提供怎样的数据卷</li>
 <li>spec.containers.volumeMounts：挂载到容器的什么路径</li>
 </ul>
-<h1 id="2-volume类型"><a href="#2-volume类型" class="headerlink" title="2. volume类型"></a>2. volume类型</h1><h2 id="21-emptydir"><a href="#2-1-emptyDir" class="headerlink" title="2.1. emptyDir"></a>2.1. emptyDir</h2><p><strong>1、特点</strong></p>
+<h1 id="2-volume类型">2. volume类型</h1>
+<h2 id="21-emptydir">2.1. emptyDir</h2>
+<p><strong>1、特点</strong></p>
 <ul>
 <li>会创建<code>emptyDir</code>对应的目录，默认为空（如果该目录原来有文件也会被重置为空）</li>
 <li>Pod中的不同容器可以在目录中读写相同文件（即Pod中的不同容器可以通过该方式来共享文件）</li>
-<li>当Pod被删除，<code>emptyDir</code> 中的数据将被永久删除，如果只是Pod挂掉该数据还会保留</li>
+<li>当Pod被删除，<code>emptyDir</code> 中的数据将被永久删除，如果只是Pod挂掉该数据还会保留</li>
 </ul>
 <p><strong>2、使用场景</strong></p>
 <ul>
-<li><p>不同容器之间共享文件（例如日志采集等）</p>
+<li>
+<p>不同容器之间共享文件（例如日志采集等）</p>
 </li>
-<li><p>暂存空间，例如用于基于磁盘的合并排序</p>
+<li>
+<p>暂存空间，例如用于基于磁盘的合并排序</p>
 </li>
-<li><p>用作长时间计算崩溃恢复时的检查点</p>
+<li>
+<p>用作长时间计算崩溃恢复时的检查点</p>
 <p><strong>3、示例</strong></p>
 </li>
 </ul>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/cache</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cache-volume</span></span><br><span class="line">    <span class="attr">emptyDir:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure>
-<h2 id="22-hostpath"><a href="#2-2-hostPath" class="headerlink" title="2.2. hostPath"></a>2.2. hostPath</h2><p><strong>1、特点</strong></p>
+<h2 id="22-hostpath">2.2. hostPath</h2>
+<p><strong>1、特点</strong></p>
 <ul>
 <li>会将宿主机的目录或文件挂载到Pod中</li>
 </ul>
 <p><strong>2、使用场景</strong></p>
 <ul>
-<li><p>运行需要访问 Docker 内部的容器；使用 <code>/var/lib/docker</code> 的 <code>hostPath</code></p>
+<li>
+<p>运行需要访问 Docker 内部的容器；使用 <code>/var/lib/docker</code> 的 <code>hostPath</code></p>
 </li>
-<li><p>在容器中运行 cAdvisor；使用 <code>/dev/cgroups</code> 的 <code>hostPath</code></p>
+<li>
+<p>在容器中运行 cAdvisor；使用 <code>/dev/cgroups</code> 的 <code>hostPath</code></p>
 </li>
-<li><p>其他使用到宿主机文件的场景</p>
+<li>
+<p>其他使用到宿主机文件的场景</p>
 </li>
 </ul>
 <p><strong><code>hostPath</code>的<code>type</code>字段</strong></p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -298,7 +307,6 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p><strong>注意事项</strong></p>
 <ul>
 <li>由于每个节点上的文件都不同，具有相同配置的 pod 在不同节点上的行为可能会有所不同</li>
@@ -307,21 +315,26 @@
 </ul>
 <p><strong>3、示例</strong></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-pd</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">k8s.gcr.io/test-webserver</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">test-container</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/test-pd</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test-volume</span></span><br><span class="line">    <span class="attr">hostPath:</span></span><br><span class="line">      <span class="comment"># directory location on host</span></span><br><span class="line">      <span class="attr">path:</span> <span class="string">/data</span></span><br><span class="line">      <span class="comment"># this field is optional</span></span><br><span class="line">      <span class="attr">type:</span> <span class="string">Directory</span></span><br></pre></td></tr></table></figure>
-<h3 id="221-同步文件变化到容器内"><a href="#2-2-1-同步文件变化到容器内" class="headerlink" title="2.2.1. 同步文件变化到容器内"></a>2.2.1. 同步文件变化到容器内</h3><p><code>hostPath</code>的挂载方式可以挂载目录和文件两种格式，如果使用文件挂载的方式，通过简单的<code>vi</code>等命令修改宿主机的文件，并不会实时同步到容器内的映射文件。而需要对容器进行重启的操作才可以把文件的修改内容同步到文件中，但生产的容器一般不建议执行重启的操作。因此我们可以通过以下的方式来避免这个问题的发生。</p>
+<h3 id="221-同步文件变化到容器内">2.2.1. 同步文件变化到容器内</h3>
+<p><code>hostPath</code>的挂载方式可以挂载目录和文件两种格式，如果使用文件挂载的方式，通过简单的<code>vi</code>等命令修改宿主机的文件，并不会实时同步到容器内的映射文件。而需要对容器进行重启的操作才可以把文件的修改内容同步到文件中，但生产的容器一般不建议执行重启的操作。因此我们可以通过以下的方式来避免这个问题的发生。</p>
 <p>以上文件不同步的本质原因是容器在初次挂载的时候使用了宿主机的文件的inode number进行标识，而<strong>vi等操作会导致文件的inode number发生变化</strong>，所以当宿主机文件的inode number发生变化，容器内并不会发生变化，<strong>为了保持文件内容一致，则需要保持修改文件的同时文件的inode number不变</strong>。那么我们<strong>可以使用 cat 或echo 命令覆盖文件的内容则inode number不会发生变化。</strong></p>
 <p>示例：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">containers:</span></span><br><span class="line">  <span class="attr">volumeMounts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/etc/hosts</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">hosts</span></span><br><span class="line">    <span class="attr">readOnly:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hostPath:</span></span><br><span class="line">    <span class="attr">path:</span> <span class="string">/etc/hosts</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">FileOrCreate</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">hosts</span></span><br></pre></td></tr></table></figure>
 <p>例如，以上的案例是通过挂载宿主机的/etc/hosts文件来映射到容器，如果想修改宿主机的hosts文件来同步容器内的hosts文件，可以通过以下的方式:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看文件的inode</span></span><br><span class="line">ls -i /etc/hosts</span><br><span class="line">39324780 /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 追加记录</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"1.1.1.1 xxx.com"</span> &gt;&gt; /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 替换内容</span></span><br><span class="line">sed <span class="string">'s/1.1.1.1/2.2.2.2/g'</span> /etc/hosts &gt; temp.txt</span><br><span class="line">cat temp.txt &gt; /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看宿主机和容器内的inode号都没有发生变化</span></span><br><span class="line"><span class="comment"># crictl exec -it 20891de31a4a6 sh</span></span><br><span class="line">/var/www/html <span class="comment"># ls -i /etc/hosts</span></span><br><span class="line">39324780 /etc/hosts</span><br></pre></td></tr></table></figure>
-<h2 id="23-configmap"><a href="#2-3-configMap" class="headerlink" title="2.3. configMap"></a>2.3. configMap</h2><p><code>configMap</code>提供了一种给Pod注入配置文件的方式，配置文件内容存储在configMap对象中，如果Pod使用configMap作为volume的类型，需要先创建configMap的对象。</p>
+<h2 id="23-configmap">2.3. configMap</h2>
+<p><code>configMap</code>提供了一种给Pod注入配置文件的方式，配置文件内容存储在configMap对象中，如果Pod使用configMap作为volume的类型，需要先创建configMap的对象。</p>
 <p><strong>示例</strong></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">configmap-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">      <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-vol</span></span><br><span class="line">          <span class="attr">mountPath:</span> <span class="string">/etc/config</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">config-vol</span></span><br><span class="line">      <span class="attr">configMap:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">log-config</span></span><br><span class="line">        <span class="attr">items:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">log_level</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">log_level</span></span><br></pre></td></tr></table></figure>
-<h2 id="24-cephfs"><a href="#2-4-cephfs" class="headerlink" title="2.4. cephfs"></a>2.4. cephfs</h2><p><code>cephfs</code>的方式将Pod的存储挂载到<code>ceph</code>集群中，通过外部存储的方式持久化Pod的数据（即当Pod被删除数据仍可以存储在ceph集群中），前提是先部署和维护好一个ceph集群。</p>
+<h2 id="24-cephfs">2.4. cephfs</h2>
+<p><code>cephfs</code>的方式将Pod的存储挂载到<code>ceph</code>集群中，通过外部存储的方式持久化Pod的数据（即当Pod被删除数据仍可以存储在ceph集群中），前提是先部署和维护好一个ceph集群。</p>
 <p><strong>示例</strong></p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cephfs</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cephfs-rw</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">kubernetes/pause</span></span><br><span class="line">    <span class="attr">volumeMounts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">"/mnt/cephfs"</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">cephfs</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cephfs</span></span><br><span class="line">    <span class="attr">cephfs:</span></span><br><span class="line">      <span class="attr">monitors:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">10.16</span><span class="number">.154</span><span class="number">.78</span><span class="string">:6789</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">10.16</span><span class="number">.154</span><span class="number">.82</span><span class="string">:6789</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">10.16</span><span class="number">.154</span><span class="number">.83</span><span class="string">:6789</span></span><br><span class="line">      <span class="comment"># by default the path is /, but you can override and mount a specific path of the filesystem by using the path attribute</span></span><br><span class="line">      <span class="comment"># path: /some/path/in/side/cephfs </span></span><br><span class="line">      <span class="attr">user:</span> <span class="string">admin</span></span><br><span class="line">      <span class="attr">secretFile:</span> <span class="string">"/etc/ceph/admin.secret"</span></span><br><span class="line">      <span class="attr">readOnly:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
 <p>更多可参考 <a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/cephfs/" target="_blank" rel="noopener">CephFS 示例</a>。</p>
-<h2 id="25-nfs"><a href="#2-5-nfs" class="headerlink" title="2.5. nfs"></a>2.5. nfs</h2><p><code>nfs</code>的方式类似cephfs，即将Pod数据存储到NFS集群中，具体可参考<a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs" target="_blank" rel="noopener">NFS示例</a>。</p>
-<h2 id="26-persistentvolumeclaim"><a href="#2-6-persistentVolumeClaim" class="headerlink" title="2.6. persistentVolumeClaim"></a>2.6. persistentVolumeClaim</h2><p><code>persistentVolumeClaim</code> 卷用于将<code>PersistentVolume</code>挂载到容器中。PersistentVolumes 是在用户不知道特定云环境的细节的情况下“声明”持久化存储（例如 GCE PersistentDisk 或 iSCSI 卷）的一种方式。 </p>
+<h2 id="25-nfs">2.5. nfs</h2>
+<p><code>nfs</code>的方式类似cephfs，即将Pod数据存储到NFS集群中，具体可参考<a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/nfs" target="_blank" rel="noopener">NFS示例</a>。</p>
+<h2 id="26-persistentvolumeclaim">2.6. persistentVolumeClaim</h2>
+<p><code>persistentVolumeClaim</code> 卷用于将<code>PersistentVolume</code>挂载到容器中。PersistentVolumes 是在用户不知道特定云环境的细节的情况下“声明”持久化存储（例如 GCE PersistentDisk 或 iSCSI 卷）的一种方式。</p>
 <p>参考文章：</p>
 <ul>
 <li><a href="https://kubernetes.io/docs/concepts/storage/volumes/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/storage/volumes/</a></li>
@@ -350,12 +363,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/storage/volume/persistent-volume-claim/" data-toggle="tooltip" data-placement="top" title="PersistentVolumeClaim 介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/principle/flow/pod-flow/" data-toggle="tooltip" data-placement="top" title="Pod创建流程">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/runtime/gpu/nvidia-device-plugin/" data-toggle="tooltip" data-placement="top" title="nvidia-device-plugin介绍">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/storage/csi/ceph/csi-cephfs-plugin/" data-toggle="tooltip" data-placement="top" title="csi-cephfs-plugin">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -633,7 +646,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,12 +212,15 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="1-部署dashboard"><a href="#1-部署dashboard" class="headerlink" title="1. 部署dashboard"></a>1. 部署dashboard</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h2 id="1-部署dashboard">1. 部署dashboard</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml</span><br></pre></td></tr></table></figure>
 <p>镜像： kubernetesui/dashboard:v2.5.0</p>
 <p>默认端口：8443</p>
 <p>登录页面需要填入token或kubeconfig</p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1658371511/article/kubernetes/dashboard/dashboard_token.png" alt></p>
-<h2 id="2-登录dashboard"><a href="#2-登录dashboard" class="headerlink" title="2. 登录dashboard"></a>2. 登录dashboard</h2><h3 id="21-创建超级管理员"><a href="#2-1-创建超级管理员" class="headerlink" title="2.1. 创建超级管理员"></a>2.1. 创建超级管理员</h3><p>参考：<a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md" target="_blank" rel="noopener">dashboard/creating-sample-user</a></p>
+<h2 id="2-登录dashboard">2. 登录dashboard</h2>
+<h3 id="21-创建超级管理员">2.1. 创建超级管理员</h3>
+<p>参考：<a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md" target="_blank" rel="noopener">dashboard/creating-sample-user</a></p>
 <p>创建dashboard-adminuser.yaml文件如下：</p>
 <blockquote>
 <p>k8s 1.24+版本需要自行创建secret绑定serviceaccount</p>
@@ -231,7 +234,8 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret admin-user-secret -n kubernetes-dashboard -o jsonpath=&#123;<span class="string">".data.token"</span>&#125; | base64 -d</span><br></pre></td></tr></table></figure>
 <p>移除账号</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kubernetes-dashboard delete serviceaccount admin-user</span><br><span class="line">kubectl -n kubernetes-dashboard delete clusterrolebinding admin-user</span><br></pre></td></tr></table></figure>
-<h3 id="22-创建namespace管理员"><a href="#2-2-创建Namespace管理员" class="headerlink" title="2.2. 创建Namespace管理员"></a>2.2. 创建Namespace管理员</h3><p>1、创建角色权限（role）</p>
+<h3 id="22-创建namespace管理员">2.2. 创建Namespace管理员</h3>
+<p>1、创建角色权限（role）</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">&lt;namespace&gt;</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;namespace&gt;-admin-role</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">'*'</span></span><br><span class="line">    <span class="attr">resources:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">'*'</span></span><br><span class="line">    <span class="attr">verbs:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">'*'</span></span><br></pre></td></tr></table></figure>
 <p>2、创建用户账号（ServiceAccount）</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;namespace&gt;-admin-user</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">&lt;namespace&gt;</span></span><br></pre></td></tr></table></figure>
@@ -243,16 +247,21 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n &lt;namespace&gt; create token &lt;ServiceAccount&gt; --duration 8760h</span><br></pre></td></tr></table></figure>
 <p>或者通过上述secret中的token获得</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret <span class="variable">$&#123;SecretName&#125;</span> -n <span class="variable">$&#123;ServiceAccountNS&#125;</span> -o jsonpath=&#123;<span class="string">".data.token"</span>&#125; | base64 -d</span><br></pre></td></tr></table></figure>
-<h3 id="23-创建只读账户"><a href="#2-3-创建只读账户" class="headerlink" title="2.3. 创建只读账户"></a>2.3. 创建只读账户</h3><p>集群默认提供了几种命名空间级别的权限，分别设置ClusterRole: [admin, edit, view], 将授权设置为<code>ClusterRole</code>为<code>view</code>即可。</p>
+<h3 id="23-创建只读账户">2.3. 创建只读账户</h3>
+<p>集群默认提供了几种命名空间级别的权限，分别设置ClusterRole: [admin, edit, view], 将授权设置为<code>ClusterRole</code>为<code>view</code>即可。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">RoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;namespace&gt;-admin-user</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">&lt;namespace&gt;</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">view</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">&lt;namespace&gt;-admin-user</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">&lt;namespace&gt;</span></span><br></pre></td></tr></table></figure>
-<h1 id="3-集成sso登录"><a href="#3-集成SSO登录" class="headerlink" title="3. 集成SSO登录"></a>3. 集成SSO登录</h1><p>社区提供了添加<code>Authorization header</code>的方式来集成自定义的SSO登录。即在HTTP请求中增加<strong>Header:  <code>Authorization: Bearer &lt;token&gt;</code></strong>。该操作可以通过apisix或Nginx等插件注入Header。</p>
+<h1 id="3-集成sso登录">3. 集成SSO登录</h1>
+<p>社区提供了添加<code>Authorization header</code>的方式来集成自定义的SSO登录。即在HTTP请求中增加<strong>Header:  <code>Authorization: Bearer &lt;token&gt;</code></strong>。该操作可以通过apisix或Nginx等插件注入Header。</p>
 <p>参考：</p>
 <ul>
-<li><p><a href="https://kubernetes.io/zh-cn/docs/tasks/access-application-cluster/web-ui-dashboard/" target="_blank" rel="noopener">部署和访问 Kubernetes 仪表板（Dashboard） | Kubernetes</a></p>
+<li>
+<p><a href="https://kubernetes.io/zh-cn/docs/tasks/access-application-cluster/web-ui-dashboard/" target="_blank" rel="noopener">部署和访问 Kubernetes 仪表板（Dashboard） | Kubernetes</a></p>
 </li>
-<li><p><a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md" target="_blank" rel="noopener">dashboard/creating-sample-user.md at master · kubernetes/dashboard · GitHub</a></p>
+<li>
+<p><a href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md" target="_blank" rel="noopener">dashboard/creating-sample-user.md at master · kubernetes/dashboard · GitHub</a></p>
 </li>
-<li><p><a href="https://github.com/kubernetes/dashboard/tree/master/docs/user/access-control" target="_blank" rel="noopener">dashboard/docs/user/access-control at master · kubernetes/dashboard · GitHub</a></p>
+<li>
+<p><a href="https://github.com/kubernetes/dashboard/tree/master/docs/user/access-control" target="_blank" rel="noopener">dashboard/docs/user/access-control at master · kubernetes/dashboard · GitHub</a></p>
 </li>
 </ul>
 </div>
@@ -279,7 +288,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/operation/helm/helm-usage/" data-toggle="tooltip" data-placement="top" title="helm的使用">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/ide/goland/" data-toggle="tooltip" data-placement="top" title="Goland配置">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -562,7 +571,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

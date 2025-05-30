@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,26 +212,32 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-redis是什么what"><a href="#1-redis是什么？（what）" class="headerlink" title="1. redis是什么？（what）"></a>1. redis是什么？（what）</h1><p>Redis是一个开源（BSD许可），内存存储的数据结构服务器，可用作数据库，高速缓存和消息队列代理。它支持字符串、哈希表、列表、集合、有序集合，位图，hyperloglogs等数据类型。内置复制、Lua脚本、LRU收回、事务以及不同级别磁盘持久化功能，同时通过Redis Sentinel提供高可用，通过Redis Cluster提供自动分区。</p>
+                <div id="vip-container"><h1 id="1-redis是什么what">1. redis是什么？（what）</h1>
+<p>Redis是一个开源（BSD许可），内存存储的数据结构服务器，可用作数据库，高速缓存和消息队列代理。它支持字符串、哈希表、列表、集合、有序集合，位图，hyperloglogs等数据类型。内置复制、Lua脚本、LRU收回、事务以及不同级别磁盘持久化功能，同时通过Redis Sentinel提供高可用，通过Redis Cluster提供自动分区。</p>
 <p>Redis是一个开源的使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
-<h1 id="2-为什么使用rediswhy"><a href="#2-为什么使用redis？（why）" class="headerlink" title="2. 为什么使用redis？（why）"></a>2. 为什么使用redis？（why）</h1><h2 id="21-redis的特点"><a href="#2-1-redis的特点" class="headerlink" title="2.1. redis的特点"></a>2.1. redis的特点</h2><ol>
+<h1 id="2-为什么使用rediswhy">2. 为什么使用redis？（why）</h1>
+<h2 id="21-redis的特点">2.1. redis的特点</h2>
+<ol>
 <li>Redis支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用。</li>
 <li>Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。</li>
 <li>Redis支持数据的备份，即master-slave模式的数据备份。</li>
 </ol>
-<h2 id="22-redis的优势"><a href="#2-2-redis的优势" class="headerlink" title="2.2. redis的优势"></a>2.2. redis的优势</h2><ol>
+<h2 id="22-redis的优势">2.2. redis的优势</h2>
+<ol>
 <li>性能极高 – Redis能读的速度是110000次/s,写的速度是81000次/s 。</li>
 <li>丰富的数据类型 – Redis支持二进制案例的 Strings, Lists, Hashes, Sets 及 Ordered Sets 数据类型操作。</li>
 <li>原子 – Redis的所有操作都是原子性的，同时Redis还支持对几个操作全并后的原子性执行。</li>
 <li>丰富的特性 – Redis还支持 publish/subscribe, 通知, key 过期等等特性。</li>
 </ol>
-<h2 id="23-redis与其他key-value存储有什么不同"><a href="#2-3-redis与其他key-value存储有什么不同" class="headerlink" title="2.3. redis与其他key-value存储有什么不同"></a>2.3. redis与其他key-value存储有什么不同</h2><ol>
+<h2 id="23-redis与其他key-value存储有什么不同">2.3. redis与其他key-value存储有什么不同</h2>
+<ol>
 <li>Redis有着更为复杂的数据结构并且提供对他们的原子性操作，Redis的数据类型都是基于基本数据结构的同时对程序员透明，无需进行额外的抽象。</li>
 <li>Redis运行在内存中但是可以持久化到磁盘，所以在对不同数据集进行高速读写时需要权衡内存，应为数据量不能大于硬件内存。</li>
 <li>相比在磁盘上相同的复杂的数据结构，在内存中操作起来非常简单，这样Redis可以做很多内部复杂性很强的事情。</li>
 <li>在磁盘格式方面他们是紧凑的以追加的方式产生的，因为他们并不需要进行随机访问。</li>
 </ol>
-<h1 id="3-如何使用redishow"><a href="#3-如何使用redis？（how）" class="headerlink" title="3. 如何使用redis？（how）"></a>3. 如何使用redis？（how）</h1><h2 id="31-redis的数据类型"><a href="#3-1-redis的数据类型" class="headerlink" title="3.1. redis的数据类型"></a>3.1. redis的数据类型</h2><div class="table-container">
+<h1 id="3-如何使用redishow">3. 如何使用redis？（how）</h1>
+<h2 id="31-redis的数据类型">3.1. redis的数据类型</h2>
 <table>
 <thead>
 <tr>
@@ -268,8 +274,8 @@
 </tr>
 </tbody>
 </table>
+<h2 id="32-redis常用命令">3.2. redis常用命令</h2>
 </div>
-<h2 id="32-redis常用命令"><a href="#3-2-redis常用命令" class="headerlink" title="3.2. redis常用命令"></a>3.2. redis常用命令</h2></div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
 			<script>
@@ -293,7 +299,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/concepts/pod/pod-volume/" data-toggle="tooltip" data-placement="top" title="Pod存储卷">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/" data-toggle="tooltip" data-placement="top" title="ConfigMap">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -576,7 +582,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

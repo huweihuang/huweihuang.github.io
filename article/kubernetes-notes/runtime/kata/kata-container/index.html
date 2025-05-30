@@ -144,7 +144,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -158,7 +158,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -214,7 +214,8 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="kata-container简介"><a href="#Kata-container简介" class="headerlink" title="Kata-container简介"></a>Kata-container简介</h1><p>kata-container通过轻量型虚拟机技术构建一个安全的容器运行时，表现像容器一样，但通硬件虚拟化技术提供强隔离，作为第二层的安全防护。</p>
+                <div id="vip-container"><h1 id="kata-container简介">Kata-container简介</h1>
+<p>kata-container通过轻量型虚拟机技术构建一个安全的容器运行时，表现像容器一样，但通硬件虚拟化技术提供强隔离，作为第二层的安全防护。</p>
 <p><strong>特点：</strong></p>
 <ul>
 <li>安全：独立的内核，提供网络、I/O、内存的隔离。</li>
@@ -222,28 +223,37 @@
 <li>性能：兼容虚拟机的安全和容器的轻量特点。</li>
 <li>简单：使用标准的接口。</li>
 </ul>
-<h1 id="1-kata-container架构"><a href="#1-kata-container架构" class="headerlink" title="1. kata-container架构"></a>1. kata-container架构</h1><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362030/article/kata-container/arch_diagram.jpg"></p>
+<h1 id="1-kata-container架构">1. kata-container架构</h1>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362030/article/kata-container/arch_diagram.jpg">
 <p><strong>kata-container与传统container的比较</strong></p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362032/article/kata-container/traditionalvskata.jpg"></p>
-<h1 id="2-kata-runtime"><a href="#2-kata-runtime" class="headerlink" title="2. kata-runtime"></a>2. <a href="https://github.com/kata-containers/runtime" target="_blank" rel="noopener">kata-runtime</a></h1><p><a href="https://github.com/kata-containers/runtime" target="_blank" rel="noopener">Kata Containers runtime (<code>kata-runtime</code>)</a>通过<code>QEMU*/KVM</code>技术创建了一种轻量型的虚拟机，兼容 <a href="https://github.com/opencontainers" target="_blank" rel="noopener">OCI</a> <a href="https://github.com/opencontainers/runtime-spec" target="_blank" rel="noopener">runtime specification</a> 标准，支持<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/container-runtime-interface.md" target="_blank" rel="noopener">Kubernetes* Container Runtime Interface (CRI)</a>接口，可替换<a href="https://github.com/opencontainers/runc" target="_blank" rel="noopener">CRI shim runtime (runc)</a> 通过k8s来创建pod或容器。</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362029/article/kata-container/docker-kata.png"></p>
-<h1 id="3-shim"><a href="#3-shim" class="headerlink" title="3. shim"></a>3. shim</h1><p><code>shim</code>类似Docker的 <code>containerd-shim</code> 或CRI-O的 <code>conmon</code>，主要用来监控和回收容器的进程，<code>kata-shim</code>需要处理所有的容器的IO流(<code>stdout</code>, <code>stdin</code> and <code>stderr</code>)和转发相关信号。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362032/article/kata-container/traditionalvskata.jpg">
+<h1 id="2-kata-runtime">2. <a href="https://github.com/kata-containers/runtime" target="_blank" rel="noopener">kata-runtime</a></h1>
+<p><a href="https://github.com/kata-containers/runtime" target="_blank" rel="noopener">Kata Containers runtime (<code>kata-runtime</code>)</a>通过<code>QEMU*/KVM</code>技术创建了一种轻量型的虚拟机，兼容 <a href="https://github.com/opencontainers" target="_blank" rel="noopener">OCI</a> <a href="https://github.com/opencontainers/runtime-spec" target="_blank" rel="noopener">runtime specification</a> 标准，支持<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/container-runtime-interface.md" target="_blank" rel="noopener">Kubernetes* Container Runtime Interface (CRI)</a>接口，可替换<a href="https://github.com/opencontainers/runc" target="_blank" rel="noopener">CRI shim runtime (runc)</a> 通过k8s来创建pod或容器。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362029/article/kata-container/docker-kata.png">
+<h1 id="3-shim">3. shim</h1>
+<p><code>shim</code>类似Docker的 <code>containerd-shim</code> 或CRI-O的 <code>conmon</code>，主要用来监控和回收容器的进程，<code>kata-shim</code>需要处理所有的容器的IO流(<code>stdout</code>, <code>stdin</code> and <code>stderr</code>)和转发相关信号。</p>
 <p><a href="https://github.com/kata-containers/runtime/tree/master/containerd-shim-v2" target="_blank" rel="noopener">containerd-shim-kata-v2</a>实现了<a href="https://github.com/containerd/containerd/tree/master/runtime/v2" target="_blank" rel="noopener">Containerd Runtime V2 (Shim API)</a>，k8s可以通过<code>containerd-shim-kata-v2</code>（替代<code>2N+1</code>个<code>shims</code>[由一个<code>containerd-shim</code>和<code>kata-shim</code>组成]）来创建pod。</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362030/article/kata-container/shimv2.svg"></p>
-<h1 id="4-kata-agent"><a href="#4-kata-agent" class="headerlink" title="4. kata-agent"></a>4. <a href="https://github.com/kata-containers/agent" target="_blank" rel="noopener">kata-agent</a></h1><p>在虚拟机内<code>kata-agent</code>作为一个daemon进程运行，并拉起容器的进程。kata-agent使用VIRTIO或VSOCK接口（QEMU在主机上暴露的socket文件）在guest虚拟机中运行gRPC服务器。kata-runtime通过grpc协议与kata-agent通信，向kata-agent发送管理容器的命令。该协议还用于容器和管理引擎（例如Docker Engine）之间传送I / O流（stdout，stderr，stdin）。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362030/article/kata-container/shimv2.svg">
+<h1 id="4-kata-agent">4. <a href="https://github.com/kata-containers/agent" target="_blank" rel="noopener">kata-agent</a></h1>
+<p>在虚拟机内<code>kata-agent</code>作为一个daemon进程运行，并拉起容器的进程。kata-agent使用VIRTIO或VSOCK接口（QEMU在主机上暴露的socket文件）在guest虚拟机中运行gRPC服务器。kata-runtime通过grpc协议与kata-agent通信，向kata-agent发送管理容器的命令。该协议还用于容器和管理引擎（例如Docker Engine）之间传送I / O流（stdout，stderr，stdin）。</p>
 <p>容器内所有的执行命令和相关的IO流都需要通过QEMU在宿主机暴露的<code>virtio-serial</code>或<code>vsock</code>接口，当使用VIRTIO的情况下，每个虚拟机会创建一个<a href="https://github.com/kata-containers/proxy" target="_blank" rel="noopener">Kata Containers proxy (<code>kata-proxy</code>)</a> 来处理命令和IO流。</p>
 <p><code>kata-agent</code>使用<a href="https://github.com/opencontainers/runc/tree/master/libcontainer" target="_blank" rel="noopener"><code>libcontainer</code></a> 来管理容器的生命周期，复用了<a href="https://github.com/opencontainers/runc" target="_blank" rel="noopener"><code>runc</code></a>的部分代码。</p>
-<h1 id="5-kata-proxy"><a href="#5-kata-proxy" class="headerlink" title="5. kata-proxy"></a>5. kata-proxy</h1><p><code>kata-proxy</code>提供了 <code>kata-shim</code> 和 <code>kata-runtime</code> 与VM中的<code>kata-agent</code>通信的方式，其中通信方式是使用<code>virtio-serial</code>或<code>vsock</code>，默认是使用<code>virtio-serial</code>。</p>
-<h1 id="6-hypervisor"><a href="#6-Hypervisor" class="headerlink" title="6. Hypervisor"></a>6. Hypervisor</h1><p>kata-container通过<a href="http://www.qemu-project.org/" target="_blank" rel="noopener">QEMU</a>/<a href="http://www.linux-kvm.org/page/Main_Page" target="_blank" rel="noopener">KVM</a>来创建虚拟机给容器运行，可以支持多种hypervisors。</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362028/article/kata-container/qemu.png"></p>
-<h1 id="7-qemukvm"><a href="#7-QEMU-KVM" class="headerlink" title="7. QEMU/KVM"></a>7. QEMU/KVM</h1><blockquote>
+<h1 id="5-kata-proxy">5. kata-proxy</h1>
+<p><code>kata-proxy</code>提供了 <code>kata-shim</code> 和 <code>kata-runtime</code> 与VM中的<code>kata-agent</code>通信的方式，其中通信方式是使用<code>virtio-serial</code>或<code>vsock</code>，默认是使用<code>virtio-serial</code>。</p>
+<h1 id="6-hypervisor">6. Hypervisor</h1>
+<p>kata-container通过<a href="http://www.qemu-project.org/" target="_blank" rel="noopener">QEMU</a>/<a href="http://www.linux-kvm.org/page/Main_Page" target="_blank" rel="noopener">KVM</a>来创建虚拟机给容器运行，可以支持多种hypervisors。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1563362028/article/kata-container/qemu.png">
+<h1 id="7-qemukvm">7. QEMU/KVM</h1>
+<blockquote>
 <p>待补充</p>
 </blockquote>
 <p>参考文档：</p>
 <ul>
-<li><p><a href="https://katacontainers.io/" target="_blank" rel="noopener">https://katacontainers.io/</a></p>
+<li>
+<p><a href="https://katacontainers.io/" target="_blank" rel="noopener">https://katacontainers.io/</a></p>
 </li>
-<li><p><a href="https://github.com/kata-containers/documentation/blob/master/design/architecture.md" target="_blank" rel="noopener">https://github.com/kata-containers/documentation/blob/master/design/architecture.md</a></p>
+<li>
+<p><a href="https://github.com/kata-containers/documentation/blob/master/design/architecture.md" target="_blank" rel="noopener">https://github.com/kata-containers/documentation/blob/master/design/architecture.md</a></p>
 </li>
 </ul>
 </div>
@@ -270,7 +280,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/edgecore/" data-toggle="tooltip" data-placement="top" title="Kubeedge之edgecore 源码分析">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/develop/operator/kubebuilder/" data-toggle="tooltip" data-placement="top" title="kubebuilder的使用">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -555,7 +565,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

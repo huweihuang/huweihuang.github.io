@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,25 +212,36 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="deployment配置金丝雀发布"><a href="#Deployment配置金丝雀发布" class="headerlink" title="Deployment配置金丝雀发布"></a>Deployment配置金丝雀发布</h1><p>金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。</p>
-<h1 id="1-设置发版节奏"><a href="#1-设置发版节奏" class="headerlink" title="1. 设置发版节奏"></a>1. 设置发版节奏</h1><p>主要是两个字段的设置：</p>
+                <div id="vip-container"><h1 id="deployment配置金丝雀发布">Deployment配置金丝雀发布</h1>
+<p>金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。</p>
+<h1 id="1-设置发版节奏">1. 设置发版节奏</h1>
+<p>主要是以下字段的设置：</p>
 <ul>
-<li>maxSurge：最大发版实例数，可以创建的超出期望 Pod 个数的 Pod 数量。可以是百分比或者是数字。</li>
-<li>maxUnavailable：最大不可用实例数。可以是百分比或数字。</li>
+<li><strong>maxSurge</strong>：最大发版实例数，可以创建的超出期望 Pod 个数的 Pod 数量。可以是百分比或者是数字。</li>
+<li><strong>maxUnavailable</strong>：最大不可用实例数。可以是百分比或数字。</li>
+<li><strong>minReadySeconds</strong> ：新建的 Pod 在没有任何容器崩溃的情况下就绪并被系统视为可用的最短秒数。 默认为 0（Pod 就绪后即被视为可用）。可将该值设置为5-10（秒），防止新起的pod发生crash，进而影响服务的可用性，保证集群在更新过程的稳定性。</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 例如将maxSurge设置为1，maxUnavailable设置为0</span></span><br><span class="line">$ kubectl patch deployment myapp-deploy -p <span class="string">'&#123;"spec": &#123;"strategy": &#123;"rollingUpdate": &#123;"maxSurge": 1, "maxUnavailable": 0&#125;&#125;&#125;&#125;'</span></span><br></pre></td></tr></table></figure>
-<h1 id="2-升级版本并暂停"><a href="#2-升级版本并暂停" class="headerlink" title="2. 升级版本并暂停"></a>2. 升级版本并暂停</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">set</span> image deployment myapp-deploy myapp=kubernetes/myapp:v3 &amp;&amp; \</span><br><span class="line">kubectl rollout pause deployments myapp-deploy</span><br></pre></td></tr></table></figure>
-<h1 id="3-查看升级状态"><a href="#3-查看升级状态" class="headerlink" title="3. 查看升级状态"></a>3. 查看升级状态</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl rollout status deployment myapp-deploy</span><br><span class="line">Waiting <span class="keyword">for</span> deployment <span class="string">"myapp-deploy"</span> rollout to finish: 1 out of 3 new replicas have been updated...</span><br></pre></td></tr></table></figure>
-<h1 id="4-恢复继续发版"><a href="#4-恢复继续发版" class="headerlink" title="4. 恢复继续发版"></a>4. 恢复继续发版</h1><p>观察灰度的实例的流量是否正常，如果正常则继续发版，如果不正常则回滚之前的升级。</p>
+<h1 id="2-升级版本并暂停">2. 升级版本并暂停</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">set</span> image deployment myapp-deploy myapp=kubernetes/myapp:v3 &amp;&amp; \</span><br><span class="line">kubectl rollout pause deployments myapp-deploy</span><br></pre></td></tr></table></figure>
+<h1 id="3-查看升级状态">3. 查看升级状态</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl rollout status deployment myapp-deploy</span><br><span class="line">Waiting <span class="keyword">for</span> deployment <span class="string">"myapp-deploy"</span> rollout to finish: 1 out of 3 new replicas have been updated...</span><br></pre></td></tr></table></figure>
+<h1 id="4-恢复继续发版">4. 恢复继续发版</h1>
+<p>观察灰度的实例的流量是否正常，如果正常则继续发版，如果不正常则回滚之前的升级。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl rollout resume deployments myapp-deploy</span><br></pre></td></tr></table></figure>
-<h1 id="5-回滚发布"><a href="#5-回滚发布" class="headerlink" title="5. 回滚发布"></a>5. 回滚发布</h1><h2 id="51-回滚上一个版本"><a href="#5-1-回滚上一个版本" class="headerlink" title="5.1. 回滚上一个版本"></a>5.1. 回滚上一个版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deployments myapp-deploy</span><br></pre></td></tr></table></figure>
-<h2 id="52-查看历史版本"><a href="#5-2-查看历史版本" class="headerlink" title="5.2. 查看历史版本"></a>5.2. 查看历史版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl rollout <span class="built_in">history</span> deployment myapp-deploy</span><br><span class="line">deployment.apps/myapp-deploy</span><br><span class="line">REVISION  CHANGE-CAUSE</span><br><span class="line">3         &lt;none&gt;</span><br><span class="line">5         &lt;none&gt;</span><br><span class="line">6         &lt;none&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="53-回滚指定版本"><a href="#5-3-回滚指定版本" class="headerlink" title="5.3. 回滚指定版本"></a>5.3. 回滚指定版本</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deployment myapp-deploy --to-revision 3</span><br></pre></td></tr></table></figure>
+<h1 id="5-回滚发布">5. 回滚发布</h1>
+<h2 id="51-回滚上一个版本">5.1. 回滚上一个版本</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deployments myapp-deploy</span><br></pre></td></tr></table></figure>
+<h2 id="52-查看历史版本">5.2. 查看历史版本</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl rollout <span class="built_in">history</span> deployment myapp-deploy</span><br><span class="line">deployment.apps/myapp-deploy</span><br><span class="line">REVISION  CHANGE-CAUSE</span><br><span class="line">3         &lt;none&gt;</span><br><span class="line">5         &lt;none&gt;</span><br><span class="line">6         &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="53-回滚指定版本">5.3. 回滚指定版本</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl rollout undo deployment myapp-deploy --to-revision 3</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
 <li><a href="https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/</a></li>
 <li><a href="https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/manage-deployment/#canary-deployments" target="_blank" rel="noopener">https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/manage-deployment/#canary-deployments</a></li>
 <li><a href="https://kubernetes.renkeju.com/chapter_5/5.3.4.Canary_release.html" target="_blank" rel="noopener">https://kubernetes.renkeju.com/chapter_5/5.3.4.Canary_release.html</a></li>
+<li><a href="https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec" target="_blank" rel="noopener">https://kubernetes.io/zh-cn/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec</a></li>
 </ul>
 </div>
 
@@ -539,7 +550,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Raid介绍 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/linux-notes/disk/disk-raid/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#disk" title="disk">disk</a>
+                            
+                        </div>
+                        <h1>Raid介绍</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2024-04-01
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-raid是什么">1. Raid是什么</h1>
+<p>RAID英文全称Redundant Array of Independent Disk，翻译过来就是“独立磁盘冗余系统”。RAID是一种可提高性能或提供容错功能的磁盘子系统。</p>
+<p>RAID的基本思想是将多个容量较小、速度较慢、可靠性较差的廉价磁盘，组合成一个磁盘组，从而以较低的成本获得与昂贵的大容量、高速磁盘相似的性能。</p>
+<p>优势：</p>
+<ul>
+<li>
+<p>高性能</p>
+</li>
+<li>
+<p>可靠性可用性</p>
+</li>
+<li>
+<p>大容量</p>
+</li>
+<li>
+<p>可管理性</p>
+</li>
+</ul>
+<h1 id="2-raid的基本原理">2. Raid的基本原理</h1>
+<p>架构上，通过RAID控制器就将多块磁盘组合，在操作系统层我们看到的是一个或多个逻辑磁盘。</p>
+<p>技术上，RAID主要采用<strong>磁盘镜像技术</strong>、<strong>条带化技术</strong>和<strong>奇偶校验技术</strong>实现高性能、可靠性、容错能力和扩展性。</p>
+<ul>
+<li>
+<p><strong>磁盘镜像技术</strong>：将数据复制到多个磁盘，一方面可以提高可靠性，另一方面可以提高读性能。因为需要写入多个磁盘会导致写性能降低。</p>
+</li>
+<li>
+<p><strong>数据条带技术</strong>：将数据分片保存到多个不同的磁盘，多个数据分片共同组成完整的数据。主要用于提示磁盘IO性能，当访问数据时可以同时对多个磁盘进行读取。</p>
+</li>
+<li>
+<p><strong>数据校验技术</strong>：利益冗余数据对数据进行校验和修复。冗余数据通常采用海明码、异或操作等算法来计算获得。可以提高磁盘阵列的可靠性和容错能力。不过，数据校验需要从多处读取数据并进行计算和对比，会影响系统性能。</p>
+</li>
+</ul>
+<h1 id="3-raid的级别">3. Raid的级别</h1>
+<p>RAID级别命名方式如，RAID 0、RAID 1/RAID 5、RAID 10等。RAID每一个级别代表一种RAID组合实现方法和技术，级别之间并无高低之分。不同等级的 RAID 采用其中一个或多个技术，得到的是不同的容量、I/O性能、可靠性、可用性。在决定选择哪种RAID级别之前，需要深入理解系统需求，根据自身情况进行合理选择，综合评估可靠性、性能和成本来进行折中的选择。</p>
+<table>
+<thead>
+<tr>
+<th>Raid等级</th>
+<th>Raid0</th>
+<th>Raid1</th>
+<th>Raid3</th>
+<th>Raid5</th>
+<th>Raid6</th>
+<th>Raid10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>别名</td>
+<td>条带</td>
+<td>镜像</td>
+<td>专用奇偶校验条带</td>
+<td>分布奇偶校验条带</td>
+<td>双重奇偶校验条带</td>
+<td>镜像+条带</td>
+</tr>
+<tr>
+<td>容错性</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>冗余类型</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>热备份选择</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>读性能</td>
+<td>高</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>随机写性能</td>
+<td>高</td>
+<td>低</td>
+<td>低</td>
+<td>一般</td>
+<td>低</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>连续写性能</td>
+<td>高</td>
+<td>低</td>
+<td>低</td>
+<td>低</td>
+<td>低</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>需要磁盘数</td>
+<td>n&gt;=1</td>
+<td>2n(n&gt;=1)</td>
+<td>n&gt;=3</td>
+<td>n&gt;=3</td>
+<td>n&gt;=4</td>
+<td>2n&gt;=4</td>
+</tr>
+<tr>
+<td>可用容量</td>
+<td>全部</td>
+<td>50%</td>
+<td>（n-1）/n</td>
+<td>（n-1）/n</td>
+<td>（n-2）/n</td>
+<td>50%</td>
+</tr>
+</tbody>
+</table>
+<h1 id="4-raid级别介绍">4. Raid级别介绍</h1>
+<h2 id="41-raid0使用较多">4.1. Raid0（使用较多）</h2>
+<p>Raid0是将多块物理磁盘组合成一个大的逻辑磁盘，在读写的时候会以独立的方式对N块磁盘进行读写，因此执行效率非常高。理论上读写的性能是单块磁盘的N倍。但是单块磁盘的损坏会导致数据丢失，无法恢复。因此适用于对可靠性不高，读写性能要求高的场景中。</p>
+<ul>
+<li>
+<p><strong>特点</strong>：RAID 0通过条带化技术，将数据分散到多个磁盘上，从而提高存储性能。它不提供数据冗余，因此没有容错能力。</p>
+</li>
+<li>
+<p><strong>适用场景</strong>：适用于对性能要求极高，但对数据安全性要求不高的场景，如视频编辑、高性能计算等。</p>
+</li>
+</ul>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1712049568/article/linux/disk/raid0.png" alt></p>
+<h2 id="42-raid1镜像">4.2. Raid1（镜像）</h2>
+<p>Raid1 是磁盘阵列中单位成本最高的一种方式。因为它的原理是在往磁盘写数据的时候，将同一份数据无差别的写两份到磁盘，分别写到工作磁盘和镜像磁盘，那么它的实际空间使用率只有50%了，两块磁盘当做一块用，这是一种比较昂贵的方案。可靠性高，但是性能低。</p>
+<ul>
+<li>
+<p><strong>特点</strong>：RAID 1通过镜像技术，将数据同时写入两个或多个相同的磁盘.中，提供数据冗余和容错能力。如果一个磁盘发生故障，另一个磁盘上的数据仍然可用。</p>
+</li>
+<li>
+<p><strong>适用场景</strong>：适用于对数据安全性要求较高的场景，如金融机构、医疗机构等。</p>
+</li>
+</ul>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1712049569/article/linux/disk/raid1.png" alt></p>
+<h2 id="43-raid5使用最多">4.3. Raid5（使用最多）</h2>
+<p>Raid5是兼具Raid0和Raid1的优点，在性能和可靠性上兼具的一种方式，也是使用最多的一种方案。</p>
+<p>Raid5方案是总共有N块磁盘，会将要写入的数据分成N份，并发的写入到N块磁盘中，同时还将数据的校验码信息也写入到这N块磁盘中（数据与对应的校验码信息必须得分开存储在不同的磁盘上）。一旦某一块磁盘损坏了，就可以用剩下的数据和对应的奇偶校验码信息去恢复损坏的数据。</p>
+<p>RAID5的方式，最少需要三块磁盘来组建磁盘阵列，允许最多同时坏一块磁盘。如果有两块磁盘同时损坏了，那数据就无法恢复了。</p>
+<ul>
+<li>
+<p><strong>特点</strong>：RAID 5结合了条带化和数据冗余技术。它将数据分割成块并分布在多个磁盘上，同时使用一个或多个磁盘存储冗余信息(校验块)。如果一个磁盘发生故障，系统可以使用冗余信息来重建故障磁盘上的数据。</p>
+</li>
+<li>
+<p><strong>适用场景</strong>：适用于对数据安全性和性能都有一定要求的场景，如企业数据库、文件服务器等。</p>
+</li>
+</ul>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1712049569/article/linux/disk/raid5.png" alt></p>
+<h2 id="44-raid6">4.4. Raid6</h2>
+<p>RAID6在RAID5的基础上再次改进，引入了双重校验的概念。RAID6除了每块磁盘上都有同级数据XOR校验区以外，还有针对每个数据块的XOR校验区，这样的话，相当于每个数据块有两个校验保护措施，因此数据的冗余性更高了。但是RAID6的这种设计也带来了很高的复杂度，虽然数据冗余性好，读取的效率也比较高，但是写数据的性能就很差。因此RAID6在实际环境中应用的比较少。</p>
+<ul>
+<li>
+<p><strong>特点</strong>：RAID 6与RAID 5类似，但使用了两个冗余信息来提供更高的容错能力。这意味着即使两个磁盘同时发生故障，系统仍然可以使用冗余信息来重建数据。</p>
+</li>
+<li>
+<p><strong>适用场景</strong>：适用于对数据安全性要求非常高的场景，如大型数据库、关键业务系统等。</p>
+</li>
+</ul>
+<h2 id="45-raid10">4.5. Raid10</h2>
+<p>RAID10其实就是RAID1与RAID0的一个合体。RAID10兼备了RAID1和RAID0的有优点。</p>
+<p>首先基于RAID1模式将磁盘分为2份，当要写入数据的时候，将所有的数据在两份磁盘上同时写入，相当于写了双份数据，起到了数据保障的作用。且在每一份磁盘上又会基于RAID0技术讲数据分为N份并发的读写，这样也保障了数据的效率。RAID10模式是有一半的磁盘空间用于存储冗余数据的，浪费的很严重，因此用的也不是很多。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1712049569/article/linux/disk/raid10.png" alt></p>
+<h1 id="5-硬raid和软raid区别">5. 硬Raid和软Raid区别</h1>
+<p>硬raid主要是通过厂商的硬件raid卡控制器来实现，而软raid主要是操作系统的raid命令来实现（例如 mdadm 命令）。</p>
+<p>以下是2者的区别：</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>硬raid</th>
+<th>软raid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>实现方式</td>
+<td>硬件 RAID 使用专用的 RAID 控制器卡，这是一块独立的硬件，通常插入到服务器或工作站的 PCIe 插槽中。该控制器处理所有 RAID 计算和磁盘管理任务，减轻了主机 CPU 的负担。</td>
+<td>软件 RAID 通过操作系统提供的 RAID 功能来实现（如 Linux 的 mdadm 或 Windows 的 Storage Spaces）。RAID 操作由主机的 CPU 处理。</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>硬件 RAID 控制器有专用的处理器和缓存，用于处理 RAID 操作，因此通常提供更高的性能，特别是在高负载或复杂 RAID 配置（如 RAID 5 或 RAID 6）下。</td>
+<td>由于 RAID 操作由主机 CPU 处理，软件 RAID 在高负载或复杂 RAID 配置下的性能可能不如硬件 RAID。</td>
+</tr>
+<tr>
+<td>系统依赖性</td>
+<td>RAID 配置存储在控制器上，因此更换主机系统或操作系统不会影响 RAID 阵列的数据完整性。</td>
+<td>RAID 配置依赖于操作系统，因此更换操作系统或重新安装系统可能需要重新配置 RAID 阵列。</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>硬件 RAID 控制器通常价格较高，增加了系统的总体成本。</td>
+<td>不需要额外的硬件，降低了成本。对于预算有限的小型企业或个人用户来说，这是一个经济的选择。</td>
+</tr>
+<tr>
+<td>数据安全与可靠性</td>
+<td>硬件 RAID 提供更高的可靠性和数据保护功能，如热备用盘和电池备份缓存。</td>
+<td>软件 RAID 在数据安全和可靠性上依赖于操作系统的实现和配置。</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>依赖不同厂商不同的raid卡命令，配置比较复杂</td>
+<td>软件 RAID 配置和管理更灵活，可以通过操作系统的命令行工具或图形界面轻松实现。</td>
+</tr>
+<tr>
+<td>高级功能</td>
+<td>硬件 RAID 控制器通常提供高级功能，如热插拔、在线扩展、热备用盘、硬件级别的加密和电池备份缓存。</td>
+<td>软件 RAID 通常缺乏一些高级功能，如硬件 RAID 提供的电池备份缓存和专用处理器。</td>
+</tr>
+</tbody>
+</table>
+<h1 id="6-如何配置硬raid">6. 如何配置硬Raid</h1>
+<p>配置硬件raid可以通过raid配置界面操作，也可以通过厂商提供的cli工具配置硬Raid。具体可参考<a href="make-hardware-raid.md">创建硬件Raid</a></p>
+<p>参考：</p>
+<ul>
+<li><a href="https://www.chinastor.com/baike/raid/" target="_blank" rel="noopener">https://www.chinastor.com/baike/raid/</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/51170719" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/51170719</a></li>
+<li><a href="https://mp.weixin.qq.com/s/xWD5p7pmzdl_YpMXY5YO4g" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/xWD5p7pmzdl_YpMXY5YO4g</a></li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/linux-notes/nginx/config-ssl-for-nginx/" data-toggle="tooltip" data-placement="top" title="配置Nginx免费证书">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/reading-notes/置身事内/" data-toggle="tooltip" data-placement="top" title="[读书笔记] 置身事内：中国政府与经济发展">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-raid是什么"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Raid是什么</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-raid的基本原理"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. Raid的基本原理</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-raid的级别"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Raid的级别</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-raid级别介绍"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. Raid级别介绍</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-raid0使用较多"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. Raid0（使用较多）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-raid1镜像"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. Raid1（镜像）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-raid5使用最多"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. Raid5（使用最多）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-raid6"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">4.4. Raid6</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#45-raid10"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">4.5. Raid10</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-硬raid和软raid区别"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. 硬Raid和软Raid区别</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-如何配置硬raid"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. 如何配置硬Raid</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#disk" title="disk">disk</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

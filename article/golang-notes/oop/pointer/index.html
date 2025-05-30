@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,7 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-指针的概念"><a href="#1-指针的概念" class="headerlink" title="1. 指针的概念"></a>1. 指针的概念</h1><div class="table-container">
+                <div id="vip-container"><h1 id="1-指针的概念">1. 指针的概念</h1>
 <table>
 <thead>
 <tr>
@@ -239,11 +239,12 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h1 id="2-内存地址说明"><a href="#2-内存地址说明" class="headerlink" title="2. 内存地址说明"></a>2. 内存地址说明</h1><h2 id="21-内存定义"><a href="#2-1-内存定义" class="headerlink" title="2.1. 内存定义"></a>2.1. 内存定义</h2><p>计算机的内存 RAM 可以把它想象成一些有序的盒子，一个接一个的排成一排，每一个盒子或者单元格都被一个唯一的数字标记依次递增，这个数字就是该单元格的地址，也就是内存的地址。<br><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578751/article/golang/pointer/memory.png" alt="什么是内存"></p>
+<h1 id="2-内存地址说明">2. 内存地址说明</h1>
+<h2 id="21-内存定义">2.1. 内存定义</h2>
+<p>计算机的内存 RAM 可以把它想象成一些有序的盒子，一个接一个的排成一排，每一个盒子或者单元格都被一个唯一的数字标记依次递增，这个数字就是该单元格的地址，也就是内存的地址。<br>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578751/article/golang/pointer/memory.png" alt="什么是内存"></p>
 <p><strong>硬件角度</strong>：内存是CPU沟通的桥梁，程序运行在内存中。</p>
 <p><strong>逻辑角度</strong>：内存是一块具备随机访问能力，支持读写操作，用来存放程序及程序运行中产生的数据的区域。</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -278,8 +279,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="22-内存单位和编址"><a href="#2-2-内存单位和编址" class="headerlink" title="2.2. 内存单位和编址"></a>2.2. 内存单位和编址</h2><h2 id="221-内存单位"><a href="#2-2-1-内存单位" class="headerlink" title="2.2.1. 内存单位"></a>2.2.1. 内存单位</h2><div class="table-container">
+<h2 id="22-内存单位和编址">2.2. 内存单位和编址</h2>
+<h2 id="221-内存单位">2.2.1. 内存单位</h2>
 <table>
 <thead>
 <tr>
@@ -314,33 +315,40 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h2 id="222-内存编址"><a href="#2-2-2-内存编址" class="headerlink" title="2.2.2. 内存编址"></a>2.2.2. 内存编址</h2><p>计算机中的内存按字节编址，每个地址的存储单元可以存放一个字节的数据，CPU通过内存地址获取指令和数据，并不关心这个地址所代表的空间在什么位置，内存地址和地址指向的空间共同构成了一个内存单元。</p>
-<h2 id="223-内存地址"><a href="#2-2-3-内存地址" class="headerlink" title="2.2.3. 内存地址"></a>2.2.3. 内存地址</h2><p>内存地址通常用16进制的数据表示，例如0x0ffc1。</p>
-<h1 id="3变量与指针运算理解"><a href="#3-变量与指针运算理解" class="headerlink" title="3.变量与指针运算理解"></a>3.变量与指针运算理解</h1><p>编写一段程序，检索出值并存储在地址为 200 的一个块内存中，将其乘以 3，并将结果存储在地址为 201 的另一块内存中</p>
-<h2 id="31本质"><a href="#3-1-本质" class="headerlink" title="3.1.本质"></a>3.1.本质</h2><ol>
+<h2 id="222-内存编址">2.2.2. 内存编址</h2>
+<p>计算机中的内存按字节编址，每个地址的存储单元可以存放一个字节的数据，CPU通过内存地址获取指令和数据，并不关心这个地址所代表的空间在什么位置，内存地址和地址指向的空间共同构成了一个内存单元。</p>
+<h2 id="223-内存地址">2.2.3. 内存地址</h2>
+<p>内存地址通常用16进制的数据表示，例如0x0ffc1。</p>
+<h1 id="3变量与指针运算理解">3.变量与指针运算理解</h1>
+<p>编写一段程序，检索出值并存储在地址为 200 的一个块内存中，将其乘以 3，并将结果存储在地址为 201 的另一块内存中</p>
+<h2 id="31本质">3.1.本质</h2>
+<ol>
 <li>检索出内存地址为 200 的值，并将其存储在 CPU 中</li>
 <li>将存储在 CPU 中的值乘以 3</li>
 <li>将 CPU 中存储的结果，写入地址为 201 的内存块中</li>
 </ol>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578752/article/golang/pointer/var1.png" alt="什么是变量"></p>
-<h2 id="32基于变量的理解"><a href="#3-2-基于变量的理解" class="headerlink" title="3.2.基于变量的理解"></a>3.2.基于变量的理解</h2><ol>
+<h2 id="32基于变量的理解">3.2.基于变量的理解</h2>
+<ol>
 <li>获取变量 a 中存储的值，并将其存储在 CPU 中</li>
 <li>将其乘以 3</li>
 <li>将结果保存在变量 b 中</li>
 </ol>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578752/article/golang/pointer/var2.png" alt="什么是变量2"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var a = 6 </span><br><span class="line">var b = a * 3</span><br></pre></td></tr></table></figure>
-<h2 id="33基于指针的理解"><a href="#3-3-基于指针的理解" class="headerlink" title="3.3.基于指针的理解"></a>3.3.基于指针的理解</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := <span class="number">200</span></span><br><span class="line">    b := &amp;a</span><br><span class="line">    *b++</span><br><span class="line">    fmt.Println(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="33基于指针的理解">3.3.基于指针的理解</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := <span class="number">200</span></span><br><span class="line">    b := &amp;a</span><br><span class="line">    *b++</span><br><span class="line">    fmt.Println(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>以上函数对a进行+1操作，具体理解如下：</p>
 <p><strong>1.a:=200</strong></p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578751/article/golang/pointer/pointer1.png" alt="什么是指针"></p>
 <p><strong>2.  b := &amp;a</strong></p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578751/article/golang/pointer/pointer2.png" alt="什么是指针2"></p>
-<p><strong>3. *b++</strong></p>
+<p>*<em>3. <em>b++</em></em></p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578752/article/golang/pointer/pointer3.png" alt="什么是指针3"></p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578752/article/golang/pointer/pointer4.png" alt="什么是指针4"></p>
-<h1 id="4-指针的使用"><a href="#4-指针的使用" class="headerlink" title="4. 指针的使用"></a>4. 指针的使用</h1><h2 id="41-方法中的指针"><a href="#4-1-方法中的指针" class="headerlink" title="4.1. 方法中的指针"></a>4.1. 方法中的指针</h2><p>方法即为有接受者的函数，接受者可以是类型的实例变量或者是类型的实例指针变量。但两种效果不同。</p>
+<h1 id="4-指针的使用">4. 指针的使用</h1>
+<h2 id="41-方法中的指针">4.1. 方法中的指针</h2>
+<p>方法即为有接受者的函数，接受者可以是类型的实例变量或者是类型的实例指针变量。但两种效果不同。</p>
 <p><strong>1、类型的实例变量</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    person := Person&#123;<span class="string">"vanyar"</span>, <span class="number">21</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"person&lt;%s:%d&gt;\n"</span>, person.name, person.age)</span><br><span class="line">    person.sayHi()</span><br><span class="line">    person.ModifyAge(<span class="number">210</span>)</span><br><span class="line">    person.sayHi()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">    name <span class="keyword">string</span></span><br><span class="line">    age <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Person)</span> <span class="title">sayHi</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"SayHi -- This is %s, my age is %d\n"</span>,p.name, p.age)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Person)</span> <span class="title">ModifyAge</span><span class="params">(age <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"ModifyAge"</span>)</span><br><span class="line">    p.age = age</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="comment">//输出结果</span></span><br><span class="line">person&lt;vanyar:<span class="number">21</span>&gt;</span><br><span class="line">SayHi -- This is vanyar, my age is <span class="number">21</span></span><br><span class="line">ModifyAgeSayHi -- This is vanyar, my age is <span class="number">21</span></span><br></pre></td></tr></table></figure>
 <p>尽管 ModifyAge 方法修改了其age字段，可是方法里的p是person变量的一个副本，修改的只是副本的值。下一次调用sayHi方法的时候，还是person的副本，因此修改方法并不会生效。</p>
@@ -349,14 +357,16 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Person)</span> <span class="title">ChangeAge</span><span class="params">(age <span class="keyword">int</span>)</span></span>  &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"ModifyAge"</span>)</span><br><span class="line">    p.age = age</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>Go会根据Person的示例类型，转换成指针类型再拷贝，即 person.ChangeAge会变成 (&amp;person).ChangeAge。</p>
 <p>指针类型的接受者，如果实例对象是值，那么go会转换成指针，然后再拷贝，如果本身就是指针对象，那么就直接拷贝指针实例。因为指针都指向一处值，就能修改对象了。</p>
-<h1 id="5-零值与nil空指针"><a href="#5-零值与nil-空指针" class="headerlink" title="5. 零值与nil(空指针)"></a>5. 零值与nil(空指针)</h1><p>变量声明而没有赋值，默认为零值，不同类型零值不同，例如字符串零值为空字符串；</p>
+<h1 id="5-零值与nil空指针">5. 零值与nil(空指针)</h1>
+<p>变量声明而没有赋值，默认为零值，不同类型零值不同，例如字符串零值为空字符串；</p>
 <p>指针声明而没有赋值，默认为nil，即该指针没有任何指向。当指针没有指向的时候，不能对(*point)进行操作包括读取，否则会报空指针异常。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 声明一个指针变量 aPot 其类型也是 string</span></span><br><span class="line">    <span class="keyword">var</span> aPot *<span class="keyword">string</span></span><br><span class="line">    fmt.Printf(<span class="string">"aPot: %p %#v\n"</span>, &amp;aPot, aPot) <span class="comment">// 输出 aPot: 0xc42000c030 (*string)(nil)</span></span><br><span class="line">    *aPot = <span class="string">"This is a Pointer"</span>  <span class="comment">// 报错： panic: runtime error: invalid memory address or nil pointer dereference</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>解决方法即给该指针分配一个指向,即初始化一个内存，并把该内存地址赋予指针变量，例如：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明一个指针变量 aPot 其类型也是 string</span></span><br><span class="line">    <span class="keyword">var</span> aPot *<span class="keyword">string</span></span><br><span class="line">    fmt.Printf(<span class="string">"aPot: %p %#v\n"</span>, &amp;aPot, aPot) <span class="comment">// 输出 aPot: 0xc42000c030 (*string)(nil)</span></span><br><span class="line"> </span><br><span class="line">    aPot = &amp;aVar</span><br><span class="line">    *aPot = <span class="string">"This is a Pointer"</span></span><br><span class="line">    fmt.Printf(<span class="string">"aVar: %p %#v \n"</span>, &amp;aVar, aVar) <span class="comment">// 输出 aVar: 0xc42000e240 "This is a Pointer"</span></span><br><span class="line">    fmt.Printf(<span class="string">"aPot: %p %#v %#v \n"</span>, &amp;aPot, aPot, *aPot) <span class="comment">// 输出 aPot: 0xc42000c030 (*string)(0xc42000e240) "This is a Pointer"</span></span><br></pre></td></tr></table></figure>
 <p>或者通过new开辟一个内存，并返回这个内存的地址。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> aNewPot *<span class="keyword">int</span></span><br><span class="line"> </span><br><span class="line">aNewPot = <span class="built_in">new</span>(<span class="keyword">int</span>)</span><br><span class="line">*aNewPot = <span class="number">217</span></span><br><span class="line">fmt.Printf(<span class="string">"aNewPot: %p %#v %#v \n"</span>, &amp;aNewPot, aNewPot, *aNewPot) <span class="comment">// 输出 aNewPot: 0xc42007a028 (*int)(0xc42006e1f0) 217</span></span><br></pre></td></tr></table></figure>
-<h1 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h1><ul>
+<h1 id="6-总结">6. 总结</h1>
+<ul>
 <li>Golang提供了指针用于操作数据内存，并通过引用来修改变量。</li>
 <li>只声明未赋值的变量，golang都会自动为其初始化为零值，基础数据类型的零值比较简单，引用类型和指针的零值都为nil，nil类型不能直接赋值，因此需要通过new开辟一个内存，或者通过make初始化数据类型，或者两者配合，然后才能赋值。</li>
 <li>指针也是一种类型，不同于一般类型，指针的值是地址，这个地址指向其他的内存，通过指针可以读取其所指向的地址所存储的值。</li>
@@ -364,9 +374,11 @@
 </ul>
 <p>参考：</p>
 <ul>
-<li><p><a href="http://www.jianshu.com/p/d23f78a3922b" target="_blank" rel="noopener">http://www.jianshu.com/p/d23f78a3922b</a></p>
+<li>
+<p><a href="http://www.jianshu.com/p/d23f78a3922b" target="_blank" rel="noopener">http://www.jianshu.com/p/d23f78a3922b</a></p>
 </li>
-<li><p><a href="http://www.jianshu.com/p/44b9429d7bef" target="_blank" rel="noopener">http://www.jianshu.com/p/44b9429d7bef</a></p>
+<li>
+<p><a href="http://www.jianshu.com/p/44b9429d7bef" target="_blank" rel="noopener">http://www.jianshu.com/p/44b9429d7bef</a></p>
 </li>
 </ul>
 </div>
@@ -676,7 +688,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

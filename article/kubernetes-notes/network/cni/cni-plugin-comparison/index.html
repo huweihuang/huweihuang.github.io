@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          CNI插件选型 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/network/cni/cni-plugin-comparison/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#CNI" title="CNI">CNI</a>
+                            
+                        </div>
+                        <h1>CNI插件选型</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2024-11-16
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><p>本文主要描述常用的CNI插件的选型，主要包括cilium，calico，flannel三种插件的对比。</p>
+<h1 id="1-技术特点对比">1. 技术特点对比</h1>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th><strong>Cilium</strong></th>
+<th><strong>Calico</strong></th>
+<th><strong>Flannel</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数据面技术</td>
+<td>eBPF 加速</td>
+<td>基于 iptables（支持 eBPF）</td>
+<td>vxlan、host-gw、ipip 等隧道技术</td>
+</tr>
+<tr>
+<td>转发效率</td>
+<td>高（内核级加速，直通流量）</td>
+<td>高（支持原生路由）</td>
+<td>中（隧道技术增加开销）</td>
+</tr>
+<tr>
+<td>可扩展性</td>
+<td>优（支持高级 L7 策略）</td>
+<td>优（支持原生路由和简单网络策略）</td>
+<td>较低（以 L3 网络为主）</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>低（无需额外隧道或规则）</td>
+<td>低（无隧道或 eBPF 模式）</td>
+<td>较高（隧道封装增加延迟）</td>
+</tr>
+<tr>
+<td>吞吐量</td>
+<td>高（eBPF 高效转发）</td>
+<td>中（依赖 iptables 或 eBPF）</td>
+<td>较低（隧道开销显著）</td>
+</tr>
+</tbody>
+</table>
+<h1 id="2-性能指标对比">2. 性能指标对比</h1>
+<table>
+<thead>
+<tr>
+<th>性能指标</th>
+<th><strong>Cilium</strong></th>
+<th><strong>Calico</strong></th>
+<th><strong>Flannel</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>吞吐量</strong></td>
+<td>高（eBPF 高效转发）</td>
+<td>中-高（取决于模式）</td>
+<td>较低（隧道封装损耗较大）</td>
+</tr>
+<tr>
+<td><strong>延迟</strong></td>
+<td>低（直接路由模式最佳）</td>
+<td>较低（非隧道模式表现良好）</td>
+<td>较高（隧道增加延迟）</td>
+</tr>
+<tr>
+<td><strong>CPU使用</strong></td>
+<td>较高（eBPF 和可观测性功能）</td>
+<td>中（iptables/eBPF 开销）</td>
+<td>低（简单架构）</td>
+</tr>
+<tr>
+<td><strong>内存使用</strong></td>
+<td>较高（功能丰富）</td>
+<td>中</td>
+<td>低</td>
+</tr>
+</tbody>
+</table>
+<h1 id="3-测试数据示例">3. 测试数据示例</h1>
+<p>以下是根据典型测试场景总结的指标（单位为吞吐量 Mbps 和延迟 ms）：</p>
+<table>
+<thead>
+<tr>
+<th>测试场景</th>
+<th><strong>Cilium</strong></th>
+<th><strong>Calico</strong></th>
+<th><strong>Flannel</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>吞吐量 (单节点)</strong></td>
+<td>~9,000 Mbps</td>
+<td>~8,500 Mbps</td>
+<td>~6,000 Mbps</td>
+</tr>
+<tr>
+<td><strong>吞吐量 (跨节点)</strong></td>
+<td>~8,000 Mbps</td>
+<td>~7,500 Mbps</td>
+<td>~5,000 Mbps</td>
+</tr>
+<tr>
+<td><strong>延迟 (单节点)</strong></td>
+<td>~0.2 ms</td>
+<td>~0.3 ms</td>
+<td>~1.0 ms</td>
+</tr>
+<tr>
+<td><strong>延迟 (跨节点)</strong></td>
+<td>~0.4 ms</td>
+<td>~0.5 ms</td>
+<td>~2.0 ms</td>
+</tr>
+</tbody>
+</table>
+<p>2020年测试数据：</p>
+<p>数据来源：<a href="https://itnext.io/benchmark-results-of-kubernetes-network-plugins-cni-over-10gbit-s-network-updated-august-2020-6e1b757b9e49" target="_blank" rel="noopener">Benchmark results of Kubernetes network plugins (CNI) over 10Gbit/s network (Updated: August 2020)</a></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1731839739/article/kubernetes/network/cni/cni-comparison.webp" alt></p>
+<p>[2024年]单位带宽消耗的CPU和内存数据：</p>
+<p>数据来源：<a href="https://itnext.io/benchmark-results-of-kubernetes-network-plugins-cni-over-40gbit-s-network-2024-156f085a5e4e#89d8-90c23c8caeb4-reply" target="_blank" rel="noopener">Benchmark results of Kubernetes network plugins (CNI) over 40Gbit/s network -2024</a></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1731839992/article/kubernetes/network/cni/Resource-efficiency-per-CNI.webp" alt></p>
+<p>以上可以看出cilium单位消耗的CPU和内存相比于flannel高。</p>
+<h1 id="4-网络性能分析">4. 网络性能分析</h1>
+<h2 id="41-cilium">4.1. Cilium</h2>
+<ul>
+<li><strong>吞吐量</strong>：基于 eBPF 的数据面技术，可直接在 Linux 内核中高效转发流量，减少上下文切换。使用直连路由模式（<code>--tunnel=disabled</code>）时，进一步减少封装开销。</li>
+<li><strong>延迟</strong>：支持 Sidecar-less 的服务网格架构，能够降低服务间通信延迟。</li>
+<li><strong>资源消耗</strong>：由于其高级功能（如 Hubble 可观测性和 L7 策略），在 CPU 和内存使用上高于其他插件。</li>
+</ul>
+<h2 id="42-calico">4.2. Calico</h2>
+<ul>
+<li><strong>吞吐量</strong>：非隧道模式下，基于 BGP 的原生路由性能接近裸机水平；启用 eBPF 模式时，性能进一步提升。</li>
+<li><strong>延迟</strong>：表现良好，但在复杂网络策略下可能增加延迟。</li>
+<li><strong>资源消耗</strong>：资源使用适中，适合大多数生产环境。</li>
+</ul>
+<h2 id="43-flannel">4.3. Flannel</h2>
+<ul>
+<li><strong>吞吐量</strong>：由于采用 VXLAN、IPIP 等隧道封装方式，其性能通常不如 Cilium 和 Calico。</li>
+<li><strong>延迟</strong>：封装和解封装的额外操作导致延迟增加。</li>
+<li><strong>资源消耗</strong>：架构简单，资源使用最低，适合资源有限的小型集群。</li>
+</ul>
+<h1 id="5-业务场景选型">5. 业务场景选型</h1>
+<p><strong>1. Cilium：适合高性能与安全需求的场景</strong></p>
+<ul>
+<li>适用场景：
+<ul>
+<li><strong>微服务架构</strong>：Cilium 的 eBPF 技术支持 L7 数据包过滤、服务可观测性和无 Sidecar 服务网格，非常适合复杂微服务环境。</li>
+<li><strong>边缘计算</strong>：在边缘节点上，需要低延迟和高吞吐量，Cilium 的直连路由模式（<code>--tunnel=disabled</code>）非常高效。</li>
+<li><strong>多云和混合云</strong>：支持多种高级网络功能，如网络策略的灵活配置和透明的加密。</li>
+</ul>
+</li>
+<li>局限性：
+<ul>
+<li>部署复杂度相对较高，对 Linux 内核版本有要求（推荐 5.3+）。</li>
+<li>资源消耗比 Flannel 高。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. Calico：适合大规模、灵活策略的企业集群</strong></p>
+<ul>
+<li>适用场景：
+<ul>
+<li><strong>大规模 Kubernetes 集群</strong>：基于 BGP 的网络路由能够高效扩展，适合公有云和企业级大规模集群。</li>
+<li><strong>注重安全策略</strong>：支持丰富的网络安全策略，并提供对接 eBPF 的能力，兼顾性能和策略灵活性。</li>
+<li><strong>混合部署</strong>：Calico 可以在非 Kubernetes 工作负载中实现一致的网络策略。</li>
+</ul>
+</li>
+<li>局限性：
+<ul>
+<li>默认基于 iptables 的实现在高负载下性能可能不如 Cilium 的 eBPF 数据面。</li>
+<li>网络策略复杂度较高时，可能增加运维工作量。</li>
+</ul>
+</li>
+</ul>
+<p><strong>3. Flannel：适合轻量级和资源有限的集群</strong></p>
+<ul>
+<li>适用场景：
+<ul>
+<li><strong>小型集群</strong>：Flannel 架构简单，资源使用少，适合轻量化的 Kubernetes 部署。</li>
+<li><strong>测试环境</strong>：性能需求较低的开发和测试环境中，可以快速搭建和运行。</li>
+<li><strong>边缘计算（非高性能）</strong>：对网络性能要求较低的小型边缘节点可以使用。</li>
+</ul>
+</li>
+<li>局限性：
+<ul>
+<li>在吞吐量和延迟上不如 Cilium 和 Calico，尤其是需要大量隧道封装时。</li>
+<li>缺乏高级网络功能，例如复杂的网络策略和观测能力。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4. 推荐选择总结</strong></p>
+<table>
+<thead>
+<tr>
+<th>场景类型</th>
+<th>推荐插件</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>高性能微服务架构</strong></td>
+<td><strong>Cilium</strong></td>
+<td>提供 eBPF 技术，支持复杂策略和低延迟网络</td>
+</tr>
+<tr>
+<td><strong>大规模企业集群</strong></td>
+<td><strong>Calico</strong></td>
+<td>稳定、灵活，适合多样化和大规模 Kubernetes 部署</td>
+</tr>
+<tr>
+<td><strong>资源受限环境</strong></td>
+<td><strong>Flannel</strong></td>
+<td>简单易用，资源消耗低</td>
+</tr>
+<tr>
+<td><strong>边缘计算</strong></td>
+<td><strong>Cilium/Flannel</strong></td>
+<td>Cilium 适合高性能需求，Flannel 适合轻量级节点</td>
+</tr>
+<tr>
+<td><strong>混合云/多云</strong></td>
+<td><strong>Cilium/Calico</strong></td>
+<td>Cilium 支持透明加密和现代架构，Calico 提供灵活网络策略支持</td>
+</tr>
+</tbody>
+</table>
+<p>参考：</p>
+<ul>
+<li><a href="https://docs.cilium.io/en/latest/operations/performance/benchmark/" target="_blank" rel="noopener">https://docs.cilium.io/en/latest/operations/performance/benchmark/</a></li>
+<li><a href="https://cilium.io/blog/2018/12/03/cni-performance/" target="_blank" rel="noopener">https://cilium.io/blog/2018/12/03/cni-performance/</a></li>
+<li><a href="https://cilium.io/blog/2021/05/11/cni-benchmark/" target="_blank" rel="noopener">https://cilium.io/blog/2021/05/11/cni-benchmark/</a></li>
+<li><a href="https://itnext.io/benchmark-results-of-kubernetes-network-plugins-cni-over-40gbit-s-network-2024-156f085a5e4e#89d8-90c23c8caeb4-reply" target="_blank" rel="noopener">Benchmark results of Kubernetes network plugins (CNI) over 40Gbit/s network -2024</a></li>
+<li><a href="https://itnext.io/benchmark-results-of-kubernetes-network-plugins-cni-over-10gbit-s-network-updated-august-2020-6e1b757b9e49" target="_blank" rel="noopener">Benchmark results of Kubernetes network plugins (CNI) over 10Gbit/s network (Updated: August 2020)</a></li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/network/cilium/cilium/" data-toggle="tooltip" data-placement="top" title="Cilium介绍">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/network/calico/calico/" data-toggle="tooltip" data-placement="top" title="Calico介绍">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-技术特点对比"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 技术特点对比</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-性能指标对比"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 性能指标对比</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-测试数据示例"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. 测试数据示例</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-网络性能分析"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. 网络性能分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-cilium"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. Cilium</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-calico"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. Calico</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-flannel"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. Flannel</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-业务场景选型"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. 业务场景选型</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#CNI" title="CNI">CNI</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

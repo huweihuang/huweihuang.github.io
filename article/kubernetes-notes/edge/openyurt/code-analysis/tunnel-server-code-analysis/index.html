@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -213,9 +213,10 @@
                 post-container">
 
                 <div id="vip-container"><blockquote>
-<p>本文以commit id：<code>180282663457080119a1bc6076cce20c922b5c50</code>， 对应版本tag: <code>v1.2.1</code> 的源码分析tunnel-server的实现逻辑。</p>
+<p>本文以commit id：<code>180282663457080119a1bc6076cce20c922b5c50</code>， 对应版本tag: <code>v1.2.1</code> 的源码分析tunnel-server的实现逻辑。</p>
 </blockquote>
-<h1 id="1-tunnel-server简介"><a href="#1-Tunnel-server简介" class="headerlink" title="1. Tunnel-server简介"></a>1. Tunnel-server简介</h1><p>云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:</p>
+<h1 id="1-tunnel-server简介">1. Tunnel-server简介</h1>
+<p>云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:</p>
 <ul>
 <li>K8s 原生运维能力缺失(如 kubectl logs/exec 等无法执行)</li>
 <li>社区主流监控运维组件无法工作(如 Prometheus/metrics-server )</li>
@@ -223,73 +224,96 @@
 <p>在 OpenYurt 中，引入了专门的组件 YurtTunnel 负责解决云边通信问题。反向通道是解决跨网络通信的一种常见方式，而 YurtTunnel 的本质也是一个反向通道。 它是一个典型的C/S结构的组件，由部署于云端的 YurtTunnelServer 和部署于边缘节点上的 YurtTunnelAgent组成。</p>
 <p>本文主要分析tunnel-server的代理逻辑。</p>
 <p>以下是基本架构图：</p>
-<p><img title src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1682566581/article/openyurt/tunnel_components.jpg" alt width="628"></p>
+<img title src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1682566581/article/openyurt/tunnel_components.jpg" alt width="628">
 <p>pkg中的目录结构：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yurttunnel</span><br><span class="line">├── agent  <span class="comment"># tunnel agent代码</span></span><br><span class="line">├── constants <span class="comment"># 常量值</span></span><br><span class="line">├── handlerwrapper</span><br><span class="line">├── informers</span><br><span class="line">├── kubernetes  <span class="comment"># k8s clientset工具包</span></span><br><span class="line">├── server  <span class="comment"># 核心代码： tunnel server逻辑</span></span><br><span class="line">├── trafficforward  <span class="comment"># iptables和dns操作</span></span><br><span class="line">└── util</span><br></pre></td></tr></table></figure>
-<h1 id="2-newyurttunnelservercommand"><a href="#2-NewYurttunnelServerCommand" class="headerlink" title="2. NewYurttunnelServerCommand"></a>2. NewYurttunnelServerCommand</h1><p>main函数入口：</p>
+<h1 id="2-newyurttunnelservercommand">2. NewYurttunnelServerCommand</h1>
+<p>main函数入口：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cmd := app.NewYurttunnelServerCommand(stop)</span><br><span class="line">    cmd.Flags().AddGoFlagSet(flag.CommandLine)</span><br><span class="line">    <span class="keyword">if</span> err := cmd.Execute(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        klog.Fatalf(<span class="string">"%s failed: %s"</span>, projectinfo.GetServerName(), err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>以下是NewYurttunnelServerCommand构造函数，常见的三件套，不做展开：</p>
 <ul>
-<li><p>读取参数：serverOptions.AddFlags(cmd.Flags())</p>
+<li>
+<p>读取参数：serverOptions.AddFlags(cmd.Flags())</p>
 </li>
-<li><p>生成配置：cfg.Complete()</p>
+<li>
+<p>生成配置：cfg.Complete()</p>
 </li>
-<li><p>执行Run函数：核心逻辑</p>
+<li>
+<p>执行Run函数：核心逻辑</p>
 </li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewYurttunnelServerCommand</span><span class="params">(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> *<span class="title">cobra</span>.<span class="title">Command</span></span> &#123;</span><br><span class="line">    serverOptions := options.NewServerOptions()</span><br><span class="line"></span><br><span class="line">    cmd := &amp;cobra.Command&#123;</span><br><span class="line">        Use:   <span class="string">"Launch "</span> + projectinfo.GetServerName(),</span><br><span class="line">        Short: projectinfo.GetServerName() + <span class="string">" sends requests to "</span> + projectinfo.GetAgentName(),</span><br><span class="line">        RunE: <span class="function"><span class="keyword">func</span><span class="params">(c *cobra.Command, args []<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">            ...</span><br><span class="line">            cfg, err := serverOptions.Config()</span><br><span class="line">            <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> err</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> err := Run(cfg.Complete(), stopCh); err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> err</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;,</span><br><span class="line">        Args: cobra.NoArgs,</span><br><span class="line">    &#125;</span><br><span class="line">    serverOptions.AddFlags(cmd.Flags())</span><br><span class="line">    <span class="keyword">return</span> cmd</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="3-runcfgcomplete-stopch"><a href="#3-Run-cfg-Complete-stopCh" class="headerlink" title="3. Run(cfg.Complete(), stopCh)"></a>3. Run(cfg.Complete(), stopCh)</h1><p>Run函数最终是运行一个tunnelserver的常驻进程。在之前会做一些controller或manager的准备工作。</p>
+<h1 id="3-runcfgcomplete-stopch">3. Run(cfg.Complete(), stopCh)</h1>
+<p>Run函数最终是运行一个tunnelserver的常驻进程。在之前会做一些controller或manager的准备工作。</p>
 <p>其中包括：</p>
 <ul>
-<li><p>DNS controller</p>
+<li>
+<p>DNS controller</p>
 </li>
-<li><p>IP table manager</p>
+<li>
+<p>IP table manager</p>
 </li>
-<li><p>certificate manager</p>
+<li>
+<p>certificate manager</p>
 </li>
-<li><p>RegisterInformersForTunnelServer</p>
+<li>
+<p>RegisterInformersForTunnelServer</p>
 </li>
 </ul>
 <p>首先是构建并运行上述的manager或controller， 源码中的注释也大概描述了主要流程：</p>
 <ol>
-<li><p>注册tunnel所需的SharedInformerFactory</p>
+<li>
+<p>注册tunnel所需的SharedInformerFactory</p>
 </li>
-<li><p>运行dns controller</p>
+<li>
+<p>运行dns controller</p>
 </li>
-<li><p>运行ip table manager</p>
+<li>
+<p>运行ip table manager</p>
 </li>
-<li><p>给tunnel server创建certificate manager</p>
+<li>
+<p>给tunnel server创建certificate manager</p>
 </li>
-<li><p>给tunnel agent 创建certificate manager</p>
+<li>
+<p>给tunnel agent 创建certificate manager</p>
 </li>
-<li><p>创建handler wrappers</p>
+<li>
+<p>创建handler wrappers</p>
 </li>
-<li><p>生成TLS 证书</p>
+<li>
+<p>生成TLS 证书</p>
 </li>
-<li><p>运行tunnel server</p>
+<li>
+<p>运行tunnel server</p>
 </li>
 </ol>
 <p>以下是部分代码，已删除无关紧要的代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// run starts the yurttunel-server</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Run</span><span class="params">(cfg *config.CompletedConfig, stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    <span class="comment">// register informers that tunnel server need</span></span><br><span class="line">    informers.RegisterInformersForTunnelServer(cfg.SharedInformerFactory)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 0. start the DNS controller</span></span><br><span class="line">    <span class="keyword">if</span> cfg.EnableDNSController &#123;</span><br><span class="line">        dnsController, err := dns.NewCoreDNSRecordController(...)</span><br><span class="line">        <span class="keyword">go</span> dnsController.Run(stopCh)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 1. start the IP table manager</span></span><br><span class="line">    <span class="keyword">if</span> cfg.EnableIptables &#123;</span><br><span class="line">        iptablesMgr, err := iptables.NewIptablesManagerWithIPFamily(...)</span><br><span class="line">        wg.Add(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">go</span> iptablesMgr.Run(stopCh, &amp;wg)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. create a certificate manager for the tunnel server</span></span><br><span class="line">    certManagerFactory := certfactory.NewCertManagerFactory(cfg.Client)</span><br><span class="line">    ips, dnsNames, err := getTunnelServerIPsAndDNSNamesBeforeInformerSynced(cfg.Client, stopCh)</span><br><span class="line"></span><br><span class="line">    serverCertMgr, err := certManagerFactory.New(...)</span><br><span class="line">    serverCertMgr.Start()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. create a certificate manager for the tunnel proxy client</span></span><br><span class="line">    tunnelProxyCertMgr, err := certManagerFactory.New(...)</span><br><span class="line">    tunnelProxyCertMgr.Start()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. create handler wrappers</span></span><br><span class="line">    mInitializer := initializer.NewMiddlewareInitializer(cfg.SharedInformerFactory)</span><br><span class="line">    wrappers, err := wraphandler.InitHandlerWrappers(mInitializer, cfg.IsIPv6())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// after all of informers are configured completed, start the shared index informer</span></span><br><span class="line">    cfg.SharedInformerFactory.Start(stopCh)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5. waiting for the certificate is generated</span></span><br><span class="line">    _ = wait.PollUntil(<span class="number">5</span>*time.Second, <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">        <span class="comment">// keep polling until the certificate is signed</span></span><br><span class="line">        <span class="keyword">if</span> serverCertMgr.Current() != <span class="literal">nil</span> &amp;&amp; tunnelProxyCertMgr.Current() != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        klog.Infof(<span class="string">"waiting for the master to sign the %s certificate"</span>, projectinfo.GetServerName())</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>, <span class="literal">nil</span></span><br><span class="line">    &#125;, stopCh)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 6. generate the TLS configuration based on the latest certificate</span></span><br><span class="line">    tlsCfg, err := certmanager.GenTLSConfigUseCurrentCertAndCertPool(serverCertMgr.Current, cfg.RootCert, <span class="string">"server"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    proxyClientTlsCfg, err := certmanager.GenTLSConfigUseCurrentCertAndCertPool(tunnelProxyCertMgr.Current, cfg.RootCert, <span class="string">"client"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 7. start the server</span></span><br><span class="line">    ts := server.NewTunnelServer(</span><br><span class="line">        cfg.EgressSelectorEnabled,</span><br><span class="line">        cfg.InterceptorServerUDSFile,</span><br><span class="line">        cfg.ListenAddrForMaster,</span><br><span class="line">        cfg.ListenInsecureAddrForMaster,</span><br><span class="line">        cfg.ListenAddrForAgent,</span><br><span class="line">        cfg.ServerCount,</span><br><span class="line">        tlsCfg,</span><br><span class="line">        proxyClientTlsCfg,</span><br><span class="line">        wrappers,</span><br><span class="line">        cfg.ProxyStrategy)</span><br><span class="line">    <span class="keyword">if</span> err := ts.Run(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 8. start meta server</span></span><br><span class="line">    util.RunMetaServer(cfg.ListenMetaAddr)</span><br><span class="line"></span><br><span class="line">    &lt;-stopCh</span><br><span class="line">    wg.Wait()</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="3-tunnelserver"><a href="#3-TunnelServer" class="headerlink" title="3. TunnelServer"></a>3. TunnelServer</h1><p>anpTunnelServer实现了TunnelServer的接口，以下分析TunnelServer.Run的部分。</p>
+<h1 id="3-tunnelserver">3. TunnelServer</h1>
+<p>anpTunnelServer实现了TunnelServer的接口，以下分析TunnelServer.Run的部分。</p>
 <p>run部分主要运行了三个server</p>
 <ul>
-<li><p>proxyServer： 主要是重定向apiserver的请求到tunnel server</p>
+<li>
+<p>proxyServer： 主要是重定向apiserver的请求到tunnel server</p>
 </li>
-<li><p>MasterServer：</p>
+<li>
+<p>MasterServer：</p>
 </li>
-<li><p>AgentServer：主要运行一个grpc server与tunnel agent连接，即云边反向隧道</p>
+<li>
+<p>AgentServer：主要运行一个grpc server与tunnel agent连接，即云边反向隧道</p>
 </li>
 </ul>
 <blockquote>
 <p>代码参考：<a href="https://github.com/openyurtio/openyurt/blob/180282663457080119a1bc6076cce20c922b5c50/pkg/yurttunnel/server/anpserver.go" target="_blank" rel="noopener">/pkg/yurttunnel/server/anpserver.go</a></p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Run runs the yurttunnel-server</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ats *anpTunnelServer)</span> <span class="title">Run</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    proxyServer := anpserver.NewProxyServer(uuid.New().String(),</span><br><span class="line">        []anpserver.ProxyStrategy&#123;anpserver.ProxyStrategy(ats.proxyStrategy)&#125;,</span><br><span class="line">        ats.serverCount,</span><br><span class="line">        &amp;anpserver.AgentTokenAuthenticationOptions&#123;&#125;)</span><br><span class="line">    <span class="comment">// 1. start the proxier</span></span><br><span class="line">    proxierErr := runProxier(</span><br><span class="line">        &amp;anpserver.Tunnel&#123;Server: proxyServer&#125;,</span><br><span class="line">        ats.egressSelectorEnabled,</span><br><span class="line">        ats.interceptorServerUDSFile,</span><br><span class="line">        ats.tlsCfg)</span><br><span class="line"></span><br><span class="line">    wrappedHandler, err := wh.WrapHandler(</span><br><span class="line">        NewRequestInterceptor(ats.interceptorServerUDSFile, ats.proxyClientTlsCfg),</span><br><span class="line">        ats.wrappers,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. start the master server</span></span><br><span class="line">    masterServerErr := runMasterServer(</span><br><span class="line">        wrappedHandler,</span><br><span class="line">        ats.egressSelectorEnabled,</span><br><span class="line">        ats.serverMasterAddr,</span><br><span class="line">        ats.serverMasterInsecureAddr,</span><br><span class="line">        ats.tlsCfg)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. start the agent server</span></span><br><span class="line">    agentServerErr := runAgentServer(ats.tlsCfg, ats.serverAgentAddr, proxyServer)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="4-runagentserver"><a href="#4-runAgentServer" class="headerlink" title="4. runAgentServer"></a>4. runAgentServer</h1><p>runAgentServer主要运行一个grpc server与edge端的agent形成grpc连接。</p>
+<h1 id="4-runagentserver">4. runAgentServer</h1>
+<p>runAgentServer主要运行一个grpc server与edge端的agent形成grpc连接。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// runAgentServer runs a grpc server that handles connections from the yurttunel-agent</span></span><br><span class="line"><span class="comment">// NOTE agent server is responsible for managing grpc connection yurttunel-server</span></span><br><span class="line"><span class="comment">// and yurttunnel-agent, and the proxy server is responsible for redirecting requests</span></span><br><span class="line"><span class="comment">// to corresponding yurttunel-agent</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">runAgentServer</span><span class="params">(tlsCfg *tls.Config,</span></span></span><br><span class="line"><span class="function"><span class="params">    agentServerAddr <span class="keyword">string</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    proxyServer *anpserver.ProxyServer)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    serverOption := grpc.Creds(credentials.NewTLS(tlsCfg))</span><br><span class="line"></span><br><span class="line">    ka := keepalive.ServerParameters&#123;</span><br><span class="line">        <span class="comment">// Ping the client if it is idle for `Time` seconds to ensure the</span></span><br><span class="line">        <span class="comment">// connection is still active</span></span><br><span class="line">        Time: constants.YurttunnelANPGrpcKeepAliveTimeSec * time.Second,</span><br><span class="line">        <span class="comment">// Wait `Timeout` second for the ping ack before assuming the</span></span><br><span class="line">        <span class="comment">// connection is dead</span></span><br><span class="line">        Timeout: constants.YurttunnelANPGrpcKeepAliveTimeoutSec * time.Second,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    grpcServer := grpc.NewServer(serverOption,</span><br><span class="line">        grpc.KeepaliveParams(ka))</span><br><span class="line"></span><br><span class="line">    anpagent.RegisterAgentServiceServer(grpcServer, proxyServer)</span><br><span class="line">    listener, err := net.Listen(<span class="string">"tcp"</span>, agentServerAddr)</span><br><span class="line">    klog.Info(<span class="string">"start handling connection from agents"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"fail to listen to agent on %s: %w"</span>, agentServerAddr, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">go</span> grpcServer.Serve(listener)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="5-interceptor"><a href="#5-Interceptor" class="headerlink" title="5. Interceptor"></a>5. Interceptor</h1><p>Interceptor（请求拦截器）拦截kube-apiserver的请求转发给tunnel，通过tunnel请求kubelet。</p>
+<h1 id="5-interceptor">5. Interceptor</h1>
+<p>Interceptor（请求拦截器）拦截kube-apiserver的请求转发给tunnel，通过tunnel请求kubelet。</p>
 <p>流程图：</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1683615159/article/openyurt/tunnel_sequence_diag.webp" title alt width="719"></p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1683615159/article/openyurt/tunnel_sequence_diag.webp" title alt width="719">
 <blockquote>
 <p>代码地址：<a href="https://github.com/openyurtio/openyurt/blob/180282663457080119a1bc6076cce20c922b5c50/pkg/yurttunnel/server/interceptor.go" target="_blank" rel="noopener">/pkg/yurttunnel/server/interceptor.go</a></p>
 </blockquote>
@@ -605,7 +629,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">
