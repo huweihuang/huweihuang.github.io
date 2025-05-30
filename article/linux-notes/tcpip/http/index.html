@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          HTTP协议 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/linux-notes/tcpip/http/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#TCPIP" title="TCPIP">TCPIP</a>
+                            
+                        </div>
+                        <h1>HTTP协议</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-09-20
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-web及网络基础">1. web及网络基础</h1>
+<h2 id="11-通过http访问webcs">1.1. 通过HTTP访问web[C/S]</h2>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579775/article/tcpip/http/basis/1.1.png" alt></p>
+<h2 id="12-tcpip四层模型">1.2. TCP/IP四层模型</h2>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/1.2.png" alt></p>
+<h3 id="121-数据包的封装">1.2.1. 数据包的封装</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/1.2.1.png" alt></p>
+<h2 id="13-tcpip协议族">1.3. TCP/IP协议族</h2>
+<h3 id="131-负责传输的ip协议">1.3.1. 负责传输的IP协议</h3>
+<p>使用ARP协议凭借MAC地址通信</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/1.3.1.png" alt></p>
+<h3 id="132-确保可靠的tcp协议">1.3.2. 确保可靠的TCP协议</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579775/article/tcpip/http/basis/1.3.2.png" alt></p>
+<h3 id="133-负责域名解析的dns服务">1.3.3. 负责域名解析的DNS服务</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/1.3.3.png" alt></p>
+<h3 id="134-各协议与http的关系">1.3.4. 各协议与HTTP的关系</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579775/article/tcpip/http/basis/1.3.4.png" alt></p>
+<h2 id="14-uri与url">1.4. URI与URL</h2>
+<ul>
+<li>URI(Uniform Resource Identifier):统一资源标识符</li>
+<li>URL(Uniform Resource Locator):统一资源定位符；URL是URI的子集</li>
+</ul>
+<h3 id="141-uri的格式">1.4.1. URI的格式</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579775/article/tcpip/http/basis/1.4.1.png" alt></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>协议</td>
+<td>http/https</td>
+</tr>
+<tr>
+<td>登录信息（认证）</td>
+<td>user:pass@(一般没有)</td>
+</tr>
+<tr>
+<td>服务器地址</td>
+<td>域名或IP</td>
+</tr>
+<tr>
+<td>服务器端口号</td>
+<td>服务端口号，省略则取默认端口号</td>
+</tr>
+<tr>
+<td>带层次的文件路径</td>
+<td>指定服务器上的文件路径来定位特指的资源</td>
+</tr>
+<tr>
+<td>查询字符串</td>
+<td>使用查询字符串传入参数</td>
+</tr>
+<tr>
+<td>片段标识符</td>
+<td>标记以获取资源中的子资源（文档内的某个位置）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="142-uri的示例">1.4.2. URI的示例</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579775/article/tcpip/http/basis/1.4.2.png" alt></p>
+<h1 id="2-http协议">2. HTTP协议</h1>
+<h2 id="21-通过请求和响应的交换达成通信">2.1. 通过请求和响应的交换达成通信</h2>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/2.1.png" alt></p>
+<h3 id="211-请求报文">2.1.1. 请求报文</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579775/article/tcpip/http/basis/2.1.1.png" alt></p>
+<h3 id="212-响应报文">2.1.2. 响应报文</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/2.1.2.png" alt></p>
+<h2 id="22-http请求方法">2.2. HTTP请求方法</h2>
+<h3 id="221-get获取资源">2.2.1. GET:获取资源</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/2.2.1.png" alt></p>
+<h3 id="222-post传输实体主体">2.2.2. POST:传输实体主体</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.2.1.png" alt></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579776/article/tcpip/http/basis/2.2.2.2.png" alt></p>
+<h3 id="223-put传输文件">2.2.3. PUT:传输文件</h3>
+<p>PUT方法用来传输文件，像FTP协议一样，要求在请求报文的主体中包含文件内容，然后保存到请求URI指定的位置。</p>
+<p>因为自身不带验证机制，有安全问题，因此一般不采用。若配合验证机制或者REST标准则可使用。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.3.png" alt></p>
+<h3 id="224-head获取报文头部">2.2.4. HEAD:获取报文头部</h3>
+<p>HEAD和GET一样但不返回报文主体部分，用于确认URI的有效性及资源的更新时间等。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.4.png" alt></p>
+<h3 id="225-delete删除文件">2.2.5. DELETE:删除文件</h3>
+<p>DELETE与PUT作用相反，但不带安全验证机制一般不采用。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.5.1.png" alt></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.5.2.png" alt></p>
+<h3 id="226-options询问支持的方法">2.2.6. OPTIONS:询问支持的方法</h3>
+<p>OPTIONS用来查询针对请求URI指定的资源支持的方法</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.6.png" alt></p>
+<h3 id="227-trace追踪路径">2.2.7. TRACE:追踪路径</h3>
+<p>TRACE用来查询发送出去的请求是怎样被加工修改/篡改的，因为易引发XST（跨站追踪）攻击，一般不使用。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.7.png" alt></p>
+<h3 id="228-connect要求用隧道协议连接代理">2.2.8. CONNECT:要求用隧道协议连接代理</h3>
+<p>CONNECT要求在与代理服务器通信时建立隧道，实现用隧道协议进行TCP通信。主要使用SSL（Source Sockets Layer:安全套接字）和TLS（Transport Layer Security:传输层安全）协议把通信内容加密后经网络隧道传输。</p>
+<p>方法格式如下：</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579777/article/tcpip/http/basis/2.2.8.1.png" alt></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579778/article/tcpip/http/basis/2.2.8.2.png" alt></p>
+<h2 id="23-持久连接">2.3. 持久连接</h2>
+<h3 id="231-keep-alive">2.3.1. keep-alive</h3>
+<p>为解决每进行一次HTTP通信就要断开一次TCP连接，增加了通信量的开销，HTTP/1.1通过keep-alive持久连接，只要任意一端没有明确提出断开连接，则保持TCP连接状态。</p>
+<p>持久连接减少了TCP连接的重复建立和断开所造成的额外开销，减轻了服务器端的负载。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579778/article/tcpip/http/basis/2.3.1.png" alt></p>
+<h3 id="232-管线化">2.3.2. 管线化</h3>
+<p>持续连接使得多数请求以管线化（pipelining）方式发送成为可能。管线化即同时并行发送多个请求，而不需要一个接一个等待响应。管线化技术比持续连接速度快，请求数越多越明显。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579778/article/tcpip/http/basis/2.3.2.png" alt></p>
+<h3 id="233-使用cookie的状态管理">2.3.3. 使用cookie的状态管理</h3>
+<p>HTTP是无状态协议，不对之前发生过的请求和响应的状态进行管理，即无法根据之前的状态进行本次的请求处理。无状态协议的优点在于不必保存状态，减少服务器CPU及内存资源的消耗。</p>
+<p>cookie技术通过在请求和响应报文中写入cookie信息来控制客户端的状态。cookie会根据从服务端发送的响应报文内的一个叫做Set-Cookie的首部字段通知客户端保存Cookie；当客户端再往服务端发送请求时，客户端自动在请求报文中加入Cookie值后发送出去。服务器发现Cookie后会检查从哪个客户端发送来的连接请求，对比服务器上的记录，最后得到之前的状态信息。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579778/article/tcpip/http/basis/2.3.3.png" alt></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579778/article/tcpip/http/basis/2.3.3.2.png" alt></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510579778/article/tcpip/http/basis/2.3.3.3.png" alt></p>
+<h1 id="3-http报文">3. HTTP报文</h1>
+<h2 id="31-http报文">3.1. HTTP报文</h2>
+<p>用于HTTP协议交互的信息被称为HTTP报文，客户端的HTTP报文叫做请求报文，服务端的叫做响应报文。报文大致分为报文首部和报文主体，但并不一定要有报文主体。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580019/article/tcpip/http/codestatus/3.1.png" alt="img"></p>
+<h2 id="32-报文结构">3.2. 报文结构</h2>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580019/article/tcpip/http/codestatus/3.2.png" alt="img"></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/3.2.2.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>请求行</td>
+<td>请求方法，请求URI和HTTP版本</td>
+</tr>
+<tr>
+<td>状态行</td>
+<td>响应结果的状态码，原因短语和HTTP版本</td>
+</tr>
+<tr>
+<td>首部字段</td>
+<td>请求和响应的各种条件和属性的各类首部：通用首部、请求首部、响应首部、实体首部</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>HTTP的RFC里未定义的首部（Cookie等）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="33-编码提升传输速率">3.3. 编码提升传输速率</h2>
+<p>HTTP在传输数据时可以按照数据原貌直接传输也可以在传输过程中编码提升传输速率；通过编码可以处理大量请求但会消耗更多的CPU等资源。</p>
+<h3 id="331-报文主体和实体主体的差异">3.3.1. 报文主体和实体主体的差异</h3>
+<ul>
+<li>报文：是HTTP通信中的基本单位，由8位组字节流组成，通过HTTP通信传输。</li>
+<li>实体：作为请求或响应的有效载荷数据被传输，其内容由实体首部和实体主体组成。</li>
+</ul>
+<p>通常报文主体等于实体主体，但当传输中进行编码时，实体主体的内容发生变化才会与报文主体产生差异。</p>
+<h3 id="332-压缩传输的内容编码">3.3.2. 压缩传输的内容编码</h3>
+<p>HTTP中的内容编码指明应用在实体内容上的编码格式，并保持实体信息原样压缩，内容编码后的实体由客户端接收并负责解码。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580019/article/tcpip/http/codestatus/3.3.2.png" alt="img"></p>
+<p>常用的内容编码：</p>
+<ul>
+<li>gzip(GNU ZIP)</li>
+<li>compress(UNIX系统的标准压缩)</li>
+<li>deflate(zlib)</li>
+<li>identity(不进行编码)</li>
+</ul>
+<h3 id="333-分块传输编码">3.3.3. 分块传输编码</h3>
+<p>分块传输编码会将实体主体分成多个块，每一块都会用十六进制来标记快的大小，而实体的最后一块会使用“0（CR+LF）”来标记。</p>
+<p>由接收的客户端负责解码，回复到编码前的实体主体。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/3.3.3.png" alt="img"></p>
+<h2 id="34-发送多种数据的多部分对象集合">3.4. 发送多种数据的多部分对象集合</h2>
+<p>HTTP中的多部分对象集合即发送一份报文主体内可含有多类型实体，通常是图片或文本文件上传等。</p>
+<p>多部分对象集合包含的对象：</p>
+<ul>
+<li>multipart/form-data:在web表单文件上传时使用</li>
+<li>multipart/byteranges：状态码206响应报文包含了多个范围的内容时使用</li>
+</ul>
+<h2 id="35-获取部分内容的范围请求">3.5. 获取部分内容的范围请求</h2>
+<p>指定范围发送的请求叫做范围请求，对于一份10000字节大小的资源，如果使用范围请求，可以只请求5001-10000字节内的资源。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/3.5.png" alt="img"></p>
+<p>执行范围请求时，会用到首部字段Range来指定资源的byte范围</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/3.5.2.png" alt="img"></p>
+<h2 id="36-内容协商返回最合适的内容">3.6. 内容协商返回最合适的内容</h2>
+<p>内容协商机制是指客户端和服务端就响应的资源内容进行交涉，然后提供给客户端最合适的资源。内容协商会以响应资源的语言、编码方式等作为判断的基准。</p>
+<p>内容协商类型：</p>
+<ul>
+<li>服务器驱动协商</li>
+<li>客户端驱动协商</li>
+<li>透明协商</li>
+</ul>
+<h1 id="4-http状态码">4. HTTP状态码</h1>
+<p>状态码即服务器返回的请求结果。</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1xx</td>
+<td>Informational(信息性状态码)</td>
+<td>接收的请求正在处理</td>
+</tr>
+<tr>
+<td>2xx</td>
+<td>Success(成功)</td>
+<td>请求正常处理完毕</td>
+</tr>
+<tr>
+<td>3xx</td>
+<td>Redirection(重定向)</td>
+<td>需要进行附加操作以完成请求</td>
+</tr>
+<tr>
+<td>4xx</td>
+<td>Client Error(客户端错误)</td>
+<td>服务器无法处理请求</td>
+</tr>
+<tr>
+<td>5xx</td>
+<td>Server Error(服务端错误)</td>
+<td>服务器处理请求出错</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580022/article/tcpip/http/codestatus/4.png" alt="img"></p>
+<h2 id="41-2xx成功">4.1. 2XX成功</h2>
+<h3 id="411-200-ok">4.1.1. 200 OK</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/4.1.1.png" alt="img"></p>
+<h3 id="412-204-no-content">4.1.2. 204 No Content</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/4.1.2.png" alt="img"></p>
+<p>表示请求已成功处理，但在返回的响应报文中不含实体的主体部分。</p>
+<h3 id="413-206-partial-content">4.1.3. 206 Partial Content</h3>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/4.1.3.png" alt="img"></p>
+<p>该状态码表示客户端进行了范围请求，服务器成功执行了这部分的GET请求。响应报文中包含由Content-Range指定范围的实体内容。</p>
+<h2 id="42-3xx-重定向">4.2. 3XX 重定向</h2>
+<h3 id="421-301-moved-permanently">4.2.1. 301 Moved Permanently</h3>
+<p>永久性重定向，表示资源已被分配了新的URI，以后应使用新的URI。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/4.2.1.png" alt="img"></p>
+<h3 id="422-302-found">4.2.2. 302 Found</h3>
+<p>临时性重定向，表示请求的资源已被分配了新的URI，但是临时性的。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.2.2.png" alt="img"></p>
+<h3 id="423-303-see-other">4.2.3. 303 See Other</h3>
+<p>表示由于请求的资源存在另一个URI，应使用GET方法重定向获取请求的资源。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580020/article/tcpip/http/codestatus/4.2.3.png" alt="img"></p>
+<h3 id="424-304-not-modified">4.2.4. 304 Not Modified</h3>
+<p>表示客户端发送附带条件的请求时（GET中的If-Modified-Since等首部），服务器允许访问资源，但未满足附带条件因此直接返回304（服务器的资源未改变，可直接使用客户端未过期的缓存），不包含任何响应的主体部分。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.2.4.png" alt="img"></p>
+<h3 id="425-307-temporary-redirect">4.2.5. 307 Temporary Redirect</h3>
+<p>临时重定向，该状态与302有相同的含义。</p>
+<h2 id="43-4xx-客户端错误">4.3. 4XX 客户端错误</h2>
+<h3 id="431-400-bad-request">4.3.1. 400 Bad Request</h3>
+<p>表示请求报文中存在语法错误，需修改内容重新发送请求。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.3.1.png" alt="img"></p>
+<h3 id="432-401-unauthorized">4.3.2. 401 Unauthorized</h3>
+<p>表示需要通过HTTP认证。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.3.2.png" alt="img"></p>
+<h3 id="433-403-forbidden">4.3.3. 403 Forbidden</h3>
+<p>表示请求被服务器拒绝，未获得访问授权。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.3.3.png" alt="img"></p>
+<h3 id="434-404-no-found">4.3.4. 404 No Found</h3>
+<p>表明服务器上找不到请求的资源，也可以在服务器拒绝请求且不想说明理由时使用。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.3.4.png" alt="img"></p>
+<h2 id="44-5xx-服务器错误">4.4. 5XX 服务器错误</h2>
+<h3 id="441-500-internal-server-error">4.4.1. 500 Internal Server Error</h3>
+<p>表明服务器在执行请求时发生了错误，也可能是Web应用存在bug或临时故障等。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580021/article/tcpip/http/codestatus/4.4.1.png" alt="img"></p>
+<h3 id="442-503-service-unavailable">4.4.2. 503 Service Unavailable</h3>
+<p>表明服务器暂时处于超负荷或正在进行停机维护，现在不能处理请求。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510580022/article/tcpip/http/codestatus/4.4.2.png" alt="img"></p>
+<p>参考：</p>
+<ul>
+<li>《图解HTTP》</li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/k8s-source-code-analysis/kube-apiserver/NewAPIServerCommand/" data-toggle="tooltip" data-placement="top" title="kube-apiserver源码分析（一）之 NewAPIServerCommand">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/linux-notes/tcpip/udp/" data-toggle="tooltip" data-placement="top" title="UDP协议">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-web及网络基础"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. web及网络基础</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-通过http访问webcs"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. 通过HTTP访问web[C/S]</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-tcpip四层模型"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. TCP/IP四层模型</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#121-数据包的封装"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">1.2.1. 数据包的封装</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-tcpip协议族"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">1.3. TCP/IP协议族</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#131-负责传输的ip协议"><span class="toc-nav-number">1.3.1.</span> <span class="toc-nav-text">1.3.1. 负责传输的IP协议</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#132-确保可靠的tcp协议"><span class="toc-nav-number">1.3.2.</span> <span class="toc-nav-text">1.3.2. 确保可靠的TCP协议</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#133-负责域名解析的dns服务"><span class="toc-nav-number">1.3.3.</span> <span class="toc-nav-text">1.3.3. 负责域名解析的DNS服务</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#134-各协议与http的关系"><span class="toc-nav-number">1.3.4.</span> <span class="toc-nav-text">1.3.4. 各协议与HTTP的关系</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#14-uri与url"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">1.4. URI与URL</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#141-uri的格式"><span class="toc-nav-number">1.4.1.</span> <span class="toc-nav-text">1.4.1. URI的格式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#142-uri的示例"><span class="toc-nav-number">1.4.2.</span> <span class="toc-nav-text">1.4.2. URI的示例</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-http协议"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. HTTP协议</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-通过请求和响应的交换达成通信"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 通过请求和响应的交换达成通信</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#211-请求报文"><span class="toc-nav-number">2.1.1.</span> <span class="toc-nav-text">2.1.1. 请求报文</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#212-响应报文"><span class="toc-nav-number">2.1.2.</span> <span class="toc-nav-text">2.1.2. 响应报文</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-http请求方法"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. HTTP请求方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#221-get获取资源"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">2.2.1. GET:获取资源</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#222-post传输实体主体"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">2.2.2. POST:传输实体主体</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#223-put传输文件"><span class="toc-nav-number">2.2.3.</span> <span class="toc-nav-text">2.2.3. PUT:传输文件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#224-head获取报文头部"><span class="toc-nav-number">2.2.4.</span> <span class="toc-nav-text">2.2.4. HEAD:获取报文头部</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#225-delete删除文件"><span class="toc-nav-number">2.2.5.</span> <span class="toc-nav-text">2.2.5. DELETE:删除文件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#226-options询问支持的方法"><span class="toc-nav-number">2.2.6.</span> <span class="toc-nav-text">2.2.6. OPTIONS:询问支持的方法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#227-trace追踪路径"><span class="toc-nav-number">2.2.7.</span> <span class="toc-nav-text">2.2.7. TRACE:追踪路径</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#228-connect要求用隧道协议连接代理"><span class="toc-nav-number">2.2.8.</span> <span class="toc-nav-text">2.2.8. CONNECT:要求用隧道协议连接代理</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-持久连接"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 持久连接</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#231-keep-alive"><span class="toc-nav-number">2.3.1.</span> <span class="toc-nav-text">2.3.1. keep-alive</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#232-管线化"><span class="toc-nav-number">2.3.2.</span> <span class="toc-nav-text">2.3.2. 管线化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#233-使用cookie的状态管理"><span class="toc-nav-number">2.3.3.</span> <span class="toc-nav-text">2.3.3. 使用cookie的状态管理</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-http报文"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. HTTP报文</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-http报文"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. HTTP报文</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-报文结构"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. 报文结构</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-编码提升传输速率"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. 编码提升传输速率</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#331-报文主体和实体主体的差异"><span class="toc-nav-number">3.3.1.</span> <span class="toc-nav-text">3.3.1. 报文主体和实体主体的差异</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#332-压缩传输的内容编码"><span class="toc-nav-number">3.3.2.</span> <span class="toc-nav-text">3.3.2. 压缩传输的内容编码</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#333-分块传输编码"><span class="toc-nav-number">3.3.3.</span> <span class="toc-nav-text">3.3.3. 分块传输编码</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-发送多种数据的多部分对象集合"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">3.4. 发送多种数据的多部分对象集合</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#35-获取部分内容的范围请求"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">3.5. 获取部分内容的范围请求</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#36-内容协商返回最合适的内容"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">3.6. 内容协商返回最合适的内容</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-http状态码"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. HTTP状态码</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-2xx成功"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. 2XX成功</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#411-200-ok"><span class="toc-nav-number">4.1.1.</span> <span class="toc-nav-text">4.1.1. 200 OK</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#412-204-no-content"><span class="toc-nav-number">4.1.2.</span> <span class="toc-nav-text">4.1.2. 204 No Content</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#413-206-partial-content"><span class="toc-nav-number">4.1.3.</span> <span class="toc-nav-text">4.1.3. 206 Partial Content</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-3xx-重定向"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. 3XX 重定向</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#421-301-moved-permanently"><span class="toc-nav-number">4.2.1.</span> <span class="toc-nav-text">4.2.1. 301 Moved Permanently</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#422-302-found"><span class="toc-nav-number">4.2.2.</span> <span class="toc-nav-text">4.2.2. 302 Found</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#423-303-see-other"><span class="toc-nav-number">4.2.3.</span> <span class="toc-nav-text">4.2.3. 303 See Other</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#424-304-not-modified"><span class="toc-nav-number">4.2.4.</span> <span class="toc-nav-text">4.2.4. 304 Not Modified</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#425-307-temporary-redirect"><span class="toc-nav-number">4.2.5.</span> <span class="toc-nav-text">4.2.5. 307 Temporary Redirect</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-4xx-客户端错误"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. 4XX 客户端错误</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#431-400-bad-request"><span class="toc-nav-number">4.3.1.</span> <span class="toc-nav-text">4.3.1. 400 Bad Request</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#432-401-unauthorized"><span class="toc-nav-number">4.3.2.</span> <span class="toc-nav-text">4.3.2. 401 Unauthorized</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#433-403-forbidden"><span class="toc-nav-number">4.3.3.</span> <span class="toc-nav-text">4.3.3. 403 Forbidden</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#434-404-no-found"><span class="toc-nav-number">4.3.4.</span> <span class="toc-nav-text">4.3.4. 404 No Found</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-5xx-服务器错误"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">4.4. 5XX 服务器错误</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#441-500-internal-server-error"><span class="toc-nav-number">4.4.1.</span> <span class="toc-nav-text">4.4.1. 500 Internal Server Error</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#442-503-service-unavailable"><span class="toc-nav-number">4.4.2.</span> <span class="toc-nav-text">4.4.2. 503 Service Unavailable</span></a></li></ol></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#TCPIP" title="TCPIP">TCPIP</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

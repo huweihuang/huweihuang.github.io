@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,45 +212,61 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-cnicontainer-network-interface"><a href="#1-CNI（Container-Network-Interface）" class="headerlink" title="1. CNI（Container Network Interface）"></a>1. CNI（Container Network Interface）</h1><p>CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。</p>
-<p>kubelet启动参数—network-plugin=cni来指定CNI插件，kubelet从<code>--cni-conf-dir</code> （默认是 <code>/etc/cni/net.d</code>） 读取文件并使用 该文件中的 CNI 配置来设置各个 Pod 的网络。 CNI 配置文件必须与 <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration" target="_blank" rel="noopener">CNI 规约</a> 匹配，并且配置所引用的所有所需的 CNI 插件都应存在于 <code>--cni-bin-dir</code>（默认是 <code>/opt/cni/bin</code>）下。如果有多个CNI配置文件，kubelet 将会使用按文件名的字典顺序排列 的第一个作为配置文件。</p>
+                <div id="vip-container"><h1 id="1-cnicontainer-network-interface">1. CNI（Container Network Interface）</h1>
+<p>CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。</p>
+<p>kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从<code>--cni-conf-dir</code> （默认是 <code>/etc/cni/net.d</code>） 读取文件并使用 该文件中的 CNI 配置来设置各个 Pod 的网络。 CNI 配置文件必须与 <a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#network-configuration" target="_blank" rel="noopener">CNI 规约</a> 匹配，并且配置所引用的所有所需的 CNI 插件都应存在于 <code>--cni-bin-dir</code>（默认是 <code>/opt/cni/bin</code>）下。如果有多个CNI配置文件，kubelet 将会使用按文件名的字典顺序排列 的第一个作为配置文件。</p>
 <p>CNI规范定义：</p>
 <ul>
-<li><p>网络配置文件的格式</p>
+<li>
+<p>网络配置文件的格式</p>
 </li>
-<li><p>容器runtime与CNI插件的通信协议</p>
+<li>
+<p>容器runtime与CNI插件的通信协议</p>
 </li>
-<li><p>基于提供的配置执行网络插件的步骤</p>
+<li>
+<p>基于提供的配置执行网络插件的步骤</p>
 </li>
-<li><p>网络插件调用其他功能插件的步骤</p>
+<li>
+<p>网络插件调用其他功能插件的步骤</p>
 </li>
-<li><p>插件返回给runtime结果的数据格式</p>
-</li>
-</ul>
-<h1 id="2-cni配置文件格式"><a href="#2-CNI配置文件格式" class="headerlink" title="2. CNI配置文件格式"></a>2. CNI配置文件格式</h1><p>CNI配置文件的格式为JSON格式，配置文件的默认路径：/etc/cni/net.d。插件二进制默认的路径为：/opt/cni/bin。</p>
-<h2 id="21-主配置的字段"><a href="#2-1-主配置的字段" class="headerlink" title="2.1. 主配置的字段"></a>2.1. 主配置的字段</h2><ul>
-<li><p><code>cniVersion</code> (string)：CNI规范使用的版本，例如版本为0.4.0。</p>
-</li>
-<li><p><code>name</code> (string)：目标网络的名称。</p>
-</li>
-<li><p><code>disableCheck</code> (boolean)：关闭CHECK操作。</p>
-</li>
-<li><p><code>plugins</code> (list)：CNI插件列表及插件配置。</p>
+<li>
+<p>插件返回给runtime结果的数据格式</p>
 </li>
 </ul>
-<h2 id="22-插件配置字段"><a href="#2-2-插件配置字段" class="headerlink" title="2.2. 插件配置字段"></a>2.2. 插件配置字段</h2><p>根据不同的插件，插件配置所需的字段不同。</p>
+<h1 id="2-cni配置文件格式">2. CNI配置文件格式</h1>
+<p>CNI配置文件的格式为JSON格式，配置文件的默认路径：/etc/cni/net.d。插件二进制默认的路径为：/opt/cni/bin。</p>
+<h2 id="21-主配置的字段">2.1. 主配置的字段</h2>
+<ul>
+<li>
+<p><code>cniVersion</code> (string)：CNI规范使用的版本，例如版本为0.4.0。</p>
+</li>
+<li>
+<p><code>name</code> (string)：目标网络的名称。</p>
+</li>
+<li>
+<p><code>disableCheck</code> (boolean)：关闭CHECK操作。</p>
+</li>
+<li>
+<p><code>plugins</code> (list)：CNI插件列表及插件配置。</p>
+</li>
+</ul>
+<h2 id="22-插件配置字段">2.2. 插件配置字段</h2>
+<p>根据不同的插件，插件配置所需的字段不同。</p>
 <p>必选字段：</p>
 <ul>
 <li><code>type</code> (string)：节点上插件二进制的名称，比如bridge，sriov，macvlan等。</li>
 </ul>
 <p>可选字段：</p>
 <ul>
-<li><p><code>capabilities</code> (dictionary)</p>
+<li>
+<p><code>capabilities</code> (dictionary)</p>
 </li>
-<li><p><code>ipMasq</code> (boolean)：为目标网络配上Outbound Masquerade(地址伪装)，即：由容器内部通过网关向外发送数据包时，对数据包的源IP地址进行修改。</p>
+<li>
+<p><code>ipMasq</code> (boolean)：为目标网络配上Outbound Masquerade(地址伪装)，即：由容器内部通过网关向外发送数据包时，对数据包的源IP地址进行修改。</p>
 <p>当我们的容器以宿主机作为网关时，这个参数是必须要设置的。否则，从容器内部发出的数据包就没有办法通过网关路由到其他网段。因为容器内部的IP地址无法被目标网段识别，所以这些数据包最终会被丢弃掉。</p>
 </li>
-<li><p><code>ipam</code> (dictionary)：IPAM(IP Adderss Management)即IP地址管理，提供了一系列方法用于对IP和路由进行管理。它对应的是由CNI提供的一组标准IPAM插件，比如像host-local，dhcp，static等。比如文中用到的bridge插件，会调用我们所指定的IPAM插件，实现对网络设备IP地址的分配和管理。**如果是自己开发的ipam插件，则相关的入参可以自己定义和实现。</p>
+<li>
+<p><code>ipam</code> (dictionary)：IPAM(IP Adderss Management)即IP地址管理，提供了一系列方法用于对IP和路由进行管理。它对应的是由CNI提供的一组标准IPAM插件，比如像host-local，dhcp，static等。比如文中用到的bridge插件，会调用我们所指定的IPAM插件，实现对网络设备IP地址的分配和管理。**如果是自己开发的ipam插件，则相关的入参可以自己定义和实现。</p>
 <p>以下以host-local为例说明。</p>
 <ul>
 <li>type：指定所用IPAM插件的名称，在我们的例子里，用的是host-local。</li>
@@ -261,24 +277,32 @@
 <li>gateway：为网关（也就是我们将要在宿主机上创建的bridge）指定的IP地址。如果省略的话，那么插件会自动从允许分配的IP地址范围内选择起始值作为网关的IP地址。</li>
 </ul>
 </li>
-<li><p><code>dns</code> (dictionary, optional)：dns配置</p>
+<li>
+<p><code>dns</code> (dictionary, optional)：dns配置</p>
 <ul>
-<li><p><code>nameservers</code> (list of strings, optional)</p>
+<li>
+<p><code>nameservers</code> (list of strings, optional)</p>
 </li>
-<li><p><code>domain</code> (string, optional)</p>
+<li>
+<p><code>domain</code> (string, optional)</p>
 </li>
-<li><p><code>search</code> (list of strings, optional)</p>
+<li>
+<p><code>search</code> (list of strings, optional)</p>
 </li>
-<li><p><code>options</code> (list of strings, optional)</p>
+<li>
+<p><code>options</code> (list of strings, optional)</p>
 </li>
 </ul>
 </li>
 </ul>
-<h2 id="23-配置文件示例"><a href="#2-3-配置文件示例" class="headerlink" title="2.3. 配置文件示例"></a>2.3. 配置文件示例</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /etc/cni/net.d</span><br><span class="line">$ cat &gt;/etc/cni/net.d/10-mynet.conf &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"cniVersion"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"dbnet"</span>,</span><br><span class="line">  <span class="attr">"plugins"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"bridge"</span>,</span><br><span class="line">      <span class="comment">// plugin specific parameters</span></span><br><span class="line">      <span class="attr">"bridge"</span>: <span class="string">"cni0"</span>,</span><br><span class="line">      <span class="attr">"keyA"</span>: [<span class="string">"some more"</span>, <span class="string">"plugin specific"</span>, <span class="string">"configuration"</span>],</span><br><span class="line"></span><br><span class="line">      <span class="attr">"ipam"</span>: &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"host-local"</span>,</span><br><span class="line">        <span class="comment">// ipam specific</span></span><br><span class="line">        <span class="attr">"subnet"</span>: <span class="string">"10.1.0.0/16"</span>,</span><br><span class="line">        <span class="attr">"gateway"</span>: <span class="string">"10.1.0.1"</span>,</span><br><span class="line">        <span class="attr">"routes"</span>: [</span><br><span class="line">            &#123;<span class="attr">"dst"</span>: <span class="string">"0.0.0.0/0"</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"dns"</span>: &#123;</span><br><span class="line">        <span class="attr">"nameservers"</span>: [ <span class="string">"10.1.0.1"</span> ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"tuning"</span>,</span><br><span class="line">      <span class="attr">"capabilities"</span>: &#123;</span><br><span class="line">        <span class="attr">"mac"</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"sysctl"</span>: &#123;</span><br><span class="line">        <span class="attr">"net.core.somaxconn"</span>: <span class="string">"500"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"portmap"</span>,</span><br><span class="line">        <span class="attr">"capabilities"</span>: &#123;<span class="attr">"portMappings"</span>: <span class="literal">true</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="3-cni插件"><a href="#3-CNI插件" class="headerlink" title="3. CNI插件"></a>3. CNI插件</h1><h2 id="31-安装插件"><a href="#3-1-安装插件" class="headerlink" title="3.1. 安装插件"></a>3.1. 安装插件</h2><p>安装CNI二进制插件，插件下载地：<a href="https://github.com/containernetworking/plugins/releases" target="_blank" rel="noopener">https://github.com/containernetworking/plugins/releases</a></p>
+<h2 id="23-配置文件示例">2.3. 配置文件示例</h2>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir -p /etc/cni/net.d</span><br><span class="line">$ cat &gt;/etc/cni/net.d/10-mynet.conf &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"cniVersion"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"dbnet"</span>,</span><br><span class="line">  <span class="attr">"plugins"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"bridge"</span>,</span><br><span class="line">      <span class="comment">// plugin specific parameters</span></span><br><span class="line">      <span class="attr">"bridge"</span>: <span class="string">"cni0"</span>,</span><br><span class="line">      <span class="attr">"keyA"</span>: [<span class="string">"some more"</span>, <span class="string">"plugin specific"</span>, <span class="string">"configuration"</span>],</span><br><span class="line"></span><br><span class="line">      <span class="attr">"ipam"</span>: &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"host-local"</span>,</span><br><span class="line">        <span class="comment">// ipam specific</span></span><br><span class="line">        <span class="attr">"subnet"</span>: <span class="string">"10.1.0.0/16"</span>,</span><br><span class="line">        <span class="attr">"gateway"</span>: <span class="string">"10.1.0.1"</span>,</span><br><span class="line">        <span class="attr">"routes"</span>: [</span><br><span class="line">            &#123;<span class="attr">"dst"</span>: <span class="string">"0.0.0.0/0"</span>&#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"dns"</span>: &#123;</span><br><span class="line">        <span class="attr">"nameservers"</span>: [ <span class="string">"10.1.0.1"</span> ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">"type"</span>: <span class="string">"tuning"</span>,</span><br><span class="line">      <span class="attr">"capabilities"</span>: &#123;</span><br><span class="line">        <span class="attr">"mac"</span>: <span class="literal">true</span></span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="attr">"sysctl"</span>: &#123;</span><br><span class="line">        <span class="attr">"net.core.somaxconn"</span>: <span class="string">"500"</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">"type"</span>: <span class="string">"portmap"</span>,</span><br><span class="line">        <span class="attr">"capabilities"</span>: &#123;<span class="attr">"portMappings"</span>: <span class="literal">true</span>&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-cni插件">3. CNI插件</h1>
+<h2 id="31-安装插件">3.1. 安装插件</h2>
+<p>安装CNI二进制插件，插件下载地：<a href="https://github.com/containernetworking/plugins/releases" target="_blank" rel="noopener">https://github.com/containernetworking/plugins/releases</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载二进制</span></span><br><span class="line">wget https://github.com/containernetworking/plugins/releases/download/v1.1.0/cni-plugins-linux-amd64-v1.1.0.tgz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压文件</span></span><br><span class="line">tar -zvxf cni-plugins-linux-amd64-v1.1.0.tgz -C /opt/cni/bin/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看解压文件</span></span><br><span class="line"><span class="comment"># ll -h</span></span><br><span class="line">总用量 63M</span><br><span class="line">-rwxr-xr-x 1 root root 3.7M 2月  24 01:01 bandwidth</span><br><span class="line">-rwxr-xr-x 1 root root 4.1M 2月  24 01:01 bridge</span><br><span class="line">-rwxr-xr-x 1 root root 9.3M 2月  24 01:01 dhcp</span><br><span class="line">-rwxr-xr-x 1 root root 4.2M 2月  24 01:01 firewall</span><br><span class="line">-rwxr-xr-x 1 root root 3.7M 2月  24 01:01 host-device</span><br><span class="line">-rwxr-xr-x 1 root root 3.1M 2月  24 01:01 host-local</span><br><span class="line">-rwxr-xr-x 1 root root 3.8M 2月  24 01:01 ipvlan</span><br><span class="line">-rwxr-xr-x 1 root root 3.2M 2月  24 01:01 loopback</span><br><span class="line">-rwxr-xr-x 1 root root 3.8M 2月  24 01:01 macvlan</span><br><span class="line">-rwxr-xr-x 1 root root 3.6M 2月  24 01:01 portmap</span><br><span class="line">-rwxr-xr-x 1 root root 4.0M 2月  24 01:01 ptp</span><br><span class="line">-rwxr-xr-x 1 root root 3.4M 2月  24 01:01 sbr</span><br><span class="line">-rwxr-xr-x 1 root root 2.7M 2月  24 01:01 static</span><br><span class="line">-rwxr-xr-x 1 root root 3.3M 2月  24 01:01 tuning</span><br><span class="line">-rwxr-xr-x 1 root root 3.8M 2月  24 01:01 vlan</span><br><span class="line">-rwxr-xr-x 1 root root 3.4M 2月  24 01:01 vrf</span><br></pre></td></tr></table></figure>
-<h2 id="32-插件分类"><a href="#3-2-插件分类" class="headerlink" title="3.2. 插件分类"></a>3.2. 插件分类</h2><p>参考：<a href="https://www.cni.dev/plugins/current/" target="_blank" rel="noopener">https://www.cni.dev/plugins/current/</a></p>
-<div class="table-container">
+<h2 id="32-插件分类">3.2. 插件分类</h2>
+<p>参考：<a href="https://www.cni.dev/plugins/current/" target="_blank" rel="noopener">https://www.cni.dev/plugins/current/</a></p>
 <table>
 <thead>
 <tr>
@@ -360,8 +384,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h1 id="4-cni插件接口"><a href="#4-CNI插件接口" class="headerlink" title="4. CNI插件接口"></a>4. CNI插件接口</h1><p>具体可参考：<a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations" target="_blank" rel="noopener">https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations</a></p>
+<h1 id="4-cni插件接口">4. CNI插件接口</h1>
+<p>具体可参考：<a href="https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations" target="_blank" rel="noopener">https://github.com/containernetworking/cni/blob/master/SPEC.md#cni-operations</a></p>
 <p>CNI定义的接口操作有：</p>
 <ul>
 <li><code>ADD</code>：添加容器网络，在容器启动时调用。</li>
@@ -372,20 +396,27 @@
 <p>这些操作通过<code>CNI_COMMAND</code>环境变量来传递给CNI插件二进制。</p>
 <p>其中环境变量包括：</p>
 <ul>
-<li><p><code>CNI_COMMAND</code>：命令操作，包括 <code>ADD</code>, <code>DEL</code>, <code>CHECK</code>, or <code>VERSION</code>。</p>
+<li>
+<p><code>CNI_COMMAND</code>：命令操作，包括 <code>ADD</code>, <code>DEL</code>, <code>CHECK</code>, or <code>VERSION</code>。</p>
 </li>
-<li><p><code>CNI_CONTAINERID</code>:容器的ID，有runtime分配，不为空。</p>
+<li>
+<p><code>CNI_CONTAINERID</code>:容器的ID，有runtime分配，不为空。</p>
 </li>
-<li><p><code>CNI_NETNS</code>:容器的网络命名空间，命名空间路径，例如：/run/netns/[nsname]</p>
+<li>
+<p><code>CNI_NETNS</code>:容器的网络命名空间，命名空间路径，例如：/run/netns/[nsname]</p>
 </li>
-<li><p><code>CNI_IFNAME</code>:容器内的网卡名称。</p>
+<li>
+<p><code>CNI_IFNAME</code>:容器内的网卡名称。</p>
 </li>
-<li><p><code>CNI_ARGS</code>:其他参数。</p>
+<li>
+<p><code>CNI_ARGS</code>:其他参数。</p>
 </li>
-<li><p><code>CNI_PATH</code>:CNI插件二进制的路径。</p>
+<li>
+<p><code>CNI_PATH</code>:CNI插件二进制的路径。</p>
 </li>
 </ul>
-<h2 id="41-add接口添加容器网络"><a href="#4-1-ADD接口：添加容器网络" class="headerlink" title="4.1. ADD接口：添加容器网络"></a>4.1. ADD接口：添加容器网络</h2><p>在容器的网络命名空间<code>CNI_NETNS</code>中创建<code>CNI_IFNAME</code>网卡设备，或者调整网卡配置。</p>
+<h2 id="41-add接口添加容器网络">4.1. ADD接口：添加容器网络</h2>
+<p>在容器的网络命名空间<code>CNI_NETNS</code>中创建<code>CNI_IFNAME</code>网卡设备，或者调整网卡配置。</p>
 <p>必选参数：</p>
 <ul>
 <li><code>CNI_COMMAND</code></li>
@@ -398,7 +429,8 @@
 <li><code>CNI_ARGS</code></li>
 <li><code>CNI_PATH</code></li>
 </ul>
-<h2 id="42-del接口删除容器网络"><a href="#4-2-DEL接口：删除容器网络" class="headerlink" title="4.2. DEL接口：删除容器网络"></a>4.2. DEL接口：删除容器网络</h2><p>删除容器网络命名空间<code>CNI_NETNS</code>中的容器网卡<code>CNI_IFNAME</code>，或者撤销ADD修改操作。</p>
+<h2 id="42-del接口删除容器网络">4.2. DEL接口：删除容器网络</h2>
+<p>删除容器网络命名空间<code>CNI_NETNS</code>中的容器网卡<code>CNI_IFNAME</code>，或者撤销ADD修改操作。</p>
 <p>必选参数：</p>
 <ul>
 <li><code>CNI_COMMAND</code></li>
@@ -411,7 +443,21 @@
 <li><code>CNI_ARGS</code></li>
 <li><code>CNI_PATH</code></li>
 </ul>
-<h2 id="43-check接口检查容器网络"><a href="#4-3-CHECK接口：检查容器网络" class="headerlink" title="4.3. CHECK接口：检查容器网络"></a>4.3. CHECK接口：检查容器网络</h2><h2 id="44-version接口输出cni的版本"><a href="#4-4-VERSION接口：输出CNI的版本" class="headerlink" title="4.4. VERSION接口：输出CNI的版本"></a>4.4. VERSION接口：输出CNI的版本</h2><p>参考：</p>
+<h2 id="43-check接口检查容器网络">4.3. CHECK接口：检查容器网络</h2>
+<p>必选参数：</p>
+<ul>
+<li><code>CNI_COMMAND</code></li>
+<li><code>CNI_CONTAINERID</code></li>
+<li><code>CNI_NETNS</code></li>
+<li><code>CNI_IFNAME</code></li>
+</ul>
+<p>可选参数：</p>
+<ul>
+<li><code>CNI_ARGS</code></li>
+<li><code>CNI_PATH</code></li>
+</ul>
+<h2 id="44-version接口输出cni的版本">4.4. VERSION接口：输出CNI的版本</h2>
+<p>参考：</p>
 <ul>
 <li><a href="https://www.cni.dev/docs/spec/" target="_blank" rel="noopener">https://www.cni.dev/docs/spec/</a></li>
 <li><a href="https://github.com/containernetworking/cni" target="_blank" rel="noopener">https://github.com/containernetworking/cni</a></li>
@@ -446,12 +492,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/resource/lxcfs/lxcfs/" data-toggle="tooltip" data-placement="top" title="Lxcfs资源视图隔离">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/network/cni/macvlan/" data-toggle="tooltip" data-placement="top" title="Macvlan介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/network/cni/macvlan/" data-toggle="tooltip" data-placement="top" title="Macvlan介绍">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/" data-toggle="tooltip" data-placement="top" title="k8s多集群管理的思考">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -729,7 +775,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

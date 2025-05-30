@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -211,7 +211,7 @@
 
 <div class="post-preview">
 
-    <a href="/article/k8s-source-code-analysis/kubelet/syncPod/">
+    <a href="/article/k8s-source-code-analysis/kube-controller-manager/Informer/">
         <h2 class="post-title">
             
                 <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
@@ -221,17 +221,18 @@
                 <!-- <font color=#F89E8C>置顶</font>  -->
                 <!-- <font color=#1CB7ED>置顶</font>  -->
                         
-            kubelet源码分析（五）之 syncPod
+            kube-controller-manager源码分析（三）之 Informer机制
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            kubelet源码分析（五）之 syncPod
+            kube-controller-manager源码分析（三）之 Informer机制
+
 以下代码分析基于 kubernetes v1.12.0 版本。
 
-本文主要分析kubelet中syncPod的部分。
-1. managePodLoopmanagePodLoop通过读取podUpdateschannel的信息，执行syncPodFn函数，而syncPodFn函数在newPodWorkers的时候赋值了，即kubelet.sync......
+本文主要分析k8s中各个核心组件经常使用到的Informer机制(即List-Watch)。该部分的代码主要位于client-go这个第三方包中。
+此部分的逻辑主要位于/vendor/k8s.io/client-go/tools/cache......
         </div>
     </a>
     
@@ -251,72 +252,250 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/setup/k8s-changelog/">
+    <a href="/article/k8s-source-code-analysis/kubelet/syncPod/">
         <h2 class="post-title">
+            
+                <i class="fa fa-thumb-tack" style="color:#F4711F" ></i>
+                <!-- <i class="fa fa-thumb-tack" style="color:#F89E8C" ></i> -->
+                <!-- <i class="fa fa-thumb-tack" style="color:#1CB7ED" ></i> -->
+                <font color=#F4711F>置顶</font>
+                <!-- <font color=#F89E8C>置顶</font>  -->
+                <!-- <font color=#1CB7ED>置顶</font>  -->
                         
-            k8s版本记录
+            kubelet源码分析（五）之 syncPod
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1.27参考：
+            kubelet源码分析（五）之 syncPod
 
-Kubernetes 在 v1.27 中移除的特性和主要变更
+以下代码分析基于 kubernetes v1.12.0 版本。
 
-https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md#changelog-since-v1260
-
-202304 | K8s 1.27 正式发布 - DaoCloud Enterprise
-
-
-（一）重要......
+本文主要分析kubelet中syncPod的部分。
+1. managePodLoop
+managePodLoop通过读取podUpdateschannel的信息，执行syncPodFn函数，而syncPodFn函数在newPodWorkers的时候赋值了，即kubelet.sy......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2023-08-02
+            2018-10-03
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#源码分析" title="源码分析">源码分析</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/baremetal/redfish-api/">
+        <h2 class="post-title">
+                        
+            Redfish API
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+本文主要介绍redfish api的调用路径及格式。
+
+Redfish是一种基于HTTPs服务的管理标准，利用RESTful接口实现设备管理。可以理解为redfish api就是通过http的调用方式来操作服务器的bmc设备，从而实现对设备的远程控制。
+1. BMC常用功能操作
+
+
+BIOS 管理
+
+
+启动设置（boot order）
+
+
+虚拟媒体管理
+
+
+电源管理（开机、关机、重启）
+
+......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2025-05-18
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#裸金属" title="裸金属">裸金属</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/mysql/deploy-mysql/">
+        <h2 class="post-title">
+                        
+            Mysql服务部署
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 通过容器的方式部署
+123mkdir -p ~/data/mysqldocker run --name my-mysql -v ~/data/mysql:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7
+2. 通过k8s deployment的方式部署
+部署的注意事项：
+
+
+mysql数据的持久......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2025-03-09
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/file/linux-command/">
+        <h2 class="post-title">
+                        
+            Linux常用命令
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            创建用户名和密码
+123456789101112131415# 通过写文件创建用户，/home/mybot是用户目录echo "mybot:x:1001:1001::/home/mybot:/bin/bash" &gt;&gt; /etc/passwd# 给用户创建密码echo "mybot:&#123;password&#125;" | chpasswd# 指定文件系统根目录创建密码，例如......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2025-03-02
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Linux" title="Linux">Linux</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/LLM/build-ollama-openwebui/">
+        <h2 class="post-title">
+                        
+            基于Ollama构建本地大模型
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本文主要介绍如何通过Ollama和OpenWebUI来搭建一个本地私有化运行的大模型工具。私有化大模型的构建主要用于解决数据的安全性问题，对于大部分私有数据不适合通过外部的大模型网站来上传和分析。
+1. Ollama 与 OpenWebUI 介绍
+1.1. Ollama简介
+Ollama 是一个 本地运行的 AI 大模型管理工具，可以让你在本地 快速拉取、管理和运行 各种开源大语言模型（如 ......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2025-02-16
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#大模型" title="大模型">大模型</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/baremetal/format-disk/">
+        <h2 class="post-title">
+                        
+            格式化磁盘分区
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            本文主要描述重装操作系统如何格式化跟分区和数据盘以及设置磁盘挂载配置。
+1.将操作系统写入根分区设备
+1、解绑根分区磁盘目录挂载
+12345678# 例如跟分区下的挂载目录如下：cat /proc/mounts | grep ^/dev/sda/dev/sda4 / ext4 rw,relatime,errors=remount-ro 0 0/dev/sda3 /boot ext4 rw,r......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2025-01-19
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#裸金属" title="裸金属">裸金属</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/network/flannel/vxlan/">
+        <h2 class="post-title">
+                        
+            VXLAN原理介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. VXLAN简介
+VXLAN（Virtual Extensible LAN）是一种网络虚拟化技术，旨在解决传统二层网络扩展的局限性，尤其是在数据中心大规模部署中。它通过隧道技术将二层以太网帧封装在三层UDP包中，实现了跨三层网络的二层网络延展。
+1.1. VXLAN的基本概念
+
+目的：解决二层网络扩展的问题，例如VLAN的数量限制（传统VLAN ID 只能支持4096（2的12次方）个）......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2024-12-01
         </p>
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/develop/operator/develop-operator/">
-        <h2 class="post-title">
-                        
-            如何开发一个Operator
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            开发一个k8s operator组件主要会用到以下几个仓库或工具：
-
-kubebuilder/operator-sdk：主要用于创建CRD对象。
-
-controller-manager：主要用于实现operator的controller逻辑。
-
-
-本文以kubebuilder的工具和controller-manager example为例。
-1. 准备工具环境及创建项目安装kubebuild......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-07-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Operator" title="Operator">Operator</a>
+              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -326,64 +505,34 @@ controller-manager：主要用于实现operator的controller逻辑。
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/deployment/canary-deployment/">
+    <a href="/article/kubernetes-notes/network/flannel/flannel/">
         <h2 class="post-title">
                         
-            金丝雀发布
+            Flannel介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Deployment配置金丝雀发布金丝雀发布是指控制更新过程中的滚动节奏，通过“暂停”（pause）或“继续”（resume）更新发布操作。通过一小部分的版本发布实例来观察新版本是否有异常，如果没有异常则依次发布剩余的实例。
-1. 设置发版节奏主要是两个字段的设置：
+            1. Flannel简介
+Flannel 是一个简单的、易于使用的 Kubernetes 网络插件，用于为容器集群提供网络功能。它主要解决的是 Kubernetes 集群中跨节点容器间通信的问题，通过为每个节点分配一个独立的子网，确保容器之间可以使用虚拟网络进行无障碍通信。
+1.1. Flannel 的特点与优势
 
-maxSurge：最大发版实例数，可以创建的超出期望 Pod 个数的 Pod 数量。可以是百分比或者是数字。
-maxUnav......
+易于配置和使用
+
+提供简单的配置文件，易于集成到 Kubernetes 集群......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2023-05-31
+            2024-11-24
         </p>
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">
-        <h2 class="post-title">
-                        
-            OpenYurt之TunnelServer源码分析
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析tunnel-server的实现逻辑。
-
-1. Tunnel-server简介云与边一般位于不同网络平面，同时边缘节点普遍位于防火墙内部，采用云(中心)边协同架构，将导致原生 K8s 系统的运维监控能力面临如下挑战:
-
-K8s 原生运维能力......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-05-18
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
+              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -393,165 +542,35 @@ K8s 原生运维能力......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/monitor/kube-promethus-stack/">
+    <a href="/article/kubernetes-notes/operation/deployment/kruise-rollout/">
         <h2 class="post-title">
                         
-            kube-prometheus-stack的使用
+            Kruise Rollout发布
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. kube-prometheus-stack简介kube-prometheus-stack是prometheus监控k8s集群的套件，可以通过helm一键安装，同时带有监控的模板。
-各组件包括
+            1. kruise-rollout简介
+金丝雀发布是逐步将流量导向新版本的应用，以最小化风险。具体过程包括：
 
-grafana
-kube-state-metrics
-prometheus
-alertmanager
-node-exporter
+部署新版本的 Pod。
+将一部分流量分配到新版本（通常比例很小）。
+逐步增加新版本的流量比例，直到完成全量发布。
 
-2. 安装kube-prometheus-stack执行以下命......
+Kruise Rollouts 是一个 Bypass(旁路) 组件，提供 高级渐进式交付功能 。可以通过Kruise Rollouts插件来实现金丝雀发布的能力。
+
+......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2023-05-18
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Monitor" title="Monitor">Monitor</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/monitor/grafana-usage/">
-        <h2 class="post-title">
-                        
-            Grafana部署
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Docker部署1docker run -d -p 3000:3000 grafana/grafana:latest
-K8S部署helm部署
-123helm repo add grafana https://grafana.github.io/helm-chartshelm search repo grafana
-参考：
-
-Install Grafana | Grafana document......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-05-18
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Monitor" title="Monitor">Monitor</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tennel-agent-code-analysis/">
-        <h2 class="post-title">
-                        
-            OpenYurt之Tunnel-Agent源码分析
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Tunnel-Agent简介tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与云端的tunnel-server建立连接。以下分析tunnel-agent的源码逻辑。
-常用的启动参数：
-1234567- args:  - --node-name=$(NODE_NAME)  - --node-ip=$(POD_IP)  - --tunnelser......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-05-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/kubectl/kubeconfig/">
-        <h2 class="post-title">
-                        
-            kubeconfig的使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. kubeconfig说明默认情况下，kubectl 在 $HOME/.kube 目录下查找名为 config 的文件。 你可以通过设置 KUBECONFIG 环境变量或者设置 --kubeconfig参数来指定其他 kubeconfig 文件。
-kubeconfig内容示例：
-以下证书以文件的形式读取。
-12345678910111213141516171819apiVersion: ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-04-19
+            2024-11-23
         </p>
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/yurthub-code-analysis-1/">
-        <h2 class="post-title">
-                        
-            OpenYurt之YurtHub源码分析
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-本文分析yurthub源码，第一部分。
-本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析yurthub的实现逻辑。
-
-yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在云边通信正常的情况下实现apiserver的请求转发，断网的情况下通过本地的缓存数据保证节点上容器的正常运行......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2023-04-16
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
             
         </div>
     
@@ -620,13 +639,15 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-        
-            
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#读书笔记" title="读书笔记" rel="2">读书笔记</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="63">Kubernetes</a>
             
         
             
@@ -634,7 +655,7 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="4">KubeVirt</a>
             
         
             
@@ -648,7 +669,17 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+        
+            
+            <a href="/tags/#裸金属" title="裸金属" rel="3">裸金属</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="4">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="11">Linux</a>
             
         
             
@@ -656,13 +687,11 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#IDE" title="IDE" rel="2">IDE</a>
             
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
             
         
             
@@ -674,15 +703,19 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="4">Mysql</a>
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#network" title="network" rel="4">network</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="4">Nginx</a>
             
         
             
@@ -690,11 +723,11 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
+            <a href="/tags/#TCPIP" title="TCPIP" rel="5">TCPIP</a>
             
         
             
@@ -702,9 +735,11 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
@@ -714,7 +749,9 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
+            
+        
             
         
             
@@ -722,11 +759,11 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
             
         
             
@@ -736,11 +773,11 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
             
         
             
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            <a href="/tags/#CNI" title="CNI" rel="7">CNI</a>
             
         
             
-            <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -749,6 +786,10 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
         
             
             <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -832,23 +873,23 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
     <ul>
       
         <li>
-          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+          <a href="/article/linux-notes/baremetal/redfish-api/">Redfish API</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
+          <a href="/article/linux-notes/mysql/deploy-mysql/">Mysql服务部署</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/develop/operator/develop-operator/">如何开发一个Operator</a>
+          <a href="/article/linux-notes/file/linux-command/">Linux常用命令</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/operation/deployment/canary-deployment/">金丝雀发布</a>
+          <a href="/article/linux-notes/LLM/build-ollama-openwebui/">基于Ollama构建本地大模型</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
+          <a href="/article/linux-notes/baremetal/format-disk/">格式化磁盘分区</a>
         </li>
       
     </ul>
@@ -877,7 +918,7 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
     </div>
 
         <hr>
@@ -951,7 +992,7 @@ yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在�
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

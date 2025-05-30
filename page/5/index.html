@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -211,26 +211,58 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/setup/k8s-version-release/">
+    <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tennel-agent-code-analysis/">
         <h2 class="post-title">
                         
-            k8s版本说明
+            OpenYurt之Tunnel-Agent源码分析
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. k8s版本号说明k8s维护最新三个版本的发布分支（[2022.7.2]当前最新三个版本为1.24、1.23、1.22），Kubernetes 1.19 和更新的版本获得大约 1 年的补丁支持。
-Kubernetes 版本表示为 x.y.z， 其中 x 是主要版本，y 是次要版本，z 是补丁版本。遵循语义化版本规范。
-2. 版本偏差策略2.1. 支持的版本偏差总结：
-
-kubelet 版......
+            1. Tunnel-Agent简介
+tunnel-agent是通过daemonset部署在每个worker节点，通过grpc协议与云端的tunnel-server建立连接。以下分析tunnel-agent的源码逻辑。
+常用的启动参数：
+1234567- args:  - --node-name=$(NODE_NAME)  - --node-ip=$(POD_IP)  - --tunnelse......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2022-06-23
+            2023-05-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/kubectl/kubeconfig/">
+        <h2 class="post-title">
+                        
+            kubeconfig的使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. kubeconfig说明
+默认情况下，kubectl 在 $HOME/.kube 目录下查找名为 config 的文件。 你可以通过设置 KUBECONFIG 环境变量或者设置 --kubeconfig参数来指定其他 kubeconfig 文件。
+kubeconfig内容示例：
+以下证书以文件的形式读取。
+12345678910111213141516171819apiVersion:......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2023-04-19
         </p>
         <div class="tags">
             
@@ -244,36 +276,30 @@ kubelet 版......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/runtime/runtime/">
+    <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/yurthub-code-analysis-1/">
         <h2 class="post-title">
                         
-            Runc和Containerd概述
+            OpenYurt之YurtHub源码分析
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
             
-本文主要分析OCI，CRI，runc，containerd，cri-containerd，dockershim等组件说明及调用关系。
+本文分析yurthub源码，第一部分。
+本文以commit id：180282663457080119a1bc6076cce20c922b5c50， 对应版本tag: v1.2.1 的源码分析yurthub的实现逻辑。
 
-1. 概述各个组件调用关系图如下：
-
-
-图片来源：https://www.jianshu.com/p/62e71584d1cb
-
-2. OCI（Open Container Initiative）OCI（Open Container Initiative）......
+yurthub是部署在每个边缘节点上用来实现边缘自治的组件。在云边通信正常的情况下实现apiserver的请求转发，断网的情况下通过本地的缓存数据保证节点上容器的正常运行......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-09-17
+            2023-04-16
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
+              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
             
         </div>
     
@@ -283,26 +309,27 @@ kubelet 版......
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/functions/">
+    <a href="/article/linux-notes/network/wrk-usage/">
         <h2 class="post-title">
                         
-            函数与闭包
+            wrk的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            函数1. 函数定义与调用12345678910111213141516171819//1、函数组成：关键字func ,函数名，参数列表，返回值，函数体，返回语句//先名称后类型func 函数名(参数列表)(返回值列表)&#123;  //参数列表和返回值列表以变量声明的形式，如果单返回值可以直接加类型  函数体  return    //返回语句&#125;//例子func Add(a,b ......
+            1. Installation
+12# macbrew install wrk
+2. Usage
+123456789101112131415$ wrk --helpUsage: wrk &lt;options&gt; &lt;url&gt;  Options:    -c, --connections &lt;N&gt;  Connections to keep open # 跟服务器建立并......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-09-16
+            2023-04-13
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -312,202 +339,42 @@ kubelet 版......
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/introduction/package/go-modules/">
+    <a href="/article/kubernetes-notes/develop/develop-k8s/">
         <h2 class="post-title">
                         
-            go modules的使用
+            k8s社区开发指南
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Go modules简介Go 1.11版本开始支持Go modules方式的依赖包管理功能，官网参考：https://github.com/golang/go/wiki/Modules 。
-2. go mod的使用项目文件如下：
-hello.go
-12345678910package mainimport (    "fmt"    "rsc.io/quote")func main()......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-09-16
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
-            
-        </div>
-    
+            1. 社区说明
+1.1. Community membership
 
-</div>
-<hr>
 
-<div class="post-preview">
 
-    <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/cloudcore/">
-        <h2 class="post-title">
-                        
-            Kubeedge之cloudcore 源码分析
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            kubeedge源码分析之cloudcore
-本文源码分析基于kubeedge v1.1.0
+Role
+Responsibilities
+Requirements
+Defined by
 
-本文主要分析cloudcore中CloudCoreCommand的基本流程，具体的cloudhub、edgecontroller、devicecontroller模块的实现逻辑待后续单独文章分析。
-目录结构：
 
-cloud/cmd/cloudcore
 
-123456cloudcore├── app......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubeedge" title="Kubeedge">Kubeedge</a>
-            
-        </div>
-    
 
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/develop/operator/kubebuilder/">
-        <h2 class="post-title">
-                        
-            kubebuilder的使用
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. kubebuilder1.1. 安装kubebuilder123# download kubebuilder and install locally.curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)chmod +x kubebuilder &amp;&am......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Operator" title="Operator">Operator</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/edge/kubeedge/kubeedge-arch/">
-        <h2 class="post-title">
-                        
-            KubeEdge介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. KubeEdge简介KubeEdge是基于kubernetes之上将容器化应用的编排能力拓展到边缘主机或边缘设备，在云端和边缘端提供网络通信，应用部署、元数据同步等功能。同时支持MQTT协议，允许开发者在边缘端自定义接入边缘设备。
-2. 功能
-边缘计算：提供边缘节点自治能力，边缘节点数据处理能力。
-便捷部署：开发者可以开发http或mqtt协议的应用，运行在云端和边缘端。
-k8s原生支......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubeedge" title="Kubeedge">Kubeedge</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/edge/kubeedge/code-analysis/edgecore/">
-        <h2 class="post-title">
-                        
-            Kubeedge之edgecore 源码分析
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            kubeedge源码分析之edgecore
-本文源码分析基于kubeedge v1.1.0
-
-本文主要分析edgecore中EdgeCoreCommand的基本流程，具体的edged、edgehub、metamanager等模块的实现逻辑待后续单独文章分析。
-目录结构：
-123456edgecore├── app│   ├── options│   │   └── options.go│  ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2021-08-13
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubeedge" title="Kubeedge">Kubeedge</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/kata/kata-container/">
-        <h2 class="post-title">
-                        
-            Kata容器简介
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Kata-container简介kata-container通过轻量型虚拟机技术构建一个安全的容器运行时，表现像容器一样，但通硬件虚拟化技术提供强隔离，作为第二层的安全防护。
-特点：
-
-安全：独立的内核，提供网络、I/O、内存的隔离。
-兼容性：支持OCI容器标准，k8s的CRI接口。
-性能：兼容虚拟机的安全和容器的轻量特点。
-简单：使用标准的接口。
-
-1. kata-container架构
+Member
+Active contributor in the community
+Sponsored by 2 reviewers and multiple contributions to the project
 ......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-07-20
+            2023-03-02
         </p>
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
             
         </div>
     
@@ -517,27 +384,219 @@ k8s原生支......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/resource/lxcfs/lxcfs/">
+    <a href="/article/linux-notes/network/tcpdump/">
         <h2 class="post-title">
                         
-            Lxcfs资源视图隔离
+            tcpdump抓包流程
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 资源视图隔离容器中的执行top、free等命令展示出来的CPU，内存等信息是从/proc目录中的相关文件里读取出来的。而容器并没有对/proc，/sys等文件系统做隔离，因此容器中读取出来的CPU和内存的信息是宿主机的信息，与容器实际分配和限制的资源量不同。
-123456/proc/cpuinfo/proc/diskstats/proc/meminfo/proc/stat/proc/s......
+            1. 简介
+linux系统上常用tcpdump抓包来分析网络问题。本文基于网络文章整理，主要介绍tcpdump抓包的常用命令及参数。
+以下是数据包在操作系统层面的流程：
+网卡nic -&gt; tcpdump -&gt; iptables(netfilter) -&gt; app -&gt; iptables(netfilter) -&gt; tcpdump -&gt; 网卡nic
+2. t......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2021-07-18
+            2023-01-06
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#network" title="network">network</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/network/pod-dns/">
+        <h2 class="post-title">
+                        
+            Pod的DNS策略
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Pod的DNS策略
+可以在pod中定义dnsPolicy字段来设置dns的策略。
+
+
+“Default”: Pod 从运行所在的节点继承名称解析配置。就是该Pod的DNS配置会跟宿主机完全一致。
+
+
+“ClusterFirst”: 如果没有配置，即为默认的DNS策略。预先把kube-dns（或CoreDNS）的信息当作预设参数写入到该Pod内的DNS配置。与配置的集群域后缀不匹配的任何......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-12-29
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Network" title="Network">Network</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/edge/openyurt/update-k8s-for-openyurt/">
+        <h2 class="post-title">
+                        
+            OpenYurt 安装相关Kubernetes配置调整
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            安装openyurt，为了适配边缘场景，需要对k8s组件进行调整。其中包括：
+
+
+kube-apiserver
+
+
+kube-controller-manager
+
+
+kube-proxy
+
+
+CoreDNS
+
+
+1. kube-apiserver
+为了实现云边通信，即用户可以正常使用kubectl exec/logs的功能来登录或查看边缘容器的信息。需要将kube-apiserver访问k......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-12-26
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#OpenYurt" title="OpenYurt">OpenYurt</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/helm/helm-usage/">
+        <h2 class="post-title">
+                        
+            helm的使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 安装helm
+1curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+2. 基本概念
+Helm是用来管理k8s集群上的软件包。
+
+
+Chart:代表helm软件包
+
+
+Repository：软件包的存放仓库
+
+
+Release:运行在k8s上的一个发布实例。
+
+
+3. helm命令......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-12-24
         </p>
         <div class="tags">
             
               <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/ide/vscode/">
+        <h2 class="post-title">
+                        
+            vscode使用配置
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            
+本文主要描述个人使用vscode中的常用插件和配置
+
+1. 常用插件
+
+
+
+插件名称
+说明
+
+
+
+
+Atom One Dark Theme
+代码风格主题
+
+
+JetBrains Icon Theme
+Icon主题
+
+
+GitLens
+显示某行提交记录
+
+
+Partial Diff
+通过剪切板diff对比
+
+
+Go/Python
+编程语言插件
+
+
+
+2. 常用快捷键
+详细快捷键参考：vsco......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2022-12-01
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#IDE" title="IDE">IDE</a>
             
         </div>
     
@@ -606,13 +665,15 @@ k8s原生支......
             
         
             
-        
-            
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#读书笔记" title="读书笔记" rel="2">读书笔记</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="63">Kubernetes</a>
             
         
             
@@ -620,7 +681,7 @@ k8s原生支......
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="4">KubeVirt</a>
             
         
             
@@ -634,7 +695,17 @@ k8s原生支......
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+        
+            
+            <a href="/tags/#裸金属" title="裸金属" rel="3">裸金属</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="4">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="11">Linux</a>
             
         
             
@@ -642,13 +713,11 @@ k8s原生支......
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#IDE" title="IDE" rel="2">IDE</a>
             
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
             
         
             
@@ -660,15 +729,19 @@ k8s原生支......
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="4">Mysql</a>
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#network" title="network" rel="4">network</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="4">Nginx</a>
             
         
             
@@ -676,11 +749,11 @@ k8s原生支......
             
         
             
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
+            <a href="/tags/#TCPIP" title="TCPIP" rel="5">TCPIP</a>
             
         
             
@@ -688,9 +761,11 @@ k8s原生支......
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
@@ -700,7 +775,9 @@ k8s原生支......
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
+            
+        
             
         
             
@@ -708,11 +785,11 @@ k8s原生支......
             
         
             
-            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
             
         
             
@@ -722,11 +799,11 @@ k8s原生支......
             
         
             
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            <a href="/tags/#CNI" title="CNI" rel="7">CNI</a>
             
         
             
-            <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -735,6 +812,10 @@ k8s原生支......
         
             
             <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -818,23 +899,23 @@ k8s原生支......
     <ul>
       
         <li>
-          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+          <a href="/article/linux-notes/baremetal/redfish-api/">Redfish API</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
+          <a href="/article/linux-notes/mysql/deploy-mysql/">Mysql服务部署</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/develop/operator/develop-operator/">如何开发一个Operator</a>
+          <a href="/article/linux-notes/file/linux-command/">Linux常用命令</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/operation/deployment/canary-deployment/">金丝雀发布</a>
+          <a href="/article/linux-notes/LLM/build-ollama-openwebui/">基于Ollama构建本地大模型</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
+          <a href="/article/linux-notes/baremetal/format-disk/">格式化磁盘分区</a>
         </li>
       
     </ul>
@@ -863,7 +944,7 @@ k8s原生支......
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
     </div>
 
         <hr>
@@ -937,7 +1018,7 @@ k8s原生支......
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

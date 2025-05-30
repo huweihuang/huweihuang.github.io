@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,15 +212,17 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="文件存储结构"><a href="#文件存储结构" class="headerlink" title="文件存储结构"></a>文件存储结构</h1><p>大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成</p>
+                <div id="vip-container"><h1 id="文件存储结构">文件存储结构</h1>
+<p>大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成</p>
 <ul>
 <li>目录项：包括文件名和inode节点号。</li>
 <li>Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。</li>
 <li>数据块：包含文件的具体内容。</li>
 </ul>
-<h2 id="1-inode"><a href="#1-inode" class="headerlink" title="1. inode"></a>1. inode</h2><p>理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector），每个扇区储存512字节（相当于0.5KB）。</p>
-<p>操作系统读取硬盘的时候，不会一个扇区一个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个”块”（block）。这种由多个扇区组成的”块”，是文件存取的最小单位。，即连续八个 sector组成一个 block。</p>
-<p>文件数据都储存在”块”中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为”索引节点”。</p>
+<h2 id="1-inode">1. inode</h2>
+<p>理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每个扇区储存512字节（相当于0.5KB）。</p>
+<p>操作系统读取硬盘的时候，不会一个扇区一个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个&quot;块&quot;（block）。这种由多个扇区组成的&quot;块&quot;，是文件存取的最小单位。，即连续八个 sector组成一个 block。</p>
+<p>文件数据都储存在&quot;块&quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为&quot;索引节点&quot;。</p>
 <p>inode包含文件的元信息，具体来说有以下内容：</p>
 <ul>
 <li>文件的字节数。</li>
@@ -236,18 +238,21 @@
 <p>总之，除了文件名以外的所有文件信息，都存在inode之中。</p>
 <p>当查看某个文件时，会先从inode表中查出文件属性及数据存放点，再从数据块中读取数据。</p>
 <p>请看文件存储结构示意图：</p>
-<p><img src="../img/linux-storage.png" alt="img"></p>
-<h3 id="11-inode的大小"><a href="#1-1-inode的大小" class="headerlink" title="1.1. inode的大小"></a>1.1. inode的大小</h3><p>inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1741317220/article/linux/file-system/linux-storage.png" alt="img"></p>
+<h3 id="11-inode的大小">1.1. inode的大小</h3>
+<p>inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。</p>
 <p>每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。</p>
 <p>查看每个硬盘分区的inode总数和已经使用的数量，可以使用df -i 命令。</p>
 <p>查看每个inode节点的大小，可以用如下命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dumpe2fs -h /dev/hda | grep <span class="string">"Inode size"</span></span><br></pre></td></tr></table></figure>
 <p>由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。</p>
-<h3 id="12-inode号码"><a href="#1-2-inode号码" class="headerlink" title="1.2. inode号码"></a>1.2. inode号码</h3><p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。</p>
+<h3 id="12-inode号码">1.2. inode号码</h3>
+<p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。</p>
 <p>Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。</p>
 <p>使用ls -i命令，可以看到文件名对应的inode号码，例如：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -i demo.txt</span><br></pre></td></tr></table></figure>
-<h2 id="3-目录项"><a href="#3-目录项" class="headerlink" title="3. 目录项"></a>3. 目录项</h2><p>Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
+<h2 id="3-目录项">3. 目录项</h2>
+<p>Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
 <p>目录文件的结构非常简单，就是一系列目录项（dirent）的列表。每个目录项，由两部分组成：所包含文件的文件名，以及该文件名对应的inode号码。</p>
 <p>ls命令只列出目录文件中的所有文件名：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /etc</span><br></pre></td></tr></table></figure>
@@ -255,13 +260,16 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -i /etc</span><br></pre></td></tr></table></figure>
 <p>如果要查看文件的详细信息，就必须根据inode号码，访问inode节点，读取信息。ls -l命令列出文件的详细信息。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -l /etc</span><br></pre></td></tr></table></figure>
-<h2 id="4-硬链接和软链接"><a href="#4-硬链接和软链接" class="headerlink" title="4. 硬链接和软链接"></a>4. 硬链接和软链接</h2><h3 id="41-硬链接"><a href="#4-1-硬链接" class="headerlink" title="4.1. 硬链接"></a>4.1. 硬链接</h3><p>一般情况下，文件名和inode号码是”一一对应”关系，每个inode号码对应一个文件名。但是，Linux系统允许，多个文件名指向同一个inode号码。这意味着，可以用不同的文件名访问同样的内容；对文件内容进行修改，会影响到所有文件名；但是，删除一个文件名，不影响另一个文件名的访问。这种情况就被称为”硬链接”（hard link）。</p>
+<h2 id="4-硬链接和软链接">4. 硬链接和软链接</h2>
+<h3 id="41-硬链接">4.1. 硬链接</h3>
+<p>一般情况下，文件名和inode号码是&quot;一一对应&quot;关系，每个inode号码对应一个文件名。但是，Linux系统允许，多个文件名指向同一个inode号码。这意味着，可以用不同的文件名访问同样的内容；对文件内容进行修改，会影响到所有文件名；但是，删除一个文件名，不影响另一个文件名的访问。这种情况就被称为&quot;硬链接&quot;（hard link）。</p>
 <p>ln命令可以创建硬链接</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln source_file target_file</span><br></pre></td></tr></table></figure>
-<p>运行上面这条命令以后，源文件与目标文件的inode号码相同，都指向同一个inode。inode信息中有一项叫做”链接数”，记录指向该inode的文件名总数，这时就会增加1。反过来，删除一个文件名，就会使得inode节点中的”链接数”减1。当这个值减到0，表明没有文件名指向这个inode，系统就会回收这个inode号码，以及其所对应block区域。</p>
-<p>这里顺便说一下目录文件的”链接数”。创建目录时，默认会生成两个目录项：”.”和”..”。前者的inode号码就是当前目录的inode号码，等同于当前目录的”硬链接”；后者的inode号码就是当前目录的父目录的inode号码，等同于父目录的”硬链接”。所以，任何一个目录的”硬链接”总数，总是等于2加上它的子目录总数（含隐藏目录）,这里的2是父目录对其的“硬链接”和当前目录下的”.硬链接“。</p>
-<h3 id="42-软链接"><a href="#4-2-软链接" class="headerlink" title="4.2. 软链接"></a>4.2. 软链接</h3><p>除了硬链接以外，还有一种特殊情况。文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。因此，无论打开哪一个文件，最终读取的都是文件B。这时，文件A就称为文件B的”软链接”（soft link）或者”符号链接（symbolic link）。</p>
-<p>这意味着，文件A依赖于文件B而存在，如果删除了文件B，打开文件A就会报错：”No such file or directory”。这是软链接与硬链接最大的不同：文件A指向文件B的文件名，而不是文件B的inode号码，文件B的inode”链接数”不会因此发生变化。</p>
+<p>运行上面这条命令以后，源文件与目标文件的inode号码相同，都指向同一个inode。inode信息中有一项叫做&quot;链接数&quot;，记录指向该inode的文件名总数，这时就会增加1。反过来，删除一个文件名，就会使得inode节点中的&quot;链接数&quot;减1。当这个值减到0，表明没有文件名指向这个inode，系统就会回收这个inode号码，以及其所对应block区域。</p>
+<p>这里顺便说一下目录文件的&quot;链接数&quot;。创建目录时，默认会生成两个目录项：&quot;.“和”…&quot;。前者的inode号码就是当前目录的inode号码，等同于当前目录的&quot;硬链接&quot;；后者的inode号码就是当前目录的父目录的inode号码，等同于父目录的&quot;硬链接&quot;。所以，任何一个目录的&quot;硬链接&quot;总数，总是等于2加上它的子目录总数（含隐藏目录）,这里的2是父目录对其的“硬链接”和当前目录下的&quot;.硬链接“。</p>
+<h3 id="42-软链接">4.2. 软链接</h3>
+<p>除了硬链接以外，还有一种特殊情况。文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。因此，无论打开哪一个文件，最终读取的都是文件B。这时，文件A就称为文件B的&quot;软链接&quot;（soft link）或者&quot;符号链接（symbolic link）。</p>
+<p>这意味着，文件A依赖于文件B而存在，如果删除了文件B，打开文件A就会报错：“No such file or directory”。这是软链接与硬链接最大的不同：文件A指向文件B的文件名，而不是文件B的inode号码，文件B的inode&quot;链接数&quot;不会因此发生变化。</p>
 <p>ln -s命令可以创建软链接</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s source_file target_file</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
@@ -292,12 +300,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/disk/disk-command/" data-toggle="tooltip" data-placement="top" title="磁盘命令">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/file/linux-introduction/" data-toggle="tooltip" data-placement="top" title="Linux介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/file/linux-introduction/" data-toggle="tooltip" data-placement="top" title="Linux介绍">Next Post &rarr;</a>
+                            <a href="/article/golang-notes/basis/errors/" data-toggle="tooltip" data-placement="top" title="错误处理">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -575,7 +583,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

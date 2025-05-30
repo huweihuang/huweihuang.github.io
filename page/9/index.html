@@ -134,7 +134,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -148,7 +148,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -211,52 +211,25 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/">
         <h2 class="post-title">
                         
-            Virtual Kubelet命令
+            increase the mlock limit
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet —help1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggableb......
+            问题描述
+容器启动报错：increase the mlock limit，原因是ulimit mlock值比较小，需要将ulimit值调大。
+报错如下：
+12345678910111213141516171819202122232425262728293031323334353637383940runtime: mlock of signal stack failed: 12runtime:......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#VirtualKubelet" title="VirtualKubelet">VirtualKubelet</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/trouble-shooting/pod-image-error/">
-        <h2 class="post-title">
-                        
-            镜像拉取失败问题
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            常见镜像拉取问题排查
-1. Pod状态为ErrImagePull或ImagePullBackOff12docker-hub-75d4dfb984-5hggg           0/1     ImagePullBackOff   0          14m     192.168.1.30   &lt;node ip&gt;   docker-hub-75d4dfb984-9r57b  ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-06-23
+            2021-06-23
         </p>
         <div class="tags">
             
@@ -270,28 +243,28 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/registry/config-private-registry/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/">
         <h2 class="post-title">
                         
-            配置私有镜像仓库
+            runc-v1.1.3-exec-failed
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 镜像仓库的基本操作1.1. 登录镜像仓库1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
-1.2. 拉取镜像1docker pull https://registry.xxx.com/dev/nginx:latest
-1.3. 推送镜像1docker push https://regi......
+            问题描述
+当使用runc 1.1.3的版本时，如果执行systemctl daemon-reload后，通过exec进入容器则会触发以下错误，无法进入容器。
+1FATA[0000] execing command in container: Internal error occurred: error executing command in container: failed to exe......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-06-23
+            2021-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -301,30 +274,26 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/operation/registry/ImagePullSecrets/">
+    <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/">
         <h2 class="post-title">
                         
-            拉取私有镜像
+            使用etcdadm部署Etcd集群
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文介绍通过pod指定 ImagePullSecrets来拉取私有镜像仓库的镜像
-
-1. 创建secretsecret是namespace级别的，创建时候需要指定namespace。
-1kubectl create secret docker-registry &lt;name&gt; --docker-server=DOCKER_REGISTRY_SERVER --docker-user......
+            1. 安装etcdadm
+在Releases · kubernetes-sigs/etcdadm · GitHub中选择需要部署的版本，示例如下：
+123wget https://github.com/kubernetes-sigs/etcdadm/releases/download/v0.1.5/etcdadm-linux-amd64mv etcdadm-linux-amd64 /usr/......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-06-23
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -334,28 +303,28 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/keepalived/install-keepalived/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-pid-error/">
         <h2 class="post-title">
                         
-            Keepalived安装与配置
+            Cgroup不支持pid资源
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Keepalived的安装1.1. yum install方式1yum install -y keepalived
-1.2. 安装包编译方式更多安装包参考：http://www.keepalived.org/download.html
-12345wget http://www.keepalived.org/software/keepalived-2.0.7.tar.gztar zxvf......
+            问题描述
+机器内核版本较低，kubelet启动异常，报错如下：
+1Failed to start ContainerManager failed to initialize top level QOS containers: failed to update top level Burstable QOS cgroup : failed to set supported cgroup sub......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2021-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#Keepalived" title="Keepalived">Keepalived</a>
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -365,44 +334,30 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/git/git-commit-msg/">
+    <a href="/article/kubernetes-notes/runtime/docker/docker-notes/">
         <h2 class="post-title">
                         
-            Git commit规范
+            Docker学习笔记
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Git commit规范1.1. 格式1&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
-示例：
-1fix(ngRepeat): fix trackBy function being invoked with incorrect scope
-1.2. type主要的提交类型如下：
+            Docker学习笔记
+详见：Docker学习笔记
 
 
-
-
-Type
-说明
-备注
-
-
-
-
-feat
-提交新功能
-常用
-......
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|Web......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Git" title="Git">Git</a>
             
         </div>
     
@@ -412,33 +367,29 @@ feat
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/git/git-commands/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/keycreate-permission-denied/">
         <h2 class="post-title">
                         
-            Git命令分类
+            keycreate permission denied
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Git 命令详解1. 示意图
-
-Workspace：工作区
-Index / Stage：暂存区
-Repository：仓库区（或本地仓库）
-Remote：远程仓库
-
-2. Git 命令分类2.1. 新建代码库123456# 在当前目录新建一个Git代码库$ git init# 新建一个目录，将其初始化为Git代码库$ git init [project-name]# 下载一个项目和它的整个代......
+            问题描述
+1write /proc/self/attr/keycreate: permission denied
+具体报错：
+1kuberuntime_manager.go:758] createPodSandbox for pod "ecc-hostpath-provisioner-8jbhf_kube-system(b8050fd3-4ffe-11eb-a82e-c6090b53405b......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2021-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#Git" title="Git">Git</a>
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -448,34 +399,29 @@ Remote：远程仓库
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/keymap/tmux-keymap/">
+    <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-subsystem-not-mount/">
         <h2 class="post-title">
                         
-            tmux快捷键
+            Cgroup子系统无法挂载
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 安装tmux12345# linuxyum install -y tmux# macbrew install tmux
-2. tmux常用命令2.1. 进入tmux1tmux
-2.2. 退出tmux，程序后台运行1按ctrl + b 进入控制台，再按 d
-2.3. 重回上次tmux窗口1ctrl + a
-2.4. 结束tmux窗口运行的进程1ctrl + d
-3. 更多快捷键说明
-
-
-......
+            问题描述
+内核版本： 5.4.56-200.el7.x86_64
+docker报错
+12345May 13 16:54:26 8b26d7a8 dockerd[44352]: time=&quot;2021-05-13T16:54:26.565235530+08:00&quot; level=warning msg=&quot;failed to load plugin io.contain......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2021-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#快捷键" title="快捷键">快捷键</a>
+              <a href="/tags/#问题排查" title="问题排查">问题排查</a>
             
         </div>
     
@@ -485,27 +431,31 @@ Remote：远程仓库
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/git/git/">
+    <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">
         <h2 class="post-title">
                         
-            Git介绍
+            controller-manager 源码思维导图
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Git是什么1.1. 概述Git是分布式版本控制系统，与SVN类似的集中化版本控制系统相比，集中化版本控制系统如果中央服务器宕机则会影响数据和协同开发。
-Git是分布式的版本控制系统，客户端不只是提取最新版本的快照，而且将整个代码仓库镜像复制下来。如果任何协同工作用的服务器发生故障了，也可以用任何一个代码仓库来恢复。而且在协作服务器宕机期间，你也可以提交代码到本地仓库，当协作服务器正常......
+            controller-manager 源码思维导图
+源码整体结构图
+
+
+
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|Bro......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Git" title="Git">Git</a>
             
         </div>
     
@@ -515,64 +465,65 @@ Git是分布式的版本控制系统，客户端不只是提取最新版本的�
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/git/git-common-cmd/">
+    <a href="/article/k8s-source-code-analysis/kube-scheduler/scheduler-xmind/">
         <h2 class="post-title">
                         
-            Git常用命令
+            kube-scheduler 源码思维导图
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Git常用命令
+            kube-scheduler 源码思维导图
+源码整体结构图
 
 
 
-分类
-子类
-git command
-zsh alias
-
-
-
-
-分支
-查看当前分支
-git branch
-gb
-
-
-
-创建新分支,仍停留在当前分支
-git branch 
-
-
-
-
-创建并切换到新分支
-git checkout -b 
-gcb
-
-
-
-切换分支
-git checkout 
-
-
-
-
-合并分支
-git checkout  #切换到要合并的分支git mer......
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|Browser......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2019-09-20
+            2021-06-23
         </p>
         <div class="tags">
             
-              <a href="/tags/#Git" title="Git">Git</a>
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/k8s-source-code-analysis/kubelet/kubelet-xmind/">
+        <h2 class="post-title">
+                        
+            kubelet 源码思维导图
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            kubelet 源码思维导图
+源码整体结构图
+
+
+
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebO......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2021-06-23
+        </p>
+        <div class="tags">
             
         </div>
     
@@ -641,13 +592,15 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-        
-            
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            <a href="/tags/#读书笔记" title="读书笔记" rel="2">读书笔记</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="58">Kubernetes</a>
+            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="63">Kubernetes</a>
             
         
             
@@ -655,7 +608,7 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#KubeVirt" title="KubeVirt" rel="3">KubeVirt</a>
+            <a href="/tags/#KubeVirt" title="KubeVirt" rel="4">KubeVirt</a>
             
         
             
@@ -669,7 +622,17 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#Linux" title="Linux" rel="10">Linux</a>
+        
+            
+            <a href="/tags/#裸金属" title="裸金属" rel="3">裸金属</a>
+            
+        
+            
+            <a href="/tags/#disk" title="disk" rel="4">disk</a>
+            
+        
+            
+            <a href="/tags/#Linux" title="Linux" rel="11">Linux</a>
             
         
             
@@ -677,13 +640,11 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#disk" title="disk" rel="2">disk</a>
+            <a href="/tags/#IDE" title="IDE" rel="2">IDE</a>
             
         
             
             <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
-            
-        
             
         
             
@@ -695,15 +656,19 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="3">Mysql</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="4">Mysql</a>
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="3">Nginx</a>
+            <a href="/tags/#network" title="network" rel="4">network</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
+            
+        
+            
+            <a href="/tags/#Nginx" title="Nginx" rel="4">Nginx</a>
             
         
             
@@ -711,11 +676,11 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#TCPIP" title="TCPIP" rel="6">TCPIP</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
+            <a href="/tags/#TCPIP" title="TCPIP" rel="5">TCPIP</a>
             
         
             
@@ -723,9 +688,11 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
+            
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
             
         
             
@@ -735,7 +702,9 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
+            
+        
             
         
             
@@ -743,11 +712,11 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
+            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
-            <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
+            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
             
         
             
@@ -757,11 +726,11 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
+            <a href="/tags/#CNI" title="CNI" rel="7">CNI</a>
             
         
             
-            <a href="/tags/#CNI" title="CNI" rel="2">CNI</a>
+            <a href="/tags/#ApiSix" title="ApiSix" rel="4">ApiSix</a>
             
         
             
@@ -770,6 +739,10 @@ git checkout  #切换到要合并的分支git mer......
         
             
             <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
+            
+        
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
             
@@ -853,23 +826,23 @@ git checkout  #切换到要合并的分支git mer......
     <ul>
       
         <li>
-          <a href="/article/reading-notes/中国是部金融史/">[读书笔记] 中国是部金融史</a>
+          <a href="/article/linux-notes/baremetal/redfish-api/">Redfish API</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/setup/k8s-changelog/">k8s版本记录</a>
+          <a href="/article/linux-notes/mysql/deploy-mysql/">Mysql服务部署</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/develop/operator/develop-operator/">如何开发一个Operator</a>
+          <a href="/article/linux-notes/file/linux-command/">Linux常用命令</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/operation/deployment/canary-deployment/">金丝雀发布</a>
+          <a href="/article/linux-notes/LLM/build-ollama-openwebui/">基于Ollama构建本地大模型</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/edge/openyurt/code-analysis/tunnel-server-code-analysis/">OpenYurt之TunnelServer源码分析</a>
+          <a href="/article/linux-notes/baremetal/format-disk/">格式化磁盘分区</a>
         </li>
       
     </ul>
@@ -898,7 +871,7 @@ git checkout  #切换到要合并的分支git mer......
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">13</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
     </div>
 
         <hr>
@@ -972,7 +945,7 @@ git checkout  #切换到要合并的分支git mer......
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

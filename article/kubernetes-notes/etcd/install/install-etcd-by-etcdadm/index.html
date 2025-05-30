@@ -140,7 +140,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -154,7 +154,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -210,25 +210,34 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="1-安装etcdadm"><a href="#1-安装etcdadm" class="headerlink" title="1. 安装etcdadm"></a>1. 安装etcdadm</h2><p>在<a href="https://github.com/kubernetes-sigs/etcdadm/releases" target="_blank" rel="noopener">Releases · kubernetes-sigs/etcdadm · GitHub</a>中选择需要部署的版本，示例如下：</p>
+                <div id="vip-container"><h2 id="1-安装etcdadm">1. 安装etcdadm</h2>
+<p>在<a href="https://github.com/kubernetes-sigs/etcdadm/releases" target="_blank" rel="noopener">Releases · kubernetes-sigs/etcdadm · GitHub</a>中选择需要部署的版本，示例如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/kubernetes-sigs/etcdadm/releases/download/v0.1.5/etcdadm-linux-amd64</span><br><span class="line">mv etcdadm-linux-amd64 /usr/bin/etcdadm</span><br><span class="line">chmod +x /usr/bin/etcdadm</span><br></pre></td></tr></table></figure>
-<h2 id="2-部署etcd集群"><a href="#2-部署etcd集群" class="headerlink" title="2. 部署etcd集群"></a>2. 部署etcd集群</h2><h3 id="21-init"><a href="#2-1-init" class="headerlink" title="2.1. init"></a>2.1. init</h3><p>etcd的版本可以在 <a href="https://github.com/etcd-io/etcd/releases" target="_blank" rel="noopener">Releases · etcd-io/etcd · GitHub</a> 中查询。</p>
+<h2 id="2-部署etcd集群">2. 部署etcd集群</h2>
+<h3 id="21-init">2.1. init</h3>
+<p>etcd的版本可以在 <a href="https://github.com/etcd-io/etcd/releases" target="_blank" rel="noopener">Releases · etcd-io/etcd · GitHub</a> 中查询。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">etcdadm init --name &lt;node1&gt; --version=3.5.4</span><br></pre></td></tr></table></figure>
-<h3 id="22-上传证书到其他机器"><a href="#2-2-上传证书到其他机器" class="headerlink" title="2.2. 上传证书到其他机器"></a>2.2. 上传证书到其他机器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 登录node2 node3</span></span><br><span class="line">mkdir -p /etc/etcd/pki</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将node1的/etc/etcd/pki/ca.* 拷贝到node2 node3 /etc/etcd/pki/</span></span><br><span class="line">scp /etc/etcd/pki/ca.* node2:/etc/etcd/pki/</span><br></pre></td></tr></table></figure>
-<h3 id="23-join"><a href="#2-3-join" class="headerlink" title="2.3. join"></a>2.3. join</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">etcdadm join https://&lt;node1&gt;:2379 --name=&lt;node2&gt; --version=3.5.4</span><br><span class="line">etcdadm join https://&lt;node1&gt;:2379 --name=&lt;node3&gt; --version=3.5.4</span><br></pre></td></tr></table></figure>
-<h2 id="3-查看集群状态"><a href="#3-查看集群状态" class="headerlink" title="3. 查看集群状态"></a>3. 查看集群状态</h2><p>设置etcdctl环境变量</p>
+<h3 id="22-上传证书到其他机器">2.2. 上传证书到其他机器</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 登录node2 node3</span></span><br><span class="line">mkdir -p /etc/etcd/pki</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将node1的/etc/etcd/pki/ca.* 拷贝到node2 node3 /etc/etcd/pki/</span></span><br><span class="line">scp /etc/etcd/pki/ca.* node2:/etc/etcd/pki/</span><br></pre></td></tr></table></figure>
+<h3 id="23-join">2.3. join</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">etcdadm join https://&lt;node1&gt;:2379 --name=&lt;node2&gt; --version=3.5.4</span><br><span class="line">etcdadm join https://&lt;node1&gt;:2379 --name=&lt;node3&gt; --version=3.5.4</span><br></pre></td></tr></table></figure>
+<h2 id="3-查看集群状态">3. 查看集群状态</h2>
+<p>设置etcdctl环境变量</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加endpoint</span></span><br><span class="line">cat &gt;&gt; /etc/etcd/etcdctl.env &lt;&lt; EOF</span><br><span class="line"><span class="built_in">export</span> ETCDCTL_ENDPOINTS=node1:2379,node2:2379,node2:2379</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># 拷贝命令脚本到/usr/bin/</span></span><br><span class="line">cp /opt/bin/etcdctl /opt/bin/etcdctl.sh /usr/bin/</span><br></pre></td></tr></table></figure>
 <p>查看集群状态</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ etcdctl.sh endpoint status -w table</span><br><span class="line">+--------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+</span><br><span class="line">|      ENDPOINT      |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |</span><br><span class="line">+--------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+</span><br><span class="line">| node1:2379 | 5fe84cb4a0ef4e69 |   3.5.4 |   20 kB |      <span class="literal">true</span> |      <span class="literal">false</span> |         3 |         13 |                 13 |        |</span><br><span class="line">| node2:2379 | cb8d48da0ea9b8c0 |   3.5.4 |   20 kB |     <span class="literal">false</span> |      <span class="literal">false</span> |         3 |         13 |                 13 |        |</span><br><span class="line">| node3:2379 | fafa80c55eebeffa |   3.5.4 |   20 kB |     <span class="literal">false</span> |      <span class="literal">false</span> |         3 |         13 |                 13 |        |</span><br><span class="line">+--------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+</span><br></pre></td></tr></table></figure>
-<h2 id="4-etcd启动配置文件"><a href="#4-Etcd启动配置文件" class="headerlink" title="4. Etcd启动配置文件"></a>4. Etcd启动配置文件</h2><p>systemd service</p>
+<h2 id="4-etcd启动配置文件">4. Etcd启动配置文件</h2>
+<p>systemd service</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat /etc/systemd/system/etcd.service</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=etcd</span><br><span class="line">Documentation=https://github.com/coreos/etcd</span><br><span class="line">Conflicts=etcd-member.service</span><br><span class="line">Conflicts=etcd2.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">EnvironmentFile=/etc/etcd/etcd.env</span><br><span class="line">ExecStart=/opt/bin/etcd</span><br><span class="line"></span><br><span class="line">Type=notify</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5s</span><br><span class="line"></span><br><span class="line">LimitNOFILE=65536</span><br><span class="line">Nice=-10</span><br><span class="line">IOSchedulingClass=best-effort</span><br><span class="line">IOSchedulingPriority=2</span><br><span class="line">MemoryLow=200M</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
 <p>/etc/etcd/etcd.env</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">ETCD_NAME=etcd01</span><br><span class="line"></span><br><span class="line"><span class="comment"># Initial cluster configuration</span></span><br><span class="line">ETCD_INITIAL_CLUSTER=etcd01=https://node1:2380</span><br><span class="line">ETCD_INITIAL_CLUSTER_TOKEN=88ad6def</span><br><span class="line">ETCD_INITIAL_CLUSTER_STATE=new</span><br><span class="line"></span><br><span class="line"><span class="comment"># Peer configuration</span></span><br><span class="line">ETCD_INITIAL_ADVERTISE_PEER_URLS=https://node1:2380</span><br><span class="line">ETCD_LISTEN_PEER_URLS=https://node1:2380</span><br><span class="line"></span><br><span class="line">ETCD_CLIENT_CERT_AUTH=<span class="literal">true</span></span><br><span class="line">ETCD_PEER_CERT_FILE=/etc/etcd/pki/peer.crt</span><br><span class="line">ETCD_PEER_KEY_FILE=/etc/etcd/pki/peer.key</span><br><span class="line">ETCD_PEER_TRUSTED_CA_FILE=/etc/etcd/pki/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># Client/server configuration</span></span><br><span class="line">ETCD_ADVERTISE_CLIENT_URLS=https://node1:2379</span><br><span class="line">ETCD_LISTEN_CLIENT_URLS=https://node1:2379,https://127.0.0.1:2379</span><br><span class="line"></span><br><span class="line">ETCD_PEER_CLIENT_CERT_AUTH=<span class="literal">true</span></span><br><span class="line">ETCD_CERT_FILE=/etc/etcd/pki/server.crt</span><br><span class="line">ETCD_KEY_FILE=/etc/etcd/pki/server.key</span><br><span class="line">ETCD_TRUSTED_CA_FILE=/etc/etcd/pki/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># Other</span></span><br><span class="line">ETCD_DATA_DIR=/var/lib/etcd</span><br><span class="line">ETCD_STRICT_RECONFIG_CHECK=<span class="literal">true</span></span><br><span class="line">GOMAXPROCS=48</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
-<li><p><a href="https://github.com/kubernetes-sigs/etcdadm" target="_blank" rel="noopener">GitHub - kubernetes-sigs/etcdadm</a></p>
+<li>
+<p><a href="https://github.com/kubernetes-sigs/etcdadm" target="_blank" rel="noopener">GitHub - kubernetes-sigs/etcdadm</a></p>
 </li>
-<li><p><a href="https://etcd.io/docs/v3.5/op-guide/clustering/" target="_blank" rel="noopener">Clustering Guide | etcd</a></p>
+<li>
+<p><a href="https://etcd.io/docs/v3.5/op-guide/clustering/" target="_blank" rel="noopener">Clustering Guide | etcd</a></p>
 </li>
 </ul>
 </div>
@@ -255,12 +264,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/" data-toggle="tooltip" data-placement="top" title="runc-v1.1.3-exec-failed">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/node/cgroup-subsystem-not-mount/" data-toggle="tooltip" data-placement="top" title="Cgroup子系统无法挂载">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/runtime/docker/docker-notes/" data-toggle="tooltip" data-placement="top" title="Docker学习笔记">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/trouble-shooting/node/runc-1.1.3-exec-failed/" data-toggle="tooltip" data-placement="top" title="runc-v1.1.3-exec-failed">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -536,7 +545,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

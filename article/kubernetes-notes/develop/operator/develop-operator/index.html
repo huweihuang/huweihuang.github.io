@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -214,58 +214,78 @@
 
                 <div id="vip-container"><p>开发一个k8s operator组件主要会用到以下几个仓库或工具：</p>
 <ul>
-<li><p><a href="https://github.com/kubernetes-sigs/kubebuilder" target="_blank" rel="noopener">kubebuilder</a>/<a href="https://github.com/operator-framework/operator-sdk" target="_blank" rel="noopener">operator-sdk</a>：主要用于创建CRD对象。</p>
+<li>
+<p><a href="https://github.com/kubernetes-sigs/kubebuilder" target="_blank" rel="noopener">kubebuilder</a>/<a href="https://github.com/operator-framework/operator-sdk" target="_blank" rel="noopener">operator-sdk</a>：主要用于创建CRD对象。</p>
 </li>
-<li><p><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank" rel="noopener">controller-manager</a>：主要用于实现operator的controller逻辑。</p>
+<li>
+<p><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank" rel="noopener">controller-manager</a>：主要用于实现operator的controller逻辑。</p>
 </li>
 </ul>
 <p>本文以kubebuilder的工具和<a href="https://github.com/kubernetes-sigs/controller-runtime/blob/main/examples/crd/main.go" target="_blank" rel="noopener">controller-manager example</a>为例。</p>
-<h1 id="1-准备工具环境及创建项目"><a href="#1-准备工具环境及创建项目" class="headerlink" title="1. 准备工具环境及创建项目"></a>1. 准备工具环境及创建项目</h1><p>安装kubebuilder工具</p>
+<h1 id="1-准备工具环境及创建项目">1. 准备工具环境及创建项目</h1>
+<p>安装kubebuilder工具</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)</span><br><span class="line">chmod +x kubebuilder &amp;&amp; mv kubebuilder /usr/<span class="built_in">local</span>/bin/</span><br></pre></td></tr></table></figure>
 <p>创建operator项目目录</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubebuilder init --domain example.com --license apache2 --owner <span class="string">"Your Name"</span> --repo github.com/example/my-operator</span><br></pre></td></tr></table></figure>
 <p>将 <code>example.com</code> 替换为你的域名，<code>Your Name</code> 替换为你的名字，<code>github.com/example/my-operator</code> 替换为你的 GitHub 仓库。</p>
-<h1 id="2-创建crd对象"><a href="#2-创建CRD对象" class="headerlink" title="2. 创建CRD对象"></a>2. 创建CRD对象</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubebuilder create api --group mygroup --version v1alpha1 --kind MyResource</span><br></pre></td></tr></table></figure>
+<h1 id="2-创建crd对象">2. 创建CRD对象</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubebuilder create api --group mygroup --version v1alpha1 --kind MyResource</span><br></pre></td></tr></table></figure>
 <p>这将在 <code>api/v1alpha1</code> 文件夹中创建一个名为 <code>myresource_types.go</code> 的文件，其中定义了 <code>MyResource</code> 资源的规范和状态。</p>
 <p>编辑 <code>api/v1alpha1/myresource_types.go</code> 文件，添加自定义资源的规范和状态字段。</p>
-<h1 id="3-实现控制器逻辑"><a href="#3-实现控制器逻辑" class="headerlink" title="3. 实现控制器逻辑"></a>3. 实现控制器逻辑</h1><p>在 <code>controllers/myresource_controller.go</code> 文件中实现控制器逻辑。该部分是不同的CRD实现自定义逻辑的核心部分。</p>
+<h1 id="3-实现控制器逻辑">3. 实现控制器逻辑</h1>
+<p>在 <code>controllers/myresource_controller.go</code> 文件中实现控制器逻辑。该部分是不同的CRD实现自定义逻辑的核心部分。</p>
 <p>主要包含以下几个部分：</p>
 <ol>
-<li><p><strong>定义ReconcileMyResource结构体。</strong></p>
+<li>
+<p><strong>定义ReconcileMyResource结构体。</strong></p>
 </li>
-<li><p><strong>实现<code>func (r *ReconcileMyResource) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error)</code>函数接口。</strong></p>
+<li>
+<p><strong>实现<code>func (r *ReconcileMyResource) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error)</code>函数接口。</strong></p>
 </li>
-<li><p><strong>定义finalizer逻辑。</strong></p>
+<li>
+<p><strong>定义finalizer逻辑。</strong></p>
 </li>
-<li><p><strong>定义reconcile逻辑。</strong></p>
+<li>
+<p><strong>定义reconcile逻辑。</strong></p>
 </li>
 </ol>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> controllers</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"context"</span></span><br><span class="line">  <span class="string">"github.com/go-logr/logr"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/controller/inject"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/reconcile"</span></span><br><span class="line"></span><br><span class="line">  myv1alpha1 <span class="string">"github.com/example/my-operator/api/v1alpha1"</span></span><br><span class="line">  corev1 <span class="string">"k8s.io/api/core/v1"</span></span><br><span class="line">  <span class="string">"k8s.io/apimachinery/pkg/api/errors"</span></span><br><span class="line">  <span class="string">"k8s.io/apimachinery/pkg/runtime"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/client"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/controller"</span></span><br><span class="line">  logf <span class="string">"sigs.k8s.io/controller-runtime/pkg/log"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/log/zap"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/manager"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/reconcile"</span></span><br><span class="line">  <span class="string">"sigs.k8s.io/controller-runtime/pkg/source"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> log = logf.Log.WithName(<span class="string">"controller_myresource"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Add creates a new MyResource Controller and adds it to the Manager. The Manager will set fields on the Controller</span></span><br><span class="line"><span class="comment">// and Start it when the Manager is Started.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Add</span><span class="params">(mgr manager.Manager)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> add(mgr, newReconciler(mgr))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// newReconciler returns a new reconcile.Reconciler</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newReconciler</span><span class="params">(mgr manager.Manager)</span> <span class="title">reconcile</span>.<span class="title">Reconciler</span></span> &#123;</span><br><span class="line">  <span class="keyword">return</span> &amp;ReconcileMyResource&#123;client: mgr.GetClient(), scheme: mgr.GetScheme()&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// blank assignment to verify that ReconcileMyResource implements reconcile.Reconciler</span></span><br><span class="line"><span class="keyword">var</span> _ reconcile.Reconciler = &amp;ReconcileMyResource&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ReconcileMyResource reconciles a MyResource object</span></span><br><span class="line"><span class="keyword">type</span> ReconcileMyResource <span class="keyword">struct</span> &#123;</span><br><span class="line">  client client.Client</span><br><span class="line">  scheme *runtime.Scheme</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Reconcile reads that state of the cluster for a MyResource object and makes changes based on the state read</span></span><br><span class="line"><span class="comment">// and what is in the MyResource.Spec</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *ReconcileMyResource)</span> <span class="title">Reconcile</span><span class="params">(ctx context.Context, request reconcile.Request)</span> <span class="params">(reconcile.Result, error)</span></span> &#123;</span><br><span class="line">  reqLogger := log.WithValues(<span class="string">"Namespace"</span>, request.Namespace, <span class="string">"Name"</span>, request.Name)</span><br><span class="line">  reqLogger.Info(<span class="string">"Reconciling MyResource"</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Fetch the MyResource instance</span></span><br><span class="line">  myresource := &amp;myv1alpha1.MyResource&#123;&#125;</span><br><span class="line">  err := r.client.Get(ctx, request.NamespacedName, myresource)</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> errors.IsNotFound(err) &#123;</span><br><span class="line">      <span class="comment">// Request object not found, could have been deleted after reconcile request.</span></span><br><span class="line">      <span class="comment">// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.</span></span><br><span class="line">      <span class="comment">// Return and don't requeue</span></span><br><span class="line">      <span class="keyword">return</span> reconcile.Result&#123;&#125;, <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Error reading the object - requeue the request.</span></span><br><span class="line">    <span class="keyword">return</span> reconcile.Result&#123;&#125;, err</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Add finalizer logic here</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// Add reconcile logic here</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> reconcile.Result&#123;&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="4-注册控制器"><a href="#4-注册控制器" class="headerlink" title="4. 注册控制器"></a>4. 注册控制器</h1><p>在 <code>main.go</code> 文件中注册控制器，主要包含以下几个步骤</p>
+<h1 id="4-注册控制器">4. 注册控制器</h1>
+<p>在 <code>main.go</code> 文件中注册控制器，主要包含以下几个步骤</p>
 <ol>
-<li><p><strong>ctrl.SetLogger(zap.New())：注册日志工具</strong></p>
+<li>
+<p><strong>ctrl.SetLogger(zap.New())：注册日志工具</strong></p>
 </li>
-<li><p><strong>ctrl.NewManager：创建一个manager，必要时可设置选主逻辑。</strong></p>
+<li>
+<p><strong>ctrl.NewManager：创建一个manager，必要时可设置选主逻辑。</strong></p>
 </li>
-<li><p><strong>ctrl.NewControllerManagedBy(mgr)：预计mgr创建manager controller并注册Reconciler。</strong></p>
+<li>
+<p><strong>ctrl.NewControllerManagedBy(mgr)：预计mgr创建manager controller并注册Reconciler。</strong></p>
 </li>
-<li><p><strong>mgr.Start(ctrl.SetupSignalHandler()): 运行mgr。</strong></p>
+<li>
+<p><strong>mgr.Start(ctrl.SetupSignalHandler()): 运行mgr。</strong></p>
 </li>
 </ol>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// set logger</span></span><br><span class="line">    ctrl.SetLogger(zap.New())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set up a Manager</span></span><br><span class="line">    mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options&#123;</span><br><span class="line">      Scheme:             myv1alpha1.SchemeBuilder.Scheme,</span><br><span class="line">      MetricsBindAddress: *metricsHost,</span><br><span class="line">      Port:               <span class="number">9443</span>,</span><br><span class="line">      LeaderElection:     *enableLeaderElection,</span><br><span class="line">      LeaderElectionID:   <span class="string">"my-operator-lock"</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        setupLog.Error(err, <span class="string">"unable to start manager"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// in a real controller, we'd create a new scheme for this</span></span><br><span class="line">    err = api.AddToScheme(mgr.GetScheme())</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        setupLog.Error(err, <span class="string">"unable to add scheme"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create a new Reconciler</span></span><br><span class="line">    r := &amp;ReconcileMyResource&#123;</span><br><span class="line">      client: m.GetClient(),</span><br><span class="line">      scheme: m.GetScheme(),</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create a new Controller and register the Reconciler</span></span><br><span class="line">    err = ctrl.NewControllerManagedBy(mgr).</span><br><span class="line">        For(&amp;myv1alpha1.MyResource&#123;&#125;).     <span class="comment">// 自定义crd</span></span><br><span class="line">        Complete(r)                        <span class="comment">// 注册Reconciler</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        setupLog.Error(err, <span class="string">"unable to create controller"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = ctrl.NewWebhookManagedBy(mgr).</span><br><span class="line">        For(&amp;api.ChaosPod&#123;&#125;).</span><br><span class="line">        Complete()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        setupLog.Error(err, <span class="string">"unable to create webhook"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    setupLog.Info(<span class="string">"starting manager"</span>)</span><br><span class="line">    <span class="keyword">if</span> err := mgr.Start(ctrl.SetupSignalHandler()); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        setupLog.Error(err, <span class="string">"problem running manager"</span>)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
-<li><p><a href="https://book.kubebuilder.io/cronjob-tutorial/controller-implementation.html" target="_blank" rel="noopener">Implementing a controller - The Kubebuilder Book</a></p>
+<li>
+<p><a href="https://book.kubebuilder.io/cronjob-tutorial/controller-implementation.html" target="_blank" rel="noopener">Implementing a controller - The Kubebuilder Book</a></p>
 </li>
-<li><p><a href="https://qiankunli.github.io/2020/08/10/controller_runtime.html" target="_blank" rel="noopener">controller-runtime源码分析 | 李乾坤的博客</a></p>
+<li>
+<p><a href="https://qiankunli.github.io/2020/08/10/controller_runtime.html" target="_blank" rel="noopener">controller-runtime源码分析 | 李乾坤的博客</a></p>
 </li>
-<li><p><a href="https://github.com/kubernetes-sigs/kubebuilder" target="_blank" rel="noopener">Kubebuilder - SDK for building Kubernetes APIs using CRDs</a></p>
+<li>
+<p><a href="https://github.com/kubernetes-sigs/kubebuilder" target="_blank" rel="noopener">Kubebuilder - SDK for building Kubernetes APIs using CRDs</a></p>
 </li>
-<li><p><a href="https://github.com/operator-framework/operator-sdk" target="_blank" rel="noopener">operator-framework/operator-sdk: SDK for building Kubernetes applications.</a></p>
+<li>
+<p><a href="https://github.com/operator-framework/operator-sdk" target="_blank" rel="noopener">operator-framework/operator-sdk: SDK for building Kubernetes applications.</a></p>
 </li>
-<li><p><a href="https://blog.hdls.me/16500403497126.html" target="_blank" rel="noopener">https://blog.hdls.me/16500403497126.html</a></p>
+<li>
+<p><a href="https://blog.hdls.me/16500403497126.html" target="_blank" rel="noopener">https://blog.hdls.me/16500403497126.html</a></p>
 </li>
-<li><p><a href="https://github.com/kubernetes-sigs/kubebuilder/blob/master/docs/book/src/multiversion-tutorial/testdata/project/controllers/cronjob_controller.go" target="_blank" rel="noopener">kubebuilder-cronjob_controller</a></p>
+<li>
+<p><a href="https://github.com/kubernetes-sigs/kubebuilder/blob/master/docs/book/src/multiversion-tutorial/testdata/project/controllers/cronjob_controller.go" target="_blank" rel="noopener">kubebuilder-cronjob_controller</a></p>
 </li>
 </ul>
 </div>
@@ -575,7 +595,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

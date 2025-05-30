@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -215,32 +215,45 @@
                 <div id="vip-container"><blockquote>
 <p>本文主要介绍部署openyurt组件到k8s集群中。</p>
 </blockquote>
-<h2 id="1-给云端节点和边缘节点打标签"><a href="#1-给云端节点和边缘节点打标签" class="headerlink" title="1. 给云端节点和边缘节点打标签"></a>1. 给云端节点和边缘节点打标签</h2><p>openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 <code>apiserver</code> 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 <code>openyurt.io/is-edge-worker</code> 的标签的方式来区分，<code>false</code>表示云端节点，<code>true</code>表示边缘节点。</p>
+<h2 id="1-给云端节点和边缘节点打标签">1. 给云端节点和边缘节点打标签</h2>
+<p>openyurt将k8s节点分为云端节点和边缘节点，云端节点主要运行一些云端的业务，边缘节点运行边缘业务。当与 <code>apiserver</code> 断开连接时，只有运行在边缘自治的节点上的Pod才不会被驱逐。通过打 <code>openyurt.io/is-edge-worker</code> 的标签的方式来区分，<code>false</code>表示云端节点，<code>true</code>表示边缘节点。</p>
 <p>云端组件：</p>
 <ul>
-<li><p>yurt-controller-manager</p>
+<li>
+<p>yurt-controller-manager</p>
 </li>
-<li><p>yurt-tunnel-server</p>
+<li>
+<p>yurt-tunnel-server</p>
 </li>
 </ul>
 <p>边缘组件：</p>
 <ul>
-<li><p>yurt-hub</p>
+<li>
+<p>yurt-hub</p>
 </li>
-<li><p>yurt-tunnel-agent</p>
+<li>
+<p>yurt-tunnel-agent</p>
 </li>
 </ul>
-<h3 id="11-openyurtiois-edge-worker节点标签"><a href="#1-1-openyurt-io-is-edge-worker节点标签" class="headerlink" title="1.1. openyurt.io/is-edge-worker节点标签"></a>1.1. openyurt.io/is-edge-worker节点标签</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 云端节点，值为false</span></span><br><span class="line">kubectl label node us-west-1.192.168.0.87 openyurt.io/is-edge-worker=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 边缘节点，值为true</span></span><br><span class="line">kubectl label node us-west-1.192.168.0.88 openyurt.io/is-edge-worker=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<h3 id="12-给边缘节点开启自治模式"><a href="#1-2-给边缘节点开启自治模式" class="headerlink" title="1.2. 给边缘节点开启自治模式"></a>1.2. 给边缘节点开启自治模式</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate node us-west-1.192.168.0.88 node.beta.openyurt.io/autonomy=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<h2 id="2-安装准备"><a href="#2-安装准备" class="headerlink" title="2. 安装准备"></a>2. 安装准备</h2><h3 id="21-调整k8s组件的配置"><a href="#2-1-调整k8s组件的配置" class="headerlink" title="2.1. 调整k8s组件的配置"></a>2.1. 调整k8s组件的配置</h3><p>参考<a href="https://blog.huweihuang.com/kubernetes-notes/edge/openyurt/update-k8s-for-openyurt/" target="_blank" rel="noopener">调整k8s组件的配置</a></p>
-<h3 id="22-部署tunnel-dns"><a href="#2-2-部署tunnel-dns" class="headerlink" title="2.2. 部署tunnel-dns"></a>2.2. 部署tunnel-dns</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/openyurtio/openyurt/master/config/setup/yurt-tunnel-dns.yaml</span><br><span class="line">kubectl apply -f yurt-tunnel-dns.yaml</span><br></pre></td></tr></table></figure>
+<h3 id="11-openyurtiois-edge-worker节点标签">1.1. <a href="http://openyurt.io/is-edge-worker%E8%8A%82%E7%82%B9%E6%A0%87%E7%AD%BE" target="_blank" rel="noopener">openyurt.io/is-edge-worker节点标签</a></h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 云端节点，值为false</span></span><br><span class="line">kubectl label node us-west-1.192.168.0.87 openyurt.io/is-edge-worker=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 边缘节点，值为true</span></span><br><span class="line">kubectl label node us-west-1.192.168.0.88 openyurt.io/is-edge-worker=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="12-给边缘节点开启自治模式">1.2. 给边缘节点开启自治模式</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl annotate node us-west-1.192.168.0.88 node.beta.openyurt.io/autonomy=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-安装准备">2. 安装准备</h2>
+<h3 id="21-调整k8s组件的配置">2.1. 调整k8s组件的配置</h3>
+<p>参考<a href="https://blog.huweihuang.com/kubernetes-notes/edge/openyurt/update-k8s-for-openyurt/" target="_blank" rel="noopener">调整k8s组件的配置</a></p>
+<h3 id="22-部署tunnel-dns">2.2. 部署tunnel-dns</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/openyurtio/openyurt/master/config/setup/yurt-tunnel-dns.yaml</span><br><span class="line">kubectl apply -f yurt-tunnel-dns.yaml</span><br></pre></td></tr></table></figure>
 <p>获取clusterIP，作为kube-apiserver的专用nameserver地址。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kube-system get svc yurt-tunnel-dns -o=jsonpath=<span class="string">'&#123;.spec.clusterIP&#125;'</span></span><br></pre></td></tr></table></figure>
-<h2 id="3-部署openyurt控制面"><a href="#3-部署openyurt控制面" class="headerlink" title="3. 部署openyurt控制面"></a>3. 部署openyurt控制面</h2><p>通过helm来部署控制面，所有helm charts都可以在<a href="https://github.com/openyurtio/openyurt-helm" target="_blank" rel="noopener">openyurt-helm 仓库</a>中找到。</p>
+<h2 id="3-部署openyurt控制面">3. 部署openyurt控制面</h2>
+<p>通过helm来部署控制面，所有helm charts都可以在<a href="https://github.com/openyurtio/openyurt-helm" target="_blank" rel="noopener">openyurt-helm 仓库</a>中找到。</p>
 <p>快捷安装可参考脚本：<a href="https://github.com/huweihuang/kubeadm-scripts/blob/main/openyurt/cloud/helm-install-openyurt.sh" target="_blank" rel="noopener">helm-install-openyurt.sh</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo add openyurt https://openyurtio.github.io/openyurt-helm</span><br></pre></td></tr></table></figure>
-<h3 id="31-yurt-app-manager"><a href="#3-1-yurt-app-manager" class="headerlink" title="3.1. yurt-app-manager"></a>3.1. yurt-app-manager</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm upgrade --install yurt-app-manager -n kube-system openyurt/yurt-app-manager</span><br></pre></td></tr></table></figure>
-<h3 id="32-openyurt"><a href="#3-2-openyurt" class="headerlink" title="3.2. openyurt"></a>3.2. openyurt</h3><p>在<code>openyurt/openyurt</code>中的组件包括：</p>
+<h3 id="31-yurt-app-manager">3.1. yurt-app-manager</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm upgrade --install yurt-app-manager -n kube-system openyurt/yurt-app-manager</span><br></pre></td></tr></table></figure>
+<h3 id="32-openyurt">3.2. openyurt</h3>
+<p>在<code>openyurt/openyurt</code>中的组件包括：</p>
 <ul>
 <li><a href="https://openyurt.io/zh/docs/core-concepts/yurt-controller-manager" target="_blank" rel="noopener">yurt-controller-manager</a>: 防止apiserver在断开连接时驱逐运行在边缘节点上的pod</li>
 <li><a href="https://openyurt.io/zh/docs/core-concepts/yurttunnel" target="_blank" rel="noopener">yurt-tunnel-server</a>: 在云端构建云边隧道</li>
@@ -248,22 +261,25 @@
 </ul>
 <p>由于yurt-tunnel-server默认使用host模式，因此可能存在边缘端的agent无法访问云端的tunnel-server，需要为tunnel-server配置一个可访问的地址。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 下载并解压</span></span><br><span class="line">helm pull openyurt/openyurt --untar</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改tunnel相关配置</span></span><br><span class="line"><span class="built_in">cd</span> openyurt </span><br><span class="line">vi values.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例：</span></span><br><span class="line">yurtTunnelServer:</span><br><span class="line">  replicaCount: 1</span><br><span class="line">  tolerations: []</span><br><span class="line">  parameters:</span><br><span class="line">    certDnsNames: <span class="string">"&lt;tunnel server的域名&gt;"</span></span><br><span class="line">    tunnelAgentConnectPort: &lt;tunnel server端口，默认为10262&gt;</span><br><span class="line">    certIps: <span class="string">""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">yurtTunnelAgent:</span><br><span class="line">  replicaCount: 1</span><br><span class="line">  tolerations: []</span><br><span class="line">  parameters:</span><br><span class="line">    tunnelserverAddr: <span class="string">"&lt;tunnel server的地址，包括端口&gt;"</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># install</span></span><br><span class="line">helm install openyurt ./openyurt</span><br></pre></td></tr></table></figure>
-<h2 id="4-部署-yurthubedge"><a href="#4-部署-Yurthub-edge" class="headerlink" title="4. 部署 Yurthub(edge)"></a>4. 部署 Yurthub(edge)</h2><p>在 <code>yurt-controller-manager</code> 启动并正常运行后，以静态 pod 的方式部署 <code>Yurthub</code>。</p>
+<h2 id="4-部署-yurthubedge">4. 部署 Yurthub(edge)</h2>
+<p>在 <code>yurt-controller-manager</code> 启动并正常运行后，以静态 pod 的方式部署 <code>Yurthub</code>。</p>
 <ol>
 <li>为 yurthub 创建全局配置(即RBAC, configmap)</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/openyurtio/openyurt/master/config/setup/yurthub-cfg.yaml</span><br><span class="line">kubectl apply -f yurthub-cfg.yaml</span><br></pre></td></tr></table></figure>
-<ol>
+<ol start="2">
 <li>在边缘节点以static pod方式创建yurthub</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /etc/kubernetes/manifests/</span><br><span class="line"><span class="built_in">cd</span> /etc/kubernetes/manifests/</span><br><span class="line">wget https://raw.githubusercontent.com/openyurtio/openyurt/master/config/setup/yurthub.yaml </span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取bootstrap token</span></span><br><span class="line">kubeadm token create</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设 apiserver 的地址是 1.2.3.4:6443，bootstrap token 是 07401b.f395accd246ae52d</span></span><br><span class="line">sed -i <span class="string">'s|__kubernetes_master_address__|1.2.3.4:6443|;</span></span><br><span class="line"><span class="string">s|__bootstrap_token__|07401b.f395accd246ae52d|'</span> /etc/kubernetes/manifests/yurthub.yaml</span><br></pre></td></tr></table></figure>
-<h2 id="5-重置-kubelet"><a href="#5-重置-Kubelet" class="headerlink" title="5. 重置 Kubelet"></a>5. 重置 Kubelet</h2><p>重置 kubelet 服务，让它通过 yurthub 访问apiserver。为 kubelet 服务创建一个新的 kubeconfig 文件来访问apiserver。</p>
+<h2 id="5-重置-kubelet">5. 重置 Kubelet</h2>
+<p>重置 kubelet 服务，让它通过 yurthub 访问apiserver。为 kubelet 服务创建一个新的 kubeconfig 文件来访问apiserver。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /var/lib/openyurt</span><br><span class="line">cat &lt;&lt; EOF &gt; /var/lib/openyurt/kubelet.conf</span><br><span class="line">apiVersion: v1</span><br><span class="line">clusters:</span><br><span class="line">- cluster:</span><br><span class="line">    server: http://127.0.0.1:10261</span><br><span class="line">  name: default-cluster</span><br><span class="line">contexts:</span><br><span class="line">- context:</span><br><span class="line">    cluster: default-cluster</span><br><span class="line">    namespace: default</span><br><span class="line">    user: default-auth</span><br><span class="line">  name: default-context</span><br><span class="line">current-context: default-context</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <p>修改<code>/etc/systemd/system/kubelet.service.d/10-kubeadm.conf</code></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">"s|KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=\/etc\/kubernetes\/bootstrap-kubelet.conf\ --kubeconfig=\/etc\/kubernetes\/kubelet.conf|KUBELET_KUBECONFIG_ARGS=--kubeconfig=\/var\/lib\/openyurt\/kubelet.conf|g"</span> \</span><br><span class="line">    /etc/systemd/system/kubelet.service.d/10-kubeadm.conf</span><br></pre></td></tr></table></figure>
 <p>重启kubelet服务</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload &amp;&amp; systemctl restart kubelet</span><br></pre></td></tr></table></figure>
-<h2 id="6-yurthub部署脚本"><a href="#6-yurthub部署脚本" class="headerlink" title="6. yurthub部署脚本"></a>6. yurthub部署脚本</h2><p>根据以上部署步骤，整理部署脚本。需要修改脚本内容的<code>master-addr</code>和<code>token</code>字段。</p>
+<h2 id="6-yurthub部署脚本">6. yurthub部署脚本</h2>
+<p>根据以上部署步骤，整理部署脚本。需要修改脚本内容的<code>master-addr</code>和<code>token</code>字段。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">set</span> -e</span><br><span class="line"><span class="built_in">set</span> -x</span><br><span class="line"></span><br><span class="line"><span class="comment">### install yurthub ###</span></span><br><span class="line">mkdir -p /etc/kubernetes/manifests/</span><br><span class="line"><span class="built_in">cd</span> /etc/kubernetes/manifests/</span><br><span class="line">wget https://raw.githubusercontent.com/openyurtio/openyurt/master/config/setup/yurthub.yaml </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">### 修改master和token字段</span></span><br><span class="line">sed -i <span class="string">'s|__kubernetes_master_address__|&lt;master-addr&gt;:6443|;</span></span><br><span class="line"><span class="string">s|__bootstrap_token__|&lt;token&gt;|'</span> /etc/kubernetes/manifests/yurthub.yaml</span><br><span class="line"></span><br><span class="line">mkdir -p /var/lib/openyurt</span><br><span class="line">cat &lt;&lt; EOF &gt; /var/lib/openyurt/kubelet.conf</span><br><span class="line">apiVersion: v1</span><br><span class="line">clusters:</span><br><span class="line">- cluster:</span><br><span class="line">    server: http://127.0.0.1:10261</span><br><span class="line">  name: default-cluster</span><br><span class="line">contexts:</span><br><span class="line">- context:</span><br><span class="line">    cluster: default-cluster</span><br><span class="line">    namespace: default</span><br><span class="line">    user: default-auth</span><br><span class="line">  name: default-context</span><br><span class="line">current-context: default-context</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cp /etc/systemd/system/kubelet.service.d/10-kubeadm.conf /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.bak</span><br><span class="line">sed -i <span class="string">"s|KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=\/etc\/kubernetes\/bootstrap-kubelet.conf\ --kubeconfig=\/etc\/kubernetes\/kubelet.conf|KUBELET_KUBECONFIG_ARGS=--kubeconfig=\/var\/lib\/openyurt\/kubelet.conf|g"</span> \</span><br><span class="line">    /etc/systemd/system/kubelet.service.d/10-kubeadm.conf</span><br><span class="line"></span><br><span class="line">systemctl daemon-reload &amp;&amp; systemctl restart kubelet</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
@@ -295,12 +311,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kubeadm/" data-toggle="tooltip" data-placement="top" title="使用kubeadm部署生产环境kubernetes集群">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/operation/access/rbac-auth/" data-toggle="tooltip" data-placement="top" title="使用 RBAC 鉴权">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/operation/access/rbac-auth/" data-toggle="tooltip" data-placement="top" title="使用 RBAC 鉴权">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/multi-cluster/karmada/karmada-introduction/" data-toggle="tooltip" data-placement="top" title="Karmada介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -578,7 +594,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

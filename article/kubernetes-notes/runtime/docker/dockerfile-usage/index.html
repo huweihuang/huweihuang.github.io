@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,102 +212,127 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-dockerfile的说明"><a href="#1-Dockerfile的说明" class="headerlink" title="1. Dockerfile的说明"></a>1. Dockerfile的说明</h1><p>dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。</p>
+                <div id="vip-container"><h1 id="1-dockerfile的说明">1. Dockerfile的说明</h1>
+<p>dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。</p>
 <p>dockerfile指令分为构建指令和设置指令。</p>
 <ol>
 <li>构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。</li>
 <li>设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。</li>
 </ol>
-<h1 id="2-dockerfile指令说明"><a href="#2-Dockerfile指令说明" class="headerlink" title="2. Dockerfile指令说明"></a>2. Dockerfile指令说明</h1><h2 id="21-from指定基础镜像构建指令"><a href="#2-1-FROM（指定基础镜像）-构建指令" class="headerlink" title="2.1. FROM（指定基础镜像）[构建指令]"></a>2.1. FROM（指定基础镜像）[构建指令]</h2><p>该命令用来指定基础镜像，在基础镜像的基础上修改数据从而构建新的镜像。基础镜像可以是本地仓库也可以是远程仓库。</p>
+<h1 id="2-dockerfile指令说明">2. Dockerfile指令说明</h1>
+<h2 id="21-from指定基础镜像构建指令">2.1. FROM（指定基础镜像）[构建指令]</h2>
+<p>该命令用来指定基础镜像，在基础镜像的基础上修改数据从而构建新的镜像。基础镜像可以是本地仓库也可以是远程仓库。</p>
 <p>指令有两种格式：</p>
 <ol>
 <li>FROM <code>image</code>   【默认为latest版本】</li>
 <li>FROM <code>image</code>:<code>tag</code>     【指定版本】</li>
 </ol>
-<h2 id="22-maintainer镜像创建者信息构建指令"><a href="#2-2-MAINTAINER（镜像创建者信息）-构建指令" class="headerlink" title="2.2. MAINTAINER（镜像创建者信息）[构建指令]"></a>2.2. MAINTAINER（镜像创建者信息）[构建指令]</h2><p>将镜像制作者（维护者）的信息写入image中，执行docker inspect时会输出该信息。</p>
+<h2 id="22-maintainer镜像创建者信息构建指令">2.2. MAINTAINER（镜像创建者信息）[构建指令]</h2>
+<p>将镜像制作者（维护者）的信息写入image中，执行docker inspect时会输出该信息。</p>
 <p>格式：MAINTAINER <code>name</code></p>
 <p>MAINTAINER命令已废弃，可使用maintainer label的方式。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LABEL maintainer=&quot;SvenDowideit@home.org.au&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="23-run安装软件用构建指令"><a href="#2-3-RUN（安装软件用）-构建指令" class="headerlink" title="2.3. RUN（安装软件用）[构建指令]"></a>2.3. RUN（安装软件用）[构建指令]</h2><p>RUN可以运行任何被基础镜像支持的命令（即在基础镜像上执行一个进程），可以使用多条RUN指令，指令较长可以使用\来换行。</p>
+<h2 id="23-run安装软件用构建指令">2.3. RUN（安装软件用）[构建指令]</h2>
+<p>RUN可以运行任何被基础镜像支持的命令（即在基础镜像上执行一个进程），可以使用多条RUN指令，指令较长可以使用\来换行。</p>
 <p>指令有两种格式：</p>
 <ol>
 <li>RUN <code>command</code> (the command is run in a shell - <code>/bin/sh -c</code>)</li>
-<li>RUN [“executable”, “param1”, “param2” … ] (exec form) <ul>
+<li>RUN [“executable”, “param1”, “param2” … ] (exec form)
+<ul>
 <li>指定使用其他终端实现，使用exec执行。</li>
-<li>例子：RUN[“/bin/bash”,”-c”,”echo hello”]</li>
+<li>例子：RUN[&quot;/bin/bash&quot;,&quot;-c&quot;,“echo hello”]</li>
 </ul>
 </li>
 </ol>
-<h2 id="24-cmd设置container启动时执行的操作设置指令"><a href="#2-4-CMD（设置container启动时执行的操作）-设置指令" class="headerlink" title="2.4. CMD（设置container启动时执行的操作）[设置指令]"></a>2.4. CMD（设置container启动时执行的操作）[设置指令]</h2><p>用于容器启动时的指定操作，可以是自定义脚本或命令，只执行一次，多个默认执行最后一个。</p>
+<h2 id="24-cmd设置container启动时执行的操作设置指令">2.4. CMD（设置container启动时执行的操作）[设置指令]</h2>
+<p>用于容器启动时的指定操作，可以是自定义脚本或命令，只执行一次，多个默认执行最后一个。</p>
 <p>指令有三种格式：</p>
 <ol>
-<li>CMD [“executable”,”param1”,”param2”] (like an exec, this is the preferred form) <ul>
+<li>CMD [“executable”,“param1”,“param2”] (like an exec, this is the preferred form)
+<ul>
 <li>运行一个可执行文件并提供参数。</li>
 </ul>
 </li>
-<li>CMD command param1 param2 (as a shell) <ul>
+<li>CMD command param1 param2 (as a shell)
+<ul>
 <li>直接执行shell命令，默认以/bin/sh -c执行。</li>
 </ul>
 </li>
-<li>CMD [“param1”,”param2”] (as default parameters to ENTRYPOINT) <ul>
+<li>CMD [“param1”,“param2”] (as default parameters to ENTRYPOINT)
+<ul>
 <li>和ENTRYPOINT配合使用，只作为完整命令的参数部分。</li>
 </ul>
 </li>
 </ol>
-<h2 id="25-entrypoint设置container启动时执行的操作设置指令"><a href="#2-5-ENTRYPOINT（设置container启动时执行的操作）-设置指令" class="headerlink" title="2.5. ENTRYPOINT（设置container启动时执行的操作）[设置指令]"></a>2.5. ENTRYPOINT（设置container启动时执行的操作）[设置指令]</h2><p>指定容器启动时执行的命令，若多次设置只执行最后一次。</p>
+<h2 id="25-entrypoint设置container启动时执行的操作设置指令">2.5. ENTRYPOINT（设置container启动时执行的操作）[设置指令]</h2>
+<p>指定容器启动时执行的命令，若多次设置只执行最后一次。</p>
 <p>ENTRYPOINT翻译为“进入点”，它的功能可以让容器表现得像一个可执行程序一样。</p>
-<p>例子：ENTRYPOINT [“/bin/echo”] ，那么docker build出来的镜像以后的容器功能就像一个/bin/echo程序，docker run -it imageecho “this is a test”，就会输出对应的字符串。这个imageecho镜像对应的容器表现出来的功能就像一个echo程序一样。</p>
+<p>例子：ENTRYPOINT [&quot;/bin/echo&quot;] ，那么docker build出来的镜像以后的容器功能就像一个/bin/echo程序，docker run -it imageecho “this is a test”，就会输出对应的字符串。这个imageecho镜像对应的容器表现出来的功能就像一个echo程序一样。</p>
 <p>指令有两种格式：</p>
 <ol>
-<li><p>ENTRYPOINT [“executable”, “param1”, “param2”] (like an exec, the preferred form)</p>
+<li>
+<p>ENTRYPOINT [“executable”, “param1”, “param2”] (like an exec, the preferred form)</p>
 <ul>
-<li><p>和CMD配合使用，CMD则作为完整命令的参数部分，ENTRYPOINT以JSON格式指定执行的命令部分。CMD可以为ENTRYPOINT提供可变参数，不需要变动的参数可以写在ENTRYPOINT里面。</p>
+<li>
+<p>和CMD配合使用，CMD则作为完整命令的参数部分，ENTRYPOINT以JSON格式指定执行的命令部分。CMD可以为ENTRYPOINT提供可变参数，不需要变动的参数可以写在ENTRYPOINT里面。</p>
 </li>
-<li><p>例子：</p>
-<p>ENTRYPOINT [“/usr/bin/ls”,”-a”]</p>
-<p>CMD [“-l”] </p>
+<li>
+<p>例子：</p>
+<p>ENTRYPOINT [&quot;/usr/bin/ls&quot;,&quot;-a&quot;]</p>
+<p>CMD [&quot;-l&quot;]</p>
 </li>
 </ul>
 </li>
-<li><p>ENTRYPOINT command param1 param2 (as a shell)</p>
+<li>
+<p>ENTRYPOINT command param1 param2 (as a shell)</p>
 <ul>
 <li>独自使用，即和CMD类似，如果CMD也是个完整命令[CMD command param1 param2 (as a shell) ]，那么会相互覆盖，只执行最后一个CMD或ENTRYPOINT。</li>
 <li>例子：ENTRYPOINT ls -l</li>
 </ul>
 </li>
 </ol>
-<h2 id="26-user设置container容器启动的登录用户设置指令"><a href="#2-6-USER（设置container容器启动的登录用户）-设置指令" class="headerlink" title="2.6. USER（设置container容器启动的登录用户）[设置指令]"></a>2.6. USER（设置container容器启动的登录用户）[设置指令]</h2><p>设置启动容器的用户，默认为root用户。</p>
+<h2 id="26-user设置container容器启动的登录用户设置指令">2.6. USER（设置container容器启动的登录用户）[设置指令]</h2>
+<p>设置启动容器的用户，默认为root用户。</p>
 <p>格式：USER daemon</p>
-<h2 id="27-expose指定容器需要映射到宿主机的端口设置指令"><a href="#2-7-EXPOSE（指定容器需要映射到宿主机的端口）-设置指令" class="headerlink" title="2.7. EXPOSE（指定容器需要映射到宿主机的端口）[设置指令]"></a>2.7. EXPOSE（指定容器需要映射到宿主机的端口）[设置指令]</h2><p>该指令会将容器中的端口映射为宿主机中的端口[确保宿主机的端口号没有被使用]。通过宿主机IP和映射后的端口即可访问容器[避免每次运行容器时IP随机生成不固定的问题]。前提是EXPOSE设置映射端口，运行容器时加上-p参数指定EXPOSE设置的端口。EXPOSE可以设置多个端口号，相应地运行容器配套多次使用-p参数。可以通过docker port +容器需要映射的端口号和容器ID来参考宿主机的映射端口。</p>
+<h2 id="27-expose指定容器需要映射到宿主机的端口设置指令">2.7. EXPOSE（指定容器需要映射到宿主机的端口）[设置指令]</h2>
+<p>该指令会将容器中的端口映射为宿主机中的端口[确保宿主机的端口号没有被使用]。通过宿主机IP和映射后的端口即可访问容器[避免每次运行容器时IP随机生成不固定的问题]。前提是EXPOSE设置映射端口，运行容器时加上-p参数指定EXPOSE设置的端口。EXPOSE可以设置多个端口号，相应地运行容器配套多次使用-p参数。可以通过docker port +容器需要映射的端口号和容器ID来参考宿主机的映射端口。</p>
 <p>格式：EXPOSE <code>port</code> [<code>port</code>…]</p>
-<h2 id="28-env用于设置环境变量构建指令"><a href="#2-8-ENV（用于设置环境变量）-构建指令" class="headerlink" title="2.8. ENV（用于设置环境变量）[构建指令]"></a>2.8. ENV（用于设置环境变量）[构建指令]</h2><p>在image中设置环境变量[以键值对的形式]，设置之后RUN命令可以使用该环境变量，在容器启动后也可以通过docker inspect查看环境变量或者通过 docker run —env key=value设置或修改环境变量。</p>
-<p>格式：ENV <code>key</code> <code>value</code> </p>
+<h2 id="28-env用于设置环境变量构建指令">2.8. ENV（用于设置环境变量）[构建指令]</h2>
+<p>在image中设置环境变量[以键值对的形式]，设置之后RUN命令可以使用该环境变量，在容器启动后也可以通过docker inspect查看环境变量或者通过 docker run --env key=value设置或修改环境变量。</p>
+<p>格式：ENV <code>key</code> <code>value</code></p>
 <p>例子：ENV JAVA_HOME /path/to/java/dirent</p>
-<h2 id="29-arg用于设置变量构建指令"><a href="#2-9-ARG（用于设置变量）-构建指令" class="headerlink" title="2.9. ARG（用于设置变量）[构建指令]"></a>2.9. ARG（用于设置变量）[构建指令]</h2><p>ARG定义一个默认参数，可以在dockerfile中引用。构建阶段可以通过docker build —build-arg <varname>=<value>参数向dockerfile文件中传入参数。</value></varname></p>
+<h2 id="29-arg用于设置变量构建指令">2.9. ARG（用于设置变量）[构建指令]</h2>
+<p>ARG定义一个默认参数，可以在dockerfile中引用。构建阶段可以通过docker build --build-arg <varname>=<value>参数向dockerfile文件中传入参数。</value></varname></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ARG &lt;arg_name&gt;[=&lt;default value&gt;]</span><br><span class="line"><span class="comment"># 可以搭配ENV使用</span></span><br><span class="line">ENV env_name <span class="variable">$&#123;arg_name&#125;</span></span><br></pre></td></tr></table></figure>
 <p>示例：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build --build-arg user=what_user .</span><br></pre></td></tr></table></figure>
-<h2 id="210-add从src复制文件到container的dest路径构建指令"><a href="#2-10-ADD（从src复制文件到container的dest路径）-构建指令" class="headerlink" title="2.10. ADD（从src复制文件到container的dest路径）[构建指令]"></a>2.10. ADD（从src复制文件到container的dest路径）[构建指令]</h2><p>复制指定的src到容器中的dest，其中src是相对被构建的源目录的相对路径，可以是文件或目录的路径，也可以是一个远程的文件url。<code>dest</code> 是container中的绝对路径。所有拷贝到container中的文件和文件夹权限为0755，uid和gid为0。</p>
+<h2 id="210-add从src复制文件到container的dest路径构建指令">2.10. ADD（从src复制文件到container的dest路径）[构建指令]</h2>
+<p>复制指定的src到容器中的dest，其中src是相对被构建的源目录的相对路径，可以是文件或目录的路径，也可以是一个远程的文件url。<code>dest</code> 是container中的绝对路径。所有拷贝到container中的文件和文件夹权限为0755，uid和gid为0。</p>
 <ul>
 <li>如果src是一个目录，那么会将该目录下的所有文件添加到container中，不包括目录；</li>
 <li>如果src文件是可识别的压缩格式，则docker会帮忙解压缩（注意压缩格式）；</li>
 <li>如果<code>src</code>是文件且<code>dest</code>中不使用斜杠结束，则会将<code>dest</code>视为文件，<code>src</code>的内容会写入<code>dest</code>；</li>
 <li>如果<code>src</code>是文件且<code>dest</code>中使用斜杠结束，则会<code>src</code>文件拷贝到<code>dest</code>目录下。</li>
 </ul>
-<p>格式：ADD <code>src</code> <code>dest</code> </p>
+<p>格式：ADD <code>src</code> <code>dest</code></p>
 <blockquote>
 <p>为避免 ADD命令带来的未知风险和复杂性，可以使用COPY命令替代ADD命令</p>
 </blockquote>
-<h2 id="211-copy复制文件"><a href="#2-11-COPY（复制文件）" class="headerlink" title="2.11. COPY（复制文件）"></a>2.11. COPY（复制文件）</h2><p>复制本地主机的src为容器中的dest，目标路径不存在时会自动创建。</p>
+<h2 id="211-copy复制文件">2.11. COPY（复制文件）</h2>
+<p>复制本地主机的src为容器中的dest，目标路径不存在时会自动创建。</p>
 <p>格式：COPY <code>src</code> <code>dest</code></p>
-<h2 id="212-volume指定挂载点设置指令"><a href="#2-12-VOLUME（指定挂载点）-设置指令" class="headerlink" title="2.12. VOLUME（指定挂载点）[设置指令]"></a>2.12. VOLUME（指定挂载点）[设置指令]</h2><p>创建一个可以从本地主机或其他容器挂载的挂载点，使容器中的一个目录具有持久化存储数据的功能，该目录可以被容器本身使用也可以被其他容器使用。</p>
-<p>格式：VOLUME [“<code>mountpoint</code>“] </p>
+<h2 id="212-volume指定挂载点设置指令">2.12. VOLUME（指定挂载点）[设置指令]</h2>
+<p>创建一个可以从本地主机或其他容器挂载的挂载点，使容器中的一个目录具有持久化存储数据的功能，该目录可以被容器本身使用也可以被其他容器使用。</p>
+<p>格式：VOLUME [&quot;<code>mountpoint</code>&quot;]</p>
 <p>其他容器使用共享数据卷：docker run -t -i -rm -volumes-from container1 image2 bash [container1为第一个容器的ID，image2为第二个容器运行image的名字。]</p>
-<h2 id="213-workdir切换目录设置指令"><a href="#2-13-WORKDIR（切换目录）-设置指令" class="headerlink" title="2.13. WORKDIR（切换目录）[设置指令]"></a>2.13. WORKDIR（切换目录）[设置指令]</h2><p>相当于cd命令，可以多次切换目录，为RUN,CMD,ENTRYPOINT配置工作目录。可以使用多个WORKDIR的命令，后续命令如果是相对路径则是在上一级路径的基础上执行[类似cd的功能]。</p>
+<h2 id="213-workdir切换目录设置指令">2.13. WORKDIR（切换目录）[设置指令]</h2>
+<p>相当于cd命令，可以多次切换目录，为RUN,CMD,ENTRYPOINT配置工作目录。可以使用多个WORKDIR的命令，后续命令如果是相对路径则是在上一级路径的基础上执行[类似cd的功能]。</p>
 <p>格式：WORKDIR /path/to/workdir</p>
-<h2 id="214-onbuild在子镜像中执行"><a href="#2-14-ONBUILD（在子镜像中执行）" class="headerlink" title="2.14. ONBUILD（在子镜像中执行）"></a>2.14. ONBUILD（在子镜像中执行）</h2><p>当所创建的镜像作为其他新创建镜像的基础镜像时执行的操作命令，即在创建本镜像时不运行，当作为别人的基础镜像时再在构建时运行（可认为基础镜像为父镜像，而该命令即在它的子镜像构建时运行，相当于在子镜像构建时多加了一些命令）。</p>
-<p>格式：ONBUILD <code>Dockerfile关键字</code> </p>
-<h1 id="3-dockerfile示例"><a href="#3-dockerfile示例" class="headerlink" title="3. dockerfile示例"></a>3. dockerfile示例</h1><p><strong>最佳实践</strong></p>
+<h2 id="214-onbuild在子镜像中执行">2.14. ONBUILD（在子镜像中执行）</h2>
+<p>当所创建的镜像作为其他新创建镜像的基础镜像时执行的操作命令，即在创建本镜像时不运行，当作为别人的基础镜像时再在构建时运行（可认为基础镜像为父镜像，而该命令即在它的子镜像构建时运行，相当于在子镜像构建时多加了一些命令）。</p>
+<p>格式：ONBUILD <code>Dockerfile关键字</code></p>
+<h1 id="3-dockerfile示例">3. dockerfile示例</h1>
+<p><strong>最佳实践</strong></p>
 <ul>
 <li>镜像可以分为三层：系统基础镜像、业务基础镜像、业务镜像。</li>
 <li>尽量将不变的镜像操作放dockerfile前面。</li>
@@ -318,12 +343,13 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">./</span><br><span class="line">|-- Dockerfile</span><br><span class="line">|-- docker-entrypoint.sh</span><br><span class="line">|-- dumb-init</span><br><span class="line">|-- conf    <span class="comment"># 配置文件路径</span></span><br><span class="line">|   `-- app_conf.py  </span><br><span class="line">|-- pkg   <span class="comment"># 安装包路径</span></span><br><span class="line">|   `-- install.tar.gz</span><br><span class="line">|-- run.sh  <span class="comment"># 启动脚本</span></span><br></pre></td></tr></table></figure>
 <p><strong>dockerfile示例</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">FROM centos:latest</span><br><span class="line">LABEL maintainer=&quot;xxx@xxx.com&quot;</span><br><span class="line"></span><br><span class="line">ARG APP=appname</span><br><span class="line">ENV APP $&#123;APP&#125;</span><br><span class="line"></span><br><span class="line"># copy and install app </span><br><span class="line">COPY conf/app_conf.py /usr/local/app/app_conf/app_conf.py</span><br><span class="line">COPY pkg/$&#123;APP&#125;-*-install.tar.gz /data/$&#123;APP&#125;-install.tar.gz</span><br><span class="line">RUN mkdir -p /data/$&#123;APP&#125; \</span><br><span class="line">    &amp;&amp; tar -zxvf /data/$&#123;APP&#125;-install.tar.gz -C /data/$&#123;APP&#125; \</span><br><span class="line">    &amp;&amp; cd /data/$&#123;APP&#125;/$&#123;APP&#125;* \</span><br><span class="line">    &amp;&amp; ./install.sh</span><br><span class="line"></span><br><span class="line">WORKDIR /usr/local/app/</span><br><span class="line"></span><br><span class="line"># init</span><br><span class="line">COPY dumb-init /usr/bin/dumb-init</span><br><span class="line">COPY docker-entrypoint.sh /docker-entrypoint.sh</span><br><span class="line">ENTRYPOINT [&quot;/usr/bin/dumb-init&quot;, &quot;--&quot;,&quot;/docker-entrypoint.sh&quot;]</span><br><span class="line"></span><br><span class="line">COPY run.sh /run.sh</span><br><span class="line">RUN chmod +x /run.sh</span><br><span class="line">CMD [&quot;/run.sh&quot;]</span><br></pre></td></tr></table></figure>
-<h1 id="4-docker-build"><a href="#4-docker-build" class="headerlink" title="4. docker build"></a>4. docker build</h1><p>指定dockerfile文件构建</p>
+<h1 id="4-docker-build">4. docker build</h1>
+<p>指定dockerfile文件构建</p>
 <blockquote>
 <p>默认不指定dockerfile文件名，则读取指定路径的Dockerfile</p>
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t &lt;image_name&gt; -f &lt;dockerfile_name&gt; &lt;dockerfile_path&gt;</span><br></pre></td></tr></table></figure>
-<p><strong>docker build —help</strong></p>
+<p><strong>docker build --help</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">docker build --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line">Usage:	docker build [OPTIONS] PATH | URL | -</span><br><span class="line"></span><br><span class="line">Build an image from a Dockerfile</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">      --add-host list           Add a custom host-to-IP mapping (host:ip)</span><br><span class="line">      --build-arg list          Set build-time variables</span><br><span class="line">      --cache-from strings      Images to consider as cache sources</span><br><span class="line">      --cgroup-parent string    Optional parent cgroup <span class="keyword">for</span> the container</span><br><span class="line">      --compress                Compress the build context using gzip</span><br><span class="line">      --cpu-period int          Limit the CPU CFS (Completely Fair Scheduler) period</span><br><span class="line">      --cpu-quota int           Limit the CPU CFS (Completely Fair Scheduler) quota</span><br><span class="line">  -c, --cpu-shares int          CPU shares (relative weight)</span><br><span class="line">      --cpuset-cpus string      CPUs <span class="keyword">in</span> <span class="built_in">which</span> to allow execution (0-3, 0,1)</span><br><span class="line">      --cpuset-mems string      MEMs <span class="keyword">in</span> <span class="built_in">which</span> to allow execution (0-3, 0,1)</span><br><span class="line">      --<span class="built_in">disable</span>-content-trust   Skip image verification (default <span class="literal">true</span>)</span><br><span class="line">  -f, --file string             Name of the Dockerfile (Default is <span class="string">'PATH/Dockerfile'</span>)</span><br><span class="line">      --force-rm                Always remove intermediate containers</span><br><span class="line">      --iidfile string          Write the image ID to the file</span><br><span class="line">      --isolation string        Container isolation technology</span><br><span class="line">      --label list              Set metadata <span class="keyword">for</span> an image</span><br><span class="line">  -m, --memory bytes            Memory <span class="built_in">limit</span></span><br><span class="line">      --memory-swap bytes       Swap <span class="built_in">limit</span> equal to memory plus swap: <span class="string">'-1'</span> to <span class="built_in">enable</span> unlimited swap</span><br><span class="line">      --network string          Set the networking mode <span class="keyword">for</span> the RUN instructions during build (default <span class="string">"default"</span>)</span><br><span class="line">      --no-cache                Do not use cache when building the image</span><br><span class="line">      --pull                    Always attempt to pull a newer version of the image</span><br><span class="line">  -q, --quiet                   Suppress the build output and <span class="built_in">print</span> image ID on success</span><br><span class="line">      --rm                      Remove intermediate containers after a successful build (default <span class="literal">true</span>)</span><br><span class="line">      --security-opt strings    Security options</span><br><span class="line">      --shm-size bytes          Size of /dev/shm</span><br><span class="line">  -t, --tag list                Name and optionally a tag <span class="keyword">in</span> the <span class="string">'name:tag'</span> format</span><br><span class="line">      --target string           Set the target build stage to build.</span><br><span class="line">      --<span class="built_in">ulimit</span> <span class="built_in">ulimit</span>           Ulimit options (default [])</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
@@ -353,7 +379,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/runtime/docker/docker-architecture/" data-toggle="tooltip" data-placement="top" title="Docker整体架构图">&larr; Previous Post</a>
+                            <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/" data-toggle="tooltip" data-placement="top" title="[Docker] Docker源码分析（二）之Docker Daemon">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -636,7 +662,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

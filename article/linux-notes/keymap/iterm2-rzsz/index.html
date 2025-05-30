@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -215,20 +215,26 @@
                 <div id="vip-container"><blockquote>
 <p>本文由网络文章整理备份。</p>
 </blockquote>
-<h1 id="iterm2-rz与sz的功能"><a href="#iterm2-rz与sz的功能" class="headerlink" title="iterm2 rz与sz的功能"></a>iterm2 rz与sz的功能</h1><p>本文主要介绍<code>mac</code>环境下使用<code>iterm2</code>的<code>rz sz</code>功能的安装流程。</p>
-<h2 id="1-安装lrzsz"><a href="#1-安装lrzsz" class="headerlink" title="1. 安装lrzsz"></a>1. 安装lrzsz</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install lrzsz</span><br></pre></td></tr></table></figure>
-<h2 id="2-安装执行脚本"><a href="#2-安装执行脚本" class="headerlink" title="2. 安装执行脚本"></a>2. 安装执行脚本</h2><p>将<code>iterm2-send-zmodem.sh</code>和<code>iterm2-recv-zmodem.sh</code>保存到<code>/usr/local/bin</code>目录下。</p>
+<h1 id="iterm2-rz与sz的功能">iterm2 rz与sz的功能</h1>
+<p>本文主要介绍<code>mac</code>环境下使用<code>iterm2</code>的<code>rz sz</code>功能的安装流程。</p>
+<h2 id="1-安装lrzsz">1. 安装lrzsz</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install lrzsz</span><br></pre></td></tr></table></figure>
+<h2 id="2-安装执行脚本">2. 安装执行脚本</h2>
+<p>将<code>iterm2-send-zmodem.sh</code>和<code>iterm2-recv-zmodem.sh</code>保存到<code>/usr/local/bin</code>目录下。</p>
 <p><a href="https://raw.githubusercontent.com/RobberPhex/iterm2-zmodem/master/iterm2-send-zmodem.sh" target="_blank" rel="noopener">iterm2-send-zmodem.sh</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Author: Matt Mastracci (matthew@mastracci.com)</span></span><br><span class="line"><span class="comment"># AppleScript from http://stackoverflow.com/questions/4309087/cancel-button-on-osascript-in-a-bash-script</span></span><br><span class="line"><span class="comment"># licensed under cc-wiki with attribution required </span></span><br><span class="line"><span class="comment"># Remainder of script public domain</span></span><br><span class="line"></span><br><span class="line">osascript -e <span class="string">'tell application "iTerm2" to version'</span> &gt; /dev/null 2&gt;&amp;1 &amp;&amp; NAME=iTerm2 || NAME=iTerm</span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$NAME</span> = <span class="string">"iTerm"</span> ]]; <span class="keyword">then</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application "iTerm" to activate'</span> -e <span class="string">'tell application "iTerm" to set thefile to choose file with prompt "Choose a file to send"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application "iTerm2" to activate'</span> -e <span class="string">'tell application "iTerm2" to set thefile to choose file with prompt "Choose a file to send"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$FILE</span> = <span class="string">""</span> ]]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> Cancelled.</span><br><span class="line">	<span class="comment"># Send ZModem cancel</span></span><br><span class="line">	<span class="built_in">echo</span> -e \\x18\\x18\\x18\\x18\\x18</span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Cancelled transfer</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	/usr/<span class="built_in">local</span>/bin/sz <span class="string">"<span class="variable">$FILE</span>"</span> --escape --binary --bufsize 4096</span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Received "$FILE"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
 <p><a href="https://raw.githubusercontent.com/RobberPhex/iterm2-zmodem/master/iterm2-recv-zmodem.sh" target="_blank" rel="noopener">iterm2-recv-zmodem.sh</a></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Author: Matt Mastracci (matthew@mastracci.com)</span></span><br><span class="line"><span class="comment"># AppleScript from http://stackoverflow.com/questions/4309087/cancel-button-on-osascript-in-a-bash-script</span></span><br><span class="line"><span class="comment"># licensed under cc-wiki with attribution required </span></span><br><span class="line"><span class="comment"># Remainder of script public domain</span></span><br><span class="line"></span><br><span class="line">osascript -e <span class="string">'tell application "iTerm2" to version'</span> &gt; /dev/null 2&gt;&amp;1 &amp;&amp; NAME=iTerm2 || NAME=iTerm</span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$NAME</span> = <span class="string">"iTerm"</span> ]]; <span class="keyword">then</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application "iTerm" to activate'</span> -e <span class="string">'tell application "iTerm" to set thefile to choose folder with prompt "Choose a folder to place received files in"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	FILE=$(osascript -e <span class="string">'tell application "iTerm2" to activate'</span> -e <span class="string">'tell application "iTerm2" to set thefile to choose folder with prompt "Choose a folder to place received files in"'</span> -e <span class="string">"do shell script (\"echo \"&amp;(quoted form of POSIX path of thefile as Unicode text)&amp;\"\")"</span>)</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [[ <span class="variable">$FILE</span> = <span class="string">""</span> ]]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> Cancelled.</span><br><span class="line">	<span class="comment"># Send ZModem cancel</span></span><br><span class="line">	<span class="built_in">echo</span> -e \\x18\\x18\\x18\\x18\\x18</span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Cancelled transfer</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">cd</span> <span class="string">"<span class="variable">$FILE</span>"</span></span><br><span class="line">	/usr/<span class="built_in">local</span>/bin/rz --rename --escape --binary --bufsize 4096 </span><br><span class="line">	sleep 1</span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span></span><br><span class="line">	<span class="built_in">echo</span> \<span class="comment"># Sent \-\&gt; $FILE</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-<h2 id="3-赋予这两个文件可执行权限"><a href="#3-赋予这两个文件可执行权限" class="headerlink" title="3. 赋予这两个文件可执行权限"></a>3. 赋予这两个文件可执行权限</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 /usr/<span class="built_in">local</span>/bin/iterm2-*</span><br></pre></td></tr></table></figure>
-<h2 id="4-设置iterm2的tirgger特性"><a href="#4-设置Iterm2的Tirgger特性" class="headerlink" title="4. 设置Iterm2的Tirgger特性"></a>4. 设置Iterm2的Tirgger特性</h2><p>设置Iterm2的Tirgger特性，profiles-&gt;default-&gt;editProfiles-&gt;Advanced中的Tirgger</p>
+<h2 id="3-赋予这两个文件可执行权限">3. 赋予这两个文件可执行权限</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod 777 /usr/<span class="built_in">local</span>/bin/iterm2-*</span><br></pre></td></tr></table></figure>
+<h2 id="4-设置iterm2的tirgger特性">4. 设置Iterm2的Tirgger特性</h2>
+<p>设置Iterm2的Tirgger特性，profiles-&gt;default-&gt;editProfiles-&gt;Advanced中的Tirgger</p>
 <p>添加两条trigger，分别设置 Regular expression，Action，Parameters，Instant如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Regular expression: rz waiting to receive.\*\*B0100</span><br><span class="line">Action: Run Silent Coprocess</span><br><span class="line">Parameters: /usr/<span class="built_in">local</span>/bin/iterm2-send-zmodem.sh</span><br><span class="line">Instant: checked</span><br><span class="line"></span><br><span class="line">Regular expression: \*\*B00000000000000</span><br><span class="line">Action: Run Silent Coprocess</span><br><span class="line">Parameters: /usr/<span class="built_in">local</span>/bin/iterm2-recv-zmodem.sh</span><br><span class="line">Instant: checked</span><br></pre></td></tr></table></figure>
 <p>示例图：</p>
-<p><img src="https://raw.githubusercontent.com/aikuyun/iterm2-zmodem/master/imgs/01.png"></p>
-<h2 id="5-使用"><a href="#5-使用" class="headerlink" title="5. 使用"></a>5. 使用</h2><ul>
+<img src="https://raw.githubusercontent.com/aikuyun/iterm2-zmodem/master/imgs/01.png">
+<h2 id="5-使用">5. 使用</h2>
+<ul>
 <li>上传文件：rz</li>
 <li>下载文件：sz + file</li>
 </ul>
@@ -261,12 +267,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/linux-notes/keymap/vscode-keymap/" data-toggle="tooltip" data-placement="top" title="vscode快捷键">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/keymap/eclipse-keymap/" data-toggle="tooltip" data-placement="top" title="eclipse快捷键">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/keepalived/install-keepalived/" data-toggle="tooltip" data-placement="top" title="Keepalived安装与配置">Next Post &rarr;</a>
+                            <a href="/article/linux-notes/keymap/tmux-keymap/" data-toggle="tooltip" data-placement="top" title="tmux快捷键">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -544,7 +550,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,25 +212,34 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-pod的dns策略"><a href="#1-Pod的DNS策略" class="headerlink" title="1. Pod的DNS策略"></a>1. Pod的DNS策略</h1><p>可以在pod中定义<code>dnsPolicy</code>字段来设置dns的策略。</p>
+                <div id="vip-container"><h1 id="1-pod的dns策略">1. Pod的DNS策略</h1>
+<p>可以在pod中定义<code>dnsPolicy</code>字段来设置dns的策略。</p>
 <ul>
-<li><p>“<code>Default</code>“: Pod 从运行所在的节点继承名称解析配置。就是该Pod的DNS配置会跟宿主机完全一致。</p>
+<li>
+<p>“<code>Default</code>”: Pod 从运行所在的节点继承名称解析配置。就是该Pod的DNS配置会跟宿主机完全一致。</p>
 </li>
-<li><p>“<code>ClusterFirst</code>“: 如果没有配置，即为默认的DNS策略。预先把kube-dns（或CoreDNS）的信息当作预设参数写入到该Pod内的DNS配置。与配置的集群域后缀不匹配的任何 DNS 查询（例如 “www.kubernetes.io”） 都会由 DNS 服务器转发到上游名称服务器。</p>
+<li>
+<p>“<code>ClusterFirst</code>”: 如果没有配置，即为默认的DNS策略。预先把kube-dns（或CoreDNS）的信息当作预设参数写入到该Pod内的DNS配置。与配置的集群域后缀不匹配的任何 DNS 查询（例如 “<a href="http://www.kubernetes.io" target="_blank" rel="noopener">www.kubernetes.io</a>”） 都会由 DNS 服务器转发到上游名称服务器。</p>
 </li>
-<li><p>“<code>ClusterFirstWithHostNet</code>“: 对于以 hostNetwork 方式运行的 Pod，应将其 DNS 策略显式设置为 “<code>ClusterFirstWithHostNet</code>“。否则，以 hostNetwork 方式和 <code>&quot;ClusterFirst&quot;</code> 策略运行的 Pod 将会做出回退至 <code>&quot;Default&quot;</code> 策略的行为。</p>
+<li>
+<p>“<code>ClusterFirstWithHostNet</code>”: 对于以 hostNetwork 方式运行的 Pod，应将其 DNS 策略显式设置为 “<code>ClusterFirstWithHostNet</code>”。否则，以 hostNetwork 方式和 <code>&quot;ClusterFirst&quot;</code> 策略运行的 Pod 将会做出回退至 <code>&quot;Default&quot;</code> 策略的行为。</p>
 </li>
-<li><p>“<code>None</code>“: 此设置允许 Pod 忽略 Kubernetes 环境中的 DNS 设置。Pod 会使用其 <code>dnsConfig</code> 字段所提供的 DNS 设置。</p>
+<li>
+<p>“<code>None</code>”: 此设置允许 Pod 忽略 Kubernetes 环境中的 DNS 设置。Pod 会使用其 <code>dnsConfig</code> 字段所提供的 DNS 设置。</p>
 </li>
 </ul>
-<h1 id="2-pod-dns的配置"><a href="#2-Pod-DNS的配置" class="headerlink" title="2. Pod DNS的配置"></a>2. Pod DNS的配置</h1><p>当 Pod 的 <code>dnsPolicy</code> 设置为 “<code>None</code>“ 时，必须指定 <code>dnsConfig</code> 字段。</p>
-<p><code>dnsConfig</code> 字段中属性：</p>
+<h1 id="2-pod-dns的配置">2. Pod DNS的配置</h1>
+<p>当 Pod 的 <code>dnsPolicy</code> 设置为 “<code>None</code>” 时，必须指定 <code>dnsConfig</code> 字段。</p>
+<p><code>dnsConfig</code> 字段中属性：</p>
 <ul>
-<li><p><code>nameservers</code>：将用作于 Pod 的 DNS 服务器的 IP 地址列表。 最多可以指定 3 个 IP 地址。例如 coredns的Cluster IP。</p>
+<li>
+<p><code>nameservers</code>：将用作于 Pod 的 DNS 服务器的 IP 地址列表。 最多可以指定 3 个 IP 地址。例如 coredns的Cluster IP。</p>
 </li>
-<li><p><code>searches</code>：用于在 Pod 中查找主机名的 DNS 搜索域的列表。此属性是可选的。</p>
+<li>
+<p><code>searches</code>：用于在 Pod 中查找主机名的 DNS 搜索域的列表。此属性是可选的。</p>
 </li>
-<li><p><code>options</code>：可选的对象列表，其中每个对象可能具有 <code>name</code> 属性（必需）和 <code>value</code> 属性（可选）。</p>
+<li>
+<p><code>options</code>：可选的对象列表，其中每个对象可能具有 <code>name</code> 属性（必需）和 <code>value</code> 属性（可选）。</p>
 </li>
 </ul>
 <p>示例：</p>
@@ -238,88 +247,121 @@
 <p>通过以上配置，容器内的<code>/etc/resolv.conf</code>文件内容为：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -it dns-example -- cat /etc/resolv.conf</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nameserver 1.2.3.4</span><br><span class="line">search ns1.svc.cluster-domain.example my.dns.search.suffix</span><br><span class="line">options ndots:2 edns0</span><br></pre></td></tr></table></figure>
-<h1 id="3-自定义dns服务"><a href="#3-自定义DNS服务" class="headerlink" title="3. 自定义DNS服务"></a>3. 自定义DNS服务</h1><p>默认一般使用coredns来作为k8s的dns服务器。默认使用deployment的方式来运行coredns，会创建一个名为<code>kube-dns</code>的service，并用ClusterIP（默认为10.96.0.10）来作为集群内的pod的nameserver。</p>
-<p>kubelet 使用 <code>--cluster-dns=&lt;DNS 服务 IP&gt;</code> 标志将 DNS 解析器的信息传递给每个容器。使用 <code>--cluster-domain=&lt;默认本地域名&gt;</code> 标志配置本地域名。</p>
+<h1 id="3-自定义dns服务">3. 自定义DNS服务</h1>
+<p>默认一般使用coredns来作为k8s的dns服务器。默认使用deployment的方式来运行coredns，会创建一个名为<code>kube-dns</code>的service，并用ClusterIP（默认为10.96.0.10）来作为集群内的pod的nameserver。</p>
+<p>kubelet 使用 <code>--cluster-dns=&lt;DNS 服务 IP&gt;</code> 标志将 DNS 解析器的信息传递给每个容器。使用 <code>--cluster-domain=&lt;默认本地域名&gt;</code> 标志配置本地域名。</p>
 <p>可查看默认配置：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cat /var/lib/kubelet/config.yaml</span></span><br><span class="line">...</span><br><span class="line">clusterDNS:</span><br><span class="line">- 10.96.0.10</span><br><span class="line">clusterDomain: cluster.local</span><br></pre></td></tr></table></figure>
 <p>总结：</p>
 <p>当没有给pod设置任何dns策略时，则默认使用ClusterFirst的策略，即nameserver的IP为coredns的ClusterIP。通过coredns来解析服务。</p>
-<h2 id="31-配置继承节点的dns解析"><a href="#3-1-配置继承节点的DNS解析" class="headerlink" title="3.1. 配置继承节点的DNS解析"></a>3.1. 配置继承节点的DNS解析</h2><ul>
-<li><p>如果 Pod 的 <code>dnsPolicy</code> 设置为 <code>default</code>，则它将从 Pod 运行所在节点继承名称解析配置。</p>
+<h2 id="31-配置继承节点的dns解析">3.1. 配置继承节点的DNS解析</h2>
+<ul>
+<li>
+<p>如果 Pod 的 <code>dnsPolicy</code> 设置为 <code>default</code>，则它将从 Pod 运行所在节点继承名称解析配置。</p>
 </li>
-<li><p>使用 kubelet 的 <code>--resolv-conf</code> 标志设置为宿主机的/etc/resolv.conf文件。</p>
+<li>
+<p>使用 kubelet 的 <code>--resolv-conf</code> 标志设置为宿主机的/etc/resolv.conf文件。</p>
 </li>
 </ul>
-<h2 id="32-配置coredns"><a href="#3-2-配置CoreDNS" class="headerlink" title="3.2. 配置CoreDNS"></a>3.2. 配置CoreDNS</h2><p> 配置</p>
+<h2 id="32-配置coredns">3.2. 配置CoreDNS</h2>
+<p>配置</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">coredns</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">Corefi:</span> <span class="string">|</span></span><br><span class="line">    <span class="string">.:53</span> <span class="string">&#123;</span></span><br><span class="line">        <span class="string">errors</span></span><br><span class="line">        <span class="string">health</span> <span class="string">&#123;</span></span><br><span class="line">           <span class="string">lameduck</span> <span class="string">5s</span></span><br><span class="line">        <span class="string">&#125;</span></span><br><span class="line">        <span class="string">ready</span></span><br><span class="line">        <span class="string">kubernetes</span> <span class="string">cluster.local</span> <span class="string">in-addr.arpa</span> <span class="string">ip6.arpa</span> <span class="string">&#123;</span></span><br><span class="line">           <span class="string">pods</span> <span class="string">insecure</span></span><br><span class="line">           <span class="string">fallthrough</span> <span class="string">in-addr.arpa</span> <span class="string">ip6.arpa</span></span><br><span class="line">           <span class="string">ttl</span> <span class="number">30</span></span><br><span class="line">        <span class="string">&#125;</span></span><br><span class="line">        <span class="string">prometheus</span> <span class="string">:9153</span></span><br><span class="line">        <span class="string">forward</span> <span class="string">.</span> <span class="string">/etc/resolv.conf</span> <span class="string">&#123;</span></span><br><span class="line">           <span class="string">max_concurrent</span> <span class="number">1000</span></span><br><span class="line">        <span class="string">&#125;</span></span><br><span class="line">        <span class="string">cache</span> <span class="number">30</span></span><br><span class="line">        <span class="string">loop</span></span><br><span class="line">        <span class="string">reload</span></span><br><span class="line">        <span class="string">loadbalance</span></span><br><span class="line">    <span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
 <p>配置说明：</p>
-<p>Corefile 配置包括以下 CoreDNS <a href="https://coredns.io/plugins/" target="_blank" rel="noopener">插件</a>：</p>
+<p>Corefile 配置包括以下 CoreDNS <a href="https://coredns.io/plugins/" target="_blank" rel="noopener">插件</a>：</p>
 <ul>
-<li><p><a href="https://coredns.io/plugins/errors/" target="_blank" rel="noopener">errors</a>：错误记录到标准输出。</p>
+<li>
+<p><a href="https://coredns.io/plugins/errors/" target="_blank" rel="noopener">errors</a>：错误记录到标准输出。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/health/" target="_blank" rel="noopener">health</a>：在 <code>http://localhost:8080/health</code> 处提供 CoreDNS 的健康报告。 在这个扩展语法中，<code>lameduck</code> 会使此进程不健康，等待 5 秒后进程被关闭。</p>
+<li>
+<p><a href="https://coredns.io/plugins/health/" target="_blank" rel="noopener">health</a>：在 <code>http://localhost:8080/health</code> 处提供 CoreDNS 的健康报告。 在这个扩展语法中，<code>lameduck</code> 会使此进程不健康，等待 5 秒后进程被关闭。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/ready/" target="_blank" rel="noopener">ready</a>：在端口 8181 上提供的一个 HTTP 端点， 当所有能够表达自身就绪的插件都已就绪时，在此端点返回 200 OK。</p>
+<li>
+<p><a href="https://coredns.io/plugins/ready/" target="_blank" rel="noopener">ready</a>：在端口 8181 上提供的一个 HTTP 端点， 当所有能够表达自身就绪的插件都已就绪时，在此端点返回 200 OK。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/kubernetes/" target="_blank" rel="noopener">kubernetes</a>：CoreDNS 将基于服务和 Pod 的 IP 来应答 DNS 查询。 你可以在 CoreDNS 网站找到有关此插件的<a href="https://coredns.io/plugins/kubernetes/" target="_blank" rel="noopener">更多细节</a>。</p>
+<li>
+<p><a href="https://coredns.io/plugins/kubernetes/" target="_blank" rel="noopener">kubernetes</a>：CoreDNS 将基于服务和 Pod 的 IP 来应答 DNS 查询。 你可以在 CoreDNS 网站找到有关此插件的<a href="https://coredns.io/plugins/kubernetes/" target="_blank" rel="noopener">更多细节</a>。</p>
 <ul>
-<li><p>你可以使用 <code>ttl</code> 来定制响应的 TTL。默认值是 5 秒钟。TTL 的最小值可以是 0 秒钟， 最大值为 3600 秒。将 TTL 设置为 0 可以禁止对 DNS 记录进行缓存。</p>
+<li>
+<p>你可以使用 <code>ttl</code> 来定制响应的 TTL。默认值是 5 秒钟。TTL 的最小值可以是 0 秒钟， 最大值为 3600 秒。将 TTL 设置为 0 可以禁止对 DNS 记录进行缓存。</p>
 </li>
-<li><p><code>pods insecure</code> 选项是为了与 kube-dns 向后兼容。</p>
+<li>
+<p><code>pods insecure</code> 选项是为了与 kube-dns 向后兼容。</p>
 </li>
-<li><p>你可以使用 <code>pods verified</code> 选项，该选项使得仅在相同名字空间中存在具有匹配 IP 的 Pod 时才返回 A 记录。</p>
+<li>
+<p>你可以使用 <code>pods verified</code> 选项，该选项使得仅在相同名字空间中存在具有匹配 IP 的 Pod 时才返回 A 记录。</p>
 </li>
-<li><p>如果你不使用 Pod 记录，则可以使用 <code>pods disabled</code> 选项。</p>
+<li>
+<p>如果你不使用 Pod 记录，则可以使用 <code>pods disabled</code> 选项。</p>
 </li>
 </ul>
 </li>
-<li><p><a href="https://coredns.io/plugins/prometheus/" target="_blank" rel="noopener">prometheus</a>：CoreDNS 的度量指标值以 <a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a> 格式（也称为 OpenMetrics）在 <code>http://localhost:9153/metrics</code> 上提供。</p>
+<li>
+<p><a href="https://coredns.io/plugins/prometheus/" target="_blank" rel="noopener">prometheus</a>：CoreDNS 的度量指标值以 <a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a> 格式（也称为 OpenMetrics）在 <code>http://localhost:9153/metrics</code> 上提供。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/forward/" target="_blank" rel="noopener">forward</a>: 不在 Kubernetes 集群域内的任何查询都将转发到预定义的解析器 (/etc/resolv.conf)。</p>
+<li>
+<p><a href="https://coredns.io/plugins/forward/" target="_blank" rel="noopener">forward</a>: 不在 Kubernetes 集群域内的任何查询都将转发到预定义的解析器 (/etc/resolv.conf)。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/cache/" target="_blank" rel="noopener">cache</a>：启用前端缓存。</p>
+<li>
+<p><a href="https://coredns.io/plugins/cache/" target="_blank" rel="noopener">cache</a>：启用前端缓存。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/loop/" target="_blank" rel="noopener">loop</a>：检测简单的转发环，如果发现死循环，则中止 CoreDNS 进程。</p>
+<li>
+<p><a href="https://coredns.io/plugins/loop/" target="_blank" rel="noopener">loop</a>：检测简单的转发环，如果发现死循环，则中止 CoreDNS 进程。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/reload" target="_blank" rel="noopener">reload</a>：允许自动重新加载已更改的 Corefile。 编辑 ConfigMap 配置后，请等待两分钟，以使更改生效。</p>
+<li>
+<p><a href="https://coredns.io/plugins/reload" target="_blank" rel="noopener">reload</a>：允许自动重新加载已更改的 Corefile。 编辑 ConfigMap 配置后，请等待两分钟，以使更改生效。</p>
 </li>
-<li><p><a href="https://coredns.io/plugins/loadbalance" target="_blank" rel="noopener">loadbalance</a>：这是一个轮转式 DNS 负载均衡器， 它在应答中随机分配 A、AAAA 和 MX 记录的顺序。</p>
+<li>
+<p><a href="https://coredns.io/plugins/loadbalance" target="_blank" rel="noopener">loadbalance</a>：这是一个轮转式 DNS 负载均衡器， 它在应答中随机分配 A、AAAA 和 MX 记录的顺序。</p>
 </li>
 </ul>
-<h2 id="33-配置存根域和上游域名服务器"><a href="#3-3-配置存根域和上游域名服务器" class="headerlink" title="3.3. 配置存根域和上游域名服务器"></a>3.3. 配置存根域和上游域名服务器</h2><p>CoreDNS 能够使用 <a href="https://coredns.io/plugins/forward/" target="_blank" rel="noopener">forward 插件</a>配置存根域和上游域名服务器。</p>
+<h2 id="33-配置存根域和上游域名服务器">3.3. 配置存根域和上游域名服务器</h2>
+<p>CoreDNS 能够使用 <a href="https://coredns.io/plugins/forward/" target="_blank" rel="noopener">forward 插件</a>配置存根域和上游域名服务器。</p>
 <p>示例：</p>
-<p>在 “10.150.0.1” 处运行了 <a href="https://www.consul.io/" target="_blank" rel="noopener">Consul</a> 域服务器， 且所有 Consul 名称都带有后缀 <code>.consul.local</code>。</p>
+<p>在 “10.150.0.1” 处运行了 <a href="https://www.consul.io/" target="_blank" rel="noopener">Consul</a> 域服务器， 且所有 Consul 名称都带有后缀 <code>.consul.local</code>。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">consul.local:53</span> <span class="string">&#123;</span></span><br><span class="line">    <span class="string">errors</span></span><br><span class="line">    <span class="string">cache</span> <span class="number">30</span></span><br><span class="line">    <span class="string">forward</span> <span class="string">.</span> <span class="number">10.150</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>要显式强制所有非集群 DNS 查找通过特定的域名服务器（位于 172.16.0.1），可将 <code>forward</code> 指向该域名服务器，而不是 <code>/etc/resolv.conf</code>。</p>
+<p>要显式强制所有非集群 DNS 查找通过特定的域名服务器（位于 172.16.0.1），可将 <code>forward</code> 指向该域名服务器，而不是 <code>/etc/resolv.conf</code>。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">forward</span> <span class="string">.</span>  <span class="number">172.16</span><span class="number">.0</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
 <p>完整示例；</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">coredns</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">Corefile:</span> <span class="string">|</span></span><br><span class="line">    <span class="string">.:53</span> <span class="string">&#123;</span></span><br><span class="line">        <span class="string">errors</span></span><br><span class="line">        <span class="string">health</span></span><br><span class="line">        <span class="string">kubernetes</span> <span class="string">cluster.local</span> <span class="string">in-addr.arpa</span> <span class="string">ip6.arpa</span> <span class="string">&#123;</span></span><br><span class="line">           <span class="string">pods</span> <span class="string">insecure</span></span><br><span class="line">           <span class="string">fallthrough</span> <span class="string">in-addr.arpa</span> <span class="string">ip6.arpa</span></span><br><span class="line">        <span class="string">&#125;</span></span><br><span class="line">        <span class="string">prometheus</span> <span class="string">:9153</span></span><br><span class="line">        <span class="string">forward</span> <span class="string">.</span> <span class="number">172.16</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">        <span class="string">cache</span> <span class="number">30</span></span><br><span class="line">        <span class="string">loop</span></span><br><span class="line">        <span class="string">reload</span></span><br><span class="line">        <span class="string">loadbalance</span></span><br><span class="line">    <span class="string">&#125;</span></span><br><span class="line">    <span class="string">consul.local:53</span> <span class="string">&#123;</span></span><br><span class="line">        <span class="string">errors</span></span><br><span class="line">        <span class="string">cache</span> <span class="number">30</span></span><br><span class="line">        <span class="string">forward</span> <span class="string">.</span> <span class="number">10.150</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">    <span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
-<h1 id="4-调试dns问题"><a href="#4-调试DNS问题" class="headerlink" title="4. 调试DNS问题"></a>4. 调试DNS问题</h1><p>创建一个调试的pod</p>
+<h1 id="4-调试dns问题">4. 调试DNS问题</h1>
+<p>创建一个调试的pod</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">dnsutils</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">dnsutils</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">registry.k8s.io/e2e-test-images/jessie-dnsutils:1.3</span></span><br><span class="line">    <span class="attr">command:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">sleep</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"infinity"</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">  <span class="attr">restartPolicy:</span> <span class="string">Always</span></span><br></pre></td></tr></table></figure>
 <p>部署调试pod</p>
-<h2 id="41-查看coredns服务是否正常"><a href="#4-1-查看Coredns服务是否正常" class="headerlink" title="4.1. 查看Coredns服务是否正常"></a>4.1. 查看Coredns服务是否正常</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc --namespace=kube-system </span><br><span class="line"></span><br><span class="line">NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE</span><br><span class="line">...</span><br><span class="line">kube-dns     ClusterIP   10.0.0.10      &lt;none&gt;        53/UDP,53/TCP        1h</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<h2 id="42-查看etcresolvconf"><a href="#4-2-查看-etc-resolv-conf" class="headerlink" title="4.2. 查看/etc/resolv.conf"></a>4.2. 查看/etc/resolv.conf</h2><p>查看容器内dns配置是否符合预期。</p>
+<h2 id="41-查看coredns服务是否正常">4.1. 查看Coredns服务是否正常</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc --namespace=kube-system </span><br><span class="line"></span><br><span class="line">NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE</span><br><span class="line">...</span><br><span class="line">kube-dns     ClusterIP   10.0.0.10      &lt;none&gt;        53/UDP,53/TCP        1h</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="42-查看etcresolvconf">4.2. 查看/etc/resolv.conf</h2>
+<p>查看容器内dns配置是否符合预期。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -ti dnsutils -- cat /etc/resolv.conf</span><br></pre></td></tr></table></figure>
-<h2 id="43-nslookup查看解析报错"><a href="#4-3-nslookup查看解析报错" class="headerlink" title="4.3. nslookup查看解析报错"></a>4.3. nslookup查看解析报错</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -i -t dnsutils -- nslookup kubernetes.default</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Server:    10.0.0.10</span><br><span class="line">Address 1: 10.0.0.10</span><br><span class="line"></span><br><span class="line">Name:      kubernetes.default</span><br><span class="line">Address 1: 10.0.0.1</span><br></pre></td></tr></table></figure>
+<h2 id="43-nslookup查看解析报错">4.3. nslookup查看解析报错</h2>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl <span class="built_in">exec</span> -i -t dnsutils -- nslookup kubernetes.default</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Server:    10.0.0.10</span><br><span class="line">Address 1: 10.0.0.10</span><br><span class="line"></span><br><span class="line">Name:      kubernetes.default</span><br><span class="line">Address 1: 10.0.0.1</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
-<li><p><a href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/dns-pod-service/" target="_blank" rel="noopener">Service 与 Pod 的 DNS | Kubernetes</a></p>
+<li>
+<p><a href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/dns-pod-service/" target="_blank" rel="noopener">Service 与 Pod 的 DNS | Kubernetes</a></p>
 </li>
-<li><p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/dns-custom-nameservers/" target="_blank" rel="noopener">自定义 DNS 服务 | Kubernetes</a></p>
+<li>
+<p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/dns-custom-nameservers/" target="_blank" rel="noopener">自定义 DNS 服务 | Kubernetes</a></p>
 </li>
-<li><p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/dns-debugging-resolution/" target="_blank" rel="noopener">调试 DNS 问题 | Kubernetes</a></p>
+<li>
+<p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/dns-debugging-resolution/" target="_blank" rel="noopener">调试 DNS 问题 | Kubernetes</a></p>
 </li>
-<li><p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/coredns/" target="_blank" rel="noopener">使用 CoreDNS 进行服务发现 | Kubernetes</a></p>
+<li>
+<p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/coredns/" target="_blank" rel="noopener">使用 CoreDNS 进行服务发现 | Kubernetes</a></p>
 </li>
-<li><p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/dns-horizontal-autoscaling/" target="_blank" rel="noopener">自动扩缩集群 DNS 服务 | Kubernetes</a></p>
+<li>
+<p><a href="https://kubernetes.io/zh-cn/docs/tasks/administer-cluster/dns-horizontal-autoscaling/" target="_blank" rel="noopener">自动扩缩集群 DNS 服务 | Kubernetes</a></p>
 </li>
-<li><p><a href="https://www.man7.org/linux/man-pages/man5/resolv.conf.5.html" target="_blank" rel="noopener">resolv.conf(5) - Linux manual page</a></p>
+<li>
+<p><a href="https://www.man7.org/linux/man-pages/man5/resolv.conf.5.html" target="_blank" rel="noopener">resolv.conf(5) - Linux manual page</a></p>
 </li>
-<li><p><a href="https://github.com/kubernetes/dns/blob/master/docs/specification.md" target="_blank" rel="noopener">dns/specification.md at master · kubernetes/dns · GitHub</a></p>
+<li>
+<p><a href="https://github.com/kubernetes/dns/blob/master/docs/specification.md" target="_blank" rel="noopener">dns/specification.md at master · kubernetes/dns · GitHub</a></p>
 </li>
-<li><p><a href="https://github.com/coredns/deployment/blob/master/kubernetes/CoreDNS-k8s_version.md" target="_blank" rel="noopener">deployment/CoreDNS-k8s_version.md at master · coredns/deployment · GitHub</a></p>
+<li>
+<p><a href="https://github.com/coredns/deployment/blob/master/kubernetes/CoreDNS-k8s_version.md" target="_blank" rel="noopener">deployment/CoreDNS-k8s_version.md at master · coredns/deployment · GitHub</a></p>
 </li>
-<li><p><a href="https://coredns.io/plugins/forward/" target="_blank" rel="noopener">forward</a></p>
+<li>
+<p><a href="https://coredns.io/plugins/forward/" target="_blank" rel="noopener">forward</a></p>
 </li>
 </ul>
 </div>
@@ -346,7 +388,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/develop/develop-k8s/" data-toggle="tooltip" data-placement="top" title="k8s社区开发指南">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/network/tcpdump/" data-toggle="tooltip" data-placement="top" title="tcpdump抓包流程">&larr; Previous Post</a>
                         </li>
                     
                     
@@ -629,7 +671,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

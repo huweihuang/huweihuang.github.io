@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,14 +212,17 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-raft协议分布式一致性算法"><a href="#1-Raft协议-分布式一致性算法" class="headerlink" title="1. Raft协议[分布式一致性算法]"></a>1. Raft协议[分布式一致性算法]</h1><p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578532/article/etcd/raft.png" alt="raft"></p>
+                <div id="vip-container"><h1 id="1-raft协议分布式一致性算法">1. Raft协议[分布式一致性算法]</h1>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578532/article/etcd/raft.png" alt="raft"></p>
 <p>raft算法中涉及三种角色，分别是：</p>
 <ul>
 <li><code>follower</code>: 跟随者</li>
 <li><code>candidate</code>: 候选者，选举过程中的中间状态角色</li>
 <li><code>leader</code>: 领导者</li>
 </ul>
-<h1 id="2-过程"><a href="#2-过程" class="headerlink" title="2. 过程"></a>2. 过程</h1><h2 id="21-选举"><a href="#2-1-选举" class="headerlink" title="2.1. 选举"></a>2.1. 选举</h2><p>有两个timeout来控制选举，第一个是<code>election timeout</code>，该时间是节点从follower到成为candidate的时间，该时间是150到300毫秒之间的随机值。另一个是<code>heartbeat timeout</code>。</p>
+<h1 id="2-过程">2. 过程</h1>
+<h2 id="21-选举">2.1. 选举</h2>
+<p>有两个timeout来控制选举，第一个是<code>election timeout</code>，该时间是节点从follower到成为candidate的时间，该时间是150到300毫秒之间的随机值。另一个是<code>heartbeat timeout</code>。</p>
 <ul>
 <li>当某个节点经历完<code>election timeout</code>成为candidate后，开启新的一个选举周期，他向其他节点发起投票请求（Request Vote），如果接收到消息的节点在该周期内还没投过票则给这个candidate投票，然后节点重置他的election timeout。</li>
 <li>当该candidate获得大部分的选票，则可以当选为leader。</li>
@@ -227,13 +230,15 @@
 <li>这个选举周期会继续，直到某个follower没有收到心跳，并成为candidate。</li>
 <li>如果某个选举周期内，有两个candidate同时获得相同多的选票，则会等待一个新的周期重新选举。</li>
 </ul>
-<h2 id="22-同步"><a href="#2-2-同步" class="headerlink" title="2.2. 同步"></a>2.2. 同步</h2><p>当选举过程结束，选出了leader，则leader需要把所有的变更同步的系统中的其他节点，该同步也是通过发送<code>Append Entries</code>的消息的方式。</p>
+<h2 id="22-同步">2.2. 同步</h2>
+<p>当选举过程结束，选出了leader，则leader需要把所有的变更同步的系统中的其他节点，该同步也是通过发送<code>Append Entries</code>的消息的方式。</p>
 <ul>
 <li>首先一个客户端发送一个更新给leader，这个更新会添加到leader的日志中。</li>
 <li>然后leader会在给follower的下次心跳探测中发送该更新。</li>
-<li>一旦大多数follower收到这个更新并返回给leader，leader提交这个更新，然后返回给客户端。 </li>
+<li>一旦大多数follower收到这个更新并返回给leader，leader提交这个更新，然后返回给客户端。</li>
 </ul>
-<h2 id="23-网络分区"><a href="#2-3-网络分区" class="headerlink" title="2.3. 网络分区"></a>2.3. 网络分区</h2><ul>
+<h2 id="23-网络分区">2.3. 网络分区</h2>
+<ul>
 <li>当发生网络分区的时候，在不同分区的节点接收不到leader的心跳，则会开启一轮选举，形成不同leader的多个分区集群。</li>
 <li>当客户端给不同leader的发送更新消息时，不同分区集群中的节点个数小于原先集群的一半时，更新不会被提交，而节点个数大于集群数一半时，更新会被提交。</li>
 <li>当网络分区恢复后，被提交的更新会同步到其他的节点上，其他节点未提交的日志会被回滚并匹配新leader的日志，保证全局的数据是一致的。</li>
@@ -268,12 +273,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/kvm/vm-concept/" data-toggle="tooltip" data-placement="top" title="虚拟化相关概念">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/operation/kubectl/install-kubectl/" data-toggle="tooltip" data-placement="top" title="kubectl安装与配置">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/setup/kubeadm-certs/" data-toggle="tooltip" data-placement="top" title="kubeadm管理证书">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/etcd/etcd-operator-usage/" data-toggle="tooltip" data-placement="top" title="etcd-operator的使用">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -551,7 +556,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

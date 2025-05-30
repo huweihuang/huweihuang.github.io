@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,20 +212,26 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h2 id="1-比特币密钥"><a href="#1-比特币密钥" class="headerlink" title="1. 比特币密钥"></a>1. 比特币密钥</h2><p>比特币的所有权是通过<code>数字密钥</code>、<code>比特币地址</code>和<code>数字签名</code>来确定的，数字密钥不存在网络中，而由用户生成，存储在一个文件或简单的数据库中，一般称之为<code>钱包</code>。</p>
+                <div id="vip-container"><h2 id="1-比特币密钥">1. 比特币密钥</h2>
+<p>比特币的所有权是通过<code>数字密钥</code>、<code>比特币地址</code>和<code>数字签名</code>来确定的，数字密钥不存在网络中，而由用户生成，存储在一个文件或简单的数据库中，一般称之为<code>钱包</code>。</p>
 <p>比特币交易都需要一个有效的签名才会被存储到区块链中，只有有效的密钥才能产生有效的数字签名，因此<code>拥有密钥副本就拥有了该账户的比特币控制权</code>。</p>
 <p>密钥是成对出现的，由<code>公钥</code>和<code>私钥</code>组成。公钥类似银行账号，私钥类似支票签名。在比特币交易环节， 收款人的公钥是通过数字指纹代表的，称之为<code>比特币地址</code>，类似支票上的收款方。一般情况，比特币地址由一个公钥生成并对应于这个公钥。</p>
-<h3 id="11-公钥加密和加密货币"><a href="#1-1-公钥加密和加密货币" class="headerlink" title="1.1. 公钥加密和加密货币"></a>1.1. 公钥加密和加密货币</h3><p>比特币使用<code>椭圆曲线算法</code>作为公钥加密的基础，椭圆曲线算法是一个<code>不可逆</code>的函数，即可以由A生成B，但不能由B推导出A。</p>
+<h3 id="11-公钥加密和加密货币">1.1. 公钥加密和加密货币</h3>
+<p>比特币使用<code>椭圆曲线算法</code>作为公钥加密的基础，椭圆曲线算法是一个<code>不可逆</code>的函数，即可以由A生成B，但不能由B推导出A。</p>
 <p>在比特币系统中，用公钥加密创建一个密钥对，用于控制比特币的获取。密钥对包括一个私钥和由其衍生的唯一公钥。公钥用于接收比特币，私钥用于比特币支付时的交易签名。由私钥生产的签名可以在不泄露私钥的同时对公钥进行验证。</p>
 <p>支付比特币时，比特币的当前所有者需要在交易中提交其公钥和签名，比特币的所有人都可以通过提交的公钥和签名验证该交易是否有效，即确认支付者在该时刻对所交易的比特币拥有所有权。</p>
-<h3 id="12-私钥和公钥"><a href="#1-2-私钥和公钥" class="headerlink" title="1.2. 私钥和公钥"></a>1.2. 私钥和公钥</h3><p>比特币包含一系列密钥对，每个密钥对包含一个公钥和私钥。<code>私钥</code>是一个随机数，私钥通过椭圆曲线算法生成<code>公钥</code>，<code>公钥</code>再通过单向加密哈希函数生成<code>比特币地址</code>。比特币使用非对称加密，使得签名只能由私钥产生，且在不泄露私钥情况下所有人都可以验证该签名p。</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821946/article/blockchain/P-Keys.png" width="100%"></p>
-<h3 id="13-私钥"><a href="#1-3-私钥" class="headerlink" title="1.3. 私钥"></a>1.3. 私钥</h3><p>私钥可以理解为一个<code>随机数</code>，<code>比特币地址中资金的控制取决于相应私钥的控制权</code>，比特币交易中，私钥用于生成支付比特币所必需的签名以证明对资金的所有权。</p>
+<h3 id="12-私钥和公钥">1.2. 私钥和公钥</h3>
+<p>比特币包含一系列密钥对，每个密钥对包含一个公钥和私钥。<code>私钥</code>是一个随机数，私钥通过椭圆曲线算法生成<code>公钥</code>，<code>公钥</code>再通过单向加密哈希函数生成<code>比特币地址</code>。比特币使用非对称加密，使得签名只能由私钥产生，且在不泄露私钥情况下所有人都可以验证该签名p。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821946/article/blockchain/P-Keys.png" width="100%">
+<h3 id="13-私钥">1.3. 私钥</h3>
+<p>私钥可以理解为一个<code>随机数</code>，<code>比特币地址中资金的控制取决于相应私钥的控制权</code>，比特币交易中，私钥用于生成支付比特币所必需的签名以证明对资金的所有权。</p>
 <p><strong>从随机数生成私钥</strong></p>
 <p>选择随机性来源（<code>熵源</code>），生成一个比特币私钥在本质上与“在1到$2^{256}$之间选一个数字”无异。建议使用密码学安全的伪随机数生成器（CSPRNG），并且需要有一个来自具有足够熵值的源的种子。</p>
-<h3 id="14公钥"><a href="#1-4-公钥" class="headerlink" title="1.4.公钥"></a>1.4.公钥</h3><p>通过椭圆曲线算法可以由私钥生成公钥，该过程是<code>不可逆</code>的过程：<code>K（公钥）=k（私钥）*G（常数点）</code>。其反向运算，被称为“寻找离散对数”——已知公钥<code>K</code>来求出私钥<code>k</code>——是极其困难的。</p>
-<h3 id="15-椭圆曲线算法"><a href="#1-5-椭圆曲线算法" class="headerlink" title="1.5. 椭圆曲线算法"></a>1.5. 椭圆曲线算法</h3><p><code>椭圆曲线加密法</code>是一种基于离散对数问题的<code>非对称</code>（或公钥）加密法，可以用对椭圆曲线上的点进行加法或乘法运算来表达。</p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821946/article/blockchain/elliptic-curve.png" width="50%"></p>
+<h3 id="14公钥">1.4.公钥</h3>
+<p>通过椭圆曲线算法可以由私钥生成公钥，该过程是<code>不可逆</code>的过程：<code>K（公钥）=k（私钥）*G（常数点）</code>。其反向运算，被称为“寻找离散对数”——已知公钥<code>K</code>来求出私钥<code>k</code>——是极其困难的。</p>
+<h3 id="15-椭圆曲线算法">1.5. 椭圆曲线算法</h3>
+<p><code>椭圆曲线加密法</code>是一种基于离散对数问题的<code>非对称</code>（或公钥）加密法，可以用对椭圆曲线上的点进行加法或乘法运算来表达。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821946/article/blockchain/elliptic-curve.png" width="50%">
 <p>比特币使用了<code>secp256k1</code>标准所定义的一条特殊的椭圆曲线和一系列数学常数。</p>
 <p><code>secp256k1</code>曲线由下述函数定义，该函数可产生一条椭圆曲线：</p>
 <p>y2 = (x3 + 7)} over (F<em>p</em>)</p>
@@ -233,18 +239,22 @@
 <p>y2 mod <em>p</em> = (x3 + 7) mod <em>p</em></p>
 <p>上述<em>mod p</em>（素数p取模）表明该曲线是在素数阶<em>p</em>的有限域内，也写作F<em>p</em>，其中p = 2256 – 232 – 29 – 28 – 27 – 26 – 24 – 1，这是一个非常大的素数。</p>
 <p>在椭圆曲线中，点的相加等同于从该点画切线找到与曲线相交的另一点，然后映射到x轴。</p>
-<h3 id="16-生成公钥"><a href="#1-6-生成公钥" class="headerlink" title="1.6. 生成公钥"></a>1.6. 生成公钥</h3><p>以一个随机生成的<code>私钥k</code>为起点，将其与曲线上已定义的<code>生成点G</code>相乘以获得曲线上的另一点，也就是相应的<code>公钥K</code>。生成点是<code>secp256k1标准</code>的一部分，<code>比特币密钥的生成点都是相同的</code>，所以一个<code>私钥k</code>对应唯一的一个<code>公钥K</code>，只能单向运算，即不能由<code>公钥K</code>得出<code>私钥k</code>。</p>
+<h3 id="16-生成公钥">1.6. 生成公钥</h3>
+<p>以一个随机生成的<code>私钥k</code>为起点，将其与曲线上已定义的<code>生成点G</code>相乘以获得曲线上的另一点，也就是相应的<code>公钥K</code>。生成点是<code>secp256k1标准</code>的一部分，<code>比特币密钥的生成点都是相同的</code>，所以一个<code>私钥k</code>对应唯一的一个<code>公钥K</code>，只能单向运算，即不能由<code>公钥K</code>得出<code>私钥k</code>。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;K = k * G&#125;</span><br></pre></td></tr></table></figure>
 <p>示例：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">K = 1E99423A4ED27608A15A2616A2B0E9E52CED330AC530EDCC32C8FFC6A526AEDD * G</span><br><span class="line"></span><br><span class="line">K = (x, y)</span><br><span class="line">其中，</span><br><span class="line">x = F028892BAD7ED57D2FB57BF33081D5CFCF6F9ED3D3D7F159C2E2FFF579DC341A</span><br><span class="line">y = 07CF33DA18BD734C600B96A72BBC4749D5141C90EC8AC328AE52DDFE2E505BDB</span><br></pre></td></tr></table></figure>
-<h2 id="2-比特币地址"><a href="#2-比特币地址" class="headerlink" title="2. 比特币地址"></a>2. 比特币地址</h2><p><code>比特币地址</code>是一个由数字和字母组成的<code>字符串</code>，可以公开，由公钥生成的比特币地址一般以数字<code>1</code>开头。</p>
+<h2 id="2-比特币地址">2. 比特币地址</h2>
+<p><code>比特币地址</code>是一个由数字和字母组成的<code>字符串</code>，可以公开，由公钥生成的比特币地址一般以数字<code>1</code>开头。</p>
 <p>例如：1J7mdg5rbQyUHENYdx39WVWK7fsLpEoXZy</p>
 <p>在比特币交易中，<code>比特币地址</code>一般用来表示<code>收款方</code>。</p>
 <p>比特币地址由公钥经过<code>单向加密哈希算法</code>得到，哈希算法是一种<code>单向函数</code>，接收任意长度的输入产生指纹摘要。由公钥生成比特币地址时使用的算法如下：</p>
 <ul>
-<li><p>Secure Hash Algorithm (SHA)</p>
+<li>
+<p>Secure Hash Algorithm (SHA)</p>
 </li>
-<li><p>the RACE Integrity Primitives Evaluation Message Digest (RIPEMD)，</p>
+<li>
+<p>the RACE Integrity Primitives Evaluation Message Digest (RIPEMD)，</p>
 </li>
 </ul>
 <p>特别是<code>SHA256</code>和<code>RIPEMD160</code>。</p>
@@ -252,8 +262,10 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> K是公钥，A是生成的比特币地址。</span><br><span class="line">A = RIPEMD160(SHA256(K))</span><br></pre></td></tr></table></figure>
 <p>通常用户见到的比特币地址是经过<code>Base58Check</code>编码的，该编码使用了58个字符（一种Base58数字系统）和校验码，提高了可读性、避免歧义并有效防止了在地址转录和输入中产生的错误。</p>
 <p><strong>由公钥生成比特币地址的过程：</strong></p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821946/article/blockchain/publicKey_to_addr.png" width="50%"></p>
-<h3 id="21-base58和base58check编码"><a href="#2-1-Base58和Base58Check编码" class="headerlink" title="2.1. Base58和Base58Check编码"></a>2.1. Base58和Base58Check编码</h3><h4 id="211-base58"><a href="#2-1-1-Base58" class="headerlink" title="2.1.1. Base58"></a>2.1.1. Base58</h4><p><code>Base58</code>是一种基于文本的二进制编码格式，用在比特币和其它的加密货币中。</p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821946/article/blockchain/publicKey_to_addr.png"  width="50%">
+<h3 id="21-base58和base58check编码">2.1. Base58和Base58Check编码</h3>
+<h4 id="211-base58">2.1.1. Base58</h4>
+<p><code>Base58</code>是一种基于文本的二进制编码格式，用在比特币和其它的加密货币中。</p>
 <p>特点：</p>
 <ul>
 <li>数据压缩</li>
@@ -264,15 +276,15 @@
 <p>即<code>Base58就是由不包括（0，O，l，I）的大小写字母和数字组成</code>（26+26+10-4=58）。</p>
 <p><strong>比特币的Base58字母表</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz</span><br></pre></td></tr></table></figure>
-<h4 id="212-base58check"><a href="#2-1-2-Base58Check" class="headerlink" title="2.1.2. Base58Check"></a>2.1.2. Base58Check</h4><p><code>Base58Check</code>编码：一种Base58格式的、有版本的、经过校验的格式，可以明确的对比特币数据编码的编码格式。</p>
+<h4 id="212-base58check">2.1.2. Base58Check</h4>
+<p><code>Base58Check</code>编码：一种Base58格式的、有版本的、经过校验的格式，可以明确的对比特币数据编码的编码格式。</p>
 <p><code>Base58Check</code>编码增加了错误校验码来检查数据在转录中出现的错误。校验码长4个字节，添加到需要编码的数据之后。校验码是从需要编码的数据的哈希值中得到的，所以可以用来检测并避免转录和输入中产生的错误。</p>
 <p><strong>示例：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">checksum = SHA256(SHA256(prefix+data))</span><br></pre></td></tr></table></figure>
 <p>结果由三部分组成：前缀、数据和校验码。</p>
 <p><strong>Base58Check编码的过程</strong></p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821947/article/blockchain/base58check.png" width="70%"></p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821947/article/blockchain/base58check.png" width="70%">
 <p><strong>Base58Check版本前缀和编码后的结果</strong></p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -314,11 +326,11 @@
 </tr>
 </tbody>
 </table>
-</div>
-<h3 id="22-密钥的格式"><a href="#2-2-密钥的格式" class="headerlink" title="2.2. 密钥的格式"></a>2.2. 密钥的格式</h3><p>公钥和私钥的都可以有多种<code>编码格式</code>。一个密钥被不同的格式编码后，虽然结果看起来可能不同，但是密钥所编码数字并没有改变。这些不同的编码格式主要是用来方便人们无误地使用和识别密钥。</p>
-<h4 id="221-私钥的格式"><a href="#2-2-1-私钥的格式" class="headerlink" title="2.2.1. 私钥的格式"></a>2.2.1. 私钥的格式</h4><p>私钥可以以许多不同的格式表示，所有这些都对应于相同的256位的数字。</p>
+<h3 id="22-密钥的格式">2.2. 密钥的格式</h3>
+<p>公钥和私钥的都可以有多种<code>编码格式</code>。一个密钥被不同的格式编码后，虽然结果看起来可能不同，但是密钥所编码数字并没有改变。这些不同的编码格式主要是用来方便人们无误地使用和识别密钥。</p>
+<h4 id="221-私钥的格式">2.2.1. 私钥的格式</h4>
+<p>私钥可以以许多不同的格式表示，所有这些都对应于相同的256位的数字。</p>
 <p><strong>1）私钥表示法（编码格式）</strong></p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -345,10 +357,8 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p><strong>2）同样的私钥，不同的格式</strong></p>
 <p>以下展示了用这三种格式所生成的私钥。</p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -371,36 +381,38 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p>这些表示法都是用来表示相同的数字、相同的私钥的不同方法。虽然编码后的字符串看起来不同，但不同的格式彼此之间可以很容易地相互转换。</p>
 <p><strong>3）不同编码格式的转换</strong></p>
 <ol>
-<li><p>将Base58Check编码解码为十六进制</p>
+<li>
+<p>将Base58Check编码解码为十六进制</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sx base58check-decode 5J3mBbAH58CpQ3Y5RNJpUKPE62SQ5tfcvU2JpbnkeyhfsYB1Jcn</span><br><span class="line">1e99423a4ed27608a15a2616a2b0e9e52ced330ac530edcc32c8ffc6a526aedd 128</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>将十六进制转换为Base58Check编码</p>
+<li>
+<p>将十六进制转换为Base58Check编码</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span>sx base58check-encode 1e99423a4ed27608a15a2616a2b0e9e52ced330ac530edcc32c8ffc6a526aedd 128 </span><br><span class="line">5J3mBbAH58CpQ3Y5RNJpUKPE62SQ5tfcvU2JpbnkeyhfsYB1Jcn</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>将十六进制（压缩格式密钥）转换为Base58Check编码</p>
+<li>
+<p>将十六进制（压缩格式密钥）转换为Base58Check编码</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> sx base58check-encode 1e99423a4ed27608a15a2616a2b0e9e52ced330ac530edcc32c8ffc6a526aedd01 128</span><br><span class="line">KxFC1jmwwCoACiCAWZ3eXa96mBM6tb3TYzGmf6YwgdGWZgawvrtJ</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
-<h4 id="222-公钥的格式"><a href="#2-2-2-公钥的格式" class="headerlink" title="2.2.2. 公钥的格式"></a>2.2.2. 公钥的格式</h4><p>公钥也可以用不同的格式来表示，主要分为<code>非压缩格式</code>和<code>压缩格式</code>两种形式。</p>
+<h4 id="222-公钥的格式">2.2.2. 公钥的格式</h4>
+<p>公钥也可以用不同的格式来表示，主要分为<code>非压缩格式</code>和<code>压缩格式</code>两种形式。</p>
 <p>公钥是在椭圆曲线上的一个点，由一对坐标（x，y）组成。公钥通常表示为前缀04紧接着两个256比特的数字。其中一个256比特数字是公钥的x坐标，另一个256比特数字是y坐标。前缀<code>04</code>是用来区分<code>非压缩格式</code>公钥，<code>压缩格式</code>公钥是以<code>02</code>或者<code>03</code>开头。</p>
 <p>公钥的组成格式：<code>04&lt;x&gt;&lt;y&gt;</code></p>
 <p>示例：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> x,y值</span><br><span class="line">x = F028892BAD7ED57D2FB57BF33081D5CFCF6F9ED3D3D7F159C2E2FFF579DC341A</span><br><span class="line">y = 07CF33DA18BD734C600B96A72BBC4749D5141C90EC8AC328AE52DDFE2E505BDB</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 公钥K</span><br><span class="line">K=04F028892BAD7ED57D2FB57BF33081D5CFCF6F9ED3D3D7F159C2E2FFF579DC341A07CF33DA18BD734C600B96A72BBC4749D5141C90EC8AC328AE52DDFE2E505BDB</span><br></pre></td></tr></table></figure>
 <p><strong>1）压缩格式公钥</strong></p>
-<p>压缩格式公钥主要为了减少比特币交易的字节数，节省运行区块链数据库节点的磁盘空间。原先公钥有520比特（包括前缀，x坐标，y坐标）。公钥是椭圆曲线上（<code>y2mod p = (x3 + 7) mod p</code>）的一个点<code>（x,y）</code>，已知x坐标，可以解方程得出y，即可省去y坐标的存储，可以减少一半字节数的存储。</p>
+<p>压缩格式公钥主要为了减少比特币交易的字节数，节省运行区块链数据库节点的磁盘空间。原先公钥有520比特（包括前缀，x坐标，y坐标）。公钥是椭圆曲线上（<code>y2mod p = (x3 + 7) mod p</code>）的一个点<code>（x,y）</code>，已知x坐标，可以解方程得出y，即可省去y坐标的存储，可以减少一半字节数的存储。</p>
 <p>压缩格式公钥的前缀是<code>02</code>和<code>03</code>，因为解方程的y值有正数和负数两个值，当我们在素数p阶的有限域上使用二进制算术计算椭圆曲线的时候，y坐标可能是奇数或者偶数，分别对应前面所讲的y值的正负符号。为了区分y坐标的两种可能值，我们在生成压缩格式公钥时，如果y是偶数，则使用02作为前缀；如果y是奇数，则使用03作为前缀。</p>
 <p><strong>示例：</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 前缀03，表示y坐标是奇数</span><br><span class="line">K = 03F028892BAD7ED57D2FB57BF33081D5CFCF6F9ED3D3D7F159C2E2FFF579DC341A</span><br></pre></td></tr></table></figure>
 <p><strong>公钥压缩示意图：</strong></p>
-<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821947/article/blockchain/compressed-keys.png" width="50%"></p>
+<img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1529821947/article/blockchain/compressed-keys.png" width="50%">
 <p><strong>2）压缩格式私钥</strong></p>
 <p><code>压缩的私钥</code>实际上只是表示“用于生成压缩格式公钥的私钥”，而<code>非压缩格式私钥</code>用来表明“用于生成非压缩格式公钥的私钥”。当一个私钥被使用<code>WIF压缩格式</code>导出时，不但没有压缩，而且比“非压缩格式”私钥长出一个字节。</p>
 <p><strong>同样的私钥，不同的格式</strong></p>
-<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -427,7 +439,6 @@
 </tr>
 </tbody>
 </table>
-</div>
 <p>参考：</p>
 <ul>
 <li><a href="https://bitcoinbook.info/" target="_blank" rel="noopener">Mastering Bitcoin</a></li>
@@ -740,7 +751,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">

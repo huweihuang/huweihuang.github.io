@@ -142,7 +142,7 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -156,7 +156,7 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -212,18 +212,24 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-docker的网络基础"><a href="#1-Docker的网络基础" class="headerlink" title="1. Docker的网络基础"></a>1. Docker的网络基础</h1><h2 id="11-network-namespace"><a href="#1-1-Network-Namespace" class="headerlink" title="1.1. Network Namespace"></a>1.1. Network Namespace</h2><p>不同的网络命名空间中，协议栈是独立的，完全隔离，彼此之间无法通信。同一个网络命名空间有独立的路由表和独立的<code>Iptables/Netfilter</code>来提供包的转发、NAT、IP包过滤等功能。</p>
-<h3 id="111-网络命名空间的实现"><a href="#1-1-1-网络命名空间的实现" class="headerlink" title="1.1.1. 网络命名空间的实现"></a>1.1.1. 网络命名空间的实现</h3><p>将与网络协议栈相关的全局变量变成一个<code>Net Namespace</code>变量的成员，然后在调用协议栈函数中加入一个Namepace参数。</p>
-<h3 id="112-网络命名空间的操作"><a href="#1-1-2-网络命名空间的操作" class="headerlink" title="1.1.2. 网络命名空间的操作"></a>1.1.2. 网络命名空间的操作</h3><p>1、创建网络命名空间</p>
+                <div id="vip-container"><h1 id="1-docker的网络基础">1. Docker的网络基础</h1>
+<h2 id="11-network-namespace">1.1. Network Namespace</h2>
+<p>不同的网络命名空间中，协议栈是独立的，完全隔离，彼此之间无法通信。同一个网络命名空间有独立的路由表和独立的<code>Iptables/Netfilter</code>来提供包的转发、NAT、IP包过滤等功能。</p>
+<h3 id="111-网络命名空间的实现">1.1.1. 网络命名空间的实现</h3>
+<p>将与网络协议栈相关的全局变量变成一个<code>Net Namespace</code>变量的成员，然后在调用协议栈函数中加入一个Namepace参数。</p>
+<h3 id="112-网络命名空间的操作">1.1.2. 网络命名空间的操作</h3>
+<p>1、创建网络命名空间</p>
 <p>ip netns add <code>name</code></p>
 <p>2、在命名空间内执行命令</p>
 <p>ip netns exec <code>name</code> <code>command</code></p>
 <p>3、进入命名空间</p>
 <p>ip netns exec <code>name</code> bash</p>
-<h1 id="2-docker的网络实现"><a href="#2-Docker的网络实现" class="headerlink" title="2. Docker的网络实现"></a>2. Docker的网络实现</h1><h2 id="21-容器网络"><a href="#2-1-容器网络" class="headerlink" title="2.1. 容器网络"></a>2.1. 容器网络</h2><p>Docker使用Linux桥接，在宿主机虚拟一个Docker容器网桥(docker0)，Docker启动一个容器时会根据Docker网桥的网段分配给容器一个IP地址，称为Container-IP，同时Docker网桥是每个容器的默认网关。因为在同一宿主机内的容器都接入同一个网桥，这样容器之间就能够通过容器的Container-IP直接通信。</p>
+<h1 id="2-docker的网络实现">2. Docker的网络实现</h1>
+<h2 id="21-容器网络">2.1. 容器网络</h2>
+<p>Docker使用Linux桥接，在宿主机虚拟一个Docker容器网桥(docker0)，Docker启动一个容器时会根据Docker网桥的网段分配给容器一个IP地址，称为Container-IP，同时Docker网桥是每个容器的默认网关。因为在同一宿主机内的容器都接入同一个网桥，这样容器之间就能够通过容器的Container-IP直接通信。</p>
 <p>Docker网桥是宿主机虚拟出来的，并不是真实存在的网络设备，外部网络是无法寻址到的，这也意味着外部网络无法通过直接Container-IP访问到容器。如果容器希望外部访问能够访问到，可以通过映射容器端口到宿主主机（端口映射），即docker run创建容器时候通过 -p 或 -P 参数来启用，访问容器的时候就通过[宿主机IP]:[容器端口]访问容器。</p>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578957/article/kubernetes/network/container-network.png" alt="这里写图片描述"></p>
-<h2 id="22-4类网络模式"><a href="#2-2-4类网络模式" class="headerlink" title="2.2. 4类网络模式"></a>2.2. 4类网络模式</h2><div class="table-container">
+<h2 id="22-4类网络模式">2.2. 4类网络模式</h2>
 <table>
 <thead>
 <tr>
@@ -235,28 +241,29 @@
 <tbody>
 <tr>
 <td>host模式</td>
-<td>—net=host</td>
+<td>–net=host</td>
 <td>容器和宿主机共享Network namespace。</td>
 </tr>
 <tr>
 <td>container模式</td>
-<td>—net=container:NAME_or_ID</td>
+<td>–net=container:NAME_or_ID</td>
 <td>容器和另外一个容器共享Network namespace。 kubernetes中的pod就是多个容器共享一个Network namespace。</td>
 </tr>
 <tr>
 <td>none模式</td>
-<td>—net=none</td>
+<td>–net=none</td>
 <td>容器有独立的Network namespace，但并没有对其进行任何网络设置，如分配veth pair 和网桥连接，配置IP等。</td>
 </tr>
 <tr>
 <td>bridge模式</td>
-<td>—net=bridge（默认为该模式）</td>
+<td>–net=bridge（默认为该模式）</td>
 <td>桥接模式</td>
 </tr>
 </tbody>
 </table>
-</div>
-<h1 id="3-docker网络模式"><a href="#3-Docker网络模式" class="headerlink" title="3. Docker网络模式"></a>3. Docker网络模式</h1><h2 id="31-bridge桥接模式"><a href="#3-1-bridge桥接模式" class="headerlink" title="3.1. bridge桥接模式"></a>3.1. bridge桥接模式</h2><p>在bridge模式下，Docker可以使用独立的网络栈。实现方式是父进程在创建子进程的时候通过传入<code>CLONE_NEWNET</code>的参数创建出一个网络命名空间。</p>
+<h1 id="3-docker网络模式">3. Docker网络模式</h1>
+<h2 id="31-bridge桥接模式">3.1. bridge桥接模式</h2>
+<p>在bridge模式下，Docker可以使用独立的网络栈。实现方式是父进程在创建子进程的时候通过传入<code>CLONE_NEWNET</code>的参数创建出一个网络命名空间。</p>
 <p><strong>实现步骤：</strong></p>
 <ol>
 <li>Docker Daemon首次启动时会创建一个虚拟网桥docker0，地址通常为172.x.x.x开头，在私有的网络空间中给这个网络分配一个子网。</li>
@@ -264,7 +271,8 @@
 </ol>
 <p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1510578957/article/kubernetes/network/bridge.png" alt="这里写图片描述"></p>
 <p>一般情况，宿主机IP与docker0 IP、容器IP是不同的IP段，默认情况，外部看不到docker0和容器IP，对于外部来说相当于docker0和容器的IP为内网IP。</p>
-<h3 id="311-外部网络访问docker容器"><a href="#3-1-1-外部网络访问Docker容器" class="headerlink" title="3.1.1. 外部网络访问Docker容器"></a>3.1.1. 外部网络访问Docker容器</h3><p>外部访问docker容器可以通过<code>端口映射(NAT)</code>的方式，Docker使用NAT的方式将容器内部的服务与宿主机的某个端口port_1绑定。</p>
+<h3 id="311-外部网络访问docker容器">3.1.1. 外部网络访问Docker容器</h3>
+<p>外部访问docker容器可以通过<code>端口映射(NAT)</code>的方式，Docker使用NAT的方式将容器内部的服务与宿主机的某个端口port_1绑定。</p>
 <p>外部访问容器的流程如下：</p>
 <ol>
 <li>外界网络通过宿主机的IP和映射的端口port_1访问。</li>
@@ -272,24 +280,33 @@
 <li>由于宿主机上可以识别容器IP，所以宿主机将请求发给veth pair。</li>
 <li>veth pair将请求发送给容器内部的eth0，由容器内部的服务进行处理。</li>
 </ol>
-<h3 id="312-docker容器访问外部网络"><a href="#3-1-2-Docker容器访问外部网络" class="headerlink" title="3.1.2. Docker容器访问外部网络"></a>3.1.2. Docker容器访问外部网络</h3><p>docker容器访问外部网络的流程：</p>
+<h3 id="312-docker容器访问外部网络">3.1.2. Docker容器访问外部网络</h3>
+<p>docker容器访问外部网络的流程：</p>
 <ol>
-<li><p>docker容器向外部目标IP和目标端口port_2发起请求，请求报文中的源IP为容器IP。</p>
+<li>
+<p>docker容器向外部目标IP和目标端口port_2发起请求，请求报文中的源IP为容器IP。</p>
 </li>
-<li><p>请求通过容器内部的eth0到veth pair的另一端docker0网桥。</p>
+<li>
+<p>请求通过容器内部的eth0到veth pair的另一端docker0网桥。</p>
 </li>
-<li><p>docker0网桥通过数据报转发功能将请求转发到宿主机的eth0。</p>
+<li>
+<p>docker0网桥通过数据报转发功能将请求转发到宿主机的eth0。</p>
 </li>
-<li><p>宿主机处理请求时通过SNAT将请求中的源IP换成宿主机eth0的IP。</p>
+<li>
+<p>宿主机处理请求时通过SNAT将请求中的源IP换成宿主机eth0的IP。</p>
 </li>
-<li><p>处理后的报文通过请求的目标IP发送到外部网络。</p>
+<li>
+<p>处理后的报文通过请求的目标IP发送到外部网络。</p>
 </li>
 </ol>
-<h3 id="313-缺点"><a href="#3-1-3-缺点" class="headerlink" title="3.1.3. 缺点"></a>3.1.3. 缺点</h3><p>   使用NAT的方式可能会带来性能的问题，影响网络传输效率。</p>
-<h2 id="32-host模式"><a href="#3-2-host模式" class="headerlink" title="3.2. host模式"></a>3.2. host模式</h2><p>host模式并没有给容器创建一个隔离的网络环境，而是和宿主机共用一个网络命名空间，容器使用宿主机的eth0和外界进行通信，同样容器也共用宿主机的端口资源，即分配端口可能存在与宿主机已分配的端口冲突的问题。</p>
+<h3 id="313-缺点">3.1.3. 缺点</h3>
+<p>使用NAT的方式可能会带来性能的问题，影响网络传输效率。</p>
+<h2 id="32-host模式">3.2. host模式</h2>
+<p>host模式并没有给容器创建一个隔离的网络环境，而是和宿主机共用一个网络命名空间，容器使用宿主机的eth0和外界进行通信，同样容器也共用宿主机的端口资源，即分配端口可能存在与宿主机已分配的端口冲突的问题。</p>
 <p>实现的方式即父进程在创建子进程的时候不传入<code>CLONE_NEWNET</code>的参数，从而和宿主机共享一个网络空间。</p>
 <p>host模式没有通过NAT的方式进行转发因此性能上相对较好，但是不存在网络隔离性，可能产生端口冲突的问题。</p>
-<h2 id="33-container模式"><a href="#3-3-container模式" class="headerlink" title="3.3. container模式"></a>3.3. container模式</h2><p>container模式即docker容器可以使用其他容器的网络命名空间，即和其他容器处于同一个网络命名空间。</p>
+<h2 id="33-container模式">3.3. container模式</h2>
+<p>container模式即docker容器可以使用其他容器的网络命名空间，即和其他容器处于同一个网络命名空间。</p>
 <p>步骤：</p>
 <ol>
 <li>查找其他容器的网络命名空间。</li>
@@ -297,7 +314,8 @@
 </ol>
 <p>通过和其他容器共享网络命名空间的方式，可以让不同的容器之间处于相同的网络命名空间，可以直接通过localhost的方式进行通信，简化了强关联的多个容器之间的通信问题。</p>
 <p>k8s中的pod的概念就是通过一组容器共享一个网络命名空间来达到pod内部的不同容器可以直接通过localhost的方式进行通信。</p>
-<h2 id="34-none模式"><a href="#3-4-none模式" class="headerlink" title="3.4. none模式"></a>3.4. none模式</h2><p>none模式即不为容器创建任何的网络环境，用户可以根据自己的需要手动去创建不同的网络定制配置。</p>
+<h2 id="34-none模式">3.4. none模式</h2>
+<p>none模式即不为容器创建任何的网络环境，用户可以根据自己的需要手动去创建不同的网络定制配置。</p>
 <p>参考：</p>
 <ul>
 <li>《Docker源码分析》</li>
@@ -326,12 +344,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/monitor/influxdb-introduction/" data-toggle="tooltip" data-placement="top" title="Influxdb介绍">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/network/kubernetes-network/" data-toggle="tooltip" data-placement="top" title="K8S网络">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/network/kubernetes-network/" data-toggle="tooltip" data-placement="top" title="K8S网络">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/monitor/influxdb-introduction/" data-toggle="tooltip" data-placement="top" title="Influxdb介绍">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -609,7 +627,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; 胡伟煌 2023 
+                    Copyright &copy; 胡伟煌 2025 
                     <br>
                     Theme by <a href="http://beantech.org">BeanTech</a> 
                     <span style="display: inline-block; margin: 0 5px;">
