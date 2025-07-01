@@ -134,13 +134,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -149,6 +142,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,25 +211,214 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/">
+    <a href="/article/kubernetes-notes/concepts/pod/pod-operation/">
         <h2 class="post-title">
                         
-            ConfigMap
+            Pod伸缩与升级
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Pod的配置管理
-Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。
-1. ConfigMap：容器应用的配置管理
-使用场景：
+            1. Pod伸缩
+k8s中RC的用来保持集群中始终运行指定数目的实例，通过RC的scale机制可以完成Pod的扩容和缩容（伸缩）。
+1.1. 手动伸缩（scale）
+1kubectl scale rc redis-slave --replicas=3
+1.2. 自动伸缩（HPA）
+Horizontal Pod Autoscaler（HPA）控制器用于实现基于CPU使用率进行自动Pod伸缩的功......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
 
-生成为容器内的环境变量。
-设置容器启动命令的启动参数（需设置为环境变量）。
-以Volume的形式挂载为容器内部的文件或目录。
+</div>
+<hr>
 
-ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可......
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-lifecycle/">
+        <h2 class="post-title">
+                        
+            Pod生命周期
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Pod phase
+Pod的phase是Pod生命周期中的简单宏观描述，定义在Pod的PodStatus对象的phase 字段中。
+phase有以下几种值：
+
+
+
+状态值
+说明
+
+
+
+
+挂起（Pending）
+Pod 已被 Kubernetes 系统接受，但有一个或者多个容器镜像尚未创建。等待时间包括调度 Pod 的时间和通过网络下载镜像的时间。
+
+
+运行中（Running）
+该 Po......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/object/kubernetes-basic-concepts/">
+        <h2 class="post-title">
+                        
+            Kubernetes基本概念
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Master
+集群的控制节点，负责整个集群的管理和控制，kubernetes的所有的命令基本都是发给Master，由它来负责具体的执行过程。
+1.1. Master的组件
+
+kube-apiserver：资源增删改查的入口
+kube-controller-manager：资源对象的大总管
+kube-scheduler：负责资源调度（Pod调度）
+etcd Server:kubernet......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-probe/">
+        <h2 class="post-title">
+                        
+            Pod健康检查
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod健康检查
+Pod的健康状态由两类探针来检查：LivenessProbe和ReadinessProbe。
+1. 探针类型
+1. livenessProbe(存活探针)
+
+表明容器是否正在运行。
+如果存活探测失败，则 kubelet 会杀死容器，并且容器将受到其 重启策略的影响。
+如果容器不提供存活探针，则默认状态为 Success。
+
+2. readinessProbe(就绪探针)
+
+表......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Pod" title="Pod">Pod</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-volume/">
+        <h2 class="post-title">
+                        
+            Pod存储卷
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod Volume
+同一个Pod中的多个容器可以共享Pod级别的存储卷Volume,Volume可以定义为各种类型，多个容器各自进行挂载，将Pod的Volume挂载为容器内部需要的目录。
+例如：Pod级别的Volume:“app-logs”,用于tomcat向其中写日志文件，busybox读日志文件。
+
+pod-volumes-applogs.yaml
+123456789101112131......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/concepts/pod/pod-scheduler/">
+        <h2 class="post-title">
+                        
+            Pod调度
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Pod调度
+在kubernetes集群中，Pod（container）是应用的载体，一般通过RC、Deployment、DaemonSet、Job等对象来完成Pod的调度与自愈功能。
+1. RC、Deployment:全自动调度
+RC的功能即保持集群中始终运行着指定个数的Pod。
+在调度策略上主要有：
+
+系统内置调度算法[最优Node]
+NodeSelector[定向调度]
+NodeAffi......
         </div>
     </a>
     
@@ -280,6 +469,38 @@ Redis......
 
 <div class="post-preview">
 
+    <a href="/article/kubernetes-notes/etcd/etcd-introduction/">
+        <h2 class="post-title">
+                        
+            Etcd介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Etcd是什么（what）
+etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:
+
+Secure: automatic TLS with optional client cert authentica......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2017-07-10
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/etcd/etcd-auth-and-security/">
         <h2 class="post-title">
                         
@@ -295,70 +516,6 @@ There are three types of resources in etcd
 permission resources: users and roles in the user store
 key-value resources: key-value pairs in the key-value store
 settings resources: secur......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v2/">
-        <h2 class="post-title">
-                        
-            etcdctl-V2
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. etcdctl介绍
-etcdctl是一个命令行的客户端，它提供了一下简洁的命令，可理解为命令工具集，可以方便我们在对服务进行测试或者手动修改数据库内容。etcdctl与其他xxxctl的命令原理及操作类似（例如kubectl，systemctl）。
-用法：etcdctl [global options] command [command options][args…]
-2. Etcd常......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/etcd-introduction/">
-        <h2 class="post-title">
-                        
-            Etcd介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Etcd是什么（what）
-etcd is a distributed, consistent key-value store for shared configuration and service discovery, with a focus on being:
-
-Secure: automatic TLS with optional client cert authentica......
         </div>
     </a>
     
@@ -399,144 +556,6 @@ Secure: automatic TLS with optional client cert authentica......
         <div class="tags">
             
               <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/etcd/etcdctl/etcdctl-v3/">
-        <h2 class="post-title">
-                        
-            etcdctl-V3
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-etcdctl的v3版本与v2版本使用命令有所不同，本文介绍etcdctl v3版本的命令工具的使用方式。
-
-1. etcdctl的安装
-etcdctl的二进制文件可以在 github.com/coreos/etcd/releases 选择对应的版本下载，例如可以执行以下install_etcdctl.sh的脚本，修改其中的版本信息。
-1234567891011121314#!/bin/b......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-10
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Etcd" title="Etcd">Etcd</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/docker/code-analysis/code-analysis-of-docker-daemon/">
-        <h2 class="post-title">
-                        
-            [Docker] Docker源码分析（二）之Docker Daemon
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            一、Docker Daemon架构示意图
-
-Docker Daemon是Docker架构中运行在后台的守护进程，大致可以分为Docker Server、Engine和Job三部分。
-Docker Daemon可以认为是通过Docker Server模块接受Docker Client的请求，并在Engine中处理请求，然后根据请求类型，创建出指定的Job并运行。
-运行过程的作用有以下几种可能：......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/docker/dockerfile-usage/">
-        <h2 class="post-title">
-                        
-            Dockerfile使用说明
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Dockerfile的说明
-dockerfile指令忽略大小写，建议大写，#作为注释，每行只支持一条指令，指令可以带多个参数。
-dockerfile指令分为构建指令和设置指令。
-
-构建指令：用于构建image，其指定的操作不会在运行image的容器中执行。
-设置指令：用于设置image的属性，其指定的操作会在运行image的容器中执行。
-
-2. Dockerfile指令说明
-2.1. ......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/runtime/docker/docker-commands-principle/">
-        <h2 class="post-title">
-                        
-            Docker常用命令原理图
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 基本概念
-1.1. image layer（镜像层）
-镜像可以看成是由多个镜像层叠加起来的一个文件系统，镜像层也可以简单理解为一个基本的镜像，而每个镜像层之间通过指针的形式进行叠加。
-
-根据上图，镜像层的主要组成部分包括镜像层id，镜像层指针【指向父层】，元数据【layer metadata】包含了docker构建和运行的信息还有父层的层次信息。
-只读层和读写层【top layer】的......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2017-07-09
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Docker" title="Docker">Docker</a>
             
         </div>
     
@@ -589,13 +608,13 @@ dockerfile指令分为构建指令和设置指令。
     <div class="tags">
         
             
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
+            
+        
+            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
-            
-        
-            
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -609,11 +628,19 @@ dockerfile指令分为构建指令和设置指令。
             
         
             
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            
+        
+            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="63">Kubernetes</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="66">Kubernetes</a>
             
         
             
@@ -621,19 +648,37 @@ dockerfile指令分为构建指令和设置指令。
             
         
             
+            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+            
+        
+            
             <a href="/tags/#KubeVirt" title="KubeVirt" rel="4">KubeVirt</a>
             
         
             
-            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+        
             
         
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="3">Runtime</a>
             
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
+            
+        
+            
+            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
+            
+        
+            
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            
+        
+            
+            <a href="/tags/#大模型" title="大模型" rel="2">大模型</a>
             
         
             
@@ -673,11 +718,11 @@ dockerfile指令分为构建指令和设置指令。
             
         
             
-            <a href="/tags/#network" title="network" rel="4">network</a>
+            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
             
         
             
-            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
+            <a href="/tags/#network" title="network" rel="4">network</a>
             
         
             
@@ -685,37 +730,17 @@ dockerfile指令分为构建指令和设置指令。
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
-            <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
             
         
             
             <a href="/tags/#TCPIP" title="TCPIP" rel="5">TCPIP</a>
             
         
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
-            
-        
-            
-            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
             
         
             
@@ -733,9 +758,9 @@ dockerfile指令分为构建指令和设置指令。
             
         
             
-        
-            
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
+            
+        
             
         
             
@@ -755,9 +780,9 @@ dockerfile指令分为构建指令和设置指令。
             
         
             
-            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
-            
         
+            
+            <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
             
         
     </div>
@@ -839,23 +864,23 @@ dockerfile指令分为构建指令和设置指令。
     <ul>
       
         <li>
+          <a href="/article/kubernetes-notes/cluster-optimization/scheduler/volcano-usage/">Volcano的使用</a>
+        </li>
+      
+        <li>
+          <a href="/article/linux-notes/LLM/mcp/">大模型相关概念</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/operation/helm/kine/">kine的使用</a>
+        </li>
+      
+        <li>
+          <a href="/article/kubernetes-notes/cluster-optimization/scheduler/massive-pod-scheduling/">大规模Pod调度优化</a>
+        </li>
+      
+        <li>
           <a href="/article/linux-notes/baremetal/redfish-api/">Redfish API</a>
-        </li>
-      
-        <li>
-          <a href="/article/linux-notes/mysql/deploy-mysql/">Mysql服务部署</a>
-        </li>
-      
-        <li>
-          <a href="/article/linux-notes/file/linux-command/">Linux常用命令</a>
-        </li>
-      
-        <li>
-          <a href="/article/linux-notes/LLM/build-ollama-openwebui/">基于Ollama构建本地大模型</a>
-        </li>
-      
-        <li>
-          <a href="/article/linux-notes/baremetal/format-disk/">格式化磁盘分区</a>
         </li>
       
     </ul>
@@ -884,7 +909,7 @@ dockerfile指令分为构建指令和设置指令。
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
     </div>
 
         <hr>
