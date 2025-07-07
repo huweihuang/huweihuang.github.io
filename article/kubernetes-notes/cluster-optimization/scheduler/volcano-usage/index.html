@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Volcano的使用 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/cluster-optimization/scheduler/volcano-usage/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                              <a class="tag" href="/tags/#Scheduler" title="Scheduler">Scheduler</a>
+                            
+                        </div>
+                        <h1>Volcano的使用</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2025-06-27
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><blockquote>
+<p>本文主要介绍volcano的使用，内容由官网文档进行整理。</p>
+</blockquote>
+<h1 id="1-volcano介绍">1. Volcano介绍</h1>
+<p>Volcano作为一个通用批处理平台，Volcano与几乎所有的主流计算框 架无缝对接，如<a href="https://spark.apache.org/" target="_blank" rel="noopener">Spark</a> 、<a href="https://tensorflow.google.cn/" target="_blank" rel="noopener">TensorFlow</a> 、<a href="https://pytorch.org/" target="_blank" rel="noopener">PyTorch</a> 、 <a href="https://flink.apache.org/" target="_blank" rel="noopener">Flink</a> 、<a href="https://argoproj.github.io/" target="_blank" rel="noopener">Argo</a> 、<a href="https://www.mindspore.cn/" target="_blank" rel="noopener">MindSpore</a> 、 <a href="https://www.paddlepaddle.org.cn/" target="_blank" rel="noopener">PaddlePaddle</a>，<a href="https://www.ray.io/" target="_blank" rel="noopener">Ray</a>等。还提供了包括异构设备调度，网络拓扑感知调度，多集群调度，在离线混部调度等多种调度能力。</p>
+<h1 id="2-特性">2. 特性</h1>
+<h2 id="21-统一调度">2.1. 统一调度</h2>
+<ul>
+<li>支持Kubernetes原生负载调度</li>
+<li>支持使用VolcanoJob来进行PyTorch、TensorFlow、Spark、Flink、Ray等框架的一体化作业调度</li>
+<li>将在线微服务和离线批处理作业统一调度，提升集群资源利用率</li>
+</ul>
+<h2 id="22-丰富的调度策略">2.2. 丰富的调度策略</h2>
+<ul>
+<li><strong>Gang Scheduling</strong>：确保作业的所有任务同时启动，适用于分布式训练、大数据等场景。</li>
+<li><strong>Binpack Scheduling</strong>：通过任务紧凑分配优化资源利用率</li>
+<li><strong>Heterogeneous device scheduling</strong>：高效共享GPU异构资源，支持CUDA和MIG两种模式的GPU调度，支持NPU调度</li>
+<li><strong>Proportion/Capacity Scheduling</strong>：基于队列配额进行资源的共享/抢占/回收</li>
+<li><strong>NodeGroup Scheduling</strong>：支持节点分组亲和性调度，实现队列与节点组的绑定关系</li>
+<li><strong>DRF Scheduling</strong>：支持多维度资源的公平调度</li>
+<li><strong>SLA Scheduling</strong>：基于服务质量的调度保障</li>
+<li><strong>Task-topology Scheduling</strong>：支持任务拓扑感知调度，优化通信密集型应用性能</li>
+<li><strong>NUMA Aware Scheduling</strong>：支持NUMA架构的调度，优化任务在多核处理器上的资源分配，提升内存访问效率和计算性能</li>
+</ul>
+<h2 id="23-gpu支持">2.3. GPU支持</h2>
+<p>支持多种<a href="https://volcano.sh/zh/docs/gpu_virtualization/" target="_blank" rel="noopener">GPU虚拟化</a>技术，提供灵活的GPU资源管理</p>
+<ul>
+<li><strong>动态MIG支持</strong>：支持NVIDIA Multi-Instance GPU(MIG)，通过硬件级隔离将单个GPU分割为多个独立的GPU实例</li>
+<li><strong>vCUDA虚拟化</strong>：通过软件层将物理GPU虚拟化为多个vGPU设备，实现资源共享和隔离</li>
+<li><strong>细粒度资源控制</strong>：为每个GPU实例提供独立的显存和算力分配</li>
+<li><strong>多容器共享</strong>：允许多个容器安全地共享同一个GPU资源，提升利用率</li>
+<li><strong>统一监控</strong>：提供对所有GPU实例的统一使用情况监控和指标收集</li>
+</ul>
+<h2 id="24-在离线混部">2.4. 在离线混部</h2>
+<ul>
+<li>支持在线和离线业务混合部署，通过统一调度，动态资源超卖，CPU Burst，资源隔离等能力，提升资源利用率的同时保障在线业务QoS</li>
+</ul>
+<h2 id="25-重调度">2.5. 重调度</h2>
+<ul>
+<li>支持动态重调度，优化集群负载分布，提升系统稳定性</li>
+</ul>
+<h1 id="3-架构介绍">3. 架构介绍</h1>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1751114745/article/kubernetes/scheduler/volcano_arch.png" alt></p>
+<p>Volcano由scheduler、controllermanager、admission和vcctl组成:</p>
+<ul>
+<li>
+<p>Scheduler Volcano scheduler通过一系列的action和plugin调度Job，并为它找到一个最适合的节点。与Kubernetes default-scheduler相比，Volcano与众不同的 地方是它支持针对Job的多种调度算法。</p>
+</li>
+<li>
+<p>Controllermanager Volcano controllermanager管理CRD资源的生命周期。它主要由<strong>Queue ControllerManager</strong>、 <strong>PodGroupControllerManager</strong>、 <strong>VCJob ControllerManager</strong>构成。</p>
+</li>
+<li>
+<p>Admission Volcano admission负责对CRD API资源进行校验。</p>
+</li>
+<li>
+<p>Vcctl 是Volcano的命令行客户端工具。</p>
+</li>
+</ul>
+<h1 id="4-部署">4. 部署</h1>
+<p>可以通过helm部署volcano。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">helm repo add volcano-sh https://volcano-sh.github.io/helm-charts</span><br><span class="line"></span><br><span class="line">helm repo update</span><br><span class="line"></span><br><span class="line">helm install volcano volcano-sh/volcano -n volcano-system --create-namespace</span><br></pre></td></tr></table></figure>
+<p>查看volcano组件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">kubectl get all -n volcano-system</span><br><span class="line">NAME                                       READY   STATUS      RESTARTS   AGE</span><br><span class="line">pod/volcano-admission-5bd5756f79-p89tx     1/1     Running     0          6m10s</span><br><span class="line">pod/volcano-admission-init-d4dns           0/1     Completed   0          6m10s</span><br><span class="line">pod/volcano-controllers-687948d9c8-bd28m   1/1     Running     0          6m10s</span><br><span class="line">pod/volcano-scheduler-94998fc64-9df5g      1/1     Running     0          6m10s</span><br><span class="line"></span><br><span class="line">NAME                                TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">service/volcano-admission-service   ClusterIP   10.96.140.22   &lt;none&gt;        443/TCP   6m10s</span><br><span class="line"></span><br><span class="line">NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">deployment.apps/volcano-admission     1/1     1            1           6m10s</span><br><span class="line">deployment.apps/volcano-controllers   1/1     1            1           6m10s</span><br><span class="line">deployment.apps/volcano-scheduler     1/1     1            1           6m10s</span><br><span class="line"></span><br><span class="line">NAME                                             DESIRED   CURRENT   READY   AGE</span><br><span class="line">replicaset.apps/volcano-admission-5bd5756f79     1         1         1       6m10s</span><br><span class="line">replicaset.apps/volcano-controllers-687948d9c8   1         1         1       6m10s</span><br><span class="line">replicaset.apps/volcano-scheduler-94998fc64      1         1         1       6m10s</span><br><span class="line"></span><br><span class="line">NAME                               COMPLETIONS   DURATION   AGE</span><br><span class="line">job.batch/volcano-admission-init   1/1           28s        6m10s</span><br></pre></td></tr></table></figure>
+<h1 id="5-使用">5. 使用</h1>
+<p>我们以组调度为例（gang scheduling），通过成组调度，您可以指定一个最小数量的Pod，这些Pod必须能够作为一个组被同时调度，然后该工作负载的任何Pod才能启动。</p>
+<h2 id="51-创建带有group-min-member注解的deployment">5.1. 创建带有<code>group-min-member</code>注解的Deployment</h2>
+<p>让我们创建一个Deployment，它期望有3个副本，但要求至少有2个Pod能被Volcano作为一个组进行调度。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># deployment-with-minmember.yaml</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-app-deployment</span></span><br><span class="line">  <span class="attr">annotations:</span></span><br><span class="line">    <span class="comment"># 对成组调度至关重要：此注解告知Volcano将此Deployment视为一个组，</span></span><br><span class="line">    <span class="comment"># 要求至少2个Pod能够一起调度，然后才会启动任何Pod。</span></span><br><span class="line">    <span class="attr">scheduling.volcano.sh/group-min-member:</span> <span class="string">"2"</span></span><br><span class="line">    <span class="comment"># 可选：您也可以为此Deployment创建的PodGroup指定一个特定的Volcano队列。</span></span><br><span class="line">    <span class="comment"># scheduling.volcano.sh/queue-name: "my-deployment-queue"</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">3</span> <span class="comment"># 我们期望应用有3个副本</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">my-app</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">schedulerName:</span> <span class="string">volcano</span> <span class="comment"># 关键：确保此Deployment的Pod使用Volcano调度器</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">my-container</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">          <span class="attr">command:</span> <span class="string">["sh",</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"echo 'Hello Volcano from Deployment'; sleep 3600"</span><span class="string">]</span> <span class="comment"># 一个长时间运行的命令，用于演示</span></span><br><span class="line">          <span class="attr">resources:</span></span><br><span class="line">            <span class="attr">requests:</span></span><br><span class="line">              <span class="attr">cpu:</span> <span class="number">1</span></span><br><span class="line">            <span class="attr">limits:</span></span><br><span class="line">              <span class="attr">cpu:</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="52-观察自动创建的podgroup和pod">5.2. 观察自动创建的PodGroup和Pod</h2>
+<p>当您应用带有<code>scheduling.volcano.sh/group-min-member</code>注解的Deployment（或StatefulSet）时，Volcano会自动创建一个PodGroup资源。此PodGroup负责为属于该工作负载的Pod强制执行成组调度约束。</p>
+<p>检查PodGroup的状态：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pg podgroup-[ReplicaSet的UID] -oyaml</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">scheduling.volcano.sh/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PodGroup</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="comment"># ...</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">podgroup-09e95eb0-e520-4b50-a15c-c14cad844674</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">ownerReferences:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line">    <span class="attr">blockOwnerDeletion:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">controller:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">kind:</span> <span class="string">ReplicaSet</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">my-app-deployment-74644c8849</span></span><br><span class="line">    <span class="attr">uid:</span> <span class="string">09e95eb0-e520-4b50-a15c-c14cad844674</span></span><br><span class="line">  <span class="comment"># ...</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">minMember:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">minResources:</span></span><br><span class="line">    <span class="attr">count/pods:</span> <span class="string">"2"</span></span><br><span class="line">    <span class="attr">cpu:</span> <span class="string">"2"</span></span><br><span class="line">    <span class="attr">limits.cpu:</span> <span class="string">"2"</span></span><br><span class="line">    <span class="attr">pods:</span> <span class="string">"2"</span></span><br><span class="line">    <span class="attr">requests.cpu:</span> <span class="string">"2"</span></span><br><span class="line">  <span class="attr">queue:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">status:</span></span><br><span class="line">  <span class="attr">conditions:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">lastTransitionTime:</span> <span class="string">"2025-05-28T09:08:13Z"</span></span><br><span class="line">    <span class="attr">reason:</span> <span class="string">tasks</span> <span class="string">in</span> <span class="string">gang</span> <span class="string">are</span> <span class="string">ready</span> <span class="string">to</span> <span class="string">be</span> <span class="string">scheduled</span></span><br><span class="line">    <span class="attr">status:</span> <span class="string">"True"</span></span><br><span class="line">    <span class="attr">transitionID:</span> <span class="string">e0b1508e-4b77-4dea-836f-0b14f9ca58df</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">Scheduled</span></span><br><span class="line">  <span class="attr">phase:</span> <span class="string">Running</span></span><br><span class="line">  <span class="attr">running:</span> <span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>将观察到Volcano调度器会确保至少<code>minMember</code>（本例中为2）个Pod能够一起调度，然后才允许此Deployment中的任何Pod启动。如果资源不足以满足这些Pod的需求，它们将保持<code>Pending</code>状态。</p>
+<p>参考：</p>
+<ul>
+<li>
+<p><a href="https://volcano.sh/zh/docs/" target="_blank" rel="noopener">介绍 | Volcano</a></p>
+</li>
+<li>
+<p><a href="https://volcano.sh/zh/docs/tutorials/" target="_blank" rel="noopener">快速开始 | Volcano</a></p>
+</li>
+<li>
+<p><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">GitHub - volcano-sh/volcano: A Cloud Native Batch System </a></p>
+</li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/cluster-optimization/gpu/gpu-virtualization/" data-toggle="tooltip" data-placement="top" title="Volcano GPU虚拟化">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-volcano介绍"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Volcano介绍</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-特性"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 特性</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-统一调度"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 统一调度</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-丰富的调度策略"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. 丰富的调度策略</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-gpu支持"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. GPU支持</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-在离线混部"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4. 在离线混部</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-重调度"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.5. 重调度</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-架构介绍"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. 架构介绍</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-部署"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. 部署</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-使用"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. 使用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#51-创建带有group-min-member注解的deployment"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">5.1. 创建带有group-min-member注解的Deployment</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#52-观察自动创建的podgroup和pod"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">5.2. 观察自动创建的PodGroup和Pod</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                          <a class="tag" href="/tags/#Scheduler" title="Scheduler">Scheduler</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

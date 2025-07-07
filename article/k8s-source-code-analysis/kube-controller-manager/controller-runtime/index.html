@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          controller-runtime源码分析 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/k8s-source-code-analysis/kube-controller-manager/controller-runtime/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>controller-runtime源码分析</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2024-06-10
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><blockquote>
+<p>本文主要分析controller-runtime的源码，源码版本为v0.16.3</p>
+</blockquote>
+<h1 id="1-概述">1. 概述</h1>
+<p>controller-runtime源码地址：<a href="https://github.com/kubernetes-sigs/controller-runtime%E3%80%82" target="_blank" rel="noopener">https://github.com/kubernetes-sigs/controller-runtime。</a></p>
+<p>controller-runtime项目是一个用于快速构建k8s operator的工具包。其中kubebuilder和operator-sdk项目都是通过controller-runtime项目来快速编写k8s operator的工具。</p>
+<p>本文以kubebuilder的代码生成架构为例，分析controller-runtime的逻辑。kubebuilder框架生成的代码参考：<a href="https://github.com/huweihuang/venus" target="_blank" rel="noopener">https://github.com/huweihuang/venus</a></p>
+<h1 id="2-controller-runtime架构图">2. controller-runtime架构图</h1>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1700367468/article/kubernetes/kubebuilder/controller_runtime_overview.jpg" alt></p>
+<p>代码目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">pkg</span><br><span class="line">├── builder</span><br><span class="line">├── cache</span><br><span class="line">├── client  <span class="comment"># client用于操作k8s的对象</span></span><br><span class="line">├── cluster</span><br><span class="line">├── config</span><br><span class="line">├── controller  <span class="comment"># controller逻辑</span></span><br><span class="line">├── envtest</span><br><span class="line">├── event</span><br><span class="line">├── finalizer</span><br><span class="line">├── handler</span><br><span class="line">├── internal  <span class="comment"># 核心代码 controller的具体实现</span></span><br><span class="line">├── leaderelection</span><br><span class="line">├── manager   <span class="comment"># 核心代码</span></span><br><span class="line">├── predicate</span><br><span class="line">├── ratelimiter</span><br><span class="line">├── reconcile</span><br><span class="line">├── recorder</span><br><span class="line">├── scheme</span><br><span class="line">├── <span class="built_in">source</span></span><br><span class="line">└── webhook</span><br></pre></td></tr></table></figure>
+<h1 id="3-operator框架逻辑">3. Operator框架逻辑</h1>
+<blockquote>
+<p>代码参考：<a href="https://github.com/huweihuang/venus/blob/main/cmd/app/operator.go#L71" target="_blank" rel="noopener">https://github.com/huweihuang/venus/blob/main/cmd/app/operator.go#L71</a></p>
+</blockquote>
+<p>operator代码框架的主体逻辑包括以下几个部分。</p>
+<ul>
+<li>
+<p><code>manager</code>：主要用来管理多个的controller，构建，注册，运行controller。</p>
+</li>
+<li>
+<p><code>controller</code>：主要用来封装reconciler的控制器。</p>
+</li>
+<li>
+<p><code>reconciler</code>：具体执行业务逻辑的函数。</p>
+</li>
+</ul>
+<p>manger的框架主要包含以下几个部分。</p>
+<ul>
+<li>
+<p>mgr:=ctrl.NewManager：构建一个manager对象。</p>
+</li>
+<li>
+<p>Reconciler.SetupWithManager(mgr)：注册controller到manager对象。</p>
+</li>
+<li>
+<p>mgr.Start(ctrl.SetupSignalHandler())：运行manager从而运行controller的逻辑。</p>
+</li>
+</ul>
+<p>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 构建manager对象，主要的初始化参数包括</span></span><br><span class="line"><span class="comment">// - kubeconfig</span></span><br><span class="line"><span class="comment">// - controller的option参数</span></span><br><span class="line">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options&#123;</span><br><span class="line">       Scheme:                 scheme,</span><br><span class="line">       Metrics:                metricsserver.Options&#123;BindAddress: opt.MetricsAddr&#125;,</span><br><span class="line">       HealthProbeBindAddress: opt.ProbeAddr,</span><br><span class="line">       LeaderElection:         opt.EnableLeaderElection,</span><br><span class="line">       LeaderElectionID:       <span class="string">"52609143.huweihuang.com"</span>,</span><br><span class="line">       Controller: config.Controller&#123;</span><br><span class="line">           MaxConcurrentReconciles: opt.MaxConcurrentReconciles,</span><br><span class="line">       &#125;,</span><br><span class="line">   &#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将controller注册到manager中，并初始化controller对象。</span></span><br><span class="line">   <span class="keyword">if</span> err = (&amp;venuscontroller.RedisReconciler&#123;</span><br><span class="line">       Client: mgr.GetClient(),</span><br><span class="line">       Scheme: mgr.GetScheme(),</span><br><span class="line">   &#125;).SetupWithManager(mgr); err != <span class="literal">nil</span> &#123;</span><br><span class="line">       setupLog.Error(err, <span class="string">"unable to create controller"</span>, <span class="string">"controller"</span>, <span class="string">"Redis"</span>)</span><br><span class="line">       <span class="keyword">return</span> err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行manager对象，从而运行controller中的reconcile逻辑。</span></span><br><span class="line">   <span class="keyword">if</span> err := mgr.Start(ctrl.SetupSignalHandler()); err != <span class="literal">nil</span> &#123;</span><br><span class="line">       setupLog.Error(err, <span class="string">"problem running manager"</span>)</span><br><span class="line">       <span class="keyword">return</span> err</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="4-newmanager">4. NewManager</h1>
+<p>NewManager初始化一个manager 用来管理和创建controller对象。一个manager可以关联多个controller对象。manager是一个接口，而最终是实现结构体是<code>controllerManager</code>的对象。</p>
+<h2 id="41-manager接口">4.1. Manager接口</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Manager <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Cluster holds a variety of methods to interact with a cluster.</span></span><br><span class="line">	cluster.Cluster</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Add will set requested dependencies on the component, and cause the component to be</span></span><br><span class="line">	<span class="comment">// started when Start is called.</span></span><br><span class="line">	<span class="comment">// Depending on if a Runnable implements LeaderElectionRunnable interface, a Runnable can be run in either</span></span><br><span class="line">	<span class="comment">// non-leaderelection mode (always running) or leader election mode (managed by leader election if enabled).</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 通过Runnable接口将具体的controller注册到manager中。</span></span><br><span class="line">	Add(Runnable) error</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start starts all registered Controllers and blocks until the context is cancelled.</span></span><br><span class="line">	<span class="comment">// Returns an error if there is an error starting any controller.</span></span><br><span class="line">	<span class="comment">//</span></span><br><span class="line">	<span class="comment">// If LeaderElection is used, the binary must be exited immediately after this returns,</span></span><br><span class="line">	<span class="comment">// otherwise components that need leader election might continue to run after the leader</span></span><br><span class="line">	<span class="comment">// lock was lost.</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 运行具体的逻辑</span></span><br><span class="line">	Start(ctx context.Context) error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="42-newcontrollermanager">4.2. NewControllerManager</h2>
+<p>New构建一个具体的controllerManager的对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(config *rest.Config, options Options)</span> <span class="params">(Manager, error)</span></span> &#123;</span><br><span class="line">    <span class="comment">// Set default values for options fields</span></span><br><span class="line">    options = setOptionsDefaults(options)</span><br><span class="line">    ... </span><br><span class="line"></span><br><span class="line">    errChan := <span class="built_in">make</span>(<span class="keyword">chan</span> error)</span><br><span class="line">    runnables := newRunnables(options.BaseContext, errChan)</span><br><span class="line">    <span class="keyword">return</span> &amp;controllerManager&#123;</span><br><span class="line">        stopProcedureEngaged:          pointer.Int64(<span class="number">0</span>),</span><br><span class="line">        cluster:                       cluster,</span><br><span class="line">        runnables:                     runnables,</span><br><span class="line">        errChan:                       errChan,</span><br><span class="line">        recorderProvider:              recorderProvider,</span><br><span class="line">        resourceLock:                  resourceLock,</span><br><span class="line">        metricsServer:                 metricsServer,</span><br><span class="line">        controllerConfig:              options.Controller,</span><br><span class="line">        logger:                        options.Logger,</span><br><span class="line">        elected:                       <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line">        webhookServer:                 options.WebhookServer,</span><br><span class="line">        leaderElectionID:              options.LeaderElectionID,</span><br><span class="line">        leaseDuration:                 *options.LeaseDuration,</span><br><span class="line">        renewDeadline:                 *options.RenewDeadline,</span><br><span class="line">        retryPeriod:                   *options.RetryPeriod,</span><br><span class="line">        healthProbeListener:           healthProbeListener,</span><br><span class="line">        readinessEndpointName:         options.ReadinessEndpointName,</span><br><span class="line">        livenessEndpointName:          options.LivenessEndpointName,</span><br><span class="line">        pprofListener:                 pprofListener,</span><br><span class="line">        gracefulShutdownTimeout:       *options.GracefulShutdownTimeout,</span><br><span class="line">        internalProceduresStop:        <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line">        leaderElectionStopped:         <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line">        leaderElectionReleaseOnCancel: options.LeaderElectionReleaseOnCancel,</span><br><span class="line">    &#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="5-setupwithmanager">5. SetupWithManager</h1>
+<p>SetupWithManager将具体的controller注册到manager中。其中通过<code>Complete</code>完成controller的初始化。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SetupWithManager sets up the controller with the Manager.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RedisReconciler)</span> <span class="title">SetupWithManager</span><span class="params">(mgr ctrl.Manager)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> ctrl.NewControllerManagedBy(mgr).</span><br><span class="line">        For(&amp;venusv1.Redis&#123;&#125;).</span><br><span class="line">        Complete(r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SetupWithManager通过NewControllerManagedBy方法构建了一个Builder的对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Builder builds a Controller.</span></span><br><span class="line"><span class="keyword">type</span> Builder <span class="keyword">struct</span> &#123;</span><br><span class="line">    forInput         ForInput</span><br><span class="line">    ownsInput        []OwnsInput</span><br><span class="line">    watchesInput     []WatchesInput</span><br><span class="line">    mgr              manager.Manager</span><br><span class="line">    globalPredicates []predicate.Predicate</span><br><span class="line">    ctrl             controller.Controller</span><br><span class="line">    ctrlOptions      controller.Options</span><br><span class="line">    name             <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ControllerManagedBy returns a new controller builder that will be started by the provided Manager.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ControllerManagedBy</span><span class="params">(m manager.Manager)</span> *<span class="title">Builder</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Builder&#123;mgr: m&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过builder对象完成controller的初始化。</p>
+<h2 id="51-controller初始化">5.1. controller初始化</h2>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Build builds the Application Controller and returns the Controller it created.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(blder *Builder)</span> <span class="title">Build</span><span class="params">(r reconcile.Reconciler)</span> <span class="params">(controller.Controller, error)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set the ControllerManagedBy</span></span><br><span class="line">    <span class="keyword">if</span> err := blder.doController(r); err != <span class="literal">nil</span> &#123;  <span class="comment">// 初始化controller</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set the Watch</span></span><br><span class="line">    <span class="keyword">if</span> err := blder.doWatch(); err != <span class="literal">nil</span> &#123;   <span class="comment">// 添加event handler</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> blder.ctrl, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>doController</code>最终通过调用<code>NewUnmanaged</code>构建一个controller对象。并传入自定义的reconciler对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(name <span class="keyword">string</span>, mgr manager.Manager, options Options)</span> <span class="params">(Controller, error)</span></span> &#123;</span><br><span class="line">    c, err := NewUnmanaged(name, mgr, options)</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// Add the controller as a Manager components</span></span><br><span class="line">    <span class="keyword">return</span> c, mgr.Add(c)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewUnmanaged returns a new controller without adding it to the manager. The</span></span><br><span class="line"><span class="comment">// caller is responsible for starting the returned controller.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUnmanaged</span><span class="params">(name <span class="keyword">string</span>, mgr manager.Manager, options Options)</span> <span class="params">(Controller, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> options.Reconciler == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"must specify Reconciler"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// Create controller with dependencies set</span></span><br><span class="line">    <span class="keyword">return</span> &amp;controller.Controller&#123;</span><br><span class="line">        Do: options.Reconciler,   <span class="comment">// 将具体的reconciler函数传递到controller的reconciler。</span></span><br><span class="line">        MakeQueue: <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">workqueue</span>.<span class="title">RateLimitingInterface</span></span> &#123;</span><br><span class="line">            <span class="keyword">return</span> workqueue.NewRateLimitingQueueWithConfig(options.RateLimiter, workqueue.RateLimitingQueueConfig&#123;</span><br><span class="line">                Name: name,</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;, <span class="comment">// 初始化任务队列</span></span><br><span class="line">        MaxConcurrentReconciles: options.MaxConcurrentReconciles, <span class="comment">// 设置controller的并发数</span></span><br><span class="line">        CacheSyncTimeout:        options.CacheSyncTimeout,</span><br><span class="line">        Name:                    name,</span><br><span class="line">        LogConstructor:          options.LogConstructor,</span><br><span class="line">        RecoverPanic:            options.RecoverPanic,</span><br><span class="line">        LeaderElected:           options.NeedLeaderElection,</span><br><span class="line">    &#125;, <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+<h2 id="52-添加event-handler">5.2. 添加event handler</h2>
+<p><code>doWatch</code>最终会运行informer.start添加event handler。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Watch implements controller.Controller.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Controller)</span> <span class="title">Watch</span><span class="params">(src source.Source, evthdler handler.EventHandler, prct ...predicate.Predicate)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    c.mu.Lock()</span><br><span class="line">    <span class="keyword">defer</span> c.mu.Unlock()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Controller hasn't started yet, store the watches locally and return.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// These watches are going to be held on the controller struct until the manager or user calls Start(...).</span></span><br><span class="line">    <span class="keyword">if</span> !c.Started &#123;</span><br><span class="line">        c.startWatches = <span class="built_in">append</span>(c.startWatches, watchDescription&#123;src: src, handler: evthdler, predicates: prct&#125;)</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    c.LogConstructor(<span class="literal">nil</span>).Info(<span class="string">"Starting EventSource"</span>, <span class="string">"source"</span>, src)</span><br><span class="line">    <span class="keyword">return</span> src.Start(c.ctx, evthdler, c.Queue, prct...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>add event handler</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(is *Informer)</span> <span class="title">Start</span><span class="params">(ctx context.Context, handler handler.EventHandler, queue workqueue.RateLimitingInterface,</span></span></span><br><span class="line"><span class="function"><span class="params">    prct ...predicate.Predicate)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="comment">// Informer should have been specified by the user.</span></span><br><span class="line">    <span class="keyword">if</span> is.Informer == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"must specify Informer.Informer"</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _, err := is.Informer.AddEventHandler(internal.NewEventHandler(ctx, queue, handler, prct).HandlerFuncs())</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="6-mgrstart">6. mgr.Start</h1>
+<p>controllerManager运行之前注册的runnables的函数，其中包括controller的函数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(cm *controllerManager)</span> <span class="title">Start</span><span class="params">(ctx context.Context)</span> <span class="params">(err error)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Start and wait for caches.</span></span><br><span class="line">	<span class="keyword">if</span> err := cm.runnables.Caches.Start(cm.internalCtx); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start the non-leaderelection Runnables after the cache has synced.</span></span><br><span class="line">	<span class="keyword">if</span> err := cm.runnables.Others.Start(cm.internalCtx); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Start the leader election and all required runnables.</span></span><br><span class="line">	&#123;</span><br><span class="line">		ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line">		cm.leaderElectionCancel = cancel</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">if</span> cm.resourceLock != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">if</span> err := cm.startLeaderElection(ctx); err != <span class="literal">nil</span> &#123;</span><br><span class="line">					cm.errChan &lt;- err</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="comment">// Treat not having leader election enabled the same as being elected.</span></span><br><span class="line">				<span class="keyword">if</span> err := cm.startLeaderElectionRunnables(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">					cm.errChan &lt;- err</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="built_in">close</span>(cm.elected)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="61-controllerstart">6.1. controller.start</h2>
+<p>start主要包含2个部分</p>
+<ul>
+<li>同步cache：WaitForSync</li>
+<li>启动指定并发数的worker：processNextWorkItem</li>
+</ul>
+<p>该部分的代码逻辑跟k8s controller-manager中的具体的controller的逻辑类似。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Controller)</span> <span class="title">Start</span><span class="params">(ctx context.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  ...</span><br><span class="line">	err := <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">		...</span><br><span class="line">		<span class="keyword">for</span> _, watch := <span class="keyword">range</span> c.startWatches &#123;</span><br><span class="line">			syncingSource, ok := watch.src.(source.SyncingSource)</span><br><span class="line">      <span class="comment">// 同步list-watch中的cache数据。</span></span><br><span class="line">			<span class="keyword">if</span> err := <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">				<span class="keyword">if</span> err := syncingSource.WaitForSync(sourceStartCtx); err != <span class="literal">nil</span> &#123;</span><br><span class="line">          ...</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 运行指定并发数的processNextWorkItem任务。</span></span><br><span class="line">		<span class="comment">// Launch workers to process resources</span></span><br><span class="line">		c.LogConstructor(<span class="literal">nil</span>).Info(<span class="string">"Starting workers"</span>, <span class="string">"worker count"</span>, c.MaxConcurrentReconciles)</span><br><span class="line">		wg.Add(c.MaxConcurrentReconciles)</span><br><span class="line">		<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; c.MaxConcurrentReconciles; i++ &#123;</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">				<span class="keyword">defer</span> wg.Done()</span><br><span class="line">				<span class="comment">// Run a worker thread that just dequeues items, processes them, and marks them done.</span></span><br><span class="line">				<span class="comment">// It enforces that the reconcileHandler is never invoked concurrently with the same object.</span></span><br><span class="line">				<span class="keyword">for</span> c.processNextWorkItem(ctx) &#123;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;()</span><br><span class="line">		&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="62-processnextworkitem">6.2. processNextWorkItem</h2>
+<p>经典的<code>processNextWorkItem</code>函数，最终调用<code>reconcileHandler</code>来处理具体的逻辑。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Controller)</span> <span class="title">processNextWorkItem</span><span class="params">(ctx context.Context)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	obj, shutdown := c.Queue.Get()</span><br><span class="line">	<span class="keyword">if</span> shutdown &#123;</span><br><span class="line">		<span class="comment">// Stop working</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> c.Queue.Done(obj)</span><br><span class="line"></span><br><span class="line">	ctrlmetrics.ActiveWorkers.WithLabelValues(c.Name).Add(<span class="number">1</span>)</span><br><span class="line">	<span class="keyword">defer</span> ctrlmetrics.ActiveWorkers.WithLabelValues(c.Name).Add(<span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">	c.reconcileHandler(ctx, obj)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="7-reconcilehandler">7. reconcileHandler</h1>
+<p><code>reconcileHandler</code>部分的代码是整个reconciler逻辑中的核心，自定义的reconciler函数最终是调用了reconcileHandler来实现，并且该函数描述了具体的任务队列处理的几种类型。</p>
+<ul>
+<li><code>err != nil</code>：如果错误不为空，则重新入队，等待处理。</li>
+<li><code>result.RequeueAfter &gt; 0</code>：如果指定RequeueAfter &gt; 0，则做延迟入队处理。</li>
+<li><code>result.Requeue</code>：如何指定了requeue则表示马上重新入队处理。</li>
+<li><code>err == nil</code> : 如果错误为空，表示reconcile成功，则移除队列的任务。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Controller)</span> <span class="title">reconcileHandler</span><span class="params">(ctx context.Context, obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获取k8s crd的具体对象</span></span><br><span class="line">	req, ok := obj.(reconcile.Request)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="comment">// As the item in the workqueue is actually invalid, we call</span></span><br><span class="line">		<span class="comment">// Forget here else we'd go into a loop of attempting to</span></span><br><span class="line">		<span class="comment">// process a work item that is invalid.</span></span><br><span class="line">		c.Queue.Forget(obj)</span><br><span class="line">		c.LogConstructor(<span class="literal">nil</span>).Error(<span class="literal">nil</span>, <span class="string">"Queue item was not a Request"</span>, <span class="string">"type"</span>, fmt.Sprintf(<span class="string">"%T"</span>, obj), <span class="string">"value"</span>, obj)</span><br><span class="line">		<span class="comment">// Return true, don't take a break</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 调用用户定义的Reconcile函数，并对返回结果进行处理。</span></span><br><span class="line">	result, err := c.Reconcile(ctx, req)</span><br><span class="line">	<span class="keyword">switch</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> err != <span class="literal">nil</span>:</span><br><span class="line">    <span class="comment">// 如果错误不为空，则重新入队，等待处理</span></span><br><span class="line">		<span class="keyword">if</span> errors.Is(err, reconcile.TerminalError(<span class="literal">nil</span>)) &#123;</span><br><span class="line">			ctrlmetrics.TerminalReconcileErrors.WithLabelValues(c.Name).Inc()</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			c.Queue.AddRateLimited(req)</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">case</span> result.RequeueAfter &gt; <span class="number">0</span>:</span><br><span class="line">		<span class="comment">// 如果指定了延迟入队，则做延迟入队处理</span></span><br><span class="line">		c.Queue.Forget(obj)</span><br><span class="line">		c.Queue.AddAfter(req, result.RequeueAfter)</span><br><span class="line">	<span class="keyword">case</span> result.Requeue:</span><br><span class="line">		<span class="comment">// 如果指定了马上入队，则做相应处理</span></span><br><span class="line">		c.Queue.AddRateLimited(req)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">    <span class="comment">// 如果错误为空，表示reconcile成功，则移除队列的任务</span></span><br><span class="line">		log.V(<span class="number">5</span>).Info(<span class="string">"Reconcile successful"</span>)</span><br><span class="line">		<span class="comment">// Finally, if no error occurs we Forget this item so it does not</span></span><br><span class="line">		<span class="comment">// get queued again until another change happens.</span></span><br><span class="line">		c.Queue.Forget(obj)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="8-总结">8. 总结</h1>
+<ol>
+<li>controller-runtime封装了k8s-controller-manager控制器的主要逻辑，其中就包括创建list-watch对象，waitForSync等，创建任务队列，将任务处理的goroutine抽象成一个reconcile函数，使用户更方便的编写operator工具。</li>
+<li>kubebuilder是一个基于controller-runtime框架的命令生成工具。可以用于快速生成和部署crd对象，快速生成controller-runtime框架的基本代码。</li>
+<li>controller-runtime框架的最核心是reconcileHandler函数，该函数定义了reconcile的4种错误处理及入队重试的类型。可以根据具体的业务需求选择合适的方法来处理。</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li>
+<p><a href="https://qiankunli.github.io/2020/08/10/controller_runtime.html" target="_blank" rel="noopener">controller-runtime源码分析</a></p>
+</li>
+<li>
+<p><a href="https://qiankunli.github.io/2022/11/24/controller_runtime_detail.html" target="_blank" rel="noopener">controller-runtime细节分析</a></p>
+</li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/linux-notes/network/vlan/" data-toggle="tooltip" data-placement="top" title="VLAN介绍">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/k8s-source-code-analysis/kube-controller-manager/daemonset-controller/" data-toggle="tooltip" data-placement="top" title="kube-controller-manager源码分析（五）之 DaemonSetController">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-概述"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 概述</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-controller-runtime架构图"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. controller-runtime架构图</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-operator框架逻辑"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Operator框架逻辑</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-newmanager"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. NewManager</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-manager接口"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. Manager接口</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-newcontrollermanager"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. NewControllerManager</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-setupwithmanager"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. SetupWithManager</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#51-controller初始化"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">5.1. controller初始化</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#52-添加event-handler"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">5.2. 添加event handler</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-mgrstart"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. mgr.Start</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#61-controllerstart"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">6.1. controller.start</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#62-processnextworkitem"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">6.2. processNextWorkItem</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#7-reconcilehandler"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">7. reconcileHandler</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#8-总结"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">8. 总结</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          Docker学习笔记 - 胡伟煌 | Blog
+          kine的使用 - 胡伟煌 | Blog
         
     </title>
 
-    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/docker/docker-notes/">
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/operation/helm/kine/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -88,12 +88,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
                         </div>
-                        <h1>Docker学习笔记</h1>
+                        <h1>kine的使用</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by 胡伟煌 on
-                            2021-06-23
+                            2025-06-10
                         </span>
                     </div>
                 
@@ -140,13 +142,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -155,6 +150,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -210,8 +212,18 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="docker学习笔记">Docker学习笔记</h1>
-<p>详见：<a href="https://www.huweihuang.com/docker-notes/">Docker学习笔记</a></p>
+                <div id="vip-container"><h1 id="创建kine的数据表">创建kine的数据表</h1>
+<p>如果kine连接MySQL使用的用户有创建表的权限，则会自动创建表名为kine的数据表，如果MySQL用户没有创建表的权限，则需要手动创建数据表，建表语句如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `kine` (</span><br><span class="line">  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `name` varchar(630) CHARACTER SET ascii DEFAULT NULL,</span><br><span class="line">  `created` int(11) DEFAULT NULL,</span><br><span class="line">  `deleted` int(11) DEFAULT NULL,</span><br><span class="line">  `create_revision` bigint(20) unsigned DEFAULT NULL,</span><br><span class="line">  `prev_revision` bigint(20) unsigned DEFAULT NULL,</span><br><span class="line">  `lease` int(11) DEFAULT NULL,</span><br><span class="line">  `value` mediumblob,</span><br><span class="line">  `old_value` mediumblob,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `kine_name_prev_revision_uindex` (`name`,`prev_revision`),</span><br><span class="line">  KEY `kine_name_index` (`name`),</span><br><span class="line">  KEY `kine_name_id_index` (`name`,`id`),</span><br><span class="line">  KEY `kine_id_deleted_index` (`id`,`deleted`),</span><br><span class="line">  KEY `kine_prev_revision_index` (`prev_revision`)</span><br><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;</span><br></pre></td></tr></table></figure>
+<h1 id="faq">FAQ</h1>
+<h2 id="问题1converting-null-to-int64-is-unsupported">问题1：converting NULL to int64 is unsupported</h2>
+<p>报错详情：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F0124 18:01:40.316896    44 controller.go:161] Unable to perform initial IP allocation check: unable to refresh the service IP block: rpc error: code = Unknown desc = sql: Scan error on column index 0, name <span class="string">"prev_revision"</span>: converting NULL to int64 is unsupported</span><br></pre></td></tr></table></figure>
+<p>原因：</p>
+<p>mysql没有开启auto commit</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE <span class="string">'autocommit'</span>;</span><br></pre></td></tr></table></figure>
+<p>解决方案：</p>
+<p>开启mysql的autocommit配置。</p>
 </div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
@@ -236,12 +248,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/trouble-shooting/node/keycreate-permission-denied/" data-toggle="tooltip" data-placement="top" title="keycreate permission denied">&larr; Previous Post</a>
+                            <a href="/article/linux-notes/LLM/mcp/" data-toggle="tooltip" data-placement="top" title="大模型相关概念">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/" data-toggle="tooltip" data-placement="top" title="increase the mlock limit">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/cluster-optimization/scheduler/massive-pod-scheduling/" data-toggle="tooltip" data-placement="top" title="大规模Pod调度优化">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -327,7 +339,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#docker学习笔记"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Docker学习笔记</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#创建kine的数据表"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">创建kine的数据表</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#faq"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">FAQ</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#问题1converting-null-to-int64-is-unsupported"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">问题1：converting NULL to int64 is unsupported</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -347,6 +359,8 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
                     </div>
                 </section>
                 

@@ -142,13 +142,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -157,6 +150,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,8 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="kubelet源码分析五之-syncpod">kubelet源码分析（五）之 syncPod</h1>
-<blockquote>
+                <div id="vip-container"><blockquote>
 <p>以下代码分析基于 <code>kubernetes v1.12.0</code> 版本。</p>
 </blockquote>
 <p>本文主要分析<code>kubelet</code>中<code>syncPod</code>的部分。</p>
@@ -396,12 +395,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/k8s-source-code-analysis/kube-controller-manager/NewControllerManagerCommand/" data-toggle="tooltip" data-placement="top" title="kube-controller-manager源码分析（一）之 NewControllerManagerCommand">&larr; Previous Post</a>
+                            <a href="/article/k8s-source-code-analysis/kubelet/syncLoopIteration/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（四）之 syncLoopIteration">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/k8s-source-code-analysis/kubelet/syncLoopIteration/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（四）之 syncLoopIteration">Next Post &rarr;</a>
+                            <a href="/article/k8s-source-code-analysis/docker/code-analysis-of-docker-client/" data-toggle="tooltip" data-placement="top" title="Docker源码分析（一）之 Docker Client">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -487,7 +486,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#kubelet源码分析五之-syncpod"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">kubelet源码分析（五）之 syncPod</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-managepodloop"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. managePodLoop</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-syncpod"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. syncPod</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-syncpodkill"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">2.1. SyncPodKill</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-syncpodcreate"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">2.2. SyncPodCreate</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-cgroups"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">2.3. Cgroups</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-mirror-pod"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">2.4. Mirror Pod</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-makepoddatadirs"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">2.5. makePodDataDirs</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#26-mount-volumes"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">2.6. mount volumes</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#27-pullsecretsforpod"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">2.7. PullSecretsForPod</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#28-containerruntimesyncpod"><span class="toc-nav-number">3.8.</span> <span class="toc-nav-text">2.8. containerRuntime.SyncPod</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-runtimesyncpod"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. Runtime.SyncPod</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-computepodactions"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">3.1. computePodActions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-killpodwithsyncresult"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">3.2. killPodWithSyncResult</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-killcontainer"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">3.3. killContainer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-createpodsandbox"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">3.4. createPodSandbox</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#35-start-init-container"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">3.5. start init container</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#36-start-containers"><span class="toc-nav-number">4.6.</span> <span class="toc-nav-text">3.6. start containers</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-startcontainer"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">4. startContainer</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-pull-image"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">4.1. pull image</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-createcontainer"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">4.2. CreateContainer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-startcontainer"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">4.3. StartContainer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-execute-post-start-hook"><span class="toc-nav-number">5.4.</span> <span class="toc-nav-text">4.4. execute post start hook</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-总结"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">5. 总结</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-managepodloop"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. managePodLoop</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-syncpod"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. syncPod</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-syncpodkill"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. SyncPodKill</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-syncpodcreate"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. SyncPodCreate</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-cgroups"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. Cgroups</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-mirror-pod"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4. Mirror Pod</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-makepoddatadirs"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.5. makePodDataDirs</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#26-mount-volumes"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">2.6. mount volumes</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#27-pullsecretsforpod"><span class="toc-nav-number">2.7.</span> <span class="toc-nav-text">2.7. PullSecretsForPod</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#28-containerruntimesyncpod"><span class="toc-nav-number">2.8.</span> <span class="toc-nav-text">2.8. containerRuntime.SyncPod</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-runtimesyncpod"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Runtime.SyncPod</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-computepodactions"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. computePodActions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-killpodwithsyncresult"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. killPodWithSyncResult</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-killcontainer"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. killContainer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-createpodsandbox"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">3.4. createPodSandbox</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#35-start-init-container"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">3.5. start init container</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#36-start-containers"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">3.6. start containers</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-startcontainer"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. startContainer</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-pull-image"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. pull image</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-createcontainer"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. CreateContainer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-startcontainer"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. StartContainer</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-execute-post-start-hook"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">4.4. execute post start hook</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-总结"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. 总结</span></a></li></ol>
         
         </div>
       </aside>

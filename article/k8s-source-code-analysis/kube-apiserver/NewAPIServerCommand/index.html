@@ -142,13 +142,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -157,6 +150,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,8 +212,7 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="kube-apiserver源码分析一之-newapiservercommand">kube-apiserver源码分析（一）之 NewAPIServerCommand</h1>
-<blockquote>
+                <div id="vip-container"><blockquote>
 <p>以下代码分析基于 <code>kubernetes v1.12.0</code> 版本。</p>
 </blockquote>
 <p>本文主要分析<code>kube-apiserver</code>中<code>cmd</code>部分的代码，即<code>NewAPIServerCommand</code>相关的代码。更多具体的逻辑待后续文章分析。</p>
@@ -360,12 +359,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/k8s-source-code-analysis/kubelet/NewKubeletCommand/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（一）之 NewKubeletCommand">&larr; Previous Post</a>
+                            <a href="/article/k8s-source-code-analysis/kubelet/NewMainKubelet/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（二）之 NewMainKubelet">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/linux-notes/tcpip/http/" data-toggle="tooltip" data-placement="top" title="HTTP协议">Next Post &rarr;</a>
+                            <a href="/article/k8s-source-code-analysis/kubelet/NewKubeletCommand/" data-toggle="tooltip" data-placement="top" title="kubelet源码分析（一）之 NewKubeletCommand">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -451,7 +450,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#kube-apiserver源码分析一之-newapiservercommand"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">kube-apiserver源码分析（一）之 NewAPIServerCommand</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-main"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. Main</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-newapiservercommand"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. NewAPIServerCommand</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-newserverrunoptions"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. NewServerRunOptions</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-serverrunoptions"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">3.1. ServerRunOptions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-newserverrunoptions"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">3.2. NewServerRunOptions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-complete"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">3.3. Complete</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-addflagset"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">3. AddFlagSet</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-flags"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">3.1. Flags</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-run"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">4. Run</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-createserverchain"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">4.1. CreateServerChain</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-preparerun"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">4.2. PrepareRun</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-preparedgenericapiserverrun"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">4.3. preparedGenericAPIServer.Run</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-总结"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">5. 总结</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-main"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Main</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-newapiservercommand"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. NewAPIServerCommand</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-newserverrunoptions"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. NewServerRunOptions</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-serverrunoptions"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. ServerRunOptions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-newserverrunoptions"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. NewServerRunOptions</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-complete"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. Complete</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-addflagset"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. AddFlagSet</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-flags"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">3.1. Flags</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-run"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">4. Run</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-createserverchain"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">4.1. CreateServerChain</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-preparerun"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">4.2. PrepareRun</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-preparedgenericapiserverrun"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">4.3. preparedGenericAPIServer.Run</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-总结"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">5. 总结</span></a></li></ol>
         
         </div>
       </aside>

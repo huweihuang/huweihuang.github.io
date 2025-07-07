@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Cgroup介绍 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/cgroup/cgroup/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
+                            
+                        </div>
+                        <h1>Cgroup介绍</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2021-07-20
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-cgroup简介">1. cgroup简介</h1>
+<p>Linux Cgroup提供了对一组进程及将来子进程的资源限制的能力。资源包括：CPU、内存、存储、网络等。通过Cgroup可以限制某个进程的资源占用，并监控进程的统计信息。</p>
+<h1 id="2-cgroup示例">2. cgroup示例</h1>
+<p>1、创建一个hierarchy（cgroup树）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个 hierarchy 挂载点</span></span><br><span class="line">mkdir cgroup-test </span><br><span class="line"><span class="comment"># 挂载hierarchy 挂载点</span></span><br><span class="line">mount -t cgroup -o none,name=cgroup-test cgroup-test ./cgroup-test</span><br><span class="line"><span class="comment"># 查看生成的默认文件</span></span><br><span class="line"><span class="comment"># ll</span></span><br><span class="line">总用量 0</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   5 19:13 cgroup.clone_children</span><br><span class="line">--w--w--w- 1 root root 0 3月   5 19:13 cgroup.event_control</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   5 19:13 cgroup.procs</span><br><span class="line">-r--r--r-- 1 root root 0 3月   5 19:13 cgroup.sane_behavior</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   5 19:13 notify_on_release</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   5 19:13 release_agent</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   5 19:13 tasks</span><br></pre></td></tr></table></figure>
+<p>2、在根cgroup创建2个子cgroup</p>
+<p>在cgroup目录下创建目录，子cgroup会继承父cgroup的属性。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">mkdir cgroup-1</span><br><span class="line">mkdir cgroup-2</span><br><span class="line"></span><br><span class="line"><span class="comment"># tree</span></span><br><span class="line">.</span><br><span class="line">├── cgroup-1</span><br><span class="line">│   ├── cgroup.clone_children</span><br><span class="line">│   ├── cgroup.event_control</span><br><span class="line">│   ├── cgroup.procs</span><br><span class="line">│   ├── notify_on_release</span><br><span class="line">│   └── tasks</span><br><span class="line">├── cgroup-2</span><br><span class="line">│   ├── cgroup.clone_children</span><br><span class="line">│   ├── cgroup.event_control</span><br><span class="line">│   ├── cgroup.procs</span><br><span class="line">│   ├── notify_on_release</span><br><span class="line">│   └── tasks</span><br><span class="line">├── cgroup.clone_children</span><br><span class="line">├── cgroup.event_control</span><br><span class="line">├── cgroup.procs</span><br><span class="line">├── cgroup.sane_behavior</span><br><span class="line">├── notify_on_release</span><br><span class="line">├── release_agent</span><br><span class="line">└── tasks</span><br></pre></td></tr></table></figure>
+<p>3、在cgroup中添加和移动进程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> $$ &gt; tasks</span><br></pre></td></tr></table></figure>
+<p>4、通过subsystem限制cgroup中进程的资源。</p>
+<p>系统为每个subsystem创建了一个默认的hierarchy。</p>
+<h1 id="3-cgroup限制cpu">3. cgroup限制CPU</h1>
+<p>1、启动进程，将cpu打到100%</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动进程，将cpu打到100%</span></span><br><span class="line">stress-ng -c 1 --cpu-load 100 &amp;</span><br><span class="line"><span class="comment"># 查看cpu占用</span></span><br><span class="line"><span class="comment">#ps auxw|grep stress</span></span><br><span class="line">root      7607  0.0  0.0  56320  3620 pts/1    SL   10:35   0:00 stress-ng -c 1 --cpu-load 100</span><br><span class="line">root      7608  100  0.0  56964  4076 pts/1    R    10:35   0:14 stress-ng -c 1 --cpu-load 100</span><br><span class="line"><span class="comment"># top</span></span><br><span class="line">  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line"> 7608 root      20   0   56964   4076   1192 R 100.0  0.0   0:37.70 stress-ng-cpu</span><br></pre></td></tr></table></figure>
+<p>2、在<code>/sys/fs/cgroup/cpu</code>下创建子cgroup</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建子目录</span></span><br><span class="line"><span class="built_in">cd</span> /sys/fs/cgroup/cpu &amp;&amp; mkdir cgroup-test</span><br><span class="line"><span class="comment"># 生成cgroup文件</span></span><br><span class="line">/sys/fs/cgroup/cpu/cgroup-test<span class="comment">#ll</span></span><br><span class="line">总用量 0</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cgroup.clone_children</span><br><span class="line">--w--w--w- 1 root root 0 3月   9 20:28 cgroup.event_control</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cgroup.procs</span><br><span class="line">-r--r--r-- 1 root root 0 3月   9 20:28 cpuacct.bt_stat</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpuacct.bt_usage</span><br><span class="line">-r--r--r-- 1 root root 0 3月   9 20:28 cpuacct.bt_usage_percpu</span><br><span class="line">-r--r--r-- 1 root root 0 3月   9 20:28 cpuacct.stat</span><br><span class="line">-r--r--r-- 1 root root 0 3月   9 20:28 cpuacct.uptime</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpuacct.usage</span><br><span class="line">-r--r--r-- 1 root root 0 3月   9 20:28 cpuacct.usage_percpu</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpu.bt_shares</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:34 cpu.cfs_period_us</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:29 cpu.cfs_quota_us</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpu.cfs_relax_thresh_sec</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpu.offline</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpu.rt_period_us</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpu.rt_runtime_us</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 cpu.shares</span><br><span class="line">-r--r--r-- 1 root root 0 3月   9 20:28 cpu.stat</span><br><span class="line">-rw-r--r-- 1 root root 0 3月   9 20:28 notify_on_release</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:32 tasks</span><br></pre></td></tr></table></figure>
+<p>3、限制进程的cpu</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 限制cpu比例为 cpu.cfs_quota_us/cpu.cfs_period_us,默认cpu.cfs_period_us为100000</span></span><br><span class="line"><span class="built_in">cd</span> /sys/fs/cgroup/cpu/cgroup-test</span><br><span class="line"><span class="built_in">echo</span> 50000 &gt; cpu.cfs_quota_us  <span class="comment"># 限制cpu使用率为50%</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将进程号写入tasks</span></span><br><span class="line"><span class="built_in">echo</span> 7608 &gt; tasks</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看cpu使用率，可以看出cpu限制在50%</span></span><br><span class="line"> PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line"> 7608 root      20   0   56964   4076   1192 R  50.2  0.0   9:08.24 stress-ng-cpu</span><br></pre></td></tr></table></figure>
+<h1 id="4-cgroup限制内存">4. cgroup限制内存</h1>
+<p>1、进入<code>/sys/fs/cgroup/memory</code>创建子cgroup</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /sys/fs/cgroup/memory</span><br><span class="line">mkdir cgroup-test</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看子cgroup生成内容</span></span><br><span class="line">/sys/fs/cgroup/memory/cgroup-test<span class="comment">#ll</span></span><br><span class="line">总用量 0</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 cgroup.clone_children</span><br><span class="line">--w--w--w- 1 root root 0 3月  10 10:51 cgroup.event_control</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 cgroup.procs</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.failcnt</span><br><span class="line">--w------- 1 root root 0 3月  10 10:51 memory.force_empty</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.kmem.failcnt</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.kmem.limit_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.kmem.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.kmem.slabinfo</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.kmem.tcp.failcnt</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.kmem.tcp.limit_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.kmem.tcp.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.kmem.tcp.usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.kmem.usage_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.limit_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.meminfo</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.memsw.failcnt</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.memsw.limit_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.memsw.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.memsw.usage_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.move_charge_at_immigrate</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.numa_stat</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.oom_control</span><br><span class="line">---------- 1 root root 0 3月  10 10:51 memory.pressure_level</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.soft_limit_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.stat</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.swappiness</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.usage_in_bytes</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 memory.use_hierarchy</span><br><span class="line">-r--r--r-- 1 root root 0 3月  10 10:51 memory.vmstat</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 notify_on_release</span><br><span class="line">-rw-r--r-- 1 root root 0 3月  10 10:51 tasks</span><br></pre></td></tr></table></figure>
+<p>2、限制进程内存为100M</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置当前cgroup限制进程内存100M</span></span><br><span class="line"><span class="built_in">cd</span> /sys/fs/cgroup/memory/cgroup-tes</span><br><span class="line"><span class="built_in">echo</span> 100m &gt; memory.limit_in_bytes</span><br><span class="line"><span class="comment"># 查看文件内容</span></span><br><span class="line">/sys/fs/cgroup/memory/cgroup-test<span class="comment">#cat memory.limit_in_bytes</span></span><br><span class="line">104857600</span><br></pre></td></tr></table></figure>
+<p>3、启动测试进程</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把当前的bash进程加入tasks</span></span><br><span class="line"><span class="built_in">echo</span> $$ &gt; tasks</span><br><span class="line"><span class="comment">#cat tasks</span></span><br><span class="line">7125</span><br><span class="line">11980</span><br><span class="line"></span><br><span class="line"><span class="comment"># ps auxw|grep 7125</span></span><br><span class="line">root      7125  0.0  0.0 115116  2588 pts/1    Ss   10:35   0:00 -bash</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动50M的进程</span></span><br><span class="line"><span class="built_in">cd</span> /sys/fs/cgroup/memory/cgroup-test</span><br><span class="line">stress-ng --vm-bytes 50m --vm-keep -m 1 &amp;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 进程内存占用为50M，可正常运行</span></span><br><span class="line">ps auxw|grep stress</span><br><span class="line">root     20021  100  0.0 113932 58188 pts/1    R    10:58   2:13 stress-ng --vm-bytes 50m --vm-keep -m 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 改用启动200M的测试进程</span></span><br><span class="line">stress-ng --vm-bytes 200m --vm-keep -m 1</span><br><span class="line"><span class="comment"># ps auxw|grep stress</span></span><br><span class="line">root     29937  0.0  0.0  56320  3644 pts/1    SL   11:16   0:00 stress-ng --vm-bytes 200m --vm-keep -m 1</span><br><span class="line">root     29938  0.1  0.0  56324   976 pts/1    S    11:16   0:00 stress-ng --vm-bytes 200m --vm-keep -m 1</span><br><span class="line"><span class="comment"># cat tasks</span></span><br><span class="line">7125</span><br><span class="line">29937</span><br><span class="line">29938</span><br><span class="line">32247</span><br><span class="line">32248</span><br></pre></td></tr></table></figure>
+<p>4、进程OOM</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">tailf /var/<span class="built_in">log</span>/messages</span><br><span class="line"><span class="comment"># OOM日志</span></span><br><span class="line">Mar 10 11:19:17  kernel: stress-ng-vm invoked oom-killer: gfp_mask=0xd0, order=0, oom_score_adj=1000</span><br><span class="line">Mar 10 11:19:17  kernel: stress-ng-vm cpuset=/ mems_allowed=0</span><br><span class="line">Mar 10 11:19:17  kernel: CPU: 11 PID: 3691 Comm: stress-ng-vm Not tainted 3.10.107-1-tlinux2-0051 <span class="comment">#1</span></span><br><span class="line">Mar 10 11:19:17  kernel: Hardware name: Inspur SA5212M4/Shuyu, BIOS 4.1.13 01/24/2018</span><br><span class="line">Mar 10 11:19:17  kernel: ffff880f5d92cd70 0000000094b48ef1 ffff880f2cee3c90 ffffffff819d9165</span><br><span class="line">Mar 10 11:19:17  kernel: ffff880f2cee3cd0 ffffffff819d4957 000000002d514000 ffff880f5d92cd70</span><br><span class="line">Mar 10 11:19:17  kernel: 0000000000000786 00000000000000d0 ffffffff81d73d78 0000000000006400</span><br><span class="line">Mar 10 11:19:17  kernel: Call Trace:</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff819d9165&gt;] dump_stack+0x19/0x1b</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff819d4957&gt;] dump_header+0x79/0xb5</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff81120aee&gt;] oom_kill_process+0x24e/0x3a0</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff8117b2f9&gt;] mem_cgroup_oom_synchronize+0x4e9/0x510</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff8117a330&gt;] ? mem_cgroup_charge_common+0xc0/0xc0</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff81121764&gt;] pagefault_out_of_memory+0x14/0x90</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff819d32dd&gt;] mm_fault_error+0x67/0x140</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff819e7ae6&gt;] __do_page_fault+0x396/0x550</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff8108335f&gt;] ? set_next_entity+0x5f/0x80</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff81084e63&gt;] ? pick_next_task_fair+0x1c3/0x2d0</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff819e7cae&gt;] do_page_fault+0xe/0x10</span><br><span class="line">Mar 10 11:19:17  kernel: [&lt;ffffffff819e4422&gt;] page_fault+0x22/0x30</span><br><span class="line">Mar 10 11:19:17  kernel: Task <span class="keyword">in</span> /cgroup-test killed as a result of <span class="built_in">limit</span> of /cgroup-test</span><br><span class="line">Mar 10 11:19:17  kernel: memory: usage 102400kB, <span class="built_in">limit</span> 102400kB, failcnt 252574</span><br><span class="line">Mar 10 11:19:17  kernel: memory+swap: usage 102400kB, <span class="built_in">limit</span> 18014398509481983kB, failcnt 0</span><br><span class="line">Mar 10 11:19:17  kernel: kmem: usage 0kB, <span class="built_in">limit</span> 18014398509481983kB, failcnt 0</span><br><span class="line">Mar 10 11:19:17  kernel: Memory cgroup stats <span class="keyword">for</span> /cgroup-test: cache:101728KB rss:672KB rss_huge:0KB mapped_file:101728KB swap:0KB inactive_anon:101712KB active_anon:600KB inactive_file:0KB active_file:0KB unevictable:16KB</span><br><span class="line">Mar 10 11:19:17  kernel: [ pid ]   uid  tgid total_vm      rss nr_ptes swapents oom_score_adj name</span><br><span class="line">Mar 10 11:19:17  kernel: [ 7125]     0  7125    28779      650      15        0             0 bash</span><br><span class="line">Mar 10 11:19:17  kernel: [29937]     0 29937    14080      911      23        0         -1000 stress-ng</span><br><span class="line">Mar 10 11:19:17  kernel: [29938]     0 29938    14081      244      23        0         -1000 stress-ng-vm</span><br><span class="line">Mar 10 11:19:17  kernel: [ 3691]     0  3691    65281    24993      73        0          1000 stress-ng-vm</span><br><span class="line">Mar 10 11:19:17  kernel: Memory cgroup out of memory: Kill process 3691 (stress-ng-vm) score 1926 or sacrifice child</span><br><span class="line">Mar 10 11:19:17  kernel: Killed process 3691 (stress-ng-vm) total-vm:261124kB, anon-rss:292kB, file-rss:99680kB</span><br><span class="line">Mar 10 11:19:17  cadvisor: I0310 11:19:17.952314    3143 manager.go:1178] Created an OOM event <span class="keyword">in</span> container <span class="string">"/cgroup-test"</span> at 2021-03-10 11:21:19.308776449 +0800 CST m=+150332.715342256</span><br><span class="line">Mar 10 11:19:17  stress-ng: memory (MB): total 63979.26, free 58262.03, shared 0.00, buffer 481.01, swap 0.00, free swap 0.00</span><br><span class="line">Mar 10 11:19:18  kernel: Memory cgroup out of memory: Kill process 3692 (stress-ng-vm) score 1926 or sacrifice child</span><br><span class="line">Mar 10 11:19:18  kernel: Killed process 3692 (stress-ng-vm) total-vm:261124kB, anon-rss:292kB, file-rss:99680kB</span><br><span class="line">Mar 10 11:19:18  stress-ng: memory (MB): total 63979.26, free 58262.15, shared 0.00, buffer 481.01, swap 0.00, free swap 0.00</span><br></pre></td></tr></table></figure>
+<p>参考：</p>
+<ul>
+<li><a href="https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt" target="_blank" rel="noopener">https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt</a></li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/runtime/cgroup/cgroup-dir/" data-toggle="tooltip" data-placement="top" title="Cgroup目录">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/runtime/namespace/namespace-cmd/" data-toggle="tooltip" data-placement="top" title="Namespace命令介绍">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-cgroup简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. cgroup简介</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-cgroup示例"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. cgroup示例</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-cgroup限制cpu"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. cgroup限制CPU</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-cgroup限制内存"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. cgroup限制内存</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

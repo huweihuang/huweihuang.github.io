@@ -134,13 +134,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -149,6 +142,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,31 +211,28 @@
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-file-system/">
+    <a href="/article/kubernetes-notes/runtime/cgroup/cgroup-cmd/">
         <h2 class="post-title">
                         
-            Linux文件系统
+            Cgroup命令介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 文件系统
-文件系统就是分区或磁盘上的所有文件的逻辑集合。文件系统不仅包含着文件中的数据而且还有文件系统的结构，所有Linux 用户和程序看到的文件、目录、软连接及文件保护信息等都存储在其中。
-不同Linux发行版本之间的文件系统差别很少，主要表现在系统管理的特色工具以及软件包管理方式的不同，文件目录结构基本上都是一样的。
-
-ext2 ： 早期linux中常用的文件系统；
-ext3 ： ......
+            cgroup常用命令
+1. cgcreate
+12345678910$ cgcreate --helpUsage: cgcreate [-h] [-f mode] [-d mode] [-s mode] [-t &lt;tuid&gt;:&lt;tgid&gt;] [-a &lt;agid&gt;:&lt;auid&gt;] -g &lt;controllers&gt;:&lt;path&g......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-20
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
             
         </div>
     
@@ -245,28 +242,28 @@ ext3 ： ......
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/errors/">
+    <a href="/article/kubernetes-notes/runtime/cgroup/cgroup-dir/">
         <h2 class="post-title">
                         
-            错误处理
+            Cgroup目录
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            错误处理
-1. error接口
-1234567891011121314//定义error接口type error interface&#123;  Error() string&#125;//调用error接口func Foo(param int) (n int,err error)&#123;  //...&#125;n,err:=Foo(0)if err!=nil&#123;  //错误......
+            1. cgroup的目录
+/sys/fs/cgroup/
+12345678910111213141516$ ll /sys/fs/cgroup/总用量 0drwxr-xr-x 6 root root  0 2月  18 14:31 blkiolrwxrwxrwx 1 root root 11 2月  18 14:25 cpu -&gt; cpu,cpuacctlrwxrwxrwx 1 roo......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-20
         </p>
         <div class="tags">
             
-              <a href="/tags/#Golang" title="Golang">Golang</a>
+              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
             
         </div>
     
@@ -276,34 +273,30 @@ ext3 ： ......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-file-storage/">
+    <a href="/article/kubernetes-notes/runtime/cgroup/cgroup/">
         <h2 class="post-title">
                         
-            Linux文件存储
+            Cgroup介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            文件存储结构
-大部分的Linux文件系统（如ext2、ext3）规定，一个文件由目录项、inode和数据块组成
-
-目录项：包括文件名和inode节点号。
-Inode：又称文件索引节点，包含文件的基础信息以及数据块的指针。
-数据块：包含文件的具体内容。
-
-1. inode
-理解inode，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector），每......
+            1. cgroup简介
+Linux Cgroup提供了对一组进程及将来子进程的资源限制的能力。资源包括：CPU、内存、存储、网络等。通过Cgroup可以限制某个进程的资源占用，并监控进程的统计信息。
+2. cgroup示例
+1、创建一个hierarchy（cgroup树）
+1234567891011121314# 创建一个 hierarchy 挂载点mkdir cgroup-test # 挂......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-20
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
             
         </div>
     
@@ -313,32 +306,29 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/data-types/">
+    <a href="/article/kubernetes-notes/runtime/namespace/namespace-cmd/">
         <h2 class="post-title">
                         
-            数据类型
+            Namespace命令介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            类型
-1. 基础类型
-1.1. 布尔类型
-12345//布尔类型的关键字为bool,值为true或false，不可写为0或1var v1 boolv1=true//接受表达式判断赋值，不支持自动或强制类型转换v2:=(1==2)
-1.2. 整型
-
-1234567891011121314151617181920//1、类型表示//int和int32为不同类型，不会自动类型转换需要强制类型转换/......
+            Namespace相关命令
+1. unshare
+让进程进入一个新的namespace。
+12345678910111213141516171819202122232425$ unshare --help用法： unshare [options] &lt;program&gt; [&lt;argument&gt;...]Run a program with some namespaces u......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-20
         </p>
         <div class="tags">
             
-              <a href="/tags/#Golang" title="Golang">Golang</a>
+              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
             
         </div>
     
@@ -348,28 +338,50 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/basis/control-structures/">
+    <a href="/article/kubernetes-notes/runtime/namespace/namespace/">
         <h2 class="post-title">
                         
-            流程语句
+            Namespace介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            流程语句
-1. 条件语句
-12345678910111213141516//在if之后条件语句之前可以添加变量初始化语句，用;号隔离if &lt;条件语句&gt; &#123;    //条件语句不需要用括号括起来，花括号必须存在  //语句体&#125;else&#123;  //语句体&#125;//在有返回值的函数中，不允许将最后的return语句放在if...else...的结构中，......
+            1. Namespace简介
+Namespace是内核的一个功能，用来给进程隔离一系列系统资源（视图隔离）。
+2. 类别
+
+
+
+namespace类别
+隔离资源
+系统调用参数
+内核版本
+Docker中的例子
+
+
+
+
+Mount namespace
+挂载点
+CLONE_NEWNS
+2.4.19
+独立的挂载点
+
+
+UTS Namespace
+hostname和domainname
+CLONE_N......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-20
         </p>
         <div class="tags">
             
-              <a href="/tags/#Golang" title="Golang">Golang</a>
+              <a href="/tags/#Runtime" title="Runtime">Runtime</a>
             
         </div>
     
@@ -379,32 +391,28 @@ Inode：又称文件索引节点，包含文件的基础信息以及数据块的
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/disk/disk-command/">
+    <a href="/article/kubernetes-notes/resource/lxcfs/lxcfs/">
         <h2 class="post-title">
                         
-            磁盘命令
+            Lxcfs资源视图隔离
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 判断磁盘是SSD或HDD盘
-1、没有使用raid方案
-lsblk -d -o name,rota命令，0表示SSD，1表示HDD
-12345# lsblk -d -o name,rotaNAME ROTAsda     0sdb     1sdc     1
-2、使用raid方案
-下载工具
-1wget https://raw.githubusercontent.com/eLvErDe/......
+            1. 资源视图隔离
+容器中的执行top、free等命令展示出来的CPU，内存等信息是从/proc目录中的相关文件里读取出来的。而容器并没有对/proc，/sys等文件系统做隔离，因此容器中读取出来的CPU和内存的信息是宿主机的信息，与容器实际分配和限制的资源量不同。
+123456/proc/cpuinfo/proc/diskstats/proc/meminfo/proc/stat/proc/......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-18
         </p>
         <div class="tags">
             
-              <a href="/tags/#disk" title="disk">disk</a>
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
             
         </div>
     
@@ -414,32 +422,37 @@ lsblk -d -o name,rota命令，0表示SSD，1表示HDD
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-file-permission/">
+    <a href="/article/kubernetes-notes/multi-cluster/k8s-multi-cluster-thinking/">
         <h2 class="post-title">
                         
-            Linux文件权限
+            k8s多集群管理的思考
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Linux文件管理
-Linux中的所有数据都被保存在文件中，所有的文件被分配到不同的目录。目录是一种类似于树的结构，称为文件系统。
-1.1. 文件类型
-1、普通文件
-普通文件是以字节为单位的数据流，包括文本文件、源码文件、可执行文件等。文本和二进制对Linux来说并无区别，对普通文件的解释由处理该文件的应用程序进行。
-2、目录
-目录可以包含普通文件和特殊文件，目录相当于Windows和......
+            k8s多集群的思考
+1. 为什么需要多集群
+1、k8s单集群的承载能力有限。
+Kubernetes v1.21 支持的最大节点数为 5000。 更具体地说，Kubernetes旨在适应满足以下所有标准的配置：
+
+每个节点的 Pod 数量不超过 100
+节点数不超过 5000
+Pod 总数不超过 150000
+容器总数不超过 300000
+
+
+参考：https://kubernetes.io/......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#多集群" title="多集群">多集群</a>
             
         </div>
     
@@ -449,29 +462,30 @@ Linux中的所有数据都被保存在文件中，所有的文件被分配到不
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/file/linux-introduction/">
+    <a href="/article/kubernetes-notes/network/cni/macvlan/">
         <h2 class="post-title">
                         
-            Linux介绍
+            Macvlan介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Linux简介
-严格来讲，Linux（内核）是计算机软件与硬件通信之间的平台，不是真正意义上的操作系统，而一些厂家将Linux内核和GNU软件（系统软件和工具）整合起来，并提供一些安装界面和系统设定与管理工具，就构成一些发行套件（系统），例如：Ubuntu、CentOS、Red Hat、Debian等。
-Linux内核版本
-Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
+            1. 简介
+macvlan可以看做是物理接口eth（父接口）的子接口，每个macvlan都拥有独立的mac地址，可以被绑定IP作为正常的网卡接口使用。通过这个特性，可以实现在一个物理网络设备绑定多个IP，每个IP拥有独立的mac地址。该特性经常被应用在容器虚拟化中（容器可以配置macvlan的网络，将macvlan interface移动到容器的namespace中）。
+示意图：
+
+2. 四......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Linux" title="Linux">Linux</a>
+              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -481,45 +495,28 @@ Linux内核版本一般格式为：x.y.zz-www，例如：Ke......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/disk/lvm-usage/">
+    <a href="/article/kubernetes-notes/network/cni/cni/">
         <h2 class="post-title">
                         
-            LVM的使用
+            CNI接口介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            
-本文由网络内容整理而成的笔记
-
-1. LVM简介
-LVM是逻辑盘卷管理（Logical Volume Manager）的简称，它是Linux环境下对磁盘分区进行管理的一种机制，LVM是建立在硬盘和分区之上的一个逻辑层，来提高磁盘分区管理的灵活性。
-优点：
-
-
-可以灵活分配和管理磁盘空间
-
-
-可以对分区进行动态的扩容
-
-
-可以增加新的磁盘到lvm中
-
-
-2. LVM核心概念
-LVM概念图：
-......
+            1. CNI（Container Network Interface）
+CNI（Container Network Interface）即容器网络接口，通过约定统一的容器网络接口，从而kubelet可以通过这个标准的API来调用不同的网络插件实现不同的网络功能。
+kubelet启动参数–network-plugin=cni来指定CNI插件，kubelet从--cni-conf-dir （默认......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-20
+            2021-07-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#disk" title="disk">disk</a>
+              <a href="/tags/#CNI" title="CNI">CNI</a>
             
         </div>
     
@@ -529,32 +526,30 @@ LVM概念图：
 
 <div class="post-preview">
 
-    <a href="/article/golang-notes/framework/cobra/cobra-usage/">
+    <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-manager-xmind/">
         <h2 class="post-title">
                         
-            cobra 介绍
+            controller-manager 源码思维导图
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Cobra简介
-Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
-Cobra主要包括以下部分
+            源码整体结构图
 
-Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
-Args:命令执行相关参数。
-Flags:二进制命令的配置参数，可对应配置文件。参数可分......
+
+
+			
+			
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windo......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2020-09-16
+            2021-06-23
         </p>
         <div class="tags">
-            
-              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -607,13 +602,13 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
     <div class="tags">
         
             
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
+            
+        
+            
         
             
             <a href="/tags/#随笔" title="随笔" rel="3">随笔</a>
-            
-        
-            
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -631,7 +626,15 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Kubernetes" title="Kubernetes" rel="63">Kubernetes</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="28">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
+            
+        
+            
+            <a href="/tags/#Kubernetes" title="Kubernetes" rel="66">Kubernetes</a>
             
         
             
@@ -639,19 +642,33 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
+            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+            
+        
+            
             <a href="/tags/#KubeVirt" title="KubeVirt" rel="4">KubeVirt</a>
             
         
             
-            <a href="/tags/#Monitor" title="Monitor" rel="6">Monitor</a>
+        
             
         
+            
+            <a href="/tags/#Runtime" title="Runtime" rel="8">Runtime</a>
+            
+        
+            
+        
+            
+            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
             
         
             
             <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
+            
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -667,7 +684,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            <a href="/tags/#大模型" title="大模型" rel="2">大模型</a>
             
         
             
@@ -675,7 +692,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -683,19 +700,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
-            
-        
-            
             <a href="/tags/#Mysql" title="Mysql" rel="4">Mysql</a>
-            
-        
-            
-            <a href="/tags/#network" title="network" rel="4">network</a>
-            
-        
-            
-            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
             
         
             
@@ -703,7 +708,15 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
-            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            
+        
+            
+            <a href="/tags/#iptables" title="iptables" rel="2">iptables</a>
+            
+        
+            
+            <a href="/tags/#network" title="network" rel="4">network</a>
             
         
             
@@ -711,29 +724,17 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
+            <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
+            
             <a href="/tags/#TCPIP" title="TCPIP" rel="5">TCPIP</a>
             
         
-            
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
-            
-        
-            
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
-            
-        
-            
-        
-            
-            <a href="/tags/#Runtime" title="Runtime" rel="2">Runtime</a>
-            
-        
-            
-            <a href="/tags/#kubeadm" title="kubeadm" rel="2">kubeadm</a>
             
         
             
@@ -769,13 +770,15 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
             
         
             
+            <a href="/tags/#GPU" title="GPU" rel="2">GPU</a>
+            
+        
+            
             <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
             
         
             
             <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
-            
-        
             
         
     </div>
@@ -857,23 +860,23 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
     <ul>
       
         <li>
-          <a href="/article/linux-notes/baremetal/redfish-api/">Redfish API</a>
+          <a href="/article/kubernetes-notes/cluster-optimization/scheduler/volcano-usage/">Volcano的使用</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/mysql/deploy-mysql/">Mysql服务部署</a>
+          <a href="/article/kubernetes-notes/cluster-optimization/gpu/gpu-virtualization/">Volcano GPU虚拟化</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/file/linux-command/">Linux常用命令</a>
+          <a href="/article/kubernetes-notes/cluster-optimization/gpu/k8s-gpu-usage/">k8s管理GPU容器</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/LLM/build-ollama-openwebui/">基于Ollama构建本地大模型</a>
+          <a href="/article/k8s-source-code-analysis/kube-controller-manager/workqueue/">workqueue源码分析</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/baremetal/format-disk/">格式化磁盘分区</a>
+          <a href="/article/k8s-source-code-analysis/kubelet/runc-code-analysis/">runc源码分析</a>
         </li>
       
     </ul>
@@ -902,7 +905,7 @@ Flags:二进制命令的配置参数，可对应配置文件。参数可分.....
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">June 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">9</span></li></ul>
     </div>
 
         <hr>
