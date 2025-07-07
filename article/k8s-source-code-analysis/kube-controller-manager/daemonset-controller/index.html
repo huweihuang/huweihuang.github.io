@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          kube-controller-manager源码分析（五）之 DaemonSetController - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/k8s-source-code-analysis/kube-controller-manager/daemonset-controller/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/building.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                            
+                        </div>
+                        <h1>kube-controller-manager源码分析（五）之 DaemonSetController</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2024-06-10
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><p>本文主要分析<code>DaemonSetController</code>的源码逻辑，daemonset是运行在指定节点上的服务，常用来作为agent类的服务来配置，也是k8s最常用的控制器之一。</p>
+<h1 id="1-startdaemonsetcontroller">1. startDaemonSetController</h1>
+<p>startDaemonSetController是入口函数，先New后Run。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">startDaemonSetController</span><span class="params">(ctx context.Context, controllerContext ControllerContext)</span> <span class="params">(controller.Interface, <span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">   dsc, err := daemon.NewDaemonSetsController(</span><br><span class="line">      ctx,</span><br><span class="line">      controllerContext.InformerFactory.Apps().V1().DaemonSets(),</span><br><span class="line">      controllerContext.InformerFactory.Apps().V1().ControllerRevisions(),</span><br><span class="line">      controllerContext.InformerFactory.Core().V1().Pods(),</span><br><span class="line">      controllerContext.InformerFactory.Core().V1().Nodes(),</span><br><span class="line">      controllerContext.ClientBuilder.ClientOrDie(<span class="string">"daemon-set-controller"</span>),</span><br><span class="line">      flowcontrol.NewBackOff(<span class="number">1</span>*time.Second, <span class="number">15</span>*time.Minute),</span><br><span class="line">   )</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">true</span>, fmt.Errorf(<span class="string">"error creating DaemonSets controller: %v"</span>, err)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">go</span> dsc.Run(ctx, <span class="keyword">int</span>(controllerContext.ComponentConfig.DaemonSetController.ConcurrentDaemonSetSyncs))</span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="2-newdaemonsetscontroller">2. NewDaemonSetsController</h1>
+<p>NewDaemonSetsController仍然是常见的k8s controller初始化逻辑:</p>
+<ul>
+<li>常用配置初始化</li>
+<li>根据所需要的对象，添加event handler，便于监听所需要对象的事件变化，此处包括ds, pod，node三个对象。</li>
+<li>赋值syncHandler，即具体实现是syncDaemonSet函数。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewDaemonSetsController</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	ctx context.Context,</span></span></span><br><span class="line"><span class="function"><span class="params">	daemonSetInformer appsinformers.DaemonSetInformer,</span></span></span><br><span class="line"><span class="function"><span class="params">	historyInformer appsinformers.ControllerRevisionInformer,</span></span></span><br><span class="line"><span class="function"><span class="params">	podInformer coreinformers.PodInformer,</span></span></span><br><span class="line"><span class="function"><span class="params">	nodeInformer coreinformers.NodeInformer,</span></span></span><br><span class="line"><span class="function"><span class="params">	kubeClient clientset.Interface,</span></span></span><br><span class="line"><span class="function"><span class="params">	failedPodsBackoff *flowcontrol.Backoff,</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> <span class="params">(*DaemonSetsController, error)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 常用配置初始化</span></span><br><span class="line">	dsc := &amp;DaemonSetsController&#123;</span><br><span class="line">		kubeClient:       kubeClient,</span><br><span class="line">		eventBroadcaster: eventBroadcaster,</span><br><span class="line">		eventRecorder:    eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource&#123;Component: <span class="string">"daemonset-controller"</span>&#125;),</span><br><span class="line">		podControl: controller.RealPodControl&#123;</span><br><span class="line">			KubeClient: kubeClient,</span><br><span class="line">			Recorder:   eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource&#123;Component: <span class="string">"daemonset-controller"</span>&#125;),</span><br><span class="line">		&#125;,</span><br><span class="line">		crControl: controller.RealControllerRevisionControl&#123;</span><br><span class="line">			KubeClient: kubeClient,</span><br><span class="line">		&#125;,</span><br><span class="line">		burstReplicas: BurstReplicas,</span><br><span class="line">		expectations:  controller.NewControllerExpectations(),</span><br><span class="line">		queue:         workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), <span class="string">"daemonset"</span>),</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 添加event handler</span></span><br><span class="line">	daemonSetInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">		AddFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.addDaemonset(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">		UpdateFunc: <span class="function"><span class="keyword">func</span><span class="params">(oldObj, newObj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.updateDaemonset(logger, oldObj, newObj)</span><br><span class="line">		&#125;,</span><br><span class="line">		DeleteFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.deleteDaemonset(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	dsc.dsLister = daemonSetInformer.Lister()</span><br><span class="line">	dsc.dsStoreSynced = daemonSetInformer.Informer().HasSynced</span><br><span class="line"></span><br><span class="line">	historyInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">		AddFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.addHistory(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">		UpdateFunc: <span class="function"><span class="keyword">func</span><span class="params">(oldObj, newObj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.updateHistory(logger, oldObj, newObj)</span><br><span class="line">		&#125;,</span><br><span class="line">		DeleteFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.deleteHistory(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	dsc.historyLister = historyInformer.Lister()</span><br><span class="line">	dsc.historyStoreSynced = historyInformer.Informer().HasSynced</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 添加pod的event handler</span></span><br><span class="line">	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">		AddFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.addPod(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">		UpdateFunc: <span class="function"><span class="keyword">func</span><span class="params">(oldObj, newObj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.updatePod(logger, oldObj, newObj)</span><br><span class="line">		&#125;,</span><br><span class="line">		DeleteFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.deletePod(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	dsc.podLister = podInformer.Lister()</span><br><span class="line">	dsc.podStoreSynced = podInformer.Informer().HasSynced</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 添加node的event handler</span></span><br><span class="line">	nodeInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">		AddFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.addNode(logger, obj)</span><br><span class="line">		&#125;,</span><br><span class="line">		UpdateFunc: <span class="function"><span class="keyword">func</span><span class="params">(oldObj, newObj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">			dsc.updateNode(logger, oldObj, newObj)</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">	)</span><br><span class="line">	dsc.nodeStoreSynced = nodeInformer.Informer().HasSynced</span><br><span class="line">	dsc.nodeLister = nodeInformer.Lister()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 赋值syncHandler，具体的controller处理代码</span></span><br><span class="line">	dsc.syncHandler = dsc.syncDaemonSet</span><br><span class="line">	dsc.enqueueDaemonSet = dsc.enqueue</span><br><span class="line"></span><br><span class="line">	dsc.failedPodsBackoff = failedPodsBackoff</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> dsc, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3-run">3. Run</h1>
+<p><code>Run</code>函数与其他controller的逻辑一致不再分析，具体可以阅读本源码分析系列的replicaset-controller分析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">Run</span><span class="params">(ctx context.Context, workers <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> utilruntime.HandleCrash()</span><br><span class="line"></span><br><span class="line">	dsc.eventBroadcaster.StartStructuredLogging(<span class="number">0</span>)</span><br><span class="line">	dsc.eventBroadcaster.StartRecordingToSink(&amp;v1core.EventSinkImpl&#123;Interface: dsc.kubeClient.CoreV1().Events(<span class="string">""</span>)&#125;)</span><br><span class="line">	<span class="keyword">defer</span> dsc.eventBroadcaster.Shutdown()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> dsc.queue.ShutDown()</span><br><span class="line"></span><br><span class="line">	logger := klog.FromContext(ctx)</span><br><span class="line">	logger.Info(<span class="string">"Starting daemon sets controller"</span>)</span><br><span class="line">	<span class="keyword">defer</span> logger.Info(<span class="string">"Shutting down daemon sets controller"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> !cache.WaitForNamedCacheSync(<span class="string">"daemon sets"</span>, ctx.Done(), dsc.podStoreSynced, dsc.nodeStoreSynced, dsc.historyStoreSynced, dsc.dsStoreSynced) &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; workers; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> wait.UntilWithContext(ctx, dsc.runWorker, time.Second)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> wait.Until(dsc.failedPodsBackoff.GC, BackoffGCInterval, ctx.Done())</span><br><span class="line"></span><br><span class="line">	&lt;-ctx.Done()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="31-processnextworkitem">3.1. processNextWorkItem</h2>
+<p><code>processNextWorkItem</code>可参考replicaset-controller对该部分的分析。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">runWorker</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">   <span class="keyword">for</span> dsc.processNextWorkItem(ctx) &#123;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// processNextWorkItem deals with one key off the queue.  It returns false when it's time to quit.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">processNextWorkItem</span><span class="params">(ctx context.Context)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">   dsKey, quit := dsc.queue.Get()</span><br><span class="line">   <span class="keyword">if</span> quit &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">defer</span> dsc.queue.Done(dsKey)</span><br><span class="line"></span><br><span class="line">   err := dsc.syncHandler(ctx, dsKey.(<span class="keyword">string</span>))</span><br><span class="line">   <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">      dsc.queue.Forget(dsKey)</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   utilruntime.HandleError(fmt.Errorf(<span class="string">"%v failed with : %v"</span>, dsKey, err))</span><br><span class="line">   dsc.queue.AddRateLimited(dsKey)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="4-syncdaemonset">4. syncDaemonSet</h1>
+<p><code>syncDaemonSet</code>是控制器具体的实现逻辑，即每个控制器的核心实现大部分在syncHandler这个函数中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">syncDaemonSet</span><span class="params">(ctx context.Context, key <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   <span class="comment">// 为了突出代码重点，已删除非必要部分。</span></span><br><span class="line">	 <span class="comment">// 获取集群中的ds对象</span></span><br><span class="line">   namespace, name, err := cache.SplitMetaNamespaceKey(key)</span><br><span class="line">   ds, err := dsc.dsLister.DaemonSets(namespace).Get(name)</span><br><span class="line"></span><br><span class="line">	 <span class="comment">// 获取机器列表</span></span><br><span class="line">   nodeList, err := dsc.nodeLister.List(labels.Everything())</span><br><span class="line">   everything := metav1.LabelSelector&#123;&#125;</span><br><span class="line">   <span class="keyword">if</span> reflect.DeepEqual(ds.Spec.Selector, &amp;everything) &#123;</span><br><span class="line">      dsc.eventRecorder.Eventf(ds, v1.EventTypeWarning, SelectingAllReason, <span class="string">"This daemon set is selecting all pods. A non-empty selector is required."</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Construct histories of the DaemonSet, and get the hash of current history</span></span><br><span class="line">   cur, old, err := dsc.constructHistory(ctx, ds)</span><br><span class="line">   hash := cur.Labels[apps.DefaultDaemonSetUniqueLabelKey]</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> !dsc.expectations.SatisfiedExpectations(logger, dsKey) &#123;</span><br><span class="line">      <span class="comment">// Only update status. Don't raise observedGeneration since controller didn't process object of that generation.</span></span><br><span class="line">      <span class="keyword">return</span> dsc.updateDaemonSetStatus(ctx, ds, nodeList, hash, <span class="literal">false</span>)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 处理daemonset中的pod创建及删除</span></span><br><span class="line">   err = dsc.updateDaemonSet(ctx, ds, nodeList, hash, dsKey, old)</span><br><span class="line">   <span class="comment">// 更新状态</span></span><br><span class="line">   statusErr := dsc.updateDaemonSetStatus(ctx, ds, nodeList, hash, <span class="literal">true</span>)</span><br><span class="line">   <span class="keyword">switch</span> &#123;</span><br><span class="line">   <span class="keyword">case</span> err != <span class="literal">nil</span> &amp;&amp; statusErr != <span class="literal">nil</span>:</span><br><span class="line">      logger.Error(statusErr, <span class="string">"Failed to update status"</span>, <span class="string">"daemonSet"</span>, klog.KObj(ds))</span><br><span class="line">      <span class="keyword">return</span> err</span><br><span class="line">   <span class="keyword">case</span> err != <span class="literal">nil</span>:</span><br><span class="line">      <span class="keyword">return</span> err</span><br><span class="line">   <span class="keyword">case</span> statusErr != <span class="literal">nil</span>:</span><br><span class="line">      <span class="keyword">return</span> statusErr</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="5-manage">5. manage</h1>
+<p><code>manage</code>是具体的daemonset的pod创建及删除的具体代码。manage入口在updateDaemonSet的函数中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">updateDaemonSet</span><span class="params">(ctx context.Context, ds *apps.DaemonSet, nodeList []*v1.Node, hash, key <span class="keyword">string</span>, old []*apps.ControllerRevision)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">  <span class="comment">// manage处理pod的创建及删除</span></span><br><span class="line">	err := dsc.manage(ctx, ds, nodeList, hash)</span><br><span class="line"></span><br><span class="line">	err = dsc.cleanupHistory(ctx, ds, old)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"failed to clean up revisions of DaemonSet: %w"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以下是manage的具体代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">manage</span><span class="params">(ctx context.Context, ds *apps.DaemonSet, nodeList []*v1.Node, hash <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">   <span class="comment">// 查找daemonset中pod和node的映射</span></span><br><span class="line">   nodeToDaemonPods, err := dsc.getNodesToDaemonPods(ctx, ds, <span class="literal">false</span>)</span><br><span class="line">	 <span class="comment">// 计算需要创建和删除的pod</span></span><br><span class="line">   <span class="keyword">var</span> nodesNeedingDaemonPods, podsToDelete []<span class="keyword">string</span></span><br><span class="line">   <span class="keyword">for</span> _, node := <span class="keyword">range</span> nodeList &#123;</span><br><span class="line">      nodesNeedingDaemonPodsOnNode, podsToDeleteOnNode := dsc.podsShouldBeOnNode(</span><br><span class="line">         logger, node, nodeToDaemonPods, ds, hash)</span><br><span class="line"></span><br><span class="line">      nodesNeedingDaemonPods = <span class="built_in">append</span>(nodesNeedingDaemonPods, nodesNeedingDaemonPodsOnNode...)</span><br><span class="line">      podsToDelete = <span class="built_in">append</span>(podsToDelete, podsToDeleteOnNode...)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// Remove unscheduled pods assigned to not existing nodes when daemonset pods are scheduled by scheduler.</span></span><br><span class="line">   <span class="comment">// If node doesn't exist then pods are never scheduled and can't be deleted by PodGCController.</span></span><br><span class="line">   podsToDelete = <span class="built_in">append</span>(podsToDelete, getUnscheduledPodsWithoutNode(nodeList, nodeToDaemonPods)...)</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 根据上述的计算结果，实现具体创建和删除pod的操作</span></span><br><span class="line">   <span class="keyword">if</span> err = dsc.syncNodes(ctx, ds, podsToDelete, nodesNeedingDaemonPods, hash); err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="6-syncnodes">6. syncNodes</h1>
+<p><code>syncNodes</code>根据传入的需要创建和删除的pod，实现具体的创建和删除pod的操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(dsc *DaemonSetsController)</span> <span class="title">syncNodes</span><span class="params">(ctx context.Context, ds *apps.DaemonSet, podsToDelete, nodesNeedingDaemonPods []<span class="keyword">string</span>, hash <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="comment">// 已删除次要代码</span></span><br><span class="line">	dsKey, err := controller.KeyFunc(ds)</span><br><span class="line"></span><br><span class="line">	batchSize := integer.IntMin(createDiff, controller.SlowStartInitialBatchSize)</span><br><span class="line">	<span class="keyword">for</span> pos := <span class="number">0</span>; createDiff &gt; pos; batchSize, pos = integer.IntMin(<span class="number">2</span>*batchSize, createDiff-(pos+batchSize)), pos+batchSize &#123;</span><br><span class="line">		errorCount := <span class="built_in">len</span>(errCh)</span><br><span class="line">		createWait.Add(batchSize)</span><br><span class="line">		<span class="keyword">for</span> i := pos; i &lt; pos+batchSize; i++ &#123;</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(ix <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">				<span class="keyword">defer</span> createWait.Done()</span><br><span class="line">				<span class="comment">// 批量创建pod</span></span><br><span class="line">				err := dsc.podControl.CreatePods(ctx, ds.Namespace, podTemplate,</span><br><span class="line">					ds, metav1.NewControllerRef(ds, controllerKind))</span><br><span class="line">			&#125;(i)</span><br><span class="line">		&#125;</span><br><span class="line">		createWait.Wait()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	deleteWait := sync.WaitGroup&#123;&#125;</span><br><span class="line">	deleteWait.Add(deleteDiff)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; deleteDiff; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(ix <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> deleteWait.Done()</span><br><span class="line">      <span class="comment">// 批量删除pod</span></span><br><span class="line">			<span class="keyword">if</span> err := dsc.podControl.DeletePod(ctx, ds.Namespace, podsToDelete[ix], ds); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				dsc.expectations.DeletionObserved(logger, dsKey)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	deleteWait.Wait()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 处理错误</span></span><br><span class="line">	errors := []error&#123;&#125;</span><br><span class="line">	<span class="built_in">close</span>(errCh)</span><br><span class="line">	<span class="keyword">for</span> err := <span class="keyword">range</span> errCh &#123;</span><br><span class="line">		errors = <span class="built_in">append</span>(errors, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> utilerrors.NewAggregate(errors)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考：</p>
+<ul>
+<li><a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/controller/daemon/daemon_controller.go" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/blob/master/pkg/controller/daemon/daemon_controller.go</a></li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/k8s-source-code-analysis/kube-controller-manager/controller-runtime/" data-toggle="tooltip" data-placement="top" title="controller-runtime源码分析">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/k8s-source-code-analysis/kube-controller-manager/replicaset-controller/" data-toggle="tooltip" data-placement="top" title="kube-controller-manager源码分析（四）之 ReplicaSetController">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-startdaemonsetcontroller"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. startDaemonSetController</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-newdaemonsetscontroller"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. NewDaemonSetsController</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-run"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Run</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-processnextworkitem"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. processNextWorkItem</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-syncdaemonset"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. syncDaemonSet</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-manage"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. manage</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-syncnodes"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. syncNodes</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#源码分析" title="源码分析">源码分析</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

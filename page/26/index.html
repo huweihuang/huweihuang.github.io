@@ -211,30 +211,50 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/monitor/heapster-introduction/">
+    <a href="/article/python/basics/python-function/">
         <h2 class="post-title">
                         
-            Heapster介绍
+            [Python] Python系列（二）之Python函数
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. heapster简介
-Heapster是容器集群监控和性能分析工具，天然的支持Kubernetes和CoreOS。
-Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都会运行cAdvisor，它会收集本机以及容器的监控数据(cpu,memory,filesystem,network,uptime)。
-2. heapster部署与配置
-......
+            1. 内置函数
+python的内置参数详见以下链接，也可以通过help(function_name)来查看具体函数的使用帮助。
+http://docs.python.org/3/library/functions.html#abs
+
+
+
+
+Built-in Functions
+
+
+
+
+
+
+
+abs()
+dict()
+help()
+min()
+setattr()
+
+
+all()
+dir()
+h......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Monitor" title="Monitor">Monitor</a>
+              <a href="/tags/#Python" title="Python">Python</a>
             
         </div>
     
@@ -244,34 +264,30 @@ Kubernetes有个出名的监控agent—cAdvisor。在每个kubernetes Node上都
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/monitor/influxdb-introduction/">
+    <a href="/article/python/basics/python-basics/">
         <h2 class="post-title">
                         
-            Influxdb介绍
+            [Python] Python系列（一）之基础篇
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. InfluxDB简介
-InfluxDB是一个当下比较流行的时序数据库，InfluxDB使用 Go 语言编写，无需外部依赖，安装配置非常方便，适合构建大型分布式系统的监控系统。
-主要特色功能：
-1）基于时间序列，支持与时间有关的相关函数（如最大，最小，求和等）
-2）可度量性：你可以实时对大量数据进行计算
-3）基于事件：它支持任意的事件数据
-2. InfluxDB安装
-1）安装
-wget ......
+            1. 数据类型和变量
+​	Python使用缩进来组织代码块，一般使用4个空格的缩进。使用#来注释一行，其他每一行都是一个语句，当语句以冒号:结尾时，缩进的语句视为代码块。Python对大小写敏感。
+1.1 整数
+​	Python可以处理任意大小的整数，包括负整数，写法与数学上写法一致，例如：-100。如果用十六进制表示，则用前缀为0x和0-9，a-f表示，例如：0xff00。
+1.2 浮点数......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-10
         </p>
         <div class="tags">
             
-              <a href="/tags/#Monitor" title="Monitor">Monitor</a>
+              <a href="/tags/#Python" title="Python">Python</a>
             
         </div>
     
@@ -281,28 +297,31 @@ wget ......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/monitor/kubernetes-cluster-monitoring/">
+    <a href="/article/golang-notes/test/test/">
         <h2 class="post-title">
                         
-            Kubernetes集群监控
+            单元测试
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 概述
-1.1. cAdvisor
-cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采集，包括CPU使用情况、内存使用情况、网络吞吐量及文件系统使用情况，cAdvisor集成在Kubelet中，当kubelet启动时会自动启动cAdvisor，即一个cAdvisor仅对一台Node机器进行监控。kubelet的启动参数–cadvisor-port可以定义cAdvisor......
+            1. Go中的测试框架
+Go语言中自带有一个轻量级的测试框架testing和自带的go test命令来实现单元测试和性能测试，testing框架和其他语言中的测试框架类似，你可以基于这个框架写针对相应函数的测试用例，也可以基于该框架写相应的压力测试用例。
+2. 单元测试原则
+
+文件名必须是_test.go结尾的，这样在执行go test的时候才会执行到相应的代码
+你必须import test......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Monitor" title="Monitor">Monitor</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -312,30 +331,31 @@ cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/docker-network/">
+    <a href="/article/golang-notes/text/json/">
         <h2 class="post-title">
                         
-            Docker网络
+            Json处理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Docker的网络基础
-1.1. Network Namespace
-不同的网络命名空间中，协议栈是独立的，完全隔离，彼此之间无法通信。同一个网络命名空间有独立的路由表和独立的Iptables/Netfilter来提供包的转发、NAT、IP包过滤等功能。
-1.1.1. 网络命名空间的实现
-将与网络协议栈相关的全局变量变成一个Net Namespace变量的成员，然后在调用协议栈函数中加......
+            JSON处理
+JSON是一种轻量级的数据交换语言。
+1. 解析JSON[Unmarshal(data []byte, v interface{})]
+1.1. Unmarshal源码
+/src/encoding/json/decode.go
+1234567891011121314151617181920212223242526272829303132func Unmarshal(data [......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -345,31 +365,35 @@ cAdvisor对Node机器上的资源及容器进行实时监控和性能数据采�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/network/kubernetes-network/">
+    <a href="/article/golang-notes/test/gdb/">
         <h2 class="post-title">
                         
-            K8S网络
+            GDB调试
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. kubernetes网络模型
-1.1. 基础原则
+            1. GDB简介
+GDB是FSF(自由软件基金会)发布的一个强大的类UNIX系统下的程序调试工具。使用GDB可以做如下事情：
 
-每个Pod都拥有一个独立的IP地址，而且假定所有Pod都在一个可以直接连通的、扁平的网络空间中，不管是否运行在同一Node上都可以通过Pod的IP来访问。
-k8s中Pod的IP是最小粒度IP。同一个Pod内所有的容器共享一个网络堆栈，该模型称为IP-per-Pod模型。
-Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
+启动程序，可以按照开发者的自定义要求运行程序。
+可让被调试的程序在开发者设定的调置的断点处停住。（断点可以是条件表达式）
+当程序被停住时，可以检查此时程序中所发生的事。
+动态的改变当前程序的执行环境。
+
+目前支持调试Go程序的GDB版本必须大于7.1。
+编译Go程序......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -379,28 +403,27 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/mysql/curd-commands/">
+    <a href="/article/golang-notes/web/golang-http-execution-flow/">
         <h2 class="post-title">
                         
-            Mysql常用命令之表内容操作
+            Http包源码分析
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            4. 表内容操作
-4.1. 增
-123456insert into 表 (列名,列名...) values (值,值,...)insert into 表 (列名,列名...) values (值,值,...),(值,值,值...)insert into 表 (列名,列名...) select (列名,列名...) from 表例：insert into tab1(name,email) va......
+            1. http包建立web服务器
+1234567891011121314151617181920212223242526package mainimport (    "fmt"    "log"    "net/http"    "strings")func sayhelloName(w http.ResponseWriter, r *http.Request) &#123;    r.P......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -410,31 +433,28 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/mysql/system-manage/">
+    <a href="/article/golang-notes/introduction/package/govendor-usage/">
         <h2 class="post-title">
                         
-            Mysql常用命令之系统管理
+            govendor的使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 系统管理
-1.1. 连接mysql
-快速部署docker mysql
-1docker pull mysql:5.7
-启动MySQL
-123mkdir -p ~/data/mysqldocker run --name my-mysql -v ~/data/mysql:/var/lib/mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d ......
+            1. govendor简介
+golang工程的依赖包经常使用go get 的方式来获取，例如：go get github.com/kardianos/govendor ，会将依赖包下载到GOPATH的路径下。
+常用的依赖包管理工具有godep，govendor等，在Golang1.5之后，Go提供了 GO15VENDOREXPERIMENT 环境变量，用于将go build时的应用路径搜索调......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -444,30 +464,33 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
 
 <div class="post-preview">
 
-    <a href="/article/linux-notes/mysql/table-operation/">
+    <a href="/article/golang-notes/web/beego/bee/">
         <h2 class="post-title">
                         
-            Mysql常用命令之数据表操作
+            Bee 工具使用
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            2. 数据库操作
-12345678#创建数据库create database &lt;数据库名&gt;#显示数据库show databases#删除数据drop database &lt;数据库名&gt;
-3. 数据表操作
-3.1. 创建表
-1234567create table 表名(    列名  类型  是否可以为空，    列名  类型  是否可以为空)ENGINE=InnoDB D......
+            1. bee工具
+bee工具用来进行beego项目的创建、热编译、开发、测试、和部署。
+安装:
+1go get github.com/beego/bee
+配置：
+安装完之后，bee可执行文件默认存放在$GOPATH/bin里面，所以要把$GOPATH/bin添加到环境变量中。
+2. bee命令
+12345678910111213141516Bee is a tool for managing......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Mysql" title="Mysql">Mysql</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -477,35 +500,33 @@ Pod由docker0实际分配的IP，Pod内部看到的IP地址和......
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/concepts/configmap/pod-configmap/">
+    <a href="/article/golang-notes/web/beego/beego-introduction/">
         <h2 class="post-title">
                         
-            ConfigMap
+            Beego 介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            Pod的配置管理
-Kubernetes v1.2的版本提供统一的集群配置管理方案–ConfigMap。
-1. ConfigMap：容器应用的配置管理
-使用场景：
-
-生成为容器内的环境变量。
-设置容器启动命令的启动参数（需设置为环境变量）。
-以Volume的形式挂载为容器内部的文件或目录。
-
-ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应用使用，既可......
+            1. beego的使用
+1.1. beego的安装
+1go get github.com/astaxie/beego
+1.2. beego的升级
+1、直接升级
+1go get -u github.com/astaxie/beego
+2、源码下载升级
+用户访问 https://github.com/astaxie/beego ,下载源码，然后覆盖到 $GOPATH/src/github.com......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -515,29 +536,28 @@ ConfigMap以一个或多个key:value的形式保存在kubernetes系统中供应�
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/concepts/pod/pod-definition/">
+    <a href="/article/golang-notes/web/beego/beego-log/">
         <h2 class="post-title">
                         
-            Pod定义文件
+            Beego 日志处理
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. Pod的基本用法
-1.1. 说明
-
-Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器的主程序需要一直在前台运行，而不是后台运行。应用可以改造成前台运行的方式，例如Go语言的程序，直接运行二进制文件；java语言则运行主类；tomcat程序可以写个运行脚本。或者通过supervisor的进程管理工具，即supervisor在前台运行，应用程序由supervisor管理在后台运......
+            1. 使用入门
+beego 的日志处理是基于 logs 模块搭建的，内置了一个变量 BeeLogger，默认已经是 logs.BeeLogger 类型，初始化了 console，也就是默认输出到 console。
+12345678beego.Emergency("this is emergency")beego.Alert("this is alert")beego.Critical("th......
         </div>
     </a>
     
         <p class="post-meta" style="margin: 10px 0;">
             Posted by 胡伟煌 on
-            2017-08-13
+            2017-09-01
         </p>
         <div class="tags">
             
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+              <a href="/tags/#Golang" title="Golang">Golang</a>
             
         </div>
     
@@ -610,15 +630,15 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
-            
-        
-            
             <a href="/tags/#Golang" title="Golang" rel="31">Golang</a>
             
         
             
-            <a href="/tags/#源码分析" title="源码分析" rel="18">源码分析</a>
+            <a href="/tags/#源码分析" title="源码分析" rel="28">源码分析</a>
+            
+        
+            
+            <a href="/tags/#Docker" title="Docker" rel="7">Docker</a>
             
         
             
@@ -642,11 +662,7 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Runtime" title="Runtime" rel="3">Runtime</a>
-            
-        
-            
-            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
+            <a href="/tags/#Runtime" title="Runtime" rel="8">Runtime</a>
             
         
             
@@ -656,11 +672,11 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Python" title="Python" rel="4">Python</a>
+            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
             
         
             
-            <a href="/tags/#大模型" title="大模型" rel="2">大模型</a>
+            <a href="/tags/#Python" title="Python" rel="4">Python</a>
             
         
             
@@ -676,7 +692,7 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Git" title="Git" rel="5">Git</a>
+            <a href="/tags/#大模型" title="大模型" rel="2">大模型</a>
             
         
             
@@ -684,7 +700,7 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
             
         
             
@@ -692,11 +708,15 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Memcached" title="Memcached" rel="2">Memcached</a>
+            <a href="/tags/#Mysql" title="Mysql" rel="4">Mysql</a>
             
         
             
-            <a href="/tags/#Mysql" title="Mysql" rel="4">Mysql</a>
+            <a href="/tags/#Nginx" title="Nginx" rel="4">Nginx</a>
+            
+        
+            
+            <a href="/tags/#Git" title="Git" rel="5">Git</a>
             
         
             
@@ -708,15 +728,15 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#Nginx" title="Nginx" rel="4">Nginx</a>
-            
-        
-            
             <a href="/tags/#Redis" title="Redis" rel="5">Redis</a>
             
         
             
             <a href="/tags/#Shell" title="Shell" rel="9">Shell</a>
+            
+        
+            
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
             
         
             
@@ -740,9 +760,9 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
-            
         
+            
+            <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
             
         
             
@@ -758,9 +778,11 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
             
         
             
-            <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
+            <a href="/tags/#GPU" title="GPU" rel="2">GPU</a>
             
         
+            
+            <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
             
         
             
@@ -850,19 +872,19 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
         </li>
       
         <li>
-          <a href="/article/linux-notes/LLM/mcp/">大模型相关概念</a>
+          <a href="/article/kubernetes-notes/cluster-optimization/gpu/gpu-virtualization/">Volcano GPU虚拟化</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/operation/helm/kine/">kine的使用</a>
+          <a href="/article/kubernetes-notes/cluster-optimization/gpu/k8s-gpu-usage/">k8s管理GPU容器</a>
         </li>
       
         <li>
-          <a href="/article/kubernetes-notes/cluster-optimization/scheduler/massive-pod-scheduling/">大规模Pod调度优化</a>
+          <a href="/article/k8s-source-code-analysis/kube-controller-manager/workqueue/">workqueue源码分析</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/baremetal/redfish-api/">Redfish API</a>
+          <a href="/article/k8s-source-code-analysis/kubelet/runc-code-analysis/">runc源码分析</a>
         </li>
       
     </ul>
@@ -891,7 +913,7 @@ Pod实际上是容器的集合，在k8s中对运行容器的要求为：容器�
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">18</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">12</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">June 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">9</span></li></ul>
     </div>
 
         <hr>

@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          nvidia-device-plugin介绍 - 胡伟煌 | Blog
+          Namespace介绍 - 胡伟煌 | Blog
         
     </title>
 
-    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/gpu/nvidia-device-plugin/">
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/namespace/namespace/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -71,7 +71,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
             /*post*/
         
     }
@@ -88,14 +88,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                              <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
                             
                         </div>
-                        <h1>nvidia-device-plugin介绍</h1>
+                        <h1>Namespace介绍</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by 胡伟煌 on
-                            2019-06-23
+                            2021-07-20
                         </span>
                     </div>
                 
@@ -142,13 +142,6 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
-                        </li>
-                        
-                    
-
-                        
-                        <li>
                             <a href="/about/">About</a>
                         </li>
                         
@@ -157,6 +150,13 @@
                         
                         <li>
                             <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -212,73 +212,120 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="1-简介">1. 简介</h1>
-<p>NVIDIA device plugin 通过k8s daemonset的方式部署到每个k8s的node节点上，实现了<a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">Kubernetes device plugin</a>的接口。</p>
-<p>提供以下功能：</p>
-<ul>
-<li>暴露每个节点的GPU数量给集群</li>
-<li>跟踪GPU的健康情况</li>
-<li>使在k8s的节点可以运行GPU容器</li>
-</ul>
-<h1 id="2-要求">2. 要求</h1>
-<ul>
-<li>NVIDIA drivers ~= 384.81</li>
-<li>nvidia-docker version &gt; 2.0 (see how to <a href="https://github.com/NVIDIA/nvidia-docker" target="_blank" rel="noopener">install</a> and it’s <a href="https://github.com/nvidia/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites" target="_blank" rel="noopener">prerequisites</a>)</li>
-<li>docker configured with nvidia as the <a href="https://github.com/NVIDIA/nvidia-docker/wiki/Advanced-topics#default-runtime" target="_blank" rel="noopener">default runtime</a>.</li>
-<li>Kubernetes version &gt;= 1.10</li>
-</ul>
-<h1 id="3-使用">3. 使用</h1>
-<h2 id="31-安装nvidia-drivers和nvidia-docker">3.1. 安装NVIDIA drivers和nvidia-docker</h2>
-<p>提供GPU节点的机器，准备工作如下</p>
-<ol>
-<li>安装NVIDIA drivers ~= 384.81</li>
-<li>安装nvidia-docker version &gt; 2.0</li>
-</ol>
-<h2 id="32-配置docker-runtime">3.2. 配置docker runtime</h2>
-<p>配置nvidia runtime作为GPU节点的默认runtime。</p>
-<p>修改文件/etc/docker/daemon.json，增加以下runtime内容。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"default-runtime"</span>: <span class="string">"nvidia"</span>,</span><br><span class="line">    <span class="attr">"runtimes"</span>: &#123;</span><br><span class="line">        <span class="attr">"nvidia"</span>: &#123;</span><br><span class="line">            <span class="attr">"path"</span>: <span class="string">"/usr/bin/nvidia-container-runtime"</span>,</span><br><span class="line">            <span class="attr">"runtimeArgs"</span>: []</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="33-部署nvidia-device-plugin">3.3. 部署nvidia-device-plugin</h2>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta4/nvidia-device-plugin.yml</span><br></pre></td></tr></table></figure>
-<p>nvidia-device-plugin的daemonset yaml文件如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Copyright (c) 2019, NVIDIA CORPORATION.  All rights reserved.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Licensed under the Apache License, Version 2.0 (the "License");</span></span><br><span class="line"><span class="comment"># you may not use this file except in compliance with the License.</span></span><br><span class="line"><span class="comment"># You may obtain a copy of the License at</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#     http://www.apache.org/licenses/LICENSE-2.0</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Unless required by applicable law or agreed to in writing, software</span></span><br><span class="line"><span class="comment"># distributed under the License is distributed on an "AS IS" BASIS,</span></span><br><span class="line"><span class="comment"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></span><br><span class="line"><span class="comment"># See the License for the specific language governing permissions and</span></span><br><span class="line"><span class="comment"># limitations under the License.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nvidia-device-plugin-daemonset</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">nvidia-device-plugin-ds</span></span><br><span class="line">  <span class="attr">updateStrategy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="comment"># This annotation is deprecated. Kept here for backward compatibility</span></span><br><span class="line">      <span class="comment"># See https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/</span></span><br><span class="line">      <span class="attr">annotations:</span></span><br><span class="line">        <span class="attr">scheduler.alpha.kubernetes.io/critical-pod:</span> <span class="string">""</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nvidia-device-plugin-ds</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">tolerations:</span></span><br><span class="line">      <span class="comment"># This toleration is deprecated. Kept here for backward compatibility</span></span><br><span class="line">      <span class="comment"># See https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">CriticalAddonsOnly</span></span><br><span class="line">        <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">nvidia.com/gpu</span></span><br><span class="line">        <span class="attr">operator:</span> <span class="string">Exists</span></span><br><span class="line">        <span class="attr">effect:</span> <span class="string">NoSchedule</span></span><br><span class="line">      <span class="comment"># Mark this pod as a critical add-on; when enabled, the critical add-on</span></span><br><span class="line">      <span class="comment"># scheduler reserves resources for critical add-on pods so that they can</span></span><br><span class="line">      <span class="comment"># be rescheduled after a failure.</span></span><br><span class="line">      <span class="comment"># See https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/</span></span><br><span class="line">      <span class="attr">priorityClassName:</span> <span class="string">"system-node-critical"</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">nvidia/k8s-device-plugin:1.0.0-beta4</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">nvidia-device-plugin-ctr</span></span><br><span class="line">        <span class="attr">securityContext:</span></span><br><span class="line">          <span class="attr">allowPrivilegeEscalation:</span> <span class="literal">false</span></span><br><span class="line">          <span class="attr">capabilities:</span></span><br><span class="line">            <span class="attr">drop:</span> <span class="string">["ALL"]</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">device-plugin</span></span><br><span class="line">            <span class="attr">mountPath:</span> <span class="string">/var/lib/kubelet/device-plugins</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">device-plugin</span></span><br><span class="line">          <span class="attr">hostPath:</span></span><br><span class="line">            <span class="attr">path:</span> <span class="string">/var/lib/kubelet/device-plugins</span></span><br></pre></td></tr></table></figure>
-<h2 id="34-运行gpu任务">3.4. 运行GPU任务</h2>
-<p>创建一个GPU的pod，pod的资源类型指定为<code>nvidia.com/gpu</code>。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">gpu-pod</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cuda-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nvidia/cuda:9.0-devel</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">limits:</span></span><br><span class="line">          <span class="attr">nvidia.com/gpu:</span> <span class="number">2</span> <span class="comment"># requesting 2 GPUs</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">digits-container</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">nvidia/digits:6.0</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">limits:</span></span><br><span class="line">          <span class="attr">nvidia.com/gpu:</span> <span class="number">2</span> <span class="comment"># requesting 2 GPUs</span></span><br></pre></td></tr></table></figure>
-<h1 id="4-构建和运行nvidia-device-plugin">4. 构建和运行nvidia-device-plugin</h1>
-<h2 id="41-docker方式">4.1. docker方式</h2>
-<h3 id="411-编译">4.1.1. 编译</h3>
-<ul>
-<li>直接拉取dockerhub的镜像</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull nvidia/k8s-device-plugin:1.0.0-beta4</span><br></pre></td></tr></table></figure>
-<ul>
-<li>拉取代码构建镜像</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -t nvidia/k8s-device-plugin:1.0.0-beta4 https://github.com/NVIDIA/k8s-device-plugin.git<span class="comment">#1.0.0-beta4</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>修改nvidia-device-plugin后构建镜像</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/NVIDIA/k8s-device-plugin.git &amp;&amp; <span class="built_in">cd</span> k8s-device-plugin</span><br><span class="line">$ git checkout 1.0.0-beta4</span><br><span class="line">$ docker build -t nvidia/k8s-device-plugin:1.0.0-beta4 .</span><br></pre></td></tr></table></figure>
-<h3 id="412-运行">4.1.2. 运行</h3>
-<ul>
-<li>docker本地运行</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run --security-opt=no-new-privileges --<span class="built_in">cap</span>-drop=ALL --network=none -it -v /var/lib/kubelet/device-plugins:/var/lib/kubelet/device-plugins nvidia/k8s-device-plugin:1.0.0-beta4</span><br></pre></td></tr></table></figure>
-<ul>
-<li>daemonset运行</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create -f nvidia-device-plugin.yml</span><br></pre></td></tr></table></figure>
-<h2 id="42-非docker方式">4.2. 非docker方式</h2>
-<h3 id="421-编译">4.2.1. 编译</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ C_INCLUDE_PATH=/usr/<span class="built_in">local</span>/cuda/include LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda/lib64 go build</span><br></pre></td></tr></table></figure>
-<h3 id="422-本地运行">4.2.2. 本地运行</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./k8s-device-plugin</span><br></pre></td></tr></table></figure>
+                <div id="vip-container"><h1 id="1-namespace简介">1. Namespace简介</h1>
+<p>Namespace是内核的一个功能，用来给进程隔离一系列系统资源（视图隔离）。</p>
+<h1 id="2-类别">2. 类别</h1>
+<table>
+<thead>
+<tr>
+<th>namespace类别</th>
+<th>隔离资源</th>
+<th>系统调用参数</th>
+<th>内核版本</th>
+<th>Docker中的例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mount namespace</td>
+<td>挂载点</td>
+<td>CLONE_NEWNS</td>
+<td>2.4.19</td>
+<td>独立的挂载点</td>
+</tr>
+<tr>
+<td>UTS Namespace</td>
+<td>hostname和domainname</td>
+<td>CLONE_NEWUTS</td>
+<td>2.6.19</td>
+<td>独立的hostname</td>
+</tr>
+<tr>
+<td>IPC Namespace</td>
+<td>System V IPC, POSIX message queues</td>
+<td>CLONE_NEWIPC</td>
+<td>2.6.19</td>
+<td></td>
+</tr>
+<tr>
+<td>PID Namespace</td>
+<td>进程ID</td>
+<td>CLONE_NEWPID</td>
+<td>2.6.24</td>
+<td>容器进程PID为1</td>
+</tr>
+<tr>
+<td>Network Namespace</td>
+<td>网络设备，端口，网络栈</td>
+<td>CLONE_NEWNET</td>
+<td>2.6.24</td>
+<td>独立的网络和端口</td>
+</tr>
+<tr>
+<td>User Namespace</td>
+<td>用户ID，group ID</td>
+<td>CLONE_NEWUSER</td>
+<td>3.8</td>
+<td>独立的用户ID</td>
+</tr>
+</tbody>
+</table>
+<h1 id="3-namespace-api">3. Namespace API</h1>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>clone()</td>
+<td>基于某namespace创建新进程，他们的子进程也包含在该namespace中</td>
+</tr>
+<tr>
+<td>unshare()</td>
+<td>将进程移出某个namespace</td>
+</tr>
+<tr>
+<td>setns()</td>
+<td>将进程加入某个namespace</td>
+</tr>
+</tbody>
+</table>
+<h1 id="4-namespace细分">4. namespace细分</h1>
+<h2 id="41-mount-namespace">4.1. Mount Namespace</h2>
+<p>Mount Namespace可以用了隔离各个进程的挂载点视图。不同的namespace中文件系统层次不一样，在其中调用mount和umount仅影响当前namespace。</p>
+<h2 id="42-network-namespace">4.2. Network Namespace</h2>
+<p>Network Namespace用来隔离网络设备，IP地址端口等网络栈。容器内可以绑定自己的端口，在宿主机建立网桥，就可以实现容器之间的通信。</p>
+<p>ip netns 命令用来管理 network namespace。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> ip netns <span class="built_in">help</span></span></span><br><span class="line">Usage: ip netns list</span><br><span class="line">       ip netns add NAME</span><br><span class="line">       ip netns set NAME NETNSID</span><br><span class="line">       ip [-all] netns delete [NAME]</span><br><span class="line">       ip netns identify [PID]</span><br><span class="line">       ip netns pids NAME</span><br><span class="line">       ip [-all] netns exec [NAME] cmd ...</span><br><span class="line">       ip netns monitor</span><br><span class="line">       ip netns list-id</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<p>模拟创建docker0及docker网络</p>
+<p>1、创建lxcbr0，相当于docker0</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 添加一个网桥lxcbr0,相当于docker0</span></span><br><span class="line">brctl addbr lxcbr0</span><br><span class="line">brctl stp lxcbr0 off</span><br><span class="line">ifconfig lxcbr0 192.168.10.1/24 up  # 配置网桥IP地址</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看网桥</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> ifconfig</span></span><br><span class="line">lxcbr0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 192.168.10.1  netmask 255.255.255.0  broadcast 192.168.10.255</span><br><span class="line">        inet6 fe80::94cb:eaff:fe48:cdd5  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 96:cb:ea:48:cd:d5  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 5  bytes 426 (426.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p>添加网络命名空间</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加网络命名空间ns1</span></span><br><span class="line">ip netns add ns1</span><br><span class="line"><span class="comment"># 激活namespace中的loopback，即127.0.0.1</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1   ip link <span class="built_in">set</span> dev lo up</span><br></pre></td></tr></table></figure>
+<p>3、添加虚拟网卡</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加一个pair虚拟网卡，注意其中的veth类型，其中一个网卡要按进容器中</span></span><br><span class="line">ip link add veth-ns1 <span class="built_in">type</span> veth peer name lxcbr0.1</span><br><span class="line"><span class="comment"># 把 veth-ns1 按到namespace ns1中，这样容器中就会有一个新的网卡了</span></span><br><span class="line">ip link <span class="built_in">set</span> veth-ns1 netns ns1</span><br></pre></td></tr></table></figure>
+<p>4、修改容器内网卡为eth0，并分配IP</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把容器里的 veth-ns1改名为 eth0 （容器外会冲突，容器内就不会了）</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1  ip link <span class="built_in">set</span> dev veth-ns1 name eth0 </span><br><span class="line"><span class="comment"># 为容器中的网卡分配一个IP地址，并激活它</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 ifconfig eth0 192.168.10.11/24 up</span><br></pre></td></tr></table></figure>
+<p>5、将lxcbr0.1添加上网桥</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上面我们把veth-ns1这个网卡按到了容器中，然后我们要把lxcbr0.1添加上网桥上</span></span><br><span class="line">brctl addif lxcbr0 lxcbr0.1</span><br></pre></td></tr></table></figure>
+<p>6、添加路由</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 为容器增加一个路由规则，让容器可以访问外面的网络</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1     ip route add default via 192.168.10.1</span><br></pre></td></tr></table></figure>
+<p>7、添加nameserver</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在/etc/netns下创建network namespce名称为ns1的目录，</span></span><br><span class="line"><span class="comment"># 然后为这个namespace设置resolv.conf，这样，容器内就可以访问域名了</span></span><br><span class="line">mkdir -p /etc/netns/ns1</span><br><span class="line"><span class="built_in">echo</span> <span class="string">"nameserver 8.8.8.8"</span> &gt; /etc/netns/ns1/resolv.conf</span><br></pre></td></tr></table></figure>
+<p>8、查看网络空间内的网络配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入网络命名空间</span></span><br><span class="line">ip netns <span class="built_in">exec</span> ns1 bash</span><br><span class="line"><span class="comment"># 查看网络配置</span></span><br><span class="line">ifconfig</span><br><span class="line">eth0: flags=4099&lt;UP,BROADCAST,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 192.168.10.11  netmask 255.255.255.0  broadcast 192.168.10.255</span><br><span class="line">        ether 2a:0c:a8:b7:bc:32  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host&gt;</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">        RX packets 4  bytes 240 (240.0 B)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 4  bytes 240 (240.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+<p>9、进入现有docker容器的网络命名空间</p>
+<p>由于docker默认隐藏了<code>/var/run/netns</code>下的命名空间，因此需要做软链接，容器的1号进程的pid下的ns软链到<code>/var/run/netns</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -sf /proc/&lt;container-pid&gt;/ns/net <span class="string">"/var/run/netns/&lt;container-id&gt;"</span></span><br><span class="line">ip netns <span class="built_in">exec</span> &lt;container-id&gt; bash</span><br></pre></td></tr></table></figure>
 <p>参考：</p>
 <ul>
-<li><a href="https://github.com/NVIDIA/k8s-device-plugin" target="_blank" rel="noopener">https://github.com/NVIDIA/k8s-device-plugin</a></li>
-<li><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/device-plugin.md" target="_blank" rel="noopener">k8s-device-plugin</a></li>
-<li><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/resource-management/gpu-support.md" target="_blank" rel="noopener">gpu-support</a></li>
+<li><a href="https://lwn.net/Articles/531114/" target="_blank" rel="noopener">https://lwn.net/Articles/531114/</a></li>
+<li><a href="https://coolshell.cn/articles/17010.html" target="_blank" rel="noopener">https://coolshell.cn/articles/17010.html</a></li>
+<li><a href="https://coolshell.cn/articles/17029.html" target="_blank" rel="noopener">https://coolshell.cn/articles/17029.html</a></li>
 </ul>
 </div>
 
@@ -304,12 +351,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/setup/installer/install-k8s-by-kind/" data-toggle="tooltip" data-placement="top" title="使用kind安装kubernetes">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/namespace/namespace-cmd/" data-toggle="tooltip" data-placement="top" title="Namespace命令介绍">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/runtime/kata/kata-container-conf/" data-toggle="tooltip" data-placement="top" title="kata配置">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/resource/lxcfs/lxcfs/" data-toggle="tooltip" data-placement="top" title="Lxcfs资源视图隔离">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -395,7 +442,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. 简介</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-要求"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 要求</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-使用"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. 使用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-安装nvidia-drivers和nvidia-docker"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. 安装NVIDIA drivers和nvidia-docker</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-配置docker-runtime"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. 配置docker runtime</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-部署nvidia-device-plugin"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. 部署nvidia-device-plugin</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#34-运行gpu任务"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">3.4. 运行GPU任务</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-构建和运行nvidia-device-plugin"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. 构建和运行nvidia-device-plugin</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-docker方式"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. docker方式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#411-编译"><span class="toc-nav-number">4.1.1.</span> <span class="toc-nav-text">4.1.1. 编译</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#412-运行"><span class="toc-nav-number">4.1.2.</span> <span class="toc-nav-text">4.1.2. 运行</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-非docker方式"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. 非docker方式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#421-编译"><span class="toc-nav-number">4.2.1.</span> <span class="toc-nav-text">4.2.1. 编译</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#422-本地运行"><span class="toc-nav-number">4.2.2.</span> <span class="toc-nav-text">4.2.2. 本地运行</span></a></li></ol></li></ol></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-namespace简介"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. Namespace简介</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-类别"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. 类别</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-namespace-api"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. Namespace API</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-namespace细分"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. namespace细分</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-mount-namespace"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. Mount Namespace</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-network-namespace"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. Network Namespace</span></a></li></ol></li></ol>
         
         </div>
       </aside>
@@ -415,7 +462,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                          <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
                         
                     </div>
                 </section>

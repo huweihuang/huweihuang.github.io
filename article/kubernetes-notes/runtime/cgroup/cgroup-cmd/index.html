@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          Docker学习笔记 - 胡伟煌 | Blog
+          Cgroup命令介绍 - 胡伟煌 | Blog
         
     </title>
 
-    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/docker/docker-notes/">
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/cgroup/cgroup-cmd/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -71,7 +71,7 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
             /*post*/
         
     }
@@ -88,12 +88,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
+                              <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
+                            
                         </div>
-                        <h1>Docker学习笔记</h1>
+                        <h1>Cgroup命令介绍</h1>
                         <h2 class="subheading"></h2>
                         <span class="meta">
                             Posted by 胡伟煌 on
-                            2021-06-23
+                            2021-07-20
                         </span>
                     </div>
                 
@@ -210,8 +212,20 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <div id="vip-container"><h1 id="docker学习笔记">Docker学习笔记</h1>
-<p>详见：<a href="https://www.huweihuang.com/docker-notes/">Docker学习笔记</a></p>
+                <div id="vip-container"><h1 id="cgroup常用命令">cgroup常用命令</h1>
+<h1 id="1-cgcreate">1. cgcreate</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ cgcreate --<span class="built_in">help</span></span><br><span class="line">Usage: cgcreate [-h] [-f mode] [-d mode] [-s mode] [-t &lt;tuid&gt;:&lt;tgid&gt;] [-a &lt;agid&gt;:&lt;auid&gt;] -g &lt;controllers&gt;:&lt;path&gt; [-g ...]</span><br><span class="line">Create control group(s)</span><br><span class="line">  -a &lt;tuid&gt;:&lt;tgid&gt;		Owner of the group and all its files</span><br><span class="line">  -d, --dperm=mode		Group directory permissions</span><br><span class="line">  -f, --fperm=mode		Group file permissions</span><br><span class="line">  -g &lt;controllers&gt;:&lt;path&gt;	Control group <span class="built_in">which</span> should be added</span><br><span class="line">  -h, --<span class="built_in">help</span>			Display this <span class="built_in">help</span></span><br><span class="line">  -s, --tperm=mode		Tasks file permissions</span><br><span class="line">  -t &lt;tuid&gt;:&lt;tgid&gt;		Owner of the tasks file</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<p>cpu</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cgcreate -g cpu:cgrouptest</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ll /sys/fs/cgroup/cpu/cgrouptest</span></span><br><span class="line">总用量 0</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cgroup.clone_children</span><br><span class="line">--w--w---- 1 root root 0 8月  15 20:14 cgroup.event_control</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cgroup.procs</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:14 cpuacct.stat</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:14 cpuacct.uptime</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpuacct.usage</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:14 cpuacct.usage_percpu</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpu.cfs_period_us</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpu.cfs_quota_us</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpu.cfs_relax_thresh_sec</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpu.rt_period_us</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpu.rt_runtime_us</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 cpu.shares</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:14 cpu.stat</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 notify_on_release</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:14 tasks</span><br></pre></td></tr></table></figure>
+<p>memory</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cgcreate -g memory:cgrouptest</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ll /sys/fs/cgroup/memory/cgrouptest</span></span><br><span class="line">总用量 0</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 cgroup.clone_children</span><br><span class="line">--w--w---- 1 root root 0 8月  15 20:16 cgroup.event_control</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 cgroup.procs</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.failcnt</span><br><span class="line">--w--w---- 1 root root 0 8月  15 20:16 memory.force_empty</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.kmem.failcnt</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.kmem.limit_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.kmem.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.kmem.slabinfo</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.kmem.tcp.failcnt</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.kmem.tcp.limit_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.kmem.tcp.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.kmem.tcp.usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.kmem.usage_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.limit_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.meminfo</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.memsw.failcnt</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.memsw.limit_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.memsw.max_usage_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.memsw.usage_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.move_charge_at_immigrate</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.numa_stat</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.oom_control</span><br><span class="line">---------- 1 root root 0 8月  15 20:16 memory.pressure_level</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.soft_limit_in_bytes</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.stat</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.swappiness</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.usage_in_bytes</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 memory.use_hierarchy</span><br><span class="line">-r--r--r-- 1 root root 0 8月  15 20:16 memory.vmstat</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 notify_on_release</span><br><span class="line">-rw-rw-r-- 1 root root 0 8月  15 20:16 tasks</span><br></pre></td></tr></table></figure>
+<h1 id="2-cgdelete">2. cgdelete</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#cgdelete --help</span></span><br><span class="line">Usage: cgdelete [-h] [-r] [[-g] &lt;controllers&gt;:&lt;path&gt;] ...</span><br><span class="line">Remove control group(s)</span><br><span class="line">  -g &lt;controllers&gt;:&lt;path&gt;	Control group to be removed (-g is optional)</span><br><span class="line">  -h, --<span class="built_in">help</span>			Display this <span class="built_in">help</span></span><br><span class="line">  -r, --recursive		Recursively remove all subgroups</span><br></pre></td></tr></table></figure>
+<p>示例</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cgdelete -g memory:/cgrouptest</span><br><span class="line">cgdelete -g cpu:/cgrouptest</span><br></pre></td></tr></table></figure>
+<h1 id="3-cgclassify">3. cgclassify</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ cgclassify --<span class="built_in">help</span></span><br><span class="line">Usage: cgclassify [[-g] &lt;controllers&gt;:&lt;path&gt;] [--sticky | --cancel-sticky] &lt;list of pids&gt;</span><br><span class="line">Move running task(s) to given cgroups</span><br><span class="line">  -h, --<span class="built_in">help</span>			Display this <span class="built_in">help</span></span><br><span class="line">  -g &lt;controllers&gt;:&lt;path&gt;	Control group to be used as target</span><br><span class="line">  --cancel-sticky		cgred daemon change pidlist and children tasks</span><br><span class="line">  --sticky			cgred daemon does not change pidlist and children tasks</span><br></pre></td></tr></table></figure>
 </div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
@@ -236,12 +250,12 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/etcd/install/install-etcd-by-etcdadm/" data-toggle="tooltip" data-placement="top" title="使用etcdadm部署Etcd集群">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/runtime/kata/kata-container/" data-toggle="tooltip" data-placement="top" title="Kata容器简介">&larr; Previous Post</a>
                         </li>
                     
                     
                         <li class="next">
-                            <a href="/article/kubernetes-notes/trouble-shooting/node/increase-the-mlock-limit/" data-toggle="tooltip" data-placement="top" title="increase the mlock limit">Next Post &rarr;</a>
+                            <a href="/article/kubernetes-notes/runtime/cgroup/cgroup-dir/" data-toggle="tooltip" data-placement="top" title="Cgroup目录">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -327,7 +341,7 @@
         <div id="toc" class="toc-article">
         <strong class="toc-title">Contents</strong>
         
-          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#docker学习笔记"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">Docker学习笔记</span></a></li></ol>
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#cgroup常用命令"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">cgroup常用命令</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-cgcreate"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. cgcreate</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-cgdelete"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. cgdelete</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-cgclassify"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. cgclassify</span></a></li></ol>
         
         </div>
       </aside>
@@ -347,6 +361,8 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
+                        
                     </div>
                 </section>
                 
