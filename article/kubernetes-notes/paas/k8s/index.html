@@ -149,14 +149,14 @@
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
@@ -214,12 +214,261 @@
 
                 <div id="vip-container"><h1 id="1-k8s知识体系">1. k8s知识体系</h1>
 <p>以下整理了k8s涉及的相关知识体系。</p>
-<p><img src="http://assets.processon.com/chart_image/5d7f7cafe4b08987f55cbee3.png" alt="k8s体系"></p>
-<p>思维导图：<a href="https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2" target="_blank" rel="noopener">https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2</a></p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1752319832/article/kubernetes/core/k8s.png" alt="k8s体系"></p>
+<p>思维导图：<a href="https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2" target="_blank" rel="noopener">k8s体系</a></p>
 <h1 id="2-k8s重点开源项目">2. k8s重点开源项目</h1>
-<blockquote>
-<p>TODO</p>
-</blockquote>
+<table>
+<thead>
+<tr>
+<th>大类</th>
+<th>小类</th>
+<th>项目及链接</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🧭 核心调度与资源管理</td>
+<td>核心调度器</td>
+<td><a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">kube-scheduler</a></td>
+<td>默认调度器，支持亲和性、优先级等策略</td>
+</tr>
+<tr>
+<td></td>
+<td>批处理调度</td>
+<td><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">Volcano</a></td>
+<td>支持 AI 训练、大数据任务 Gang 调度、队列管理</td>
+</tr>
+<tr>
+<td></td>
+<td>混部调度</td>
+<td><a href="https://github.com/koordinator-sh/koordinator" target="_blank" rel="noopener">Koordinator</a></td>
+<td>支持离在线混部、QoS 管理、NUMA 亲和等能力</td>
+</tr>
+<tr>
+<td></td>
+<td>多集群调度</td>
+<td><a href="https://github.com/karmada-io/karmada" target="_blank" rel="noopener">Karmada</a></td>
+<td>多集群资源调度和统一控制</td>
+</tr>
+<tr>
+<td></td>
+<td>Pod 优化调度</td>
+<td><a href="https://github.com/kubernetes-sigs/descheduler" target="_blank" rel="noopener">Descheduler</a></td>
+<td>定期检测资源不均衡并重新调度</td>
+</tr>
+<tr>
+<td>🌐 网络与服务网格</td>
+<td>网络插件（CNI）</td>
+<td><a href="https://github.com/projectcalico/calico" target="_blank" rel="noopener">Calico</a> <br><a href="https://github.com/cilium/cilium" target="_blank" rel="noopener">Cilium</a><br><a href="https://github.com/flannel-io/flannel" target="_blank" rel="noopener">Flannel</a></td>
+<td>Pod 网络连接，Cilium 基于 eBPF 支持 L7 策略</td>
+</tr>
+<tr>
+<td></td>
+<td>服务网格</td>
+<td><a href="https://github.com/istio/istio" target="_blank" rel="noopener">Istio</a><br><a href="https://github.com/linkerd/linkerd2" target="_blank" rel="noopener">Linkerd</a></td>
+<td>微服务通信控制：认证、流量治理、可观测性</td>
+</tr>
+<tr>
+<td></td>
+<td>DNS 服务</td>
+<td><a href="https://github.com/coredns/coredns" target="_blank" rel="noopener">CoreDNS</a></td>
+<td>Kubernetes 默认 DNS 插件</td>
+</tr>
+<tr>
+<td></td>
+<td>LoadBalancer</td>
+<td><a href="https://github.com/metallb/metallb" target="_blank" rel="noopener">MetalLB</a></td>
+<td>裸金属集群中提供 LoadBalancer 类型服务</td>
+</tr>
+<tr>
+<td></td>
+<td>Gateway 网关</td>
+<td><a href="https://github.com/apache/apisix-ingress-controller" target="_blank" rel="noopener">Apache APISIX Ingress</a><br><a href="https://github.com/Kong/kubernetes-ingress-controller" target="_blank" rel="noopener">Kong Ingress</a><br><a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">NGINX Ingress</a><br><a href="https://github.com/envoyproxy/gateway" target="_blank" rel="noopener">Envoy Gateway</a></td>
+<td>支持 Ingress/Gateway API，提供流量入口、认证、限流等</td>
+</tr>
+<tr>
+<td>🔐 安全与策略控制</td>
+<td>策略控制</td>
+<td><a href="https://github.com/kyverno/kyverno" target="_blank" rel="noopener">Kyverno</a><br><a href="https://github.com/open-policy-agent/gatekeeper" target="_blank" rel="noopener">Gatekeeper</a></td>
+<td>对资源进行策略校验、合规控制</td>
+</tr>
+<tr>
+<td></td>
+<td>密钥管理</td>
+<td><a href="https://github.com/hashicorp/vault" target="_blank" rel="noopener">Vault</a><a href="https://github.com/bitnami-labs/sealed-secrets" target="_blank" rel="noopener">Sealed Secrets</a></td>
+<td>管理和加密存储 Kubernetes 密钥和凭据</td>
+</tr>
+<tr>
+<td></td>
+<td>运行时安全</td>
+<td><a href="https://github.com/falcosecurity/falco" target="_blank" rel="noopener">Falco</a></td>
+<td>实时监控容器中可疑行为</td>
+</tr>
+<tr>
+<td></td>
+<td>镜像签名</td>
+<td><a href="https://github.com/sigstore/cosign" target="_blank" rel="noopener">cosign</a></td>
+<td>为容器镜像提供签名与验证功能</td>
+</tr>
+<tr>
+<td>💾 存储与数据保护</td>
+<td>CSI 存储</td>
+<td><a href="https://github.com/longhorn/longhorn" target="_blank" rel="noopener">Longhorn</a><br><a href="https://github.com/rook/rook" target="_blank" rel="noopener">Rook</a></td>
+<td>提供持久化块存储或对象存储能力</td>
+</tr>
+<tr>
+<td></td>
+<td>备份与恢复</td>
+<td><a href="https://github.com/vmware-tanzu/velero" target="_blank" rel="noopener">Velero</a></td>
+<td>Pod 和卷的备份、恢复、集群迁移</td>
+</tr>
+<tr>
+<td></td>
+<td>卷调度组件</td>
+<td><a href="https://github.com/kubernetes-csi/external-provisioner" target="_blank" rel="noopener">external-provisioner</a></td>
+<td>Kubernetes 官方 CSI 卷调度器</td>
+</tr>
+<tr>
+<td>📊 监控与可观测性</td>
+<td>指标采集</td>
+<td><a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a><br><a href="https://github.com/kubernetes/kube-state-metrics" target="_blank" rel="noopener">kube-state-metrics</a></td>
+<td>收集节点/Pod 状态与业务指标</td>
+</tr>
+<tr>
+<td></td>
+<td>可视化展示</td>
+<td><a href="https://github.com/grafana/grafana" target="_blank" rel="noopener">Grafana</a></td>
+<td>指标、日志、链路追踪可视化</td>
+</tr>
+<tr>
+<td></td>
+<td>日志系统</td>
+<td><a href="https://github.com/grafana/loki" target="_blank" rel="noopener">Loki</a><br><a href="https://github.com/fluent/fluent-bit" target="_blank" rel="noopener">Fluent Bit</a></td>
+<td>日志采集与聚合，低资源占用</td>
+</tr>
+<tr>
+<td></td>
+<td>链路追踪</td>
+<td><a href="https://github.com/jaegertracing/jaeger" target="_blank" rel="noopener">Jaeger</a><br><a href="https://github.com/open-telemetry/opentelemetry-collector" target="_blank" rel="noopener">OpenTelemetry</a></td>
+<td>追踪服务调用链路、性能瓶颈</td>
+</tr>
+<tr>
+<td>🧪 CI/CD 与 GitOps</td>
+<td>工作流引擎</td>
+<td><a href="https://github.com/argoproj/argo-workflows" target="_blank" rel="noopener">Argo Workflows</a><br><a href="https://github.com/tektoncd/pipeline" target="_blank" rel="noopener">Tekton</a></td>
+<td>原生工作流与流水线管理</td>
+</tr>
+<tr>
+<td></td>
+<td>GitOps</td>
+<td><a href="https://github.com/argoproj/argo-cd" target="_blank" rel="noopener">Argo CD</a><a href="https://github.com/fluxcd/flux2" target="_blank" rel="noopener">Flux</a></td>
+<td>Git 驱动的自动部署与管理</td>
+</tr>
+<tr>
+<td></td>
+<td>镜像构建</td>
+<td><a href="https://github.com/GoogleContainerTools/kaniko" target="_blank" rel="noopener">Kaniko</a><br><a href="https://github.com/moby/buildkit" target="_blank" rel="noopener">BuildKit</a></td>
+<td>无需 Docker daemon 的镜像构建工具</td>
+</tr>
+<tr>
+<td></td>
+<td>应用包管理</td>
+<td><a href="https://github.com/helm/helm" target="_blank" rel="noopener">Helm</a></td>
+<td>Kubernetes 最主流的应用部署工具，支持模板化部署</td>
+</tr>
+<tr>
+<td>⚙️ 集群运维与扩展</td>
+<td>快速部署</td>
+<td><a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm</a><br><a href="https://github.com/kubernetes-sigs/kind" target="_blank" rel="noopener">kind</a><br><a href="https://github.com/k3s-io/k3s" target="_blank" rel="noopener">k3s</a></td>
+<td>轻量化和本地环境 Kubernetes 集群安装工具</td>
+</tr>
+<tr>
+<td></td>
+<td>节点扩缩容</td>
+<td><a href="https://github.com/kubernetes/autoscaler" target="_blank" rel="noopener">Cluster Autoscaler</a></td>
+<td>根据 Pod 排队与资源使用率自动扩缩容节点</td>
+</tr>
+<tr>
+<td></td>
+<td>多集群互联</td>
+<td><a href="https://github.com/submariner-io/submariner" target="_blank" rel="noopener">Submariner</a></td>
+<td>跨集群的网络互通方案</td>
+</tr>
+<tr>
+<td></td>
+<td>故障检测</td>
+<td><a href="https://github.com/kubernetes/node-problem-detector" target="_blank" rel="noopener">Node Problem Detector</a></td>
+<td>检测节点硬件、系统异常并上报 K8s</td>
+</tr>
+<tr>
+<td></td>
+<td>混沌测试</td>
+<td><a href="https://github.com/chaos-mesh/chaos-mesh" target="_blank" rel="noopener">Chaos Mesh</a><br><a href="https://github.com/litmuschaos/litmus" target="_blank" rel="noopener">Litmus</a></td>
+<td>注入网络/CPU/磁盘等故障模拟场景</td>
+</tr>
+<tr>
+<td></td>
+<td>Workload 扩展</td>
+<td><a href="https://github.com/openkruise/kruise" target="_blank" rel="noopener">OpenKruise</a></td>
+<td>扩展原生 workload 控制器能力，如 Sidecar、InPlace 升级</td>
+</tr>
+<tr>
+<td></td>
+<td>应用交付平台</td>
+<td><a href="https://github.com/kubevela/kubevela" target="_blank" rel="noopener">KubeVela</a></td>
+<td>基于 OAM 模型，提供开发者友好、平台团队可控的应用交付能力</td>
+</tr>
+<tr>
+<td>🤖 AI 与大数据</td>
+<td>AI 平台</td>
+<td><a href="https://github.com/kubeflow/kubeflow" target="_blank" rel="noopener">Kubeflow</a></td>
+<td>支持训练、调度、模型管理的机器学习平台</td>
+</tr>
+<tr>
+<td></td>
+<td>联邦学习</td>
+<td><a href="https://github.com/FederatedAI/KubeFATE" target="_blank" rel="noopener">KubeFATE</a></td>
+<td>基于 K8s 的联邦学习调度与部署平台</td>
+</tr>
+<tr>
+<td></td>
+<td>模型推理</td>
+<td><a href="https://github.com/triton-inference-server/server" target="_blank" rel="noopener">Triton Inference Server</a><br><a href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener">vLLM</a></td>
+<td>高性能大模型/AI 模型推理服务</td>
+</tr>
+<tr>
+<td></td>
+<td>分布式调度器</td>
+<td><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">Volcano</a></td>
+<td>支持 AI 大数据任务的 batch 资源调度</td>
+</tr>
+<tr>
+<td>⚡ GPU 与硬件加速</td>
+<td>GPU 驱动插件</td>
+<td><a href="https://github.com/NVIDIA/k8s-device-plugin" target="_blank" rel="noopener">NVIDIA device plugin</a></td>
+<td>为 K8s 提供 GPU 发现、分配与隔离能力</td>
+</tr>
+<tr>
+<td></td>
+<td>GPU 监控工具</td>
+<td><a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">DCGM Exporter</a></td>
+<td>GPU 状态指标（温度、利用率、内存）采集器，用于 Prometheus</td>
+</tr>
+<tr>
+<td></td>
+<td>GPU 虚拟化</td>
+<td><a href="https://github.com/NVIDIA/cloud-native-technologies" target="_blank" rel="noopener">vGPU manager</a></td>
+<td>管理 GPU 分片、vGPU 分配</td>
+</tr>
+<tr>
+<td></td>
+<td>GPU 调度增强</td>
+<td><a href="https://github.com/koordinator-sh/koordinator" target="_blank" rel="noopener">Koordinator</a><br><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">Volcano</a></td>
+<td>支持 NUMA-aware、GPU topology-aware 的任务调度策略</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
@@ -244,7 +493,7 @@
                 <ul class="pager">
                     
                         <li class="previous">
-                            <a href="/article/kubernetes-notes/resource/quality-of-service/" data-toggle="tooltip" data-placement="top" title="资源服务质量">&larr; Previous Post</a>
+                            <a href="/article/kubernetes-notes/paas/12-factor/" data-toggle="tooltip" data-placement="top" title="12 Factor">&larr; Previous Post</a>
                         </li>
                     
                     
