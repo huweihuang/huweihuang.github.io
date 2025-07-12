@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          Cgroup v2和v1的区别 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/runtime/cgroup/cgroup-v2-vs-v1/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1508253812/header/cow.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
+                            
+                              <a class="tag" href="/tags/#Cgroup" title="Cgroup">Cgroup</a>
+                            
+                        </div>
+                        <h1>Cgroup v2和v1的区别</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2025-07-11
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><blockquote>
+<p>本文主要介绍cgroup v2和v1的区别。</p>
+</blockquote>
+<p>Cgroups（Control Groups）是 Linux 内核提供的一种资源限制、审计与隔离机制。它允许</p>
+<p>将进程分组，并对这些组应用资源限制（如 CPU、内存、IO 等）。目前存在两个主要版本：<strong>cgroup v1</strong> 和 <strong>cgroup v2</strong>。</p>
+<h1 id="1-cgroup-v1-和-v2-的主要区别">1. cgroup v1 和 v2 的主要区别</h1>
+<h2 id="11-层级结构设计">1.1. 层级结构设计</h2>
+<p><strong>cgroup v1：</strong></p>
+<ul>
+<li>
+<p>每个子系统（controller，如 <code>cpu</code>、<code>memory</code>）可以挂载在<strong>不同的层级上</strong>。</p>
+</li>
+<li>
+<p>不同资源控制器可以拥有<strong>不同的层级结构</strong>。</p>
+</li>
+<li>
+<p>同一个进程可以出现在多个层级中（因为各 controller 独立）。</p>
+</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>
+<p>管理复杂：不同 controller 的层级可能冲突。</p>
+</li>
+<li>
+<p>用户空间程序难以协调多个资源的管理。</p>
+</li>
+</ul>
+<p><strong>cgroup v2：</strong></p>
+<ul>
+<li>
+<p>所有 controller 使用<strong>统一的单层次树形结构</strong>（single unified hierarchy）。</p>
+</li>
+<li>
+<p>每个进程只能属于一个 cgroup。</p>
+</li>
+<li>
+<p>更简洁、更一致、更容易管理。</p>
+</li>
+</ul>
+<hr>
+<h2 id="12-资源控制行为改进">1.2. 资源控制行为改进</h2>
+<p><strong>cgroup v1：</strong></p>
+<ul>
+<li>
+<p>控制器之间独立实现，行为不一致。</p>
+</li>
+<li>
+<p>有些 controller 行为奇怪或不完整（如 memory 的 oom 行为、cpu shares）。</p>
+</li>
+</ul>
+<p><strong>cgroup v2：</strong></p>
+<ul>
+<li>
+<p>控制器重写或增强，行为更加一致和合理。</p>
+</li>
+<li>
+<p>更加严格的限制与传播模型，例如：</p>
+<ul>
+<li>
+<p>子 cgroup 的资源使用总量不能超过父级分配。</p>
+</li>
+<li>
+<p>支持精细的 IO 带宽控制（通过 <code>io.max</code> 取代 v1 的 <code>blkio</code> 控制器）。</p>
+</li>
+<li>
+<p>内存高水位线通知 (<code>memory.high</code>)，支持 memory pressure 的渐进控制。</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="13-配置接口文件系统">1.3. 配置接口（文件系统）</h2>
+<p><strong>cgroup v1：</strong></p>
+<ul>
+<li>
+<p>每个 controller 会暴露多个文件，如 <code>memory.limit_in_bytes</code>、<code>cpu.shares</code>。</p>
+</li>
+<li>
+<p>文件名不一致、语义也不统一。</p>
+</li>
+</ul>
+<p><strong>cgroup v2：</strong></p>
+<ul>
+<li>
+<p>使用统一的接口命名，如：</p>
+<ul>
+<li>
+<p><code>memory.max</code> 替代 <code>memory.limit_in_bytes</code></p>
+</li>
+<li>
+<p><code>cpu.max</code> 替代 <code>cpu.cfs_quota_us</code> 等</p>
+</li>
+</ul>
+</li>
+<li>
+<p>配置方式更简洁、更一致。</p>
+</li>
+</ul>
+<hr>
+<h2 id="14进程行为控制">1.4.进程行为控制</h2>
+<p><strong>cgroup v1：</strong></p>
+<ul>
+<li>
+<p>没有明显的限制，父级 cgroup 中的进程可以和子 cgroup 并存。</p>
+</li>
+<li>
+<p>容易产生“叶子节点”和“中间节点”混用的问题。</p>
+</li>
+</ul>
+<p><strong>cgroup v2：</strong></p>
+<ul>
+<li>
+<p><strong>中间节点不能包含进程</strong>，只有叶子节点可以运行进程。</p>
+</li>
+<li>
+<p>强制遵循“控制权不可传递”，资源必须分配到底层。</p>
+</li>
+</ul>
+<hr>
+<h2 id="15-内核支持和兼容性">1.5. 内核支持和兼容性</h2>
+<ul>
+<li>
+<p><strong>cgroup v1</strong>：默认启用在旧版本 Linux（如 CentOS 7）。</p>
+</li>
+<li>
+<p><strong>cgroup v2</strong>：Linux kernel 4.5 引入，5.x 逐渐成熟，现在主流发行版（如 Fedora、Ubuntu 22.04+）已默认使用 cgroup v2。</p>
+</li>
+</ul>
+<hr>
+<h2 id="16-总结对比表">1.6. 总结对比表</h2>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>cgroup v1</th>
+<th>cgroup v2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制器挂载</td>
+<td>多层级结构</td>
+<td>单一统一层级</td>
+</tr>
+<tr>
+<td>文件接口</td>
+<td>各控制器自定义</td>
+<td>统一命名和行为</td>
+</tr>
+<tr>
+<td>进程限制</td>
+<td>可混用中间/叶子节点</td>
+<td>只能在叶子节点运行</td>
+</tr>
+<tr>
+<td>控制器一致性</td>
+<td>不一致，独立实现</td>
+<td>统一，行为一致</td>
+</tr>
+<tr>
+<td>内核支持</td>
+<td>老系统默认使用</td>
+<td>新内核推荐使用</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="2-cgroup-v2的资源隔离性优化">2. Cgroup v2的资源隔离性优化</h1>
+<h2 id="21-统一的层级结构消除隔离漏洞">2.1. 统一的层级结构，消除隔离漏洞</h2>
+<p><strong>📌 v1 问题：</strong></p>
+<ul>
+<li>
+<p>每个 controller（如 cpu、memory、blkio）可以挂载在<strong>不同的层级</strong>。</p>
+</li>
+<li>
+<p>一个进程可能出现在多个 cgroup（分别控制不同资源），<strong>导致资源隔离不一致或冲突</strong>。</p>
+<ul>
+<li>例如：<code>cpu</code> 限制在 <code>/cg1</code>，<code>memory</code> 限制在 <code>/cg2</code>，无法准确控制组合资源使用。</li>
+</ul>
+</li>
+</ul>
+<p><strong>✅ v2 优化：</strong></p>
+<ul>
+<li>
+<p>所有 controller 使用<strong>统一的单层级树</strong>（unified hierarchy）。</p>
+</li>
+<li>
+<p>每个进程<strong>只能存在于一个 cgroup 中</strong>，所有资源限制统一生效。</p>
+</li>
+<li>
+<p>隔离策略具有<strong>一致性和传递性</strong>，防止“某些资源没隔离”的情况。</p>
+</li>
+</ul>
+<p>🔍 <strong>好处：</strong> 避免多 controller 层级不一致造成的隔离漏洞，资源限制行为更可预期。</p>
+<hr>
+<h2 id="22-增强的内存隔离机制">2.2. 增强的内存隔离机制</h2>
+<p><strong>v2 新特性：</strong></p>
+<ul>
+<li>
+<p>引入 <strong><code>memory.high</code></strong>（软限制）：超过后触发页回收（但不立即 OOM）。</p>
+</li>
+<li>
+<p>强化 <strong><code>memory.max</code></strong>（硬限制）：超过直接触发 OOM。</p>
+</li>
+<li>
+<p>支持 <strong>OOM group kill</strong>：可将整个 pod 内的多个进程作为一组统一 kill。</p>
+</li>
+</ul>
+<p><strong>v1 缺陷：</strong></p>
+<ul>
+<li>只有 <code>memory.limit_in_bytes</code>，OOM 后果不可控，不能渐进响应内存压力。</li>
+</ul>
+<p>🔍 <strong>好处：</strong></p>
+<ul>
+<li>
+<p>实现<strong>更平滑的资源压力反馈</strong>，容器在压力下可“自救”。</p>
+</li>
+<li>
+<p>防止 noisy neighbor（内存噪声邻居）干扰其他 pod。</p>
+</li>
+</ul>
+<hr>
+<h2 id="23-更精准的-cpu-调度控制">2.3. 更精准的 CPU 调度控制</h2>
+<p><strong>v2 改进：</strong></p>
+<ul>
+<li>
+<p>使用 <code>cpu.max</code> 设置 CPU 带宽上限，精度提升。</p>
+</li>
+<li>
+<p>引入 <code>cpu.weight</code>（0~10000）：代替 v1 的 <code>cpu.shares</code>，线性、可加性更强。</p>
+</li>
+<li>
+<p>支持 <strong>按比例调度</strong>，防止低优先 pod 抢占高优先资源。</p>
+</li>
+</ul>
+<p><strong>v1 问题：</strong></p>
+<ul>
+<li>
+<p><code>cpu.shares</code> 非线性、不稳定。</p>
+</li>
+<li>
+<p><code>cfs_quota</code> 控制粒度粗，容易造成抖动。</p>
+</li>
+</ul>
+<p>🔍 <strong>好处：</strong> CPU 时间分配更加公平和稳定，<strong>防止容器之间 CPU 抢占影响彼此性能</strong>。</p>
+<hr>
+<h2 id="24-io-隔离更细粒度和可控">2.4. IO 隔离更细粒度和可控</h2>
+<p><strong>v2 提供：</strong></p>
+<ul>
+<li>
+<p><code>io.max</code>：按设备设置带宽/IOPS 上限。</p>
+</li>
+<li>
+<p><code>io.weight</code>：设置权重调度优先级。</p>
+</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"8:0 rbps=1048576 wbps=1048576"</span> &gt; io.max <span class="comment"># 限制 /dev/sda 读写速率为 1MB/s</span></span><br></pre></td></tr></table></figure>
+<p><strong>v1 问题：</strong></p>
+<ul>
+<li>
+<p>使用 <code>blkio.*</code>，行为依赖块设备，支持不一致，精度低。</p>
+</li>
+<li>
+<p>IOPS 与带宽不能同时控制，难以部署混合 workload。</p>
+</li>
+</ul>
+<p>🔍 <strong>好处：</strong> 提供<strong>IO 抢占控制</strong>、<strong>防止磁盘打满拖垮其他 pod</strong>，对数据库/日志类容器特别有利。</p>
+<hr>
+<h2 id="25-压力感知能力psi提升感知性隔离">2.5. 压力感知能力（PSI）提升感知性隔离</h2>
+<p><strong>v2 新特性：</strong></p>
+<ul>
+<li>
+<p>原生支持 <strong>Pressure Stall Information (PSI)</strong>：</p>
+<ul>
+<li>
+<p>提供 <code>cpu.pressure</code>、<code>memory.pressure</code>、<code>io.pressure</code> 等指标。</p>
+</li>
+<li>
+<p>显示资源的阻塞比例、等待时间（如 <code>some</code> / <code>full</code> stall）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>v1 不支持 PSI。</strong></p>
+<p>🔍 <strong>好处：</strong></p>
+<ul>
+<li>
+<p>可用于<strong>调度器做资源感知</strong>（例如 Koordinator、Kubelet QRM）。</p>
+</li>
+<li>
+<p>实现动态隔离/弹性扩缩容策略，提前感知资源瓶颈。</p>
+</li>
+</ul>
+<hr>
+<h2 id="26-进程放置约束提升层级隔离清晰度">2.6. 进程放置约束提升层级隔离清晰度</h2>
+<p><strong>v2 要求：</strong></p>
+<ul>
+<li>
+<p>只有叶子节点可以运行进程。</p>
+</li>
+<li>
+<p>中间节点用于组织和资源继承，避免&quot;父子 cgroup 都有进程&quot;的资源争用。</p>
+</li>
+</ul>
+<p><strong>v1 无此限制，容易产生隔离混乱。</strong></p>
+<p>🔍 <strong>好处：</strong> 保证资源继承链明确，避免“父子抢资源”问题。</p>
+<hr>
+<h2 id="27-更好的资源传播和继承规则">2.7. 更好的资源传播和继承规则</h2>
+<ul>
+<li>
+<p>v2 明确规定：<strong>子 cgroup 的资源配额不可超过父级设置</strong>。</p>
+</li>
+<li>
+<p>v1 中 controller 行为不一致，有些 controller（如 <code>cpu</code>）资源限制不会级联。</p>
+</li>
+</ul>
+<p>🔍 <strong>好处：</strong> 资源隔离链路完整，<strong>防止容器层越权使用 pod 层的资源限制之外的资源</strong>。</p>
+<h2 id="28-资源隔离性提示对比">2.8. 资源隔离性提示对比</h2>
+<table>
+<thead>
+<tr>
+<th>功能点</th>
+<th>cgroup v1</th>
+<th>cgroup v2</th>
+<th>提升点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>层级一致性</td>
+<td>❌ 多层级</td>
+<td>✅ 单层级</td>
+<td>统一控制、隔离不混乱</td>
+</tr>
+<tr>
+<td>内存隔离</td>
+<td>一刀切、容易 OOM</td>
+<td>支持 <code>memory.high</code> + OOM group kill</td>
+<td>渐进隔离、防止雪崩</td>
+</tr>
+<tr>
+<td>CPU 限制</td>
+<td>粒度粗、抢占明显</td>
+<td>带宽精细 + weight 线性</td>
+<td>可控公平调度</td>
+</tr>
+<tr>
+<td>IO 控制</td>
+<td>粗糙、支持差</td>
+<td><code>io.max</code>, <code>io.weight</code> 精细控制</td>
+<td>IO 不互相影响</td>
+</tr>
+<tr>
+<td>PSI 支持</td>
+<td>❌</td>
+<td>✅</td>
+<td>可用于资源压力调度</td>
+</tr>
+<tr>
+<td>运行位置限制</td>
+<td>无要求</td>
+<td>只能在叶子节点</td>
+<td>结构清晰，避免冲突</td>
+</tr>
+<tr>
+<td>资源继承传播</td>
+<td>弱、不一致</td>
+<td>强、自动级联</td>
+<td>隔离逻辑严密</td>
+</tr>
+</tbody>
+</table>
+<h1 id="3-cgroup-v1-和-cgroup-v2-的层级结构差异">3. cgroup v1 和 cgroup v2 的层级结构差异</h1>
+<p>场景：一个 Pod 内有两个容器 containerA 和 containerB</p>
+<h2 id="31-cgroup-v1-的层级格式多树结构">3.1. cgroup v1 的层级格式（多树结构）</h2>
+<p>在 cgroup v1 中，每个 controller（如 memory、cpu）<strong>是单独挂载的子系统</strong>，彼此独立，层级不一致：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># memory 子系统的 cgroup 层级：</span></span><br><span class="line">/sys/fs/cgroup/memory/kubepods/pod123/containerA</span><br><span class="line">/sys/fs/cgroup/memory/kubepods/pod123/containerB</span><br><span class="line"></span><br><span class="line"><span class="comment"># cpu 子系统的 cgroup 层级可能不同（可能是按 qos 再分层）：</span></span><br><span class="line">/sys/fs/cgroup/cpu/kubepods/burstable/pod123/containerA</span><br><span class="line">/sys/fs/cgroup/cpu/kubepods/burstable/pod123/containerB</span><br><span class="line"></span><br><span class="line"><span class="comment"># blkio 也可能完全不同</span></span><br><span class="line">/sys/fs/cgroup/blkio/k8s.io/pod123/containerA</span><br><span class="line">/sys/fs/cgroup/blkio/k8s.io/pod123/containerB</span><br></pre></td></tr></table></figure>
+<p><strong>问题</strong>：</p>
+<ul>
+<li>
+<p>资源限制配置分散，隔离策略难以统一。</p>
+</li>
+<li>
+<p>kubelet 或 CRI 管理难度高，不易维护。</p>
+</li>
+<li>
+<p>某些 controller 中，父子 cgroup 会混放进程，造成资源混抢。</p>
+</li>
+</ul>
+<h2 id="32-cgroup-v2-的层级格式统一树结构">3.2. cgroup v2 的层级格式（统一树结构）</h2>
+<p>cgroup v2 所有控制器（memory、cpu、io）使用统一的挂载点，并严格限制结构层次：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 所有 controller 都在统一挂载点 /sys/fs/cgroup</span></span><br><span class="line">/sys/fs/cgroup/kubepods.slice/</span><br><span class="line">└── kubepods-burstable.slice/</span><br><span class="line">    └── kubepods-burstable-pod123.slice/</span><br><span class="line">        ├── containerA.scope/</span><br><span class="line">        └── containerB.scope/</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<ul>
+<li>
+<p>所有资源限制（CPU、memory、IO）都在 <code>/sys/fs/cgroup/kubepods-burstable-pod123.slice/containerA.scope/</code> 这个目录中。</p>
+</li>
+<li>
+<p>每个 container 的资源控制逻辑清晰统一。</p>
+</li>
+<li>
+<p>不允许 container 和 pod 同时在一个目录中运行进程（叶子节点原则）。</p>
+</li>
+</ul>
+<h2 id="33-对比总结表">3.3. 对比总结表</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>cgroup v1</th>
+<th>cgroup v2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制器层级</td>
+<td>每个控制器独立（多棵树）</td>
+<td>所有控制器统一（单棵树）</td>
+</tr>
+<tr>
+<td>示例目录结构</td>
+<td>memory/…, cpu/…, blkio/…</td>
+<td>/sys/fs/cgroup/…（统一）</td>
+</tr>
+<tr>
+<td>资源隔离配置</td>
+<td>分散在不同路径</td>
+<td>集中在统一路径</td>
+</tr>
+<tr>
+<td>父子节点进程混放</td>
+<td>可能混放</td>
+<td>严格禁止，父不能运行进程</td>
+</tr>
+<tr>
+<td>管理复杂度</td>
+<td>高，需多层次同步</td>
+<td>低，集中管理</td>
+</tr>
+</tbody>
+</table>
+<h1 id="4-cgroup-v2-常用资源限制文件汇总">4. cgroup v2 常用资源限制文件汇总</h1>
+<h2 id="41-cpu-控制器文件cpu">4.1. CPU 控制器文件（cpu.*）</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>用途说明</th>
+<th>示例值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cpu.max</code></td>
+<td>限制 CPU 最大使用带宽，格式为 <code>quota period</code></td>
+<td><code>50000 100000</code>：每 100ms 最多用 50ms，即 0.5 CPU</td>
+</tr>
+<tr>
+<td><code>cpu.weight</code></td>
+<td>设置 CPU 相对调度权重（1~10000）</td>
+<td><code>100</code>（默认）权重越高调度越积极</td>
+</tr>
+<tr>
+<td><code>cpu.stat</code></td>
+<td>CPU 使用统计</td>
+<td>包含 <code>usage_usec</code>、<code>throttled_usec</code> 等累计指标</td>
+</tr>
+<tr>
+<td><code>cpu.pressure</code></td>
+<td>CPU 资源压力监控（PSI）</td>
+<td><code>some avg10=0.00 avg60=0.00 avg300=0.00 total=0</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="42-内存控制器文件memory">4.2. 内存控制器文件（memory.*）</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>用途说明</th>
+<th>示例值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>memory.max</code></td>
+<td>内存硬限制，超出则 OOM</td>
+<td><code>536870912</code> 表示 512MB</td>
+</tr>
+<tr>
+<td><code>memory.high</code></td>
+<td>内存软限制，超过则触发回收（不 OOM）</td>
+<td><code>268435456</code> 表示 256MB</td>
+</tr>
+<tr>
+<td><code>memory.low</code></td>
+<td>设置最低保证值，低于此值尽量不回收</td>
+<td><code>134217728</code> 表示 128MB</td>
+</tr>
+<tr>
+<td><code>memory.current</code></td>
+<td>当前使用内存</td>
+<td><code>123456789</code> 表示当前用约 117MB</td>
+</tr>
+<tr>
+<td><code>memory.stat</code></td>
+<td>内存使用细节统计</td>
+<td>包括 anon、file、rss、slab、cache 等</td>
+</tr>
+<tr>
+<td><code>memory.events</code></td>
+<td>记录 OOM、high 命中等事件次数</td>
+<td><code>high 1</code>, <code>oom 0</code> 等</td>
+</tr>
+<tr>
+<td><code>memory.pressure</code></td>
+<td>内存 PSI 指标</td>
+<td><code>some avg10=0.10 avg60=0.08 avg300=0.05 total=1234</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="43-io-控制器文件io">4.3. IO 控制器文件（io.*）</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>用途说明</th>
+<th>示例值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>io.max</code></td>
+<td>限制块设备 IO 带宽/IOPS</td>
+<td><code>8:0 rbps=1048576 wbps=1048576</code> 表示限速 1MB/s</td>
+</tr>
+<tr>
+<td><code>io.weight</code></td>
+<td>设置相对 IO 权重（1~10000）</td>
+<td><code>100</code>（默认）</td>
+</tr>
+<tr>
+<td><code>io.stat</code></td>
+<td>实际 IO 统计（读写字节/次数）</td>
+<td><code>8:0 rbytes=12345678 wbytes=87654321 rios=123 wios=321</code></td>
+</tr>
+<tr>
+<td><code>io.pressure</code></td>
+<td>IO PSI 指标</td>
+<td><code>some avg10=0.00 avg60=0.00 avg300=0.00 total=0</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="44-进程数控制器文件pids">4.4. 进程数控制器文件（pids.*）</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>用途说明</th>
+<th>示例值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pids.max</code></td>
+<td>限制最大进程/线程数</td>
+<td><code>512</code>：最多允许 512 个进程/线程</td>
+</tr>
+<tr>
+<td><code>pids.current</code></td>
+<td>当前进程/线程数量</td>
+<td><code>18</code>：当前在此 cgroup 中运行的数量</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="45-通用控制器文件所有-cgroup-目录都会包含">4.5. 通用控制器文件（所有 cgroup 目录都会包含）</h2>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>用途说明</th>
+<th>示例值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cgroup.procs</code></td>
+<td>包含在该 cgroup 中的进程 PID</td>
+<td><code>1234\n5678</code> 等</td>
+</tr>
+<tr>
+<td><code>cgroup.threads</code></td>
+<td>包含线程 ID（TID）</td>
+<td><code>1234\n5678</code>（不同于 PID）</td>
+</tr>
+<tr>
+<td><code>cgroup.controllers</code></td>
+<td>当前节点支持的 controller 列表</td>
+<td><code>cpu memory io pids</code></td>
+</tr>
+<tr>
+<td><code>cgroup.subtree_control</code></td>
+<td>子 cgroup 可继承的 controller 设置</td>
+<td><code>+cpu +memory +io</code>（必须手动 echo 设置）</td>
+</tr>
+<tr>
+<td><code>cgroup.stat</code></td>
+<td>cgroup 统计信息</td>
+<td><code>nr_descendants=3 nr_dying_descendants=0</code></td>
+</tr>
+<tr>
+<td><code>cgroup.events</code></td>
+<td>当前 cgroup 状态事件布尔值</td>
+<td><code>populated 1 memory.events oom=0</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="46-高阶行为控制">4.6. 高阶行为控制</h2>
+<p>常见于 systemd 管理或进程终止场景</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>用途说明</th>
+<th>示例值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cgroup.freeze</code></td>
+<td>是否冻结此 cgroup 中所有进程（0=运行，1=冻结）</td>
+<td><code>0</code>：未冻结</td>
+</tr>
+<tr>
+<td><code>cgroup.kill</code></td>
+<td>向所有进程发送 SIGKILL，强制终止</td>
+<td>（执行 <code>echo 1 &gt; cgroup.kill</code>）</td>
+</tr>
+<tr>
+<td><code>cgroup.type</code></td>
+<td>当前 cgroup 类型</td>
+<td>domain / threaded / domain threaded 等</td>
+</tr>
+</tbody>
+</table>
+<h1 id="5-koordinator-vs-volcano-cgroup-v2对比">5. Koordinator vs Volcano cgroup v2对比</h1>
+<p>Koordinator和Volcano是常用的在服务混布和调度方面的开源调度组件，以下是 <strong>Koordinator vs Volcano 在 cgroup v2 层面对 Pod 资源隔离增强能力的对比表格</strong>，从四大类资源（CPU、内存、IO、网络）出发，列出各自支持的能力、作用机制和相关的 cgroup v2 文件名。</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>能力</th>
+<th>说明</th>
+<th>Koordinator</th>
+<th>Volcano</th>
+<th>使用的 cgroup v2 文件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CPU</strong></td>
+<td><code>cpu.weight</code></td>
+<td>调整调度优先级，高权重获得更多 CPU 时间片</td>
+<td>✅</td>
+<td>✅</td>
+<td><code>cpu.weight</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>cpu.max</code> 限速</td>
+<td>限制低优 pod 最大可用 CPU 带宽</td>
+<td>✅</td>
+<td>✅</td>
+<td><code>cpu.max</code></td>
+</tr>
+<tr>
+<td></td>
+<td>动态 CPU Throttle</td>
+<td>根据压力指标自动调整低优 CPU 限速</td>
+<td>✅（PSI 感知）</td>
+<td>❌</td>
+<td><code>cpu.max</code>, <code>cpu.pressure</code></td>
+</tr>
+<tr>
+<td></td>
+<td>PSI 感知调度</td>
+<td>根据 <code>cpu.pressure</code> 控制 pod 的调度去向</td>
+<td>✅</td>
+<td>❌</td>
+<td><code>cpu.pressure</code></td>
+</tr>
+<tr>
+<td></td>
+<td>NUMA / CPU 绑核</td>
+<td>结合 Topology 策略、QoS 实现高优绑核</td>
+<td>✅</td>
+<td>✅</td>
+<td>非标准：<code>cpuset.cpus</code>（结合 CRI）</td>
+</tr>
+<tr>
+<td><strong>内存</strong></td>
+<td><code>memory.high</code> 软限</td>
+<td>超过此值将触发内核回收机制，避免高优被影响</td>
+<td>✅</td>
+<td>✅</td>
+<td><code>memory.high</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>memory.low</code> 保底</td>
+<td>高优 pod 内存保底，不被回收</td>
+<td>✅</td>
+<td>❌</td>
+<td><code>memory.low</code></td>
+</tr>
+<tr>
+<td></td>
+<td>OOM Group Kill</td>
+<td>高优任务不被单独 kill，统一 OOM 策略</td>
+<td>✅</td>
+<td>✅</td>
+<td><code>memory.events</code>, <code>cgroup.kill</code></td>
+</tr>
+<tr>
+<td></td>
+<td>PSI 感知调度</td>
+<td>通过 <code>memory.pressure</code> 控制任务调度，避免拥塞节点</td>
+<td>✅</td>
+<td>❌</td>
+<td><code>memory.pressure</code></td>
+</tr>
+<tr>
+<td><strong>IO</strong></td>
+<td><code>io.max</code> 带宽限速</td>
+<td>精确限制某容器的磁盘读写速率（rbps/wbps）</td>
+<td>✅</td>
+<td>✅</td>
+<td><code>io.max</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>io.weight</code> 权重</td>
+<td>调整 IO 调度优先级</td>
+<td>✅</td>
+<td>✅</td>
+<td><code>io.weight</code></td>
+</tr>
+<tr>
+<td></td>
+<td>IO PSI 感知调度</td>
+<td>避免将 pod 调度到高 IO 压力节点</td>
+<td>✅</td>
+<td>❌</td>
+<td><code>io.pressure</code></td>
+</tr>
+<tr>
+<td><strong>网络</strong></td>
+<td>网络速率控制（带宽）</td>
+<td>非 cgroup v2 标准，通过 eBPF/TC/net_cls 配合实现</td>
+<td>✅（需扩展组件）</td>
+<td>❌</td>
+<td>非标准：需 eBPF + tc + net_cls</td>
+</tr>
+<tr>
+<td></td>
+<td>网络 NUMA 感知调度</td>
+<td>网络与计算资源拓扑感知，避免带宽竞争</td>
+<td>✅</td>
+<td>❌</td>
+<td>非标准（TopologyHints）</td>
+</tr>
+<tr>
+<td><strong>通用</strong></td>
+<td>PSI 感知</td>
+<td>综合调度参考 CPU/Memory/IO pressure</td>
+<td>✅</td>
+<td>❌</td>
+<td><code>*.pressure</code></td>
+</tr>
+<tr>
+<td></td>
+<td>Freeze / Kill 控制</td>
+<td>在极端负载时暂停或终止低优任务</td>
+<td>✅（结合 memory.qos）</td>
+<td>✅</td>
+<td><code>cgroup.freeze</code>, <code>cgroup.kill</code></td>
+</tr>
+<tr>
+<td></td>
+<td>容器级 QoS 管控</td>
+<td>每个容器细粒度配置 resource policy</td>
+<td>✅</td>
+<td>❌</td>
+<td><code>cpu.*</code>, <code>memory.*</code>, <code>io.*</code></td>
+</tr>
+</tbody>
+</table>
+<h1 id="6-配置-kubernetes-使用-cgroup-v2">6. 配置 Kubernetes 使用 cgroup v2</h1>
+<h2 id="61-版本要求">6.1. 版本要求</h2>
+<table>
+<thead>
+<tr>
+<th>条件/组件</th>
+<th>要求/版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux 内核</td>
+<td>≥ 5.4（推荐 ≥ 5.10）</td>
+</tr>
+<tr>
+<td>containerd</td>
+<td>≥ 1.6，配置 <code>SystemdCgroup = true</code></td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>≥ 1.24，建议 1.28+</td>
+</tr>
+</tbody>
+</table>
+<h2 id="62-配置-kubernetes-使用-cgroup-v2">6.2. 配置 Kubernetes 使用 cgroup v2</h2>
+<p>配置 kubelet 使用 systemd 驱动（匹配 cgroup v2）</p>
+<ul>
+<li>kubelet 启动参数：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--cgroup-driver=systemd</span><br></pre></td></tr></table></figure>
+<ul>
+<li>containerd 的配置文件（<code>/etc/containerd/config.toml</code>）：</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]</span> </span><br><span class="line">    SystemdCgroup = true</span><br></pre></td></tr></table></figure>
+<ul>
+<li>重启 containerd：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart containerd</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<p>使用 <code>kubeadm init</code> 时建议显式指定：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --cgroup-driver=systemd ...</span><br></pre></td></tr></table></figure>
+<h2 id="63-验证-kubernetes-是否运行在-cgroup-v2">6.3. 验证 Kubernetes 是否运行在 cgroup v2</h2>
+<p>检查 cgroup 挂载类型：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount | grep cgroup</span><br><span class="line"><span class="comment"># 输出如下则为cgroup v2</span></span><br><span class="line">cgroup2 on /sys/fs/cgroup <span class="built_in">type</span> cgroup2 (rw,nosuid,nodev,noexec,relatime)</span><br></pre></td></tr></table></figure>
+<p>验证 Pod 使用的是 cgroup v2 路径：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -eo pid,comm,cgroup | grep containerd-shim</span><br></pre></td></tr></table></figure>
+<p>输出中 cgroup 路径应以 <code>/kubepods.slice/</code> 开头，无 <code>cpu,cpuacct:</code> 等逗号分隔子系统。</p>
+<p>参考：</p>
+<ul>
+<li>
+<p><a href="https://docs.kernel.org/admin-guide/cgroup-v2.html" target="_blank" rel="noopener">Control Group v2 The Linux Kernel documentation</a></p>
+</li>
+<li>
+<p><a href="https://docs.kernel.org/admin-guide/cgroup-v1/cgroups.html" target="_blank" rel="noopener">Control Groups v1 The Linux Kernel documentation</a></p>
+</li>
+<li>
+<p><a href="https://www.alibabacloud.com/help/zh/alinux/support/differences-between-cgroup-v1-and-cgroup-v2" target="_blank" rel="noopener">https://www.alibabacloud.com/help/zh/alinux/support/differences-between-cgroup-v1-and-cgroup-v2</a></p>
+</li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/cluster-optimization/scheduler/volcano-usage/" data-toggle="tooltip" data-placement="top" title="Volcano的使用">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-cgroup-v1-和-v2-的主要区别"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. cgroup v1 和 v2 的主要区别</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-层级结构设计"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. 层级结构设计</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-资源控制行为改进"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. 资源控制行为改进</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-配置接口文件系统"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">1.3. 配置接口（文件系统）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#14进程行为控制"><span class="toc-nav-number">1.4.</span> <span class="toc-nav-text">1.4.进程行为控制</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#15-内核支持和兼容性"><span class="toc-nav-number">1.5.</span> <span class="toc-nav-text">1.5. 内核支持和兼容性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#16-总结对比表"><span class="toc-nav-number">1.6.</span> <span class="toc-nav-text">1.6. 总结对比表</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-cgroup-v2的资源隔离性优化"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. Cgroup v2的资源隔离性优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-统一的层级结构消除隔离漏洞"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 统一的层级结构，消除隔离漏洞</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-增强的内存隔离机制"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. 增强的内存隔离机制</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-更精准的-cpu-调度控制"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 更精准的 CPU 调度控制</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-io-隔离更细粒度和可控"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4. IO 隔离更细粒度和可控</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-压力感知能力psi提升感知性隔离"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.5. 压力感知能力（PSI）提升感知性隔离</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#26-进程放置约束提升层级隔离清晰度"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">2.6. 进程放置约束提升层级隔离清晰度</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#27-更好的资源传播和继承规则"><span class="toc-nav-number">2.7.</span> <span class="toc-nav-text">2.7. 更好的资源传播和继承规则</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#28-资源隔离性提示对比"><span class="toc-nav-number">2.8.</span> <span class="toc-nav-text">2.8. 资源隔离性提示对比</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-cgroup-v1-和-cgroup-v2-的层级结构差异"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">3. cgroup v1 和 cgroup v2 的层级结构差异</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-cgroup-v1-的层级格式多树结构"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">3.1. cgroup v1 的层级格式（多树结构）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#32-cgroup-v2-的层级格式统一树结构"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">3.2. cgroup v2 的层级格式（统一树结构）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-对比总结表"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">3.3. 对比总结表</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-cgroup-v2-常用资源限制文件汇总"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">4. cgroup v2 常用资源限制文件汇总</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-cpu-控制器文件cpu"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">4.1. CPU 控制器文件（cpu.*）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-内存控制器文件memory"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">4.2. 内存控制器文件（memory.*）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#43-io-控制器文件io"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">4.3. IO 控制器文件（io.*）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-进程数控制器文件pids"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">4.4. 进程数控制器文件（pids.*）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#45-通用控制器文件所有-cgroup-目录都会包含"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">4.5. 通用控制器文件（所有 cgroup 目录都会包含）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#46-高阶行为控制"><span class="toc-nav-number">4.6.</span> <span class="toc-nav-text">4.6. 高阶行为控制</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-koordinator-vs-volcano-cgroup-v2对比"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">5. Koordinator vs Volcano cgroup v2对比</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#6-配置-kubernetes-使用-cgroup-v2"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">6. 配置 Kubernetes 使用 cgroup v2</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#61-版本要求"><span class="toc-nav-number">6.1.</span> <span class="toc-nav-text">6.1. 版本要求</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#62-配置-kubernetes-使用-cgroup-v2"><span class="toc-nav-number">6.2.</span> <span class="toc-nav-text">6.2. 配置 Kubernetes 使用 cgroup v2</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#63-验证-kubernetes-是否运行在-cgroup-v2"><span class="toc-nav-number">6.3.</span> <span class="toc-nav-text">6.3. 验证 Kubernetes 是否运行在 cgroup v2</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Runtime" title="Runtime">Runtime</a>
+                        
+                          <a class="tag" href="/tags/#Cgroup" title="Cgroup">Cgroup</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
