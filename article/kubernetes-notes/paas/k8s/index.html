@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          k8s知识体系 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/paas/k8s/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                        </div>
+                        <h1>k8s知识体系</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2018-06-23
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><h1 id="1-k8s知识体系">1. k8s知识体系</h1>
+<p>以下整理了k8s涉及的相关知识体系。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1752319832/article/kubernetes/core/k8s.png" alt="k8s体系"></p>
+<p>思维导图：<a href="https://www.processon.com/view/link/5d7f7d08e4b03461a3a937e2" target="_blank" rel="noopener">k8s体系</a></p>
+<h1 id="2-k8s重点开源项目">2. k8s重点开源项目</h1>
+<table>
+<thead>
+<tr>
+<th>大类</th>
+<th>小类</th>
+<th>项目及链接</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🧭 核心调度与资源管理</td>
+<td>核心调度器</td>
+<td><a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">kube-scheduler</a></td>
+<td>默认调度器，支持亲和性、优先级等策略</td>
+</tr>
+<tr>
+<td></td>
+<td>批处理调度</td>
+<td><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">Volcano</a></td>
+<td>支持 AI 训练、大数据任务 Gang 调度、队列管理</td>
+</tr>
+<tr>
+<td></td>
+<td>混部调度</td>
+<td><a href="https://github.com/koordinator-sh/koordinator" target="_blank" rel="noopener">Koordinator</a></td>
+<td>支持离在线混部、QoS 管理、NUMA 亲和等能力</td>
+</tr>
+<tr>
+<td></td>
+<td>多集群调度</td>
+<td><a href="https://github.com/karmada-io/karmada" target="_blank" rel="noopener">Karmada</a></td>
+<td>多集群资源调度和统一控制</td>
+</tr>
+<tr>
+<td></td>
+<td>Pod 优化调度</td>
+<td><a href="https://github.com/kubernetes-sigs/descheduler" target="_blank" rel="noopener">Descheduler</a></td>
+<td>定期检测资源不均衡并重新调度</td>
+</tr>
+<tr>
+<td>🌐 网络与服务网格</td>
+<td>网络插件（CNI）</td>
+<td><a href="https://github.com/projectcalico/calico" target="_blank" rel="noopener">Calico</a> <br><a href="https://github.com/cilium/cilium" target="_blank" rel="noopener">Cilium</a><br><a href="https://github.com/flannel-io/flannel" target="_blank" rel="noopener">Flannel</a></td>
+<td>Pod 网络连接，Cilium 基于 eBPF 支持 L7 策略</td>
+</tr>
+<tr>
+<td></td>
+<td>服务网格</td>
+<td><a href="https://github.com/istio/istio" target="_blank" rel="noopener">Istio</a><br><a href="https://github.com/linkerd/linkerd2" target="_blank" rel="noopener">Linkerd</a></td>
+<td>微服务通信控制：认证、流量治理、可观测性</td>
+</tr>
+<tr>
+<td></td>
+<td>DNS 服务</td>
+<td><a href="https://github.com/coredns/coredns" target="_blank" rel="noopener">CoreDNS</a></td>
+<td>Kubernetes 默认 DNS 插件</td>
+</tr>
+<tr>
+<td></td>
+<td>LoadBalancer</td>
+<td><a href="https://github.com/metallb/metallb" target="_blank" rel="noopener">MetalLB</a></td>
+<td>裸金属集群中提供 LoadBalancer 类型服务</td>
+</tr>
+<tr>
+<td></td>
+<td>Gateway 网关</td>
+<td><a href="https://github.com/apache/apisix-ingress-controller" target="_blank" rel="noopener">Apache APISIX Ingress</a><br><a href="https://github.com/Kong/kubernetes-ingress-controller" target="_blank" rel="noopener">Kong Ingress</a><br><a href="https://github.com/kubernetes/ingress-nginx" target="_blank" rel="noopener">NGINX Ingress</a><br><a href="https://github.com/envoyproxy/gateway" target="_blank" rel="noopener">Envoy Gateway</a></td>
+<td>支持 Ingress/Gateway API，提供流量入口、认证、限流等</td>
+</tr>
+<tr>
+<td>🔐 安全与策略控制</td>
+<td>策略控制</td>
+<td><a href="https://github.com/kyverno/kyverno" target="_blank" rel="noopener">Kyverno</a><br><a href="https://github.com/open-policy-agent/gatekeeper" target="_blank" rel="noopener">Gatekeeper</a></td>
+<td>对资源进行策略校验、合规控制</td>
+</tr>
+<tr>
+<td></td>
+<td>密钥管理</td>
+<td><a href="https://github.com/hashicorp/vault" target="_blank" rel="noopener">Vault</a><a href="https://github.com/bitnami-labs/sealed-secrets" target="_blank" rel="noopener">Sealed Secrets</a></td>
+<td>管理和加密存储 Kubernetes 密钥和凭据</td>
+</tr>
+<tr>
+<td></td>
+<td>运行时安全</td>
+<td><a href="https://github.com/falcosecurity/falco" target="_blank" rel="noopener">Falco</a></td>
+<td>实时监控容器中可疑行为</td>
+</tr>
+<tr>
+<td></td>
+<td>镜像签名</td>
+<td><a href="https://github.com/sigstore/cosign" target="_blank" rel="noopener">cosign</a></td>
+<td>为容器镜像提供签名与验证功能</td>
+</tr>
+<tr>
+<td>💾 存储与数据保护</td>
+<td>CSI 存储</td>
+<td><a href="https://github.com/longhorn/longhorn" target="_blank" rel="noopener">Longhorn</a><br><a href="https://github.com/rook/rook" target="_blank" rel="noopener">Rook</a></td>
+<td>提供持久化块存储或对象存储能力</td>
+</tr>
+<tr>
+<td></td>
+<td>备份与恢复</td>
+<td><a href="https://github.com/vmware-tanzu/velero" target="_blank" rel="noopener">Velero</a></td>
+<td>Pod 和卷的备份、恢复、集群迁移</td>
+</tr>
+<tr>
+<td></td>
+<td>卷调度组件</td>
+<td><a href="https://github.com/kubernetes-csi/external-provisioner" target="_blank" rel="noopener">external-provisioner</a></td>
+<td>Kubernetes 官方 CSI 卷调度器</td>
+</tr>
+<tr>
+<td>📊 监控与可观测性</td>
+<td>指标采集</td>
+<td><a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a><br><a href="https://github.com/kubernetes/kube-state-metrics" target="_blank" rel="noopener">kube-state-metrics</a></td>
+<td>收集节点/Pod 状态与业务指标</td>
+</tr>
+<tr>
+<td></td>
+<td>可视化展示</td>
+<td><a href="https://github.com/grafana/grafana" target="_blank" rel="noopener">Grafana</a></td>
+<td>指标、日志、链路追踪可视化</td>
+</tr>
+<tr>
+<td></td>
+<td>日志系统</td>
+<td><a href="https://github.com/grafana/loki" target="_blank" rel="noopener">Loki</a><br><a href="https://github.com/fluent/fluent-bit" target="_blank" rel="noopener">Fluent Bit</a></td>
+<td>日志采集与聚合，低资源占用</td>
+</tr>
+<tr>
+<td></td>
+<td>链路追踪</td>
+<td><a href="https://github.com/jaegertracing/jaeger" target="_blank" rel="noopener">Jaeger</a><br><a href="https://github.com/open-telemetry/opentelemetry-collector" target="_blank" rel="noopener">OpenTelemetry</a></td>
+<td>追踪服务调用链路、性能瓶颈</td>
+</tr>
+<tr>
+<td>🧪 CI/CD 与 GitOps</td>
+<td>工作流引擎</td>
+<td><a href="https://github.com/argoproj/argo-workflows" target="_blank" rel="noopener">Argo Workflows</a><br><a href="https://github.com/tektoncd/pipeline" target="_blank" rel="noopener">Tekton</a></td>
+<td>原生工作流与流水线管理</td>
+</tr>
+<tr>
+<td></td>
+<td>GitOps</td>
+<td><a href="https://github.com/argoproj/argo-cd" target="_blank" rel="noopener">Argo CD</a><a href="https://github.com/fluxcd/flux2" target="_blank" rel="noopener">Flux</a></td>
+<td>Git 驱动的自动部署与管理</td>
+</tr>
+<tr>
+<td></td>
+<td>镜像构建</td>
+<td><a href="https://github.com/GoogleContainerTools/kaniko" target="_blank" rel="noopener">Kaniko</a><br><a href="https://github.com/moby/buildkit" target="_blank" rel="noopener">BuildKit</a></td>
+<td>无需 Docker daemon 的镜像构建工具</td>
+</tr>
+<tr>
+<td></td>
+<td>应用包管理</td>
+<td><a href="https://github.com/helm/helm" target="_blank" rel="noopener">Helm</a></td>
+<td>Kubernetes 最主流的应用部署工具，支持模板化部署</td>
+</tr>
+<tr>
+<td>⚙️ 集群运维与扩展</td>
+<td>快速部署</td>
+<td><a href="https://github.com/kubernetes/kubeadm" target="_blank" rel="noopener">kubeadm</a><br><a href="https://github.com/kubernetes-sigs/kind" target="_blank" rel="noopener">kind</a><br><a href="https://github.com/k3s-io/k3s" target="_blank" rel="noopener">k3s</a></td>
+<td>轻量化和本地环境 Kubernetes 集群安装工具</td>
+</tr>
+<tr>
+<td></td>
+<td>节点扩缩容</td>
+<td><a href="https://github.com/kubernetes/autoscaler" target="_blank" rel="noopener">Cluster Autoscaler</a></td>
+<td>根据 Pod 排队与资源使用率自动扩缩容节点</td>
+</tr>
+<tr>
+<td></td>
+<td>多集群互联</td>
+<td><a href="https://github.com/submariner-io/submariner" target="_blank" rel="noopener">Submariner</a></td>
+<td>跨集群的网络互通方案</td>
+</tr>
+<tr>
+<td></td>
+<td>故障检测</td>
+<td><a href="https://github.com/kubernetes/node-problem-detector" target="_blank" rel="noopener">Node Problem Detector</a></td>
+<td>检测节点硬件、系统异常并上报 K8s</td>
+</tr>
+<tr>
+<td></td>
+<td>混沌测试</td>
+<td><a href="https://github.com/chaos-mesh/chaos-mesh" target="_blank" rel="noopener">Chaos Mesh</a><br><a href="https://github.com/litmuschaos/litmus" target="_blank" rel="noopener">Litmus</a></td>
+<td>注入网络/CPU/磁盘等故障模拟场景</td>
+</tr>
+<tr>
+<td></td>
+<td>Workload 扩展</td>
+<td><a href="https://github.com/openkruise/kruise" target="_blank" rel="noopener">OpenKruise</a></td>
+<td>扩展原生 workload 控制器能力，如 Sidecar、InPlace 升级</td>
+</tr>
+<tr>
+<td></td>
+<td>应用交付平台</td>
+<td><a href="https://github.com/kubevela/kubevela" target="_blank" rel="noopener">KubeVela</a></td>
+<td>基于 OAM 模型，提供开发者友好、平台团队可控的应用交付能力</td>
+</tr>
+<tr>
+<td>🤖 AI 与大数据</td>
+<td>AI 平台</td>
+<td><a href="https://github.com/kubeflow/kubeflow" target="_blank" rel="noopener">Kubeflow</a></td>
+<td>支持训练、调度、模型管理的机器学习平台</td>
+</tr>
+<tr>
+<td></td>
+<td>联邦学习</td>
+<td><a href="https://github.com/FederatedAI/KubeFATE" target="_blank" rel="noopener">KubeFATE</a></td>
+<td>基于 K8s 的联邦学习调度与部署平台</td>
+</tr>
+<tr>
+<td></td>
+<td>模型推理</td>
+<td><a href="https://github.com/triton-inference-server/server" target="_blank" rel="noopener">Triton Inference Server</a><br><a href="https://github.com/vllm-project/vllm" target="_blank" rel="noopener">vLLM</a></td>
+<td>高性能大模型/AI 模型推理服务</td>
+</tr>
+<tr>
+<td></td>
+<td>分布式调度器</td>
+<td><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">Volcano</a></td>
+<td>支持 AI 大数据任务的 batch 资源调度</td>
+</tr>
+<tr>
+<td>⚡ GPU 与硬件加速</td>
+<td>GPU 驱动插件</td>
+<td><a href="https://github.com/NVIDIA/k8s-device-plugin" target="_blank" rel="noopener">NVIDIA device plugin</a></td>
+<td>为 K8s 提供 GPU 发现、分配与隔离能力</td>
+</tr>
+<tr>
+<td></td>
+<td>GPU 监控工具</td>
+<td><a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">DCGM Exporter</a></td>
+<td>GPU 状态指标（温度、利用率、内存）采集器，用于 Prometheus</td>
+</tr>
+<tr>
+<td></td>
+<td>GPU 虚拟化</td>
+<td><a href="https://github.com/NVIDIA/cloud-native-technologies" target="_blank" rel="noopener">vGPU manager</a></td>
+<td>管理 GPU 分片、vGPU 分配</td>
+</tr>
+<tr>
+<td></td>
+<td>GPU 调度增强</td>
+<td><a href="https://github.com/koordinator-sh/koordinator" target="_blank" rel="noopener">Koordinator</a><br><a href="https://github.com/volcano-sh/volcano" target="_blank" rel="noopener">Volcano</a></td>
+<td>支持 NUMA-aware、GPU topology-aware 的任务调度策略</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/paas/12-factor/" data-toggle="tooltip" data-placement="top" title="12 Factor">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/kubernetes-notes/resource/quality-of-service/" data-toggle="tooltip" data-placement="top" title="资源服务质量">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-k8s知识体系"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. k8s知识体系</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-k8s重点开源项目"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. k8s重点开源项目</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          RAG工程 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/linux-notes/LLM/llm-rag/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#大模型" title="大模型">大模型</a>
+                            
+                        </div>
+                        <h1>RAG工程</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2025-09-13
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><blockquote>
+<p>本文基于<a href="https://github.com/AlibabaCloudDocs/aliyun_acp_learning/tree/main" target="_blank" rel="noopener">GitHub - AlibabaCloudDocs/aliyun_acp_learning</a>内容整理。</p>
+</blockquote>
+<h1 id="1-rag检索增强生成">1. RAG（检索增强生成）</h1>
+<p><strong>RAG（Retrieval-Augmented Generation，检索增强生成）</strong> 就是实现上下文工程的强大技术方案。</p>
+<p>核心思想：</p>
+<ul>
+<li>
+<p>检索：检索与私域知识相关的知识片段。</p>
+</li>
+<li>
+<p>增强：与用户的问题合并喂给大模型。</p>
+</li>
+<li>
+<p>生成：生成大模型返回的回答。</p>
+</li>
+</ul>
+<p>构建RAG主要为2个阶段：</p>
+<h2 id="11-建立索引">1.1. 建立索引</h2>
+<p>建立索引是为了将私有知识文档或片段转换为可以高效检索的形式。通过将文件内容分割并转化为多维向量（使用专用 Embedding 模型），并结合向量存储保留文本的语义信息，方便进行相似度计算。向量化使得模型能够高效检索和匹配相关内容，特别是在处理大规模知识库时，显著提高了查询的准确性和响应速度。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1757338374/article/linux/llm/rag_1.png" alt></p>
+<p>建议索引主要包含以下步骤：</p>
+<ol>
+<li>
+<p><strong>文档解析</strong>：需要将各种格式的文档（pdf, word）解析成大模型可理解的格式。</p>
+</li>
+<li>
+<p><strong>文本分段</strong>：对解析后的文档进行分类分段，以便可以快速找到。</p>
+</li>
+<li>
+<p><strong>文本向量化</strong>：对文本进行数字化，以便进行相似度比较和寻址。</p>
+</li>
+<li>
+<p><strong>存储索引</strong>：将向量化后的数据存储到向量数据库，增加后续的查找速度。</p>
+</li>
+</ol>
+<h2 id="12-检索与生成">1.2. 检索与生成</h2>
+<p>检索生成是根据用户的提问，从索引中检索相关的文档片段，这些片段会与提问一起输入到大模型生成最终的回答。这样大模型就能够回答私有知识问题了。</p>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1757338376/article/linux/llm/rag_2.png" alt></p>
+<ol>
+<li>
+<p>检索：检索会把问题同向量数据库的进行相似度比较，并找出最相关的段落。</p>
+</li>
+<li>
+<p>生成：将问题和检索的内容生成提示词喂给大模型，利用大模型的总结能力返回答案。</p>
+</li>
+</ol>
+<h2 id="13-实践rag应用">1.3. 实践RAG应用</h2>
+<p><strong>1、基于公司的制度文件创建RAG应用</strong>，步骤如下：</p>
+<ol>
+<li>
+<p><strong>解析文本文件</strong></p>
+</li>
+<li>
+<p><strong>创建索引</strong></p>
+</li>
+<li>
+<p><strong>创建提问引擎（设置流式输出）</strong></p>
+</li>
+<li>
+<p><strong>输入问题并输出答案</strong></p>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入依赖</span></span><br><span class="line"><span class="keyword">from</span> llama_index.embeddings.dashscope <span class="keyword">import</span> DashScopeEmbedding,DashScopeTextEmbeddingModels</span><br><span class="line"><span class="keyword">from</span> llama_index.core <span class="keyword">import</span> SimpleDirectoryReader,VectorStoreIndex</span><br><span class="line"><span class="keyword">from</span> llama_index.llms.openai_like <span class="keyword">import</span> OpenAILike</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这两行代码是用于消除 WARNING 警告信息，避免干扰阅读学习，生产环境中建议根据需要来设置日志级别</span></span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line">logging.basicConfig(level=logging.ERROR)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"正在解析文件..."</span>)</span><br><span class="line"><span class="comment"># LlamaIndex提供了SimpleDirectoryReader方法，可以直接将指定文件夹中的文件加载为document对象，对应着解析过程</span></span><br><span class="line">documents = SimpleDirectoryReader(<span class="string">'./docs'</span>).load_data()</span><br><span class="line"></span><br><span class="line">print(<span class="string">"正在创建索引..."</span>)</span><br><span class="line"><span class="comment"># from_documents方法包含切片与建立索引步骤</span></span><br><span class="line">index = VectorStoreIndex.from_documents(</span><br><span class="line">    documents,</span><br><span class="line">    <span class="comment"># 指定embedding 模型</span></span><br><span class="line">    embed_model=DashScopeEmbedding(</span><br><span class="line">        <span class="comment"># 你也可以使用阿里云提供的其它embedding模型：https://help.aliyun.com/zh/model-studio/getting-started/models#3383780daf8hw</span></span><br><span class="line">        model_name=DashScopeTextEmbeddingModels.TEXT_EMBEDDING_V2</span><br><span class="line">    ))</span><br><span class="line">print(<span class="string">"正在创建提问引擎..."</span>)</span><br><span class="line">query_engine = index.as_query_engine(</span><br><span class="line">    <span class="comment"># 设置为流式输出</span></span><br><span class="line">    streaming=<span class="literal">True</span>,</span><br><span class="line">    <span class="comment"># 此处使用qwen-plus模型，你也可以使用阿里云提供的其它qwen的文本生成模型：https://help.aliyun.com/zh/model-studio/getting-started/models#9f8890ce29g5u</span></span><br><span class="line">    llm=OpenAILike(</span><br><span class="line">        model=<span class="string">"qwen-plus"</span>,</span><br><span class="line">        api_base=<span class="string">"https://dashscope.aliyuncs.com/compatible-mode/v1"</span>,</span><br><span class="line">        api_key=os.getenv(<span class="string">"DASHSCOPE_API_KEY"</span>),</span><br><span class="line">        is_chat_model=<span class="literal">True</span></span><br><span class="line">        ))</span><br><span class="line">print(<span class="string">"正在生成回复..."</span>)</span><br><span class="line">streaming_response = query_engine.query(<span class="string">'我们公司项目管理应该用什么工具'</span>)</span><br><span class="line">print(<span class="string">"回答是："</span>)</span><br><span class="line"><span class="comment"># 采用流式输出</span></span><br><span class="line">streaming_response.print_response_stream()</span><br></pre></td></tr></table></figure>
+<p><strong>2、RAG程序优化，保存和加载索引</strong></p>
+<p>由于创建索引的时间比较长，如果提前创建索引并保存到本地，则可以提升大模型回答的速度。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将索引保存为本地文件</span></span><br><span class="line">index.storage_context.persist(<span class="string">"knowledge_base/test"</span>)</span><br><span class="line">print(<span class="string">"索引文件保存到了knowledge_base/test"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将本地索引文件加载为索引</span></span><br><span class="line"><span class="keyword">from</span> llama_index.core <span class="keyword">import</span> StorageContext,load_index_from_storage</span><br><span class="line">storage_context = StorageContext.from_defaults(persist_dir=<span class="string">"knowledge_base/test"</span>)</span><br><span class="line">index = load_index_from_storage(storage_context,embed_model=DashScopeEmbedding(</span><br><span class="line">        model_name=DashScopeTextEmbeddingModels.TEXT_EMBEDDING_V2</span><br><span class="line">    ))</span><br><span class="line">print(<span class="string">"成功从knowledge_base/test路径加载索引"</span>)</span><br></pre></td></tr></table></figure>
+<p>封装：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> chatbot <span class="keyword">import</span> rag</span><br><span class="line"></span><br><span class="line"><span class="comment"># 引文在前面的步骤中已经建立了索引，因此这里可以直接加载索引。如果需要重建索引，可以增加一行代码：rag.indexing()</span></span><br><span class="line">index = rag.load_index(persist_path=<span class="string">'./knowledge_base/test'</span>)</span><br><span class="line">query_engine = rag.create_query_engine(index=index)</span><br><span class="line"></span><br><span class="line">rag.ask(<span class="string">'我们公司项目管理应该用什么工具'</span>, query_engine=query_engine)</span><br></pre></td></tr></table></figure>
+<h1 id="2-rag工作流程优化">2. RAG工作流程优化</h1>
+<p>rag的工作流程如下：</p>
+<ol>
+<li>
+<p>解析与切片</p>
+</li>
+<li>
+<p>向量存储</p>
+</li>
+<li>
+<p>检索召回</p>
+</li>
+<li>
+<p>生成答案</p>
+</li>
+</ol>
+<p><img src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1757591798/article/linux/llm/rag.jpg" alt></p>
+<p>RAG各个环节优化策略</p>
+<h2 id="21-文档准备阶段">2.1. 文档准备阶段</h2>
+<h2 id="22-文档解析与切片阶段">2.2. 文档解析与切片阶段</h2>
+<h3 id="221-问题分类及改进策略">2.2.1. 问题分类及改进策略</h3>
+<h3 id="222-借助工具解析pdf到markdown">2.2.2. 借助工具解析pdf到markdown</h3>
+<h3 id="223-使用多种文档切片方法">2.2.3. 使用多种文档切片方法</h3>
+<ol>
+<li>
+<p>Token切片</p>
+</li>
+<li>
+<p>句子切片</p>
+</li>
+<li>
+<p>句子窗口切片</p>
+</li>
+<li>
+<p>语义切片</p>
+</li>
+<li>
+<p>markdown切片</p>
+</li>
+</ol>
+<h2 id="23-切片向量化与存储阶段">2.3. 切片向量化与存储阶段</h2>
+<p>文档切片后需要建立索引，可以使用嵌入（Embedding）模型将切片向量化，并存储到向量数据库中。</p>
+<h3 id="231-了解embedding与向量化">2.3.1. 了解Embedding与向量化</h3>
+<p>Embedding模型将文本转换为高维向量，向量之间夹角越小说明相似度越高。</p>
+<h3 id="232-选择合适的embedding模型">2.3.2. 选择合适的Embedding模型</h3>
+<p>不同的Embedding模型对相同文字得到的向量可能完全不同，越新的Embedding模型其表现越好。在实践中，单纯升级Embedding模型就可以显著提升检索质量。</p>
+<h3 id="233-选择合适的向量数据库">2.3.3. 选择合适的向量数据库</h3>
+<p>向量存储方案从简单到复杂如下：</p>
+<ul>
+<li>
+<p><code>内存向量存储</code>：优点快速上手，开发测试；缺点数据无法持久化，受限于内存大小。</p>
+</li>
+<li>
+<p><code>本地向量数据库</code>：例如Milvus、Qdrant 等。这些数据库提供了数据持久化和高效检索能力。优点是功能完整、可控性强；缺点是需要自行部署维护。</p>
+</li>
+<li>
+<p><code>云服务向量存储</code>：例如阿里云的向量检索服务（DashVector），向量检索服务 Milvus 版，已有数据库的向量能力。优点是按量付费，成本可控，无需运维。</p>
+</li>
+</ul>
+<p>选择建议：</p>
+<ul>
+<li>
+<p>开发测试选择内存向量存储</p>
+</li>
+<li>
+<p>小规模应用选择本地向量数据库</p>
+</li>
+<li>
+<p>生产环境使用云服务。</p>
+</li>
+</ul>
+<h2 id="24-向量召回阶段">2.4. 向量召回阶段</h2>
+<h3 id="231-问题改写">2.3.1. 问题改写</h3>
+<ul>
+<li>
+<p>使用大模型扩充问题</p>
+</li>
+<li>
+<p>将单一查询改为多步查询</p>
+</li>
+<li>
+<p>用假设文档来增强检索</p>
+</li>
+</ul>
+<h3 id="232-提取标签增强检索">2.3.2. 提取标签增强检索</h3>
+<p>在向量检索的基础上我们可以增加标签过滤：</p>
+<ol>
+<li>
+<p>建立索引时，从文档切片中提取结构化标签</p>
+</li>
+<li>
+<p>检索时，从用户问题中提取对应标签进行过滤</p>
+</li>
+</ol>
+<h3 id="223-重排序">2.2.3. 重排序</h3>
+<p>从向量数据库中检索出20条文档切片，通过文本排序模型进行重新排序，删选出最相关的3条信息。</p>
+<h2 id="25-生成答案阶段">2.5. 生成答案阶段</h2>
+<p>大模型生成的答案不及预期，可以通过以下方式解决：</p>
+<ol>
+<li>
+<p>选择合适的大模型</p>
+</li>
+<li>
+<p>充分优化提示词模板：明确要求不编造答案；添加内容分隔标记；根据问题类型调整模板。</p>
+</li>
+<li>
+<p>调整大模型参数</p>
+</li>
+<li>
+<p>调优大模型</p>
+</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li>
+<p><a href="https://github.com/AlibabaCloudDocs/aliyun_acp_learning/blob/main/%E5%A4%A7%E6%A8%A1%E5%9E%8BACP%E8%AE%A4%E8%AF%81%E6%95%99%E7%A8%8B/p2_%E6%9E%84%E9%80%A0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/2_2_%E6%89%A9%E5%B1%95%E7%AD%94%E7%96%91%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E7%9F%A5%E8%AF%86%E8%8C%83%E5%9B%B4.ipynb" target="_blank" rel="noopener">扩展答疑机器人的知识范围</a></p>
+</li>
+<li>
+<p><a href="https://github.com/AlibabaCloudDocs/aliyun_acp_learning/blob/main/%E5%A4%A7%E6%A8%A1%E5%9E%8BACP%E8%AE%A4%E8%AF%81%E6%95%99%E7%A8%8B/p2_%E6%9E%84%E9%80%A0%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%97%AE%E7%AD%94%E7%B3%BB%E7%BB%9F/2_5_%E4%BC%98%E5%8C%96RAG%E5%BA%94%E7%94%A8%E6%8F%90%E5%8D%87%E9%97%AE%E7%AD%94%E5%87%86%E7%A1%AE%E5%BA%A6.ipynb" target="_blank" rel="noopener">优化RAG应用提升问答准确度</a></p>
+</li>
+</ul>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/linux-notes/LLM/how-llm-work/" data-toggle="tooltip" data-placement="top" title="大模型原理">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/linux-notes/LLM/llm-fine-tuning/" data-toggle="tooltip" data-placement="top" title="大模型微调">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-rag检索增强生成"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">1. RAG（检索增强生成）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-建立索引"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">1.1. 建立索引</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#12-检索与生成"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">1.2. 检索与生成</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-实践rag应用"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">1.3. 实践RAG应用</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-rag工作流程优化"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">2. RAG工作流程优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-文档准备阶段"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">2.1. 文档准备阶段</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-文档解析与切片阶段"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">2.2. 文档解析与切片阶段</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#221-问题分类及改进策略"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">2.2.1. 问题分类及改进策略</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#222-借助工具解析pdf到markdown"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">2.2.2. 借助工具解析pdf到markdown</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#223-使用多种文档切片方法"><span class="toc-nav-number">2.2.3.</span> <span class="toc-nav-text">2.2.3. 使用多种文档切片方法</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-切片向量化与存储阶段"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">2.3. 切片向量化与存储阶段</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#231-了解embedding与向量化"><span class="toc-nav-number">2.3.1.</span> <span class="toc-nav-text">2.3.1. 了解Embedding与向量化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#232-选择合适的embedding模型"><span class="toc-nav-number">2.3.2.</span> <span class="toc-nav-text">2.3.2. 选择合适的Embedding模型</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#233-选择合适的向量数据库"><span class="toc-nav-number">2.3.3.</span> <span class="toc-nav-text">2.3.3. 选择合适的向量数据库</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#24-向量召回阶段"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">2.4. 向量召回阶段</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#231-问题改写"><span class="toc-nav-number">2.4.1.</span> <span class="toc-nav-text">2.3.1. 问题改写</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#232-提取标签增强检索"><span class="toc-nav-number">2.4.2.</span> <span class="toc-nav-text">2.3.2. 提取标签增强检索</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#223-重排序"><span class="toc-nav-number">2.4.3.</span> <span class="toc-nav-text">2.2.3. 重排序</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#25-生成答案阶段"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">2.5. 生成答案阶段</span></a></li></ol></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#大模型" title="大模型">大模型</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

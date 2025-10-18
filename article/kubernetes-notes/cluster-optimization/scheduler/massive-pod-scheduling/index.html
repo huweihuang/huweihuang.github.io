@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          大规模Pod调度优化 - 胡伟煌 | Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://www.huweihuang.com/article/kubernetes-notes/cluster-optimization/scheduler/massive-pod-scheduling/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+
+    <link rel="stylesheet" href="/css/donate.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('https://res.cloudinary.com/dqxtn0ick/image/upload/v1542285471/header/article.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                            
+                        </div>
+                        <h1>大规模Pod调度优化</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 胡伟煌 on
+                            2025-06-07
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">胡伟煌</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <div id="vip-container"><p>假设在 Kubernetes 集群中一次性调度 1 万个 Pod， 这是一项极具挑战性的任务。如果管理不当，可能会导致调度器瓶颈、API Server 过载，甚至整个集群崩溃。</p>
+<p>本文将探讨优化大规模 Pod 调度的最佳实践与技术手段。</p>
+<hr>
+<h1 id="面临的挑战">🚀 面临的挑战</h1>
+<ul>
+<li><strong>调度器压力大</strong>：大量 Pod 同时进入 Pending 状态，调度器处理不过来。</li>
+<li><strong>API Server 压力大</strong>：高频的 CREATE/GET/LIST 请求可能触发限流。</li>
+<li><strong>etcd 延迟增加</strong>：写入及状态变化频繁，导致存储后端压力过大。</li>
+<li><strong>节点压力不均衡</strong>：调度不均可导致部分节点 CPU/内存/磁盘 IO 资源打爆。</li>
+<li><strong>网络插件瓶颈</strong>：CNI 插件无法处理大量并发的 IP 分配。</li>
+</ul>
+<hr>
+<h1 id="1-调度器优化">1. 调度器优化</h1>
+<h2 id="11-控制-pod-创建速率">🔧 1.1. 控制 Pod 创建速率</h2>
+<p>不要一次性启动 10,000 个 Pod，而是：</p>
+<ul>
+<li><strong>分批创建</strong>：例如每批创建 500–1000 个 Pod。</li>
+<li><strong>控制速率</strong>：通过脚本或 Job 控制器引入 <code>sleep</code> 等时间间隔。</li>
+</ul>
+<h3 id="示例-shell-脚本">示例 Shell 脚本：</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> batches/batch_*.yaml; <span class="keyword">do</span></span><br><span class="line">  kubectl apply -f <span class="string">"<span class="variable">$file</span>"</span></span><br><span class="line">  sleep 10</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<h2 id="️-12-调优默认调度器">⚙️ 1.2. 调优默认调度器</h2>
+<p>默认调度器（<code>kube-scheduler</code>）在高并发场景下可能成为瓶颈。为了高效调度 1 万个以上的 Pod，可以从以下几个方面进行深入调优：</p>
+<h3 id="1-提高并发调度能力">✅ 1. 提高并发调度能力</h3>
+<p>Kubernetes v1.19+ 支持配置并行调度线程数：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubescheduler.config.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">KubeSchedulerConfiguration</span></span><br><span class="line"><span class="attr">profiles:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">schedulerName:</span> <span class="string">default-scheduler</span></span><br><span class="line">  <span class="attr">parallelism:</span> <span class="number">64</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>推荐值为 CPU 核心数的 2~4 倍（视调度密集度而定）。<br>
+注意：并发过高可能导致内存激增或 etcd 压力过大，建议结合压测评估。</p>
+</blockquote>
+<h3 id="2-启用缓存调度器scheduling-queue-优化">✅ 2. 启用缓存调度器（Scheduling Queue 优化）</h3>
+<p>调度器内部维护了 Pending Pod 的优先队列（<code>PriorityQueue</code>）与 Node 信息缓存。</p>
+<ul>
+<li>
+<p><strong>确保使用优先级调度</strong>（PodPriority）可帮助调度器优先处理重要任务。</p>
+</li>
+<li>
+<p>配置调度器时可启用 <code>permit</code> 插件阶段，在调度决策前提前控制调度流量。</p>
+</li>
+</ul>
+<h3 id="3-关闭或精简耗时插件">✅ 3. 关闭或精简耗时插件</h3>
+<p>某些默认启用的插件在调度高峰时会带来性能负担：</p>
+<table>
+<thead>
+<tr>
+<th>插件</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VolumeBinding</td>
+<td>Bind</td>
+<td>持久化卷绑定，需访问 API</td>
+</tr>
+<tr>
+<td>NodeResourcesFit</td>
+<td>Filter</td>
+<td>检查资源是否满足</td>
+</tr>
+<tr>
+<td>InterPodAffinity</td>
+<td>Filter</td>
+<td>Pod 之间亲和性计算复杂</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>优化建议</strong>：</p>
+<ul>
+<li>
+<p>无状态服务建议 <strong>关闭 VolumeBinding</strong> 插件。</p>
+</li>
+<li>
+<p>只使用必要的 Score 插件（如 <code>LeastAllocated</code>、<code>BalancedAllocation</code>）。</p>
+</li>
+</ul>
+<p>配置方式：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">plugins:</span></span><br><span class="line">  <span class="attr">score:</span></span><br><span class="line">    <span class="attr">disabled:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">"NodeResourcesBalancedAllocation"</span></span><br><span class="line">    <span class="attr">enabled:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">"NodeResourcesLeastAllocated"</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-预选节点集范围节点剪枝">✅ 4. 预选节点集范围（节点剪枝）</h3>
+<p>调度器默认会评估所有可调度节点，1 万 Pod × 1 千节点的组合极其耗时。</p>
+<p>优化方法：</p>
+<ul>
+<li>
+<p><strong>NodeAffinity</strong>：提前通过标签筛掉不符合的节点。</p>
+</li>
+<li>
+<p><strong>使用 preFilter 插件</strong> 自定义节点集合。</p>
+</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">affinity:</span></span><br><span class="line">  <span class="attr">nodeAffinity:</span></span><br><span class="line">    <span class="attr">requiredDuringSchedulingIgnoredDuringExecution:</span></span><br><span class="line">      <span class="attr">nodeSelectorTerms:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">matchExpressions:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">key:</span> <span class="string">node-role.kubernetes.io/worker</span></span><br><span class="line">          <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">          <span class="attr">values:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">batch</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-启用拓扑感知与亲和性缓存">✅ 5. 启用拓扑感知与亲和性缓存</h3>
+<p>使用拓扑调度建议：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">topologySpreadConstraints:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">maxSkew:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">topologyKey:</span> <span class="string">topology.kubernetes.io/zone</span></span><br><span class="line">  <span class="attr">whenUnsatisfiable:</span> <span class="string">ScheduleAnyway</span></span><br></pre></td></tr></table></figure>
+<h3 id="6-控制调度队列压力backoff-amp-retry">✅ 6. 控制调度队列压力（Backoff &amp; Retry）</h3>
+<p>Pod 多次调度失败会进入 backoff 队列，默认退避时间为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">InitialBackoff = <span class="number">1</span> * time.Second </span><br><span class="line">MaxBackoff = <span class="number">10</span> * time.Second</span><br></pre></td></tr></table></figure>
+<p>调大 <code>MaxBackoff</code> 可减缓高频重试对调度器的压力。</p>
+<h3 id="调优效果验证建议">🧪 调优效果验证建议：</h3>
+<ul>
+<li>
+<p>使用 <code>--v=5</code> 级别运行 <code>kube-scheduler</code>，输出调度详细日志。</p>
+</li>
+<li>
+<p>观察调度延迟指标（SchedulingLatencySeconds）：</p>
+<ul>
+<li>
+<p><code>framework_extension_point_duration_seconds</code></p>
+</li>
+<li>
+<p><code>scheduler_scheduling_duration_seconds_bucket</code></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="13-扩展调度器scheduling-framework-插件">🧩 1.3. 扩展调度器（Scheduling Framework 插件）</h2>
+<p>Kubernetes 支持通过调度框架插件机制自定义调度逻辑。</p>
+<h3 id="示例快速-filter-插件">✨ 示例：快速 Filter 插件</h3>
+<p>自定义过滤插件，可只评估部分节点，从而减少调度延迟：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FastFilterPlugin)</span> <span class="title">Filter</span><span class="params">(...)</span> *<span class="title">framework</span>.<span class="title">Status</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> strings.HasPrefix(node.Name, <span class="string">"compute-node-"</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> framework.NewStatus(framework.Success)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> framework.NewStatus(framework.Unschedulable)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="14-使用多个调度器调度器隔离">🧠 1.4. 使用多个调度器（调度器隔离）</h2>
+<p>并行部署多个调度器进程：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">schedulerName:</span> <span class="string">batch-scheduler</span></span><br></pre></td></tr></table></figure>
+<p>每类工作负载使用不同调度器进行处理，实现并行调度和资源隔离。</p>
+<h2 id="15-使用高性能调度系统">🛠 1.5. 使用高性能调度系统</h2>
+<h3 id="koordinator">Koordinator</h3>
+<ul>
+<li>支持批量调度、NUMA 感知、QoS 资源分级</li>
+<li>与 Kubernetes 调度框架兼容，部署简单</li>
+</ul>
+<h3 id="volcano">Volcano</h3>
+<ul>
+<li>面向大规模批处理、AI/ML、HPC 任务调度</li>
+<li>支持抢占、任务优先级、依赖关系等</li>
+</ul>
+<h2 id="16-监控与验证建议">📊 1.6. 监控与验证建议</h2>
+<ul>
+<li>使用 <code>kubectl get pods -w</code> 实时观察 Pending 状态</li>
+<li>关注调度事件 <code>FailedScheduling</code></li>
+<li>跟踪 API Server 指标：QPS、延迟、内存占用</li>
+<li>部署 Prometheus + Grafana 进行系统监控与可视化</li>
+</ul>
+<h2 id="17-总结对比">✅ 1.7. 总结对比</h2>
+<table>
+<thead>
+<tr>
+<th>优化方式</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>控制 Pod 创建速率</td>
+<td>避免控制面组件过载</td>
+</tr>
+<tr>
+<td>提高调度器并发度</td>
+<td>提升每秒调度吞吐</td>
+</tr>
+<tr>
+<td>编写调度器插件</td>
+<td>降低单次调度复杂度</td>
+</tr>
+<tr>
+<td>多调度器架构</td>
+<td>实现任务隔离与并行调度</td>
+</tr>
+<tr>
+<td>使用 Koordinator/Volcano</td>
+<td>面向 AI/批处理等高负载场景</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="2-etcd优化">2. Etcd优化</h1>
+<p>etcd 是 Kubernetes 控制平面的核心存储引擎，一旦在大规模 Pod 创建、调度过程中出现 <strong>写入延迟增加</strong>，会直接影响 API Server 性能，进而拖慢调度器和控制器反应速度，甚至引发集群不可用。</p>
+<h2 id="21-基础配置优化">🔧 2.1. 基础配置优化</h2>
+<h3 id="1-启用自动压缩历史数据">✅ 1. 启用自动压缩历史数据</h3>
+<p>etcd 默认会保留历史版本，随着对象变化增多，存储膨胀，导致延迟升高。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--auto-compaction-retention=1h   <span class="comment"># 每小时清理历史</span></span><br><span class="line">--snapshot-count=10000           <span class="comment"># 控制何时触发快照</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-启用-wal-压缩">✅ 2. 启用 WAL 压缩</h3>
+<p>压缩 Write-Ahead Log，减少磁盘 I/O 开销：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--experimental-initial-corrupt-check=<span class="literal">true</span></span><br><span class="line">--experimental-compact-hash-check-enabled=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="22-硬件层优化非常关键">💽 2.2. 硬件层优化（非常关键）</h2>
+<p>etcd 对 <strong>磁盘 IOPS 和延迟</strong> 敏感，推荐：</p>
+<ul>
+<li>
+<p><strong>使用 SSD</strong>（NVMe 最佳）</p>
+</li>
+<li>
+<p>etcd 独立磁盘，避免和 kubelet 或 container runtime 共用</p>
+</li>
+<li>
+<p>提升内存（建议 16G+）、CPU 性能（至少 4 核）</p>
+</li>
+<li>
+<p>开启 NUMA 亲和配置，减少跨核调度</p>
+</li>
+</ul>
+<h2 id="23-集群部署架构优化">🧱 2.3. 集群部署架构优化</h2>
+<h3 id="1-隔离部署-etcd">✅ 1. 隔离部署 etcd</h3>
+<p>etcd不要与 <code>kube-apiserver</code>、<code>controller-manager</code> 等组件共节点运行。</p>
+<p>1）<strong>etcd 对磁盘 IO、内存和 CPU 的性能非常敏感</strong>，特别是磁盘延迟对 etcd 性能和稳定性有显著影响。</p>
+<ul>
+<li>
+<p>kube-apiserver、controller-manager、scheduler 等组件也会频繁访问 etcd，产生较大 CPU 和内存负载。</p>
+</li>
+<li>
+<p>如果它们部署在同一节点，容易导致 <strong>资源竞争（尤其是 IO）</strong>，影响 etcd 的响应能力和稳定性，进而影响整个集群的控制面。</p>
+</li>
+</ul>
+<p>2） <strong>Kubernetes 通常运行在高速局域网内，访问 etcd 的延迟很小</strong></p>
+<ul>
+<li>
+<p>网络延迟在现代数据中心或云环境中通常是<strong>微秒到毫秒级别</strong>。</p>
+</li>
+<li>
+<p>只要保证 etcd 集群网络稳定，控制面组件即使不在同一个节点也能快速访问。</p>
+</li>
+</ul>
+<p>3） <strong>不在一个节点，可以避免“局部高负载”导致连锁影响</strong></p>
+<ul>
+<li>
+<p>如果 kube-apiserver 跟 etcd 同节点，一旦 kube-apiserver 突发流量（比如创建大量资源），会导致 <strong>etcd 所在节点资源被占满</strong>，从而影响 etcd 响应。</p>
+</li>
+<li>
+<p>反之亦然，etcd 的 GC 或 compaction 操作也可能影响 apiserver 的性能。</p>
+</li>
+</ul>
+<h3 id="2-多副本部署3~5个节点">✅ 2. 多副本部署（3~5个节点）</h3>
+<p>避免单点瓶颈，并启用高可用。</p>
+<h1 id="3-kube-apiserver优化">3. kube-apiserver优化</h1>
+<p>在大量 Pod 同时调度时，<strong>API Server 压力大</strong> 是造成集群卡顿或异常的核心瓶颈之一，主要表现为：</p>
+<ul>
+<li>
+<p>创建、更新、查询 Pod 等请求响应变慢</p>
+</li>
+<li>
+<p>kubelet、controller-manager 与 API Server 通信超时</p>
+</li>
+<li>
+<p>etcd QPS 激增、延迟升高，甚至触发熔断</p>
+</li>
+</ul>
+<p>以下是具体的优化策略，从集群参数、限流、组件解耦等多个层面展开：</p>
+<h2 id="31-控制请求速率限流">🧱 3.1. 控制请求速率（限流）</h2>
+<h3 id="1-控制客户端创建速率">✅ 1. 控制客户端创建速率</h3>
+<p>比如大量 Job/Deployment 控制器、脚本同时发出 <code>kubectl apply</code> 请求：</p>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>
+<p>采用 <code>kubectl --wait=false</code> 异步创建</p>
+</li>
+<li>
+<p>使用分批 apply 或 sleep 控制速率</p>
+</li>
+<li>
+<p>使用 controller（例如自定义 CRD + controller）分批分组管理 pod/job</p>
+</li>
+</ul>
+<h2 id="️-32-调优-api-server-参数">⚙️ 3.2. 调优 API Server 参数</h2>
+<p>在 kube-apiserver 启动参数中：</p>
+<h3 id="1-增加最大并发-qps">✅ 1. 增加最大并发 QPS</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--max-requests-inflight=4000              <span class="comment"># 默认 400，增加吞吐能力</span></span><br><span class="line">--max-mutating-requests-inflight=2000     <span class="comment"># 默认 200，调大写请求容量</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-增加缓存时间与响应窗口">✅ 2. 增加缓存时间与响应窗口</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--request-timeout=1m</span><br><span class="line">--min-request-timeout=300</span><br></pre></td></tr></table></figure>
+<h2 id="33-operator优化">3.3. operator优化</h2>
+<p>如果有开发自定义的operator，则需要对operator的逻辑进行优化。</p>
+<h3 id="1-使用-informer-缓存机制client-go-默认支持">✅ 1. 使用 informer 缓存机制（client-go 默认支持）</h3>
+<p>自定义控制器或调度插件中应使用共享缓存，而非频繁 <code>GET</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">informer := factory.Core().V1().Pods().Informer()</span><br></pre></td></tr></table></figure>
+<h3 id="2-减少不必要的-watch-或频繁-list-请求">✅ 2. 减少不必要的 Watch 或频繁 List 请求</h3>
+<ul>
+<li>
+<p>调度器插件中不要频繁访问 Pod 列表</p>
+</li>
+<li>
+<p>减少 metrics 或审计日志系统对 API 的高频采集</p>
+</li>
+</ul>
+<h1 id="4-网络插件优化">4. 网络插件优化</h1>
+<p>Kubernetes 网络插件（CNI）在大规模部署或高并发场景下，若处理能力跟不上，会出现 <strong>调度成功但网络不通、服务连接慢、跨节点通信异常</strong> 等问题。</p>
+<h2 id="41-网络瓶颈表现">🧭 4.1. 网络瓶颈表现</h2>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>可能原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pod 创建卡住在 <code>ContainerCreating</code></td>
+<td>CNI 插件调用超时，网络设备未初始化</td>
+</tr>
+<tr>
+<td>跨节点服务访问慢或超时</td>
+<td>网络插件转发路径性能不足，iptables/ebpf 累积</td>
+</tr>
+<tr>
+<td>集群中 ping 某些 Pod 慢</td>
+<td>某些节点流量瓶颈，或者 VXLAN 隧道高延迟</td>
+</tr>
+<tr>
+<td><code>kube-proxy</code> CPU 占满</td>
+<td>iptables 规则过多或频繁变更</td>
+</tr>
+</tbody>
+</table>
+<h2 id="42-选型优化选择高性能-cni-插件">✅ 4.2. 选型优化：选择高性能 CNI 插件</h2>
+<table>
+<thead>
+<tr>
+<th>插件</th>
+<th>性能特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://cilium.io" target="_blank" rel="noopener">Cilium</a></td>
+<td>eBPF 驱动，无需 iptables，极高性能，支持大规模节点</td>
+</tr>
+<tr>
+<td>Calico (BPF 模式)</td>
+<td>支持 eBPF 模式，性能更好于传统 iptables</td>
+</tr>
+<tr>
+<td>Flannel</td>
+<td>适用于小规模集群，性能普通，不推荐大集群使用</td>
+</tr>
+<tr>
+<td>Multus</td>
+<td>支持多网卡/多 CNI，适合边缘场景但调试复杂</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 推荐使用 <strong>Cilium 或 Calico（eBPF 模式）</strong>，避免使用传统 Flannel/VXLAN。</p>
+</blockquote>
+<h2 id="️-43-网络插件参数调优">⚙️ 4.3. 网络插件参数调优</h2>
+<h3 id="cilium-示例">🔹 Cilium 示例</h3>
+<p>配置 <code>/etc/cilium/cilium-config</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enable</span>-bpf-masquerade: <span class="string">"true"</span></span><br><span class="line"><span class="built_in">enable</span>-ipv4-masquerade: <span class="string">"false"</span></span><br><span class="line">bpf-lb-map-max: <span class="string">"65536"</span></span><br><span class="line">bpf-ct-global-tcp-max: <span class="string">"524288"</span></span><br><span class="line">bpf-ct-global-any-max: <span class="string">"262144"</span></span><br></pre></td></tr></table></figure>
+<p>并启用 kube-proxy 替代模式（kube-proxy-free）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kubeProxyReplacement:</span> <span class="string">"strict"</span></span><br></pre></td></tr></table></figure>
+<h2 id="44-跨节点通信优化">🔄 4.4. 跨节点通信优化</h2>
+<h3 id="1-减少-vxlan-封装或改为-native-routing">✅ 1. 减少 VXLAN 封装（或改为 Native Routing）</h3>
+<ul>
+<li>
+<p>Flannel/Calico VXLAN 模式性能差</p>
+</li>
+<li>
+<p>推荐切换为 Calico 的 <strong>BGP 模式</strong>（路由直达，无封装）</p>
+</li>
+</ul>
+<h3 id="2-使用-direct-server-returndsr-ecmp-路由">✅ 2. 使用 Direct Server Return（DSR）+ ECMP 路由</h3>
+<p>大流量服务部署时，避免中心化转发。</p>
+<h2 id="45-kube-proxy-优化">🔃 4.5. kube-proxy 优化</h2>
+<h3 id="1-使用-ipvs-模式代替-iptables">✅ 1. 使用 <code>ipvs</code> 模式代替 <code>iptables</code></h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">--proxy-mode=ipvs</span><br><span class="line">--ipvs-scheduler=rr</span><br></pre></td></tr></table></figure>
+<p>相比 <code>iptables</code>，<code>ipvs</code> 处理服务转发在大规模集群下 CPU 更省、延迟更低。</p>
+<h3 id="2-配合-ebpf-替代-kube-proxycilium-推荐">✅ 2. 配合 eBPF 替代 kube-proxy（Cilium 推荐）</h3>
+<p>Cilium 的 <code>kube-proxy-replacement=strict</code> 直接使用 BPF 加速服务调度。</p>
+<h2 id="46-节点系统参数优化">🔧 4.6. 节点系统参数优化</h2>
+<p>设置节点的内核参数，提升大流量下系统处理能力：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 提高 conntrack 表容量</span></span><br><span class="line">sysctl -w net.netfilter.nf_conntrack_max=262144</span><br><span class="line">sysctl -w net.netfilter.nf_conntrack_tcp_timeout_established=86400</span><br><span class="line"></span><br><span class="line"><span class="comment"># 允许更多文件描述符</span></span><br><span class="line"><span class="built_in">ulimit</span> -n 1048576</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调高队列长度</span></span><br><span class="line">sysctl -w net.core.somaxconn=1024</span><br><span class="line">sysctl -w net.core.netdev_max_backlog=250000</span><br></pre></td></tr></table></figure>
+<h2 id="47-监控关键指标">📊 4.7. 监控关键指标</h2>
+<p>通过 Cilium/Calico 自带 metrics 或 Prometheus 采集：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cilium_forwarding_latency_seconds</code></td>
+<td>转发延迟</td>
+</tr>
+<tr>
+<td><code>cilium_drop_count_total</code></td>
+<td>数据包被丢弃的原因</td>
+</tr>
+<tr>
+<td><code>iptables_rule_count</code></td>
+<td>kube-proxy 中规则数量</td>
+</tr>
+<tr>
+<td><code>conntrack_entries</code></td>
+<td>当前连接跟踪表大小</td>
+</tr>
+</tbody>
+</table>
+<h2 id="48-总结优化建议表">✅ 4.8. 总结优化建议表</h2>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插件选型</td>
+<td>使用 Cilium/Calico eBPF，避免 Flannel</td>
+</tr>
+<tr>
+<td>插件配置</td>
+<td>优化转发表、连接跟踪表大小</td>
+</tr>
+<tr>
+<td>网络架构</td>
+<td>BGP 替代 VXLAN，开启 kube-proxy-free</td>
+</tr>
+<tr>
+<td>系统内核</td>
+<td>调高 conntrack / backlog 等参数</td>
+</tr>
+<tr>
+<td>转发模式</td>
+<td>使用 ipvs 或 eBPF 加速 kube-proxy</td>
+</tr>
+<tr>
+<td>监控排查</td>
+<td>开启 drop 分析、BPF 路径追踪</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="5-总结">5. 总结</h1>
+<p>大规模 Pod 调度不仅仅是追求速度，更重要的是在高压下保持系统的稳定性与正确性。需要从各个方面进行集群优化才能承受大规模pod集群的性能压力。本文分别从以下几个方面进行优化：</p>
+<ul>
+<li>
+<p>调度器及扩展调度器</p>
+</li>
+<li>
+<p>ETCD优化</p>
+</li>
+<li>
+<p>kube-apiserver优化</p>
+</li>
+<li>
+<p>网络插件及节点优化</p>
+</li>
+</ul>
+<p>只要设计合理，Kubernetes 完全可以稳定高效地调度数万个 Pod。</p>
+</div>
+
+			<script src="https://my.openwrite.cn/js/readmore.js" type="text/javascript"></script>
+			<script>
+			var isMobile = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i);
+			if (!isMobile) {
+			    var btw = new BTWPlugin();
+			    btw.init({
+			        "id": "vip-container",
+			        "blogId": "30679-1666530720672-990",
+			        "name": "容器云架构",
+			        "qrcode": "https://res.cloudinary.com/dqxtn0ick/image/upload/v1551600382/blog/wechat-public-acconut.jpg",
+			        "keyword": "vip"
+			    });
+			}
+			</script>
+		
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/article/kubernetes-notes/operation/helm/kine/" data-toggle="tooltip" data-placement="top" title="kine的使用">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/article/linux-notes/baremetal/redfish-api/" data-toggle="tooltip" data-placement="top" title="Redfish API">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <br>
+
+                <!--打赏-->
+                
+                    <div class="reward">
+                        <div class="reward-button">赏 <span class="reward-code"> 
+                            <span class="alipay-code"> <img class="alipay-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599640/blog/donate/alipay.jpg"><b>支付宝打赏</b></span> 
+                            <span class="wechat-code"> <img class="wechat-img" src="https://res.cloudinary.com/dqxtn0ick/image/upload/v1551599472/blog/donate/wechatpay.jpg"><b>微信打赏</b> </span>
+                            </span></div>
+                        <p class="reward-notice">赞赏一下</p>
+                    </div>
+                
+                <!--打赏-->                
+
+                <br>
+
+                <!--分享-->
+                
+                    <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                    <!--  css & js -->
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!--分享-->
+                <br>                
+                
+                <!-- require APlayer -->
+                
+                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.css">
+                    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10/dist/APlayer.min.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/meting@1.2/dist/Meting.min.js"></script>
+    
+                    <div class="aplayer"
+                        data-id="2423410161"
+                        data-server="netease"
+                        data-type="playlist"
+                        data-fixed="true" >
+                    </div>
+                
+                
+                
+
+                <br>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+
+                
+                    <!-- disqus 评论框 start -->
+                    <div class="comment">
+                        <div id="lv-container" data-id="city" data-uid="MTAyMC8zNDM0Mi8xMDg3OQ=="></div>
+                    </div>
+                    <!-- disqus 评论框 end -->
+                
+
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+  
+    <style>
+      span.toc-nav-number{
+        display: none
+      }
+    </style>
+  
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#面临的挑战"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">🚀 面临的挑战</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#1-调度器优化"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">1. 调度器优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#11-控制-pod-创建速率"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">🔧 1.1. 控制 Pod 创建速率</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#示例-shell-脚本"><span class="toc-nav-number">2.1.1.</span> <span class="toc-nav-text">示例 Shell 脚本：</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#️-12-调优默认调度器"><span class="toc-nav-number">2.2.</span> <span class="toc-nav-text">⚙️ 1.2. 调优默认调度器</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-提高并发调度能力"><span class="toc-nav-number">2.2.1.</span> <span class="toc-nav-text">✅ 1. 提高并发调度能力</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-启用缓存调度器scheduling-queue-优化"><span class="toc-nav-number">2.2.2.</span> <span class="toc-nav-text">✅ 2. 启用缓存调度器（Scheduling Queue 优化）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-关闭或精简耗时插件"><span class="toc-nav-number">2.2.3.</span> <span class="toc-nav-text">✅ 3. 关闭或精简耗时插件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-预选节点集范围节点剪枝"><span class="toc-nav-number">2.2.4.</span> <span class="toc-nav-text">✅ 4. 预选节点集范围（节点剪枝）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#5-启用拓扑感知与亲和性缓存"><span class="toc-nav-number">2.2.5.</span> <span class="toc-nav-text">✅ 5. 启用拓扑感知与亲和性缓存</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#6-控制调度队列压力backoff-amp-retry"><span class="toc-nav-number">2.2.6.</span> <span class="toc-nav-text">✅ 6. 控制调度队列压力（Backoff &amp; Retry）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#调优效果验证建议"><span class="toc-nav-number">2.2.7.</span> <span class="toc-nav-text">🧪 调优效果验证建议：</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#13-扩展调度器scheduling-framework-插件"><span class="toc-nav-number">2.3.</span> <span class="toc-nav-text">🧩 1.3. 扩展调度器（Scheduling Framework 插件）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#示例快速-filter-插件"><span class="toc-nav-number">2.3.1.</span> <span class="toc-nav-text">✨ 示例：快速 Filter 插件</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#14-使用多个调度器调度器隔离"><span class="toc-nav-number">2.4.</span> <span class="toc-nav-text">🧠 1.4. 使用多个调度器（调度器隔离）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#15-使用高性能调度系统"><span class="toc-nav-number">2.5.</span> <span class="toc-nav-text">🛠 1.5. 使用高性能调度系统</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#koordinator"><span class="toc-nav-number">2.5.1.</span> <span class="toc-nav-text">Koordinator</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#volcano"><span class="toc-nav-number">2.5.2.</span> <span class="toc-nav-text">Volcano</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#16-监控与验证建议"><span class="toc-nav-number">2.6.</span> <span class="toc-nav-text">📊 1.6. 监控与验证建议</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#17-总结对比"><span class="toc-nav-number">2.7.</span> <span class="toc-nav-text">✅ 1.7. 总结对比</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#2-etcd优化"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">2. Etcd优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#21-基础配置优化"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">🔧 2.1. 基础配置优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-启用自动压缩历史数据"><span class="toc-nav-number">3.1.1.</span> <span class="toc-nav-text">✅ 1. 启用自动压缩历史数据</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-启用-wal-压缩"><span class="toc-nav-number">3.1.2.</span> <span class="toc-nav-text">✅ 2. 启用 WAL 压缩</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#22-硬件层优化非常关键"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">💽 2.2. 硬件层优化（非常关键）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#23-集群部署架构优化"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">🧱 2.3. 集群部署架构优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-隔离部署-etcd"><span class="toc-nav-number">3.3.1.</span> <span class="toc-nav-text">✅ 1. 隔离部署 etcd</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-多副本部署3~5个节点"><span class="toc-nav-number">3.3.2.</span> <span class="toc-nav-text">✅ 2. 多副本部署（3~5个节点）</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#3-kube-apiserver优化"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">3. kube-apiserver优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#31-控制请求速率限流"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">🧱 3.1. 控制请求速率（限流）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-控制客户端创建速率"><span class="toc-nav-number">4.1.1.</span> <span class="toc-nav-text">✅ 1. 控制客户端创建速率</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#️-32-调优-api-server-参数"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">⚙️ 3.2. 调优 API Server 参数</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-增加最大并发-qps"><span class="toc-nav-number">4.2.1.</span> <span class="toc-nav-text">✅ 1. 增加最大并发 QPS</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-增加缓存时间与响应窗口"><span class="toc-nav-number">4.2.2.</span> <span class="toc-nav-text">✅ 2. 增加缓存时间与响应窗口</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#33-operator优化"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">3.3. operator优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-使用-informer-缓存机制client-go-默认支持"><span class="toc-nav-number">4.3.1.</span> <span class="toc-nav-text">✅ 1. 使用 informer 缓存机制（client-go 默认支持）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-减少不必要的-watch-或频繁-list-请求"><span class="toc-nav-number">4.3.2.</span> <span class="toc-nav-text">✅ 2. 减少不必要的 Watch 或频繁 List 请求</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#4-网络插件优化"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">4. 网络插件优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#41-网络瓶颈表现"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">🧭 4.1. 网络瓶颈表现</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#42-选型优化选择高性能-cni-插件"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">✅ 4.2. 选型优化：选择高性能 CNI 插件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#️-43-网络插件参数调优"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">⚙️ 4.3. 网络插件参数调优</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#cilium-示例"><span class="toc-nav-number">5.3.1.</span> <span class="toc-nav-text">🔹 Cilium 示例</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#44-跨节点通信优化"><span class="toc-nav-number">5.4.</span> <span class="toc-nav-text">🔄 4.4. 跨节点通信优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-减少-vxlan-封装或改为-native-routing"><span class="toc-nav-number">5.4.1.</span> <span class="toc-nav-text">✅ 1. 减少 VXLAN 封装（或改为 Native Routing）</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-使用-direct-server-returndsr-ecmp-路由"><span class="toc-nav-number">5.4.2.</span> <span class="toc-nav-text">✅ 2. 使用 Direct Server Return（DSR）+ ECMP 路由</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#45-kube-proxy-优化"><span class="toc-nav-number">5.5.</span> <span class="toc-nav-text">🔃 4.5. kube-proxy 优化</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-使用-ipvs-模式代替-iptables"><span class="toc-nav-number">5.5.1.</span> <span class="toc-nav-text">✅ 1. 使用 ipvs 模式代替 iptables</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-配合-ebpf-替代-kube-proxycilium-推荐"><span class="toc-nav-number">5.5.2.</span> <span class="toc-nav-text">✅ 2. 配合 eBPF 替代 kube-proxy（Cilium 推荐）</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#46-节点系统参数优化"><span class="toc-nav-number">5.6.</span> <span class="toc-nav-text">🔧 4.6. 节点系统参数优化</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#47-监控关键指标"><span class="toc-nav-number">5.7.</span> <span class="toc-nav-text">📊 4.7. 监控关键指标</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#48-总结优化建议表"><span class="toc-nav-number">5.8.</span> <span class="toc-nav-text">✅ 4.8. 总结优化建议表</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#5-总结"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">5. 总结</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.huweihuang.com" target="_blank">胡伟煌 | Blog</a></li>
+                    
+                        <li><a href="http://blog.csdn.net/huwh_" target="_blank">胡伟煌 | CSDN Blog</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/kubernetes-notes" target="_blank">Kubernetes 学习笔记</a></li>
+                    
+                        <li><a href="https://www.huweihuang.com/golang-notes" target="_blank">Golang 学习笔记</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+    <!-- 屏蔽来必力广告 -->
+    <style>
+        #taboola-livere { display: none; }
+    </style>
+    <!-- 来必力City版公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+    
+           if (typeof LivereTower === 'function') { return; }
+    
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+    
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+    <!-- 来必力City版 公共JS代码 end -->
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+<!-- chrome Firefox 中文锚点定位失效-->
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+<!-- smooth scroll behavior polyfill  -->
+<script type="text/javascript" src="/js/smoothscroll.js"></script>
+<script>
+        $('#toc').on('click','a',function(a){
+            // var isChrome = window.navigator.userAgent.indexOf("Chrome") !== -1;
+            // console.log(window.navigator.userAgent,isChrome)
+                // if(isChrome) {
+                    // console.log(a.currentTarget.outerHTML);
+                    // console.log($(a.currentTarget).attr("href"));
+                    //跳转到指定锚点
+                    // document.getElementById(a.target.innerText.toLowerCase()).scrollIntoView(true);
+                    document.getElementById($(a.currentTarget).attr("href").replace("#","")).scrollIntoView({behavior: 'smooth' });
+                // }
+        })  
+</script>
+
+<!-- https://www.google.com/adsense -->
+
+<script data-ad-client="ca-pub-8205636531078391" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/huweihuang0">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/huweihuang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 胡伟煌 2025 
+                    <br>
+                    Theme by <a href="http://beantech.org">BeanTech</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://www.huweihuang.com">胡伟煌</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=huweihuang&repo=hexo-theme-huweihuang&type=star&count=true" >
+                    </iframe>
+                    <br>
+                    闽ICP备18027922号 | 闽公网安备35020302033291号                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://www.huweihuang.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-114718458-2';
+    var _gaDomain = 'www.huweihuang.com';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    // dynamic User by Hux
+    var _baId = 'e146d71b77957235bba1e709d930f62e';
+
+    // Originial
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<!-- <img src="http://www.huweihuang.com/img/icon_wechat.png" width="0" height="0" /> -->
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
