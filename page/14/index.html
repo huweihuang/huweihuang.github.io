@@ -141,14 +141,14 @@
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/archives/">Archives</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/archives/">Archives</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
@@ -211,6 +211,176 @@
 
 <div class="post-preview">
 
+    <a href="/article/golang-notes/framework/cobra/cobra-flags/">
+        <h2 class="post-title">
+                        
+            cobra flags
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            添加Flags
+1. Persistent Flags
+Persistent Flags表示该类参数可以被用于当前命令及其子命令。
+例如，以下表示verbose参数可以被用于rootCmd及其子命令。
+1rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, "verbose", "v", false, "verbose output")
+2. Lo......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-16
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/golang-notes/framework/cobra/cobra-usage/">
+        <h2 class="post-title">
+                        
+            cobra 介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. Cobra简介
+Cobra是一个cli接口模式的应用程序框架，同时也是生成该框架的命令行工具。用户可以通过help方式快速查看该二进制的使用方式。
+Cobra主要包括以下部分
+
+Command:一般表示action，即运行的二进制命令服务。同时可以拥有子命令（children commands）。
+Args:命令执行相关参数。
+Flags:二进制命令的配置参数，可对应配置文件。参数可分......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-09-16
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Golang" title="Golang">Golang</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/network/iptables-command/">
+        <h2 class="post-title">
+                        
+            iptables命令
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            添加iptables规则
+12345# 单个端口iptables -A INPUT -p tcp --dport 22 -j ACCEPT# 多个端口iptables -A INPUT -p tcp -m multiport --dports 6443,8443,2379,2380,10250 -j ACCEPT
+删除iptables规则
+12345# 显示iptables规则行号iptab......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#iptables" title="iptables">iptables</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/linux-notes/network/iptables/">
+        <h2 class="post-title">
+                        
+            iptables介绍
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. 简介
+iptables是一个设置防火墙（netfilter）规则的命令工具。网络规则包括源地址、目的地址、传输协议（如TCP、UDP、ICMP）和服务类型（如HTTP、FTP和SMTP）等，当数据包与规则匹配时，iptables就根据规则所定义的方法来处理这些数据包，如放行（accept）、拒绝（reject）和丢弃（drop）等。配置防火墙的主要工作就是添加、修改和删除这些规则。
+2......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#iptables" title="iptables">iptables</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
+    <a href="/article/kubernetes-notes/operation/kubectl/kubectl-commands/">
+        <h2 class="post-title">
+                        
+            kubectl命令使用
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            1. kubectl命令介绍
+kubectl的命令语法
+1kubectl [command] [TYPE] [NAME] [flags]
+其中command，TYPE，NAME，和flags分别是：
+
+
+command: 指定要在一个或多个资源进行操作，例如create，get，describe，delete。
+
+
+TYPE：指定资源类型。资源类型区分大小写，您可以指定单数，复数或缩写形式。......
+        </div>
+    </a>
+    
+        <p class="post-meta" style="margin: 10px 0;">
+            Posted by 胡伟煌 on
+            2020-08-13
+        </p>
+        <div class="tags">
+            
+              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
+            
+        </div>
+    
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/article/kubernetes-notes/etcd/k8s-etcd-data/">
         <h2 class="post-title">
                         
@@ -242,18 +412,17 @@
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
         <h2 class="post-title">
                         
-            Virtual Kubelet介绍
+            Virtual Kubelet命令
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            1. 简介
-Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
-一句话概括：Kubernetes API on top, programm......
+            virtual-kubelet --help
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
         </div>
     </a>
     
@@ -273,17 +442,18 @@ Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kub
 
 <div class="post-preview">
 
-    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet-cmd/">
+    <a href="/article/kubernetes-notes/multi-cluster/virtual-kubelet/virtual-kubelet/">
         <h2 class="post-title">
                         
-            Virtual Kubelet命令
+            Virtual Kubelet介绍
         </h2>
         <h3 class="post-subtitle">
             
         </h3>
         <div class="post-content-preview">
-            virtual-kubelet --help
-1234567891011121314151617181920212223242526272829303132333435363738394041424344454647#./virtual-kubelet --helpvirtual-kubelet implements the Kubelet interface with a pluggabl......
+            1. 简介
+Virtual Kubelet是 Kubernetes kubelet 的一种实现，作为一种虚拟的kubelet用来连接k8s集群和其他平台的API。这允许k8s的节点由其他提供者（provider）提供支持，这些提供者例如serverless平台（ACI, AWS Fargate）、IoT Edge等。
+一句话概括：Kubernetes API on top, programm......
         </div>
     </a>
     
@@ -366,228 +536,6 @@ secret是namespace级别的，创建时候需要指定namespace。
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/article/kubernetes-notes/operation/registry/config-private-registry/">
-        <h2 class="post-title">
-                        
-            配置私有镜像仓库
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. 镜像仓库的基本操作
-1.1. 登录镜像仓库
-1docker login -u &lt;username&gt; -p &lt;password&gt; &lt;registry-addr&gt;
-1.2. 拉取镜像
-1docker pull https://registry.xxx.com/dev/nginx:latest
-1.3. 推送镜像
-1docker push https://......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2020-06-23
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Kubernetes" title="Kubernetes">Kubernetes</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/git/git-commit-msg/">
-        <h2 class="post-title">
-                        
-            Git commit规范
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Git commit规范
-1.1. 格式
-1&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
-示例：
-1fix(ngRepeat): fix trackBy function being invoked with incorrect scope
-1.2. type
-主要的提交类型如下：
-
-
-
-Type
-说明
-备注
-
-
-
-
-feat
-提交新功能
-常......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Git" title="Git">Git</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/git/git/">
-        <h2 class="post-title">
-                        
-            Git介绍
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Git是什么
-1.1. 概述
-Git是分布式版本控制系统，与SVN类似的集中化版本控制系统相比，集中化版本控制系统如果中央服务器宕机则会影响数据和协同开发。
-Git是分布式的版本控制系统，客户端不只是提取最新版本的快照，而且将整个代码仓库镜像复制下来。如果任何协同工作用的服务器发生故障了，也可以用任何一个代码仓库来恢复。而且在协作服务器宕机期间，你也可以提交代码到本地仓库，当协作服务器......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Git" title="Git">Git</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/git/git-commands/">
-        <h2 class="post-title">
-                        
-            Git命令分类
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Git 命令详解
-1. 示意图
-
-
-Workspace：工作区
-Index / Stage：暂存区
-Repository：仓库区（或本地仓库）
-Remote：远程仓库
-
-2. Git 命令分类
-2.1. 新建代码库
-123456# 在当前目录新建一个Git代码库$ git init# 新建一个目录，将其初始化为Git代码库$ git init [project-name]# 下载一个项目和它......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Git" title="Git">Git</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
-<div class="post-preview">
-
-    <a href="/article/linux-notes/git/git-common-cmd/">
-        <h2 class="post-title">
-                        
-            Git常用命令
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            1. Git常用命令
-
-
-
-分类
-子类
-git command
-zsh alias
-
-
-
-
-分支
-查看当前分支
-git branch
-gb
-
-
-
-创建新分支,仍停留在当前分支
-git branch 
-
-
-
-
-创建并切换到新分支
-git checkout -b 
-gcb
-
-
-
-切换分支
-git checkout 
-
-
-
-
-合并分支
-git checkout  #切换到要合并的分支git mer......
-        </div>
-    </a>
-    
-        <p class="post-meta" style="margin: 10px 0;">
-            Posted by 胡伟煌 on
-            2019-09-20
-        </p>
-        <div class="tags">
-            
-              <a href="/tags/#Git" title="Git">Git</a>
-            
-        </div>
-    
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -633,9 +581,9 @@ git checkout  #切换到要合并的分支git mer......
     <div class="tags">
         
             
-            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
-            
         
+            
+            <a href="/tags/#Blockchain" title="Blockchain" rel="5">Blockchain</a>
             
         
             
@@ -649,7 +597,7 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#读书笔记" title="读书笔记" rel="2">读书笔记</a>
+            <a href="/tags/#读书笔记" title="读书笔记" rel="3">读书笔记</a>
             
         
             
@@ -695,7 +643,7 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#问题排查" title="问题排查" rel="9">问题排查</a>
+            <a href="/tags/#问题排查" title="问题排查" rel="10">问题排查</a>
             
         
             
@@ -719,11 +667,13 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            <a href="/tags/#IDE" title="IDE" rel="2">IDE</a>
             
         
             
-            <a href="/tags/#IDE" title="IDE" rel="2">IDE</a>
+            <a href="/tags/#Keepalived" title="Keepalived" rel="4">Keepalived</a>
+            
+        
             
         
             
@@ -779,21 +729,21 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
-            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
-            
-        
-            
             <a href="/tags/#Kubeedge" title="Kubeedge" rel="3">Kubeedge</a>
             
         
             
-        
+            <a href="/tags/#OpenYurt" title="OpenYurt" rel="5">OpenYurt</a>
             
-            <a href="/tags/#CNI" title="CNI" rel="7">CNI</a>
+        
             
         
             
             <a href="/tags/#VirtualKubelet" title="VirtualKubelet" rel="2">VirtualKubelet</a>
+            
+        
+            
+            <a href="/tags/#CNI" title="CNI" rel="7">CNI</a>
             
         
             
@@ -809,13 +759,19 @@ git checkout  #切换到要合并的分支git mer......
             
         
             
+            <a href="/tags/#IaC" title="IaC" rel="3">IaC</a>
+            
+        
+            
+            <a href="/tags/#Terraform" title="Terraform" rel="3">Terraform</a>
+            
+        
+            
             <a href="/tags/#CSI" title="CSI" rel="4">CSI</a>
             
         
             
             <a href="/tags/#VIM" title="VIM" rel="3">VIM</a>
-            
-        
             
         
     </div>
@@ -897,23 +853,23 @@ git checkout  #切换到要合并的分支git mer......
     <ul>
       
         <li>
+          <a href="/article/reading-notes/2010年的房地产调控我们收获了什么/">[读书笔记] 2010年的房地产调控我们收获了什么(一)</a>
+        </li>
+      
+        <li>
           <a href="/article/linux-notes/LLM/agent/">大模型agent概述</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/LLM/how-llm-work/">大模型原理</a>
+          <a href="/article/kubernetes-notes/serverless/iac/terraform-module/">Terraform的模块及依赖引用</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/LLM/llm-fine-tuning/">大模型微调</a>
+          <a href="/article/kubernetes-notes/serverless/iac/terraform-concept/">Terraform的基本概念</a>
         </li>
       
         <li>
-          <a href="/article/linux-notes/LLM/llm-rag/">RAG工程</a>
-        </li>
-      
-        <li>
-          <a href="/article/kubernetes-notes/runtime/cgroup/cgroup-v2-vs-v1/">Cgroup v2和v1的区别</a>
+          <a href="/article/kubernetes-notes/serverless/iac/terraform-usage/">Terraform的使用</a>
         </li>
       
     </ul>
@@ -942,7 +898,7 @@ git checkout  #切换到要合并的分支git mer......
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">June 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">9</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">November 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">July 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/06/">June 2025</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/05/">May 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">January 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">December 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">October 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">July 2024</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">June 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/12/">December 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">November 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/08/">August 2023</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/07/">July 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">April 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">December 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">September 2022</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">August 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">July 2022</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/">June 2019</a><span class="archive-list-count">17</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">April 2019</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">27</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">9</span></li></ul>
     </div>
 
         <hr>
